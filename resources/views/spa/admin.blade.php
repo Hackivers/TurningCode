@@ -595,6 +595,8 @@
         let pollTimer   = null;
         let unreadCount = 0;
         let initialLoad = true;
+        let isFetching  = false;
+        const renderedIds = new Set();
 
         // ── Reply state ─────────────────────────────────
         let replyToId   = null;
@@ -654,6 +656,8 @@
 
         // ── Load messages ───────────────────────────────
         async function loadMessages() {
+            if (isFetching) return;
+            isFetching = true;
             try {
                 const url = lastMsgId > 0 ? `${API_URL}?after=${lastMsgId}` : API_URL;
                 const res = await fetch(url, {
@@ -680,10 +684,15 @@
 
                 if (lastMsgId === 0) {
                     chatMessages.innerHTML = '';
+                    renderedIds.clear();
                 }
 
+                let hasNew = false;
                 let lastDate = '';
                 msgs.forEach(msg => {
+                    // Skip already rendered messages
+                    if (renderedIds.has(msg.id)) return;
+
                     if (msg.date !== lastDate) {
                         lastDate = msg.date;
                         const sep = document.createElement('div');
@@ -693,6 +702,7 @@
                     }
 
                     appendMessage(msg);
+                    hasNew = true;
 
                     if (msg.id > lastMsgId) {
                         lastMsgId = msg.id;
@@ -703,13 +713,19 @@
                 });
 
                 updateBadge();
-                scrollToBottom();
+                if (hasNew) scrollToBottom();
             } catch (e) {
                 console.error('Chat load error:', e);
+            } finally {
+                isFetching = false;
             }
         }
 
         function appendMessage(msg) {
+            // Prevent duplicate rendering
+            if (renderedIds.has(msg.id)) return;
+            renderedIds.add(msg.id);
+
             const div = document.createElement('div');
             div.className = `chat-msg ${msg.is_mine ? 'mine' : 'other'}`;
             div.setAttribute('data-msg-id', msg.id);
