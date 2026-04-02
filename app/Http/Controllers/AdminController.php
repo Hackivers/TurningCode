@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MainMateri;
+use App\Models\Materi;
 use App\Models\SubMateri;
+use App\Models\User;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -29,6 +31,21 @@ class AdminController extends Controller
     {
         if (! in_array($page, self::PAGES, true)) {
             abort(404);
+        }
+
+        if ($page === 'dashboard') {
+            return view('spa.fragments.admin-dashboard', [
+                'page'               => $page,
+                'totalUsers'         => User::where('role', 'user')->count(),
+                'totalAdmins'        => User::where('role', 'admin')->count(),
+                'totalMainMateris'   => MainMateri::count(),
+                'totalMateris'       => Materi::count(),
+                'totalSubMateris'    => SubMateri::count(),
+                'publishedSubMateris'=> SubMateri::where('is_published', true)->count(),
+                'draftSubMateris'    => SubMateri::where('is_published', false)->count(),
+                'recentSubMateris'   => SubMateri::with('materi.mainMateri')->latest()->limit(5)->get(),
+                'topMateris'         => Materi::withCount('subMateris')->orderByDesc('sub_materis_count')->limit(5)->get(),
+            ]);
         }
 
         if ($page === 'main-materi') {

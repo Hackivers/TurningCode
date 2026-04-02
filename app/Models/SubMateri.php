@@ -9,6 +9,13 @@ class SubMateri extends Model
 {
     protected $fillable = [
         'materi_id',
+        'title',
+        'subtitle',
+        'author',
+        'thumbnail',
+        'meta_title',
+        'meta_description',
+        'is_published',
         'sections',
         'sections_json',
     ];
@@ -17,6 +24,7 @@ class SubMateri extends Model
     {
         return [
             'sections' => 'array',
+            'is_published' => 'boolean',
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\AdminMateriController;
 use App\Http\Controllers\Admin\AdminSubMateriController;
 use App\Http\Controllers\AdminController;
@@ -55,4 +56,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::post('/admin/materi', [AdminMateriController::class, 'storeMateri'])->name('admin.materi.store');
     Route::get('/admin/api/main/{mainMateri}/materis', [AdminSubMateriController::class, 'materisByMain'])->name('admin.api.materis-by-main');
     Route::post('/admin/sub-materi', [AdminSubMateriController::class, 'store'])->name('admin.sub-materi.store');
+
+    // Admin global chat
+    Route::get('/admin/api/chat', [AdminChatController::class, 'index'])->name('admin.chat.index');
+    Route::post('/admin/api/chat', [AdminChatController::class, 'store'])->name('admin.chat.store');
 });
