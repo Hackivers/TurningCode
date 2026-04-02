@@ -1,12 +1,14 @@
 @extends('layouts.spa')
 
 @section('content')
-    @include('components.nav')
-    @include('components.aside')
-    @include('components.header')
-    {{-- @include('components.timeStudy') --}}
-    @include('components.navBottom')
-    {{-- <div class="flex min-h-screen">
+    {{-- @include('spa.fragments.user-navBar')
+    @include('spa.fragments.user-asideBar')
+    @include('spa.fragments.user-timeCard')
+    @include('spa.fragments.user-materiCard')
+    @include('spa.fragments.user-progres')
+    @include('spa.fragments.user-navBottom') --}}
+
+    <div class="flex min-h-screen">
         <aside class="w-56 shrink-0 border-r border-zinc-200 bg-white p-4">
             <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">User</p>
             <nav class="flex flex-col gap-1 text-sm">
@@ -18,8 +20,8 @@
                     class="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100">Akun</a>
                 <a href="#" data-spa-page="materi"
                     class="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100">Materi</a>
-                <a href="#" data-spa-page="submateri"
-                    class="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100">Sub materi</a>
+                <a href="#" data-spa-page="submateri" class="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100">Sub
+                    materi</a>
                 <a href="#" data-spa-page="detail"
                     class="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100">Detail</a>
             </nav>
@@ -35,5 +37,5 @@
                 <p class="text-sm text-zinc-500">Memuat…</p>
             </div>
         </main>
-    </div> --}}
+    </div>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MainMateri;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -31,6 +32,15 @@ class UserController extends Controller
             abort(404);
         }
 
-        return view('spa.fragments.user', ['page' => $page]);
+        $data = [];
+
+        if ($page === 'materi') {
+            $data['mainMateri'] = MainMateri::with('materi.submateri')->get();
+        }
+
+        return view('spa.fragments.user', [
+            'page' => $page,
+            'data' => $data,
+        ]);
     }
 }
