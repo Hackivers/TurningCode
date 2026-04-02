@@ -1,7 +1,12 @@
 @extends('layouts.spa')
 
 @section('content')
-    <div class="flex min-h-screen">
+    @include('components.nav')
+    @include('components.aside')
+    @include('components.header')
+    {{-- @include('components.timeStudy') --}}
+    @include('components.navBottom')
+    {{-- <div class="flex min-h-screen">
         <aside class="w-56 shrink-0 border-r border-zinc-200 bg-white p-4">
             <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">User</p>
             <nav class="flex flex-col gap-1 text-sm">
@@ -30,5 +35,5 @@
                 <p class="text-sm text-zinc-500">Memuat…</p>
             </div>
         </main>
-    </div>
+    </div> --}}
 @endsection

@@ -7,6 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
     @vite(['resources/css/app.css', $viteEntry])
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ asset('src/css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('src/css/style.css') }}">
 </head>
 
 <body class="min-h-screen bg-zinc-50 text-zinc-900 antialiased" data-spa-initial="{{ $initialPage }}"
