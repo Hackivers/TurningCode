@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ asset('src/css/welcome.css') }}">
+    <link rel="stylesheet" href="{{ asset('src/css/global.css') }}">
+    {{-- @vite(['resources/css/app.css']) --}}
     <title>{{ config('app.name') }}</title>
-    @vite(['resources/css/app.css'])
 </head>
-
-<body class="min-h-screen bg-zinc-50 text-zinc-900 antialiased">
-    <div class="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-4">
-        <h1 class="text-3xl font-semibold tracking-tight">{{ config('app.name') }}</h1>
-        <p class="mt-2 text-center text-sm text-zinc-600">Silakan masuk atau daftar sebagai pengguna.</p>
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a href="{{ route('login') }}"
-                class="inline-flex rounded-md bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-800">
-                Masuk
-            </a>
-            <a href="{{ route('register') }}"
-                class="inline-flex rounded-md border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
-                Daftar
-            </a>
-        </div>
+<body>
+    <div class="back-cover">
+        <h1>Turning Code</h1>
+        <h1>Turning Code</h1>
+        <h1>Turning Code</h1>
+        <h1>Turning Code</h1>
+    </div>
+    <div class="container">
+        <main class="wrapper">
+            <div class="title">
+                <h2>welcome to</h2>
+                <h1>Turning<strong>Code</strong></h1>
+            </div>
+            <div class="thumbnail">
+                <img src="{{ asset('assets/ico/img001thumb01Trans.png') }}" alt="">
+            </div>
+            <div>
+                <h5>silahkan login, atau bila tidak memiliki akun silahkan daftar terlebih dahulu</h5>
+            </div>
+            <div class="btn">
+                <a href="{{ route('login') }}">
+                    <button>login</button>
+                </a>
+                <div class="strip">
+                    <span>or</span>
+                    <hr>
+                </div>
+                <a href="{{ route('register') }}">
+                    <button>register</button>
+                </a>
+            </div>
+        </main>
     </div>
 </body>
-
 </html>

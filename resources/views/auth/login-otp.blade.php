@@ -1,4 +1,121 @@
 <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ asset('src/css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('src/css/auth.css') }}">
+    <title>Masuk — {{ config('app.name') }}</title>
+</head>
+
+<body>
+    <main class="thumbnail">
+        <div class="wrapper-thumb">
+            <div class="title-thumb">
+                <h2>yok, buruan login!!</h2>
+                <h5>materi udah nugguin nih, buat dipelajari...</h5>
+            </div>
+            <div class="thumb-img">
+                <img src="{{ asset('assets/ico/img001thumb02Trans.png') }}" alt="">
+            </div>
+        </div>
+    </main>
+    <main class="form-input">
+        <div class="wrapper-input">
+            <div class="title-input">
+                <h2>login</h2>
+            </div>
+            <div class="profile">
+                <div class="wrapper-profile">
+                    <div class="profile-admin">
+                        <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="admin image">
+                        <input type="hidden" name="email" value="{{ $email }}">
+                    </div>
+                    <div class="profile-title">
+                        <h5>admin</h5>
+                        <h4>{{ $email }}</h4>
+                    </div>
+                </div>
+            </div>
+            <form method="post" action="{{ route('login') }}" class="main-input admin-otp">
+                @csrf
+                <div class="input pass">
+                    <label for="password">
+                        <h5>Kode OTP</h5>
+                    </label>
+                    <div>
+                        <i class='bx bxs-lock'></i>
+                        <input type="password" name="password" id="password" placeholder="XX XX XX">
+                        <i class='bx bx-show toggle-password' id="togglePassword"></i>
+                    </div>
+                </div>
+                @if (session('info'))
+                    <h5 class="text-sm info">{{ session('info') }}</h5>
+                @endif
+                @if (session('error'))
+                    <h5 class="text-sm error">{{ session('error') }}</h5>
+                @endif
+                <button type="submit" class="btn-resend">
+                    Kirim ulang OTP
+                </button>
+                <div class="btn">
+                    <button type="button" onclick="window.location='{{ route('home') }}'">
+                        kembali
+                    </button>
+                    <button type="submit">Login</button>
+                </div>
+                <h5 class="register">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="font-medium text-zinc-900 underline">Daftar</a>
+                </h5>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.querySelectorAll('.input input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.input').classList.add('fokus');
+            });
+
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.closest('.input').classList.remove('fokus');
+                }
+            });
+        });
+
+        const toggle = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        toggle.addEventListener('click', () => {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+
+            // ganti icon
+            toggle.classList.toggle('bx-show');
+            toggle.classList.toggle('bx-hide');
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{-- <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -51,4 +168,4 @@
     </div>
 </body>
 
-</html>
+</html> --}}

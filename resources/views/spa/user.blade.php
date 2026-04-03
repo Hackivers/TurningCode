@@ -1,13 +1,6 @@
 @extends('layouts.spa')
 
 @section('content')
-    {{-- @include('spa.fragments.user-navBar')
-    @include('spa.fragments.user-asideBar')
-    @include('spa.fragments.user-timeCard')
-    @include('spa.fragments.user-materiCard')
-    @include('spa.fragments.user-progres')
-    @include('spa.fragments.user-navBottom') --}}
-
     <div class="flex min-h-screen">
         <aside class="w-56 shrink-0 border-r border-zinc-200 bg-white p-4">
             <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">User</p>

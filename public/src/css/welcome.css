@@ -1,0 +1,119 @@
+body{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.back-cover{
+    z-index: -1;
+    inset: unset;
+    display: none;
+    position: absolute;
+}
+.back-cover h1{
+    font-size: 7em;
+    opacity: .4;
+    white-space: nowrap;
+    font-weight: 550;
+    color: #20202100;
+    mix-blend-mode: difference;
+    -webkit-text-stroke: 1px #202021;
+}
+.container{
+    width: 100%;
+    max-width: 30em;
+}
+.wrapper{
+    gap: 30px;
+    margin: 0 10px;
+    display: flex;
+    border-radius: 30px;
+    padding: 20px 20px;
+    flex-direction: column;
+    background: #ededed33;
+    border: 1px solid #d9d9d9;
+    backdrop-filter: blur(5px);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+.thumbnail {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
+.thumbnail img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-width: 12em;
+    border-radius: 10px;
+}
+.title{
+    margin: 17px 10px 0 10px;
+}
+.title h1{
+    font-size: 2.7em;
+    font-weight: 550;
+    color: #323234;
+}
+.title h2{
+    font-size: 1.6em;
+    line-height: 20px;
+    color: #585858;
+}
+.title strong{
+    font-weight: 550;
+    color: #5b5b9b;
+}
+.btn{
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+.btn a{
+    width: 100%;
+}
+button{
+    width: 100%;
+    background: #202021;
+    color: white;
+    font-size: 15px;
+    text-transform: capitalize;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+.btn a:first-child button{
+    background: transparent;
+    color: #202021;
+    border: 1px solid #202021;
+}
+h5{
+    color: #585858;
+    letter-spacing: .3px;
+}
+.strip{
+    margin: 4px 1em;
+    display: flex;
+    align-items: center;
+    /* background: red; */
+    height: 10px;
+    justify-content: center;
+}
+.strip hr{
+    height: 1px;
+    width: 100%;
+}
+.strip span{
+    font-size: 13px;
+    padding: 0 10px;
+    background: #e7e7e7;
+    position: absolute;
+}
+@media screen and (min-width: 1200px) {
+    .back-cover{
+        display: block;
+    }
+}
