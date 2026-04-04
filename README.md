@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/TurningCode-E--Learning%20Platform-7c3aed?style=for-the-badge&logo=laravel&logoColor=white" alt="TurningCode">
+  <img src="https://img.shields.io/badge/TurningCode-Learn%20to%20Code-7c3aed?style=for-the-badge&logo=laravel&logoColor=white" alt="TurningCode">
 </p>
 
 <h1 align="center">🚀 TurningCode</h1>
 
 <p align="center">
-  <b>Platform e-learning modern berbasis SPA untuk belajar pemrograman secara terstruktur dan terjadwal.</b>
+  <b>Platform belajar programming modern — dari nol hingga jadi programmer.</b>
 </p>
 
 <p align="center">
@@ -20,11 +20,15 @@
 
 ## 📖 Tentang Project
 
-**TurningCode** adalah platform e-learning bertema pemrograman yang dibangun sebagai Single Page Application (SPA) menggunakan Laravel Blade Fragments. Platform ini memungkinkan pengguna mempelajari berbagai materi coding secara terstruktur — mulai dari kategori utama, sub-materi, hingga konten detail — dilengkapi dengan fitur penjadwalan belajar, pelacakan progres, dan sistem favorit.
+**TurningCode** adalah aplikasi web yang dirancang khusus untuk membantu siapa saja yang ingin **belajar menjadi programmer**. Nama "TurningCode" mencerminkan semangat *turning point* — titik balik di mana seseorang mulai memahami dunia pemrograman dan berubah menjadi seorang developer.
+
+Platform ini menyajikan materi-materi programming secara **terstruktur dan bertahap**, mulai dari konsep dasar hingga topik lanjutan. Pengguna tidak hanya membaca materi, tetapi juga dapat mengatur **jadwal belajar harian**, melacak **progres** dan **riwayat belajar**, serta menyimpan materi **favorit** — sehingga proses belajar coding menjadi lebih terarah, konsisten, dan efektif.
+
+Dibangun sebagai **Single Page Application (SPA)** menggunakan Laravel Blade Fragments, TurningCode memberikan pengalaman navigasi yang cepat dan mulus layaknya aplikasi modern.
 
 Aplikasi ini memiliki dua sisi utama:
-- **User Panel** — tempat pengguna belajar, mengatur jadwal, dan melacak progres.
-- **Admin Panel** — tempat admin mengelola seluruh konten materi dan berkomunikasi melalui global chat.
+- **User Panel** — tempat pengguna belajar programming, mengatur jadwal, dan melacak progres belajar.
+- **Admin Panel** — tempat admin mengelola seluruh konten materi pembelajaran dan berkomunikasi melalui global chat.
 
 ---
 
