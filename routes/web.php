@@ -47,6 +47,17 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/app', [UserController::class, 'spa'])->name('user.spa');
     Route::get('/app/page/{page}', [UserController::class, 'page'])->name('user.page');
+    Route::post('/app/profile/update', [UserController::class, 'updateProfile'])->name('user.profile.update');
+
+    // Schedule CRUD (JSON API)
+    Route::post('/app/schedule', [UserController::class, 'storeSchedule'])->name('user.schedule.store');
+    Route::put('/app/schedule/{schedule}', [UserController::class, 'updateSchedule'])->name('user.schedule.update');
+    Route::delete('/app/schedule/{schedule}', [UserController::class, 'deleteSchedule'])->name('user.schedule.delete');
+    Route::post('/app/schedule/{schedule}/toggle', [UserController::class, 'toggleSchedule'])->name('user.schedule.toggle');
+    Route::get('/app/api/schedules/today', [UserController::class, 'todaySchedules'])->name('user.schedule.today');
+
+    // Favorites
+    Route::post('/app/favorite/toggle', [UserController::class, 'toggleFavorite'])->name('user.favorite.toggle');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {

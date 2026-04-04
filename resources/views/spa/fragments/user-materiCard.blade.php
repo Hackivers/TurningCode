@@ -4,7 +4,7 @@
         <h5>Masih bingung arah? Web dev, app dev, game dev — gas aja dulu, nanti juga nemu jalan</h5>
     </div>
 </div>
-@if (isset($data['mainMateri']))
+@if (isset($data['mainMateri']) && $data['mainMateri']->count())
     <div class="conatiner container-materi materibar">
         <main class="main-materi">
             <div class="wrapper-materi" id="scrollingMaterial">
@@ -16,7 +16,6 @@
                                     <div class="coming-soon-materi">
                                         <h4>Coming soon</h4>
                                     </div>
-                                @else
                                 @endif
                                 <div class="cover-materi">
                                     <div class="txt-materi">
@@ -28,21 +27,20 @@
                                                 <h6>{{ $materi->description }}</h6>
                                             </div>
                                             <div class="subdesc-materi">
-                                                <h6>{{ $materi->total_materi }}+ materi</h6>
-                                                <h6>{{ $materi->total_submateri }}+ sub materi</h6>
+                                                <h6>{{ $materi->total_materi ?? 0 }}+ materi</h6>
+                                                <h6>{{ $materi->total_submateri ?? 0 }}+ sub materi</h6>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="thumb-materi">
                                     <img src="{{ asset('assets/img/img00' . (($loop->iteration % 3) + 1) . 'non.jpg') }}"
-                                        alt="">
+                                        alt="{{ $materi->title }}">
                                 </div>
                             </div>
                             @if ($materi->is_coming_soon)
                                 <div class="materi-btn">
                                     <button class="btn-disabled">tunggu yak</button>
-
                                 </div>
                             @else
                                 <a href="?page=materi&main_id={{ $materi->id }}" class="link-spa" data-page="materi"
@@ -57,5 +55,9 @@
                 @endforeach
             </div>
         </main>
+    </div>
+@else
+    <div style="text-align:center; padding: 3em 1em;">
+        <h5 style="color: #8a898a;">Belum ada materi yang tersedia saat ini</h5>
     </div>
 @endif

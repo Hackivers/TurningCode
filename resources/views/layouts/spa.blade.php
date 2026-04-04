@@ -8,6 +8,8 @@
     <title>{{ $title ?? config('app.name') }}</title>
     @if (Auth::User()->role == 'admin')
         @vite(['resources/css/app.css', $viteEntry])
+    @else
+        @vite([$viteEntry])
     @endif
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     @if (Auth::User()->role == 'user')
