@@ -1,58 +1,202 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/TurningCode-E--Learning%20Platform-7c3aed?style=for-the-badge&logo=laravel&logoColor=white" alt="TurningCode">
 </p>
 
-## About Laravel
+<h1 align="center">🚀 TurningCode</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <b>Platform e-learning modern berbasis SPA untuk belajar pemrograman secara terstruktur dan terjadwal.</b>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.3+">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 8">
+  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite">
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📖 Tentang Project
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**TurningCode** adalah platform e-learning bertema pemrograman yang dibangun sebagai Single Page Application (SPA) menggunakan Laravel Blade Fragments. Platform ini memungkinkan pengguna mempelajari berbagai materi coding secara terstruktur — mulai dari kategori utama, sub-materi, hingga konten detail — dilengkapi dengan fitur penjadwalan belajar, pelacakan progres, dan sistem favorit.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Aplikasi ini memiliki dua sisi utama:
+- **User Panel** — tempat pengguna belajar, mengatur jadwal, dan melacak progres.
+- **Admin Panel** — tempat admin mengelola seluruh konten materi dan berkomunikasi melalui global chat.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## ✨ Fitur
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 🔐 Autentikasi & Keamanan
+- Registrasi akun dengan validasi
+- Login dengan **OTP berbasis email** (dikirim ke Gmail)
+- Verifikasi email wajib sebelum akses platform
+- Role-based access control (`admin` / `user`)
+- Middleware proteksi rute berdasarkan role
+
+### 👨‍🎓 Panel User
+- **Dashboard** — ringkasan aktivitas & widget waktu belajar
+- **Jelajah Materi** — telusuri materi berdasarkan kategori utama → sub-kategori → konten detail
+- **Detail Sub-Materi** — halaman konten pembelajaran lengkap
+- **Jadwal Belajar (Study Schedule)** — CRUD jadwal dengan pola rekurensi (harian, mingguan, bulanan, kustom), toggle aktif/nonaktif, dan API jadwal hari ini
+- **Notifikasi Real-Time** — pengingat waktu belajar & istirahat langsung di browser
+- **Favorit** — tandai materi favorit untuk akses cepat
+- **Riwayat Belajar** — lacak materi yang sudah dipelajari
+- **Progres Belajar** — visualisasi kemajuan belajar
+- **Profil & Akun** — edit profil, upload avatar, dan pengaturan akun
+- **Navigasi Responsif** — navbar atas + bottom navigation untuk mobile
+
+### 🛠️ Panel Admin
+- **Dashboard Admin** — statistik dan overview platform
+- **Kelola Main Materi** — CRUD kategori utama materi
+- **Kelola Materi** — CRUD sub-kategori materi
+- **Kelola Sub-Materi** — upload & manajemen konten pembelajaran dengan metadata
+- **Global Chat** — sistem chat antar admin dengan fitur reply
+
+### ⚙️ Arsitektur & Teknis
+- **SPA dengan Blade Fragments** — navigasi halaman tanpa full reload
+- **AJAX API Endpoints** — komunikasi asinkron untuk jadwal, chat, dan data materi
+- **Vite + Tailwind CSS 4** — build tool modern dengan utility-first CSS
+- **SQLite** — database ringan tanpa konfigurasi server tambahan
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Teknologi |
+|-------|-----------|
+| **Backend** | Laravel 13 (PHP 8.3+) |
+| **Frontend** | Blade Templates, Tailwind CSS 4, Vanilla JS |
+| **Build Tool** | Vite 8 |
+| **Database** | SQLite |
+| **HTTP Client** | Axios |
+| **Dev Tools** | Laravel Pail, Laravel Pint, Concurrently |
+
+---
+
+## 🚀 Instalasi & Setup
+
+### Prasyarat
+- PHP 8.3+
+- Composer
+- Node.js & npm
+- Git
+
+### Langkah Instalasi
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone repository
+git clone https://github.com/your-org/TurningCode.git
+cd TurningCode
 
-php artisan boost:install
+# 2. Jalankan setup otomatis (install deps, generate key, migrate, build assets)
+composer setup
+
+# 3. Jalankan development server (Laravel + Queue + Pail + Vite secara bersamaan)
+composer dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Atau secara manual:
 
-## Contributing
+```bash
+# Install dependencies
+composer install
+npm install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Konfigurasi environment
+cp .env.example .env
+php artisan key:generate
 
-## Code of Conduct
+# Jalankan migrasi database
+php artisan migrate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Build assets
+npm run dev
 
-## Security Vulnerabilities
+# Jalankan server
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Akses aplikasi di `http://localhost:8000`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📁 Struktur Project
+
+```
+TurningCode/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/              # AdminChatController, AdminMateriController, AdminSubMateriController
+│   │   │   ├── AdminController.php # SPA admin & routing halaman
+│   │   │   ├── AuthController.php  # Login, register, OTP, logout
+│   │   │   └── UserController.php  # SPA user, profil, jadwal, favorit
+│   │   └── Middleware/
+│   │       └── EnsureRole.php      # Middleware role-based access
+│   ├── Models/                     # User, MainMateri, Materi, SubMateri, StudySchedule, dll.
+│   └── Providers/
+├── config/
+│   └── admin.php                   # Mapping email admin & OTP
+├── database/
+│   ├── migrations/                 # Schema: users, materis, schedules, chats, favorites, dll.
+│   └── database.sqlite
+├── resources/
+│   ├── css/
+│   ├── js/
+│   └── views/
+│       ├── auth/                   # Login, register, OTP, verify email
+│       ├── layouts/
+│       ├── spa/
+│       │   └── fragments/          # Semua halaman SPA (dashboard, materi, jadwal, dll.)
+│       └── welcome.blade.php       # Landing page
+├── routes/
+│   └── web.php                     # Definisi semua route (guest, user, admin)
+├── composer.json
+├── package.json
+└── vite.config.js
+```
+
+---
+
+## 👥 Kontributor
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://img.shields.io/badge/-hanzz-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="hanzz"><br>
+      <sub><b>hanzz</b></sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/-Jester-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Jester"><br>
+      <sub><b>Jester</b></sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/-ghostface-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="ghostface"><br>
+      <sub><b>ghostface</b></sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/-Mychel09-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Mychel09"><br>
+      <sub><b>Mychel09</b></sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/-maousama-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="maousama"><br>
+      <sub><b>maousama</b></sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 📄 Lisensi
+
+Project ini dikembangkan untuk keperluan pembelajaran dan bersifat open-source di bawah lisensi [MIT](https://opensource.org/licenses/MIT).
+
+---
+
+<p align="center">
+  Dibangun dengan ❤️ oleh <b>Tim TurningCode</b>
+</p>
