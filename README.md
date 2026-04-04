@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/TurningCode-Learn%20to%20Code-7c3aed?style=for-the-badge&logo=laravel&logoColor=white" alt="TurningCode">
+  <img src="public/assets/img/logo-turningcode.png" width="280" alt="TurningCode Logo">
 </p>
 
 <h1 align="center">🚀 TurningCode</h1>
