@@ -20,7 +20,11 @@
                             <div class="wrapper-user">
 
                                 <div class="user-img">
-                                    <img src="{{ asset('assets/ico/default-user.jpg') }}" alt="user" />
+                                    @if($user->avatar)
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="user" />
+                                    @else
+                                        <img src="{{ asset('assets/ico/default-user.jpg') }}" alt="user" />
+                                    @endif
                                 </div>
                                 <div class="username">
                                     <h4>{{ $user->name }}</h4>

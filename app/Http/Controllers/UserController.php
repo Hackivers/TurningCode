@@ -11,6 +11,7 @@ use App\Models\UserHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -236,8 +237,9 @@ class UserController extends Controller
         $user = Auth::user();
 
         $rules = [
-            'name'  => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'name'   => ['required', 'string', 'max:255'],
+            'email'  => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
 
         // Password opsional — hanya validate jika diisi
@@ -255,14 +257,32 @@ class UserController extends Controller
             $user->password = $validated['password']; // auto-hashed by cast
         }
 
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        // Handle avatar removal
+        if ($request->input('remove_avatar') === '1' && $user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+            $user->avatar = null;
+        }
+
         $user->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Profile berhasil diupdate! 🎉',
             'user'    => [
-                'name'  => $user->name,
-                'email' => $user->email,
+                'name'   => $user->name,
+                'email'  => $user->email,
+                'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
             ],
         ]);
     }

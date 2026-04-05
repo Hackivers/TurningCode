@@ -40,3 +40,24 @@ body {
     background-color: #EDEDED;
     /* background-color: #141622; */
 }
+.title-example{
+    margin-top: 3em;
+    display: flex;
+    justify-content: center;
+}
+.title-example>div{
+    width: 100%;
+    max-width: 79em;
+    margin: 0 15px 20px 15px;
+}
+.title-example h4{
+    font-weight: 550;
+    font-size: 16px;
+    color: #2a2c3a;
+    text-transform: capitalize;
+}
+.title-example h5{
+    margin-top: 10px;
+    font-size: 12px;
+    color: #464646;
+}

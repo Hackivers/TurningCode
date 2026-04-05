@@ -1,19 +1,12 @@
-<div class="container container-nav-header">
-    <main class="main-nav-header" id="dashboard-header">
-        <div>
-            <div class="desc-nav-header">
-                <div>
-                    <h4>halloo!!, hanzzsama</h4>
-                    <h5>bingunng mau jadi apa, sini jadi programmer aja!!...</h5>
-                </div>
+<div class="container container-header">
+    <main class="main-header">
+        <div class="wrapper-header">
+            <div class="tittle-header">
+                <h2>halo HanzzSama</h2>
+                <h5>selamat datang kembali di turning code</h5>
             </div>
-            <div class="thumb-maskot-nav-header">
-                <div>
-                    <img src="{{ asset('assets/ico/img002.png') }}" alt="">
-                </div>
-            </div>
-            <div class="thumb-cover-nav-header">
-                <img src="{{ asset('assets/img/img001cover.png') }}" alt="">
+            <div class="thumb-header">
+                <img src="{{ asset('assets/ico/img001thumb01Trans.png') }}" alt="">
             </div>
         </div>
     </main>

@@ -149,6 +149,10 @@
     justify-content: center;
     transition: all 0.3s ease;
 }
+.container-nav.scrolled .wrapper-nav{
+    border-radius: 0 0 28px 28px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
 .container-nav.scrolled .box-nav-profile{
     height: 0;
     opacity: 0;
@@ -179,7 +183,8 @@
     gap: 13px;
     display: flex;
     flex-direction: column;
-    background-color: #13121c;
+    backdrop-filter: blur(10px);
+    background-color: #e6e0e97e;
 }
 .box-nav-profile{
     display: flex;
@@ -200,7 +205,7 @@
     align-items: center;
 }
 .profile-img-nav h5{
-    color: #E6E0E9;
+    font-weight: 450;
     margin-right: 10px;
 }
 .profile-img-nav img{
@@ -220,7 +225,6 @@
     align-items: center;
 }
 .profile-archive-nav i{
-    color: #E6E0E9;
     font-size: 16px;
 }
 .box-nav-search{
@@ -242,9 +246,16 @@
     width: 100%;
     border: none;
     outline: none;
+    color: #13121c;
+    font-weight: 450;
     border-radius: 20px;
     padding: 7px 30px 7px 40px;
-    background: #191825;
+    background: transparent;
+    border: 2px solid #1f1e2e;
+}
+.box-nav-search input::placeholder{
+    color: #2a2c3a;
+    font-weight: 450;
 }
 .menu-nav-header{
     display: flex;
@@ -260,84 +271,47 @@
     display: flex;
     border-radius: 50%;
     width: 100%;
-    height: 100%;
     align-items: center;
     justify-content: center;
     border: 2px solid #2a2c3a;
 }
-.menu-nav-header i{
-    color: #E6E0E9;
-    /* background: blue; */
-}
-.container-nav-header{
+/* =================================================================================================== */
+/* ================================================================== Main Header ==================== */
+/* =================================================================================================== */
+.container-header{
     display: flex;
-    position: relative;
-    overflow: hidden;
+    margin-top: 10px;
     justify-content: center;
 }
-.main-nav-header{
-    width: 100%;
-    border-radius: 0 0 30px 30px;
-    max-width: 79em;
-    height: 15em;
-    background: #13121c;
-}
-.main-nav-header>div{
+.main-header{
     display: flex;
     position: relative;
-}
-.desc-nav-header{
-    z-index: 2;
     width: 100%;
-    height: 100%;
+    max-width: 79em;
+    margin: 0 10px;
+    border-radius: 30px;
+    border: 1px solid #1f1e2e;
+}
+.wrapper-header{
     display: flex;
+    gap: 10px;
+    margin: 10px 15px;
     align-items: center;
-    position: absolute;
 }
-.desc-nav-header>div{
-    max-width: 50%;
-    margin: 0 12px;
-}
-.desc-nav-header h4{
-    color: #E6E0E9;
+.tittle-header h2{
     font-weight: 450;
-    font-size: 16px;
     text-transform: capitalize;
 }
-.desc-nav-header h5{
-    color: #7A7F84;
-    font-size: 11px;
-    margin-top: 8px;
+.tittle-header h5{
+    color: #8a898a;
 }
-.thumb-cover-nav-header{
-    display: flex;
-    width: 100%;
-}
-.thumb-cover-nav-header img{
-    width: 100%;
-    object-fit: cover;
-    height: 15em;
-    opacity: .5;
-    border-radius: 0 0 30px 30px;
-}
-.thumb-maskot-nav-header{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    z-index: 1;
-    position: absolute;
-    justify-content: end;
-    align-items: end;
-}
-.thumb-maskot-nav-header>div{
+.thumb-header{
     display: flex;
 }
-.thumb-maskot-nav-header img{
-    width: 13em;
-    height: 11em;
-    object-position: 0 0;
-    object-fit: cover;
-    border-radius: 0 0 30px 30px;
+.thumb-header img{
+    width: 100%;
+    max-width: 9em;
+    border-radius: 0 0 20px 20px;
 }
 /* =================================================================================================== */
 /* ======================================================= Main Navigation Bottom ==================== */
@@ -400,7 +374,6 @@
 /* =================================================================================================== */
 .container-time{
     display: flex;
-    margin-top: 2.7em;
     justify-content: center;
 }
 .main-time{
@@ -423,7 +396,7 @@
     position: absolute;
     z-index: 2;
     border-radius: 20px 20px 35px 35px;
-    background: linear-gradient(transparent, #13121ccb);
+    background: linear-gradient(transparent, #13121ce6);
 }
 .date-time{
     width: 100%;
@@ -491,12 +464,15 @@
     position: relative;
 }
 
+.img-wrapper img {
+    transition: opacity 0.8s ease;
+}
+
 .img-wrapper img:last-child {
     position: absolute;
     inset: 0;
     width: 100%;
     opacity: 0;
-    transition: opacity 0.6s ease;
 }
 
 .img-wrapper img.active {

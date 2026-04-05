@@ -5,14 +5,58 @@
             {{-- Profile Header --}}
             <div class="account-header">
                 <div class="account-avatar">
-                    <div class="avatar-circle">
-                        <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                    <div class="avatar-circle" id="header-avatar">
+                        @if($user->avatar)
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img">
+                        @else
+                            <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        @endif
                     </div>
                 </div>
                 <div class="account-info">
                     <h3 id="display-name">{{ $user->name }}</h3>
                     <h6>{{ $user->email }}</h6>
                     <span class="account-badge">{{ $user->role }}</span>
+                </div>
+            </div>
+
+            {{-- Edit Profile Photo --}}
+            <div class="account-section">
+                <div class="section-title">
+                    <i class='bx bx-camera'></i>
+                    <h4>foto profil</h4>
+                </div>
+
+                <div class="avatar-editor">
+                    <div class="avatar-preview-wrap">
+                        <div class="avatar-preview" id="avatar-preview">
+                            @if($user->avatar)
+                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" id="preview-img">
+                            @else
+                                <div class="avatar-placeholder" id="avatar-placeholder">
+                                    <i class='bx bx-user'></i>
+                                    <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="avatar-overlay" id="avatar-overlay" onclick="document.getElementById('input-avatar').click()">
+                            <i class='bx bx-camera'></i>
+                            <span>Ganti Foto</span>
+                        </div>
+                    </div>
+
+                    <div class="avatar-actions">
+                        <input type="file" id="input-avatar" accept="image/jpeg,image/png,image/webp" hidden>
+                        <button type="button" class="btn-upload-avatar" id="btn-upload-avatar" onclick="document.getElementById('input-avatar').click()">
+                            <i class='bx bx-upload'></i> Pilih Foto
+                        </button>
+                        @if($user->avatar)
+                        <button type="button" class="btn-remove-avatar" id="btn-remove-avatar">
+                            <i class='bx bx-trash'></i> Hapus Foto
+                        </button>
+                        @endif
+                        <p class="avatar-hint">Format: JPG, PNG, WEBP · Maks. 2MB</p>
+                    </div>
                 </div>
             </div>
 
@@ -124,7 +168,212 @@
         }
     }
 
-    // Submit profile form via AJAX
+    // ── Avatar Upload ─────────────────────────────────────────────
+    (function() {
+        const inputAvatar     = document.getElementById('input-avatar');
+        const avatarPreview   = document.getElementById('avatar-preview');
+        const avatarOverlay   = document.getElementById('avatar-overlay');
+        const btnRemove       = document.getElementById('btn-remove-avatar');
+        const headerAvatar    = document.getElementById('header-avatar');
+        const csrfToken       = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        let pendingAvatarFile = null;
+        let pendingRemove     = false;
+
+        if (inputAvatar) {
+            inputAvatar.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Validate client-side
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    showAvatarToast('Format harus JPG, PNG, atau WEBP', 'error');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    showAvatarToast('Ukuran maksimal 2MB', 'error');
+                    return;
+                }
+
+                pendingAvatarFile = file;
+                pendingRemove = false;
+
+                // Preview
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    avatarPreview.innerHTML = `<img src="${ev.target.result}" alt="Preview" id="preview-img">`;
+                    // Also update header avatar
+                    headerAvatar.innerHTML = `<img src="${ev.target.result}" alt="Avatar" class="avatar-img">`;
+                    // Show remove button
+                    if (!btnRemove) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn-remove-avatar';
+                        btn.id = 'btn-remove-avatar';
+                        btn.innerHTML = "<i class='bx bx-trash'></i> Hapus Foto";
+                        btn.addEventListener('click', handleRemoveAvatar);
+                        document.querySelector('.avatar-actions').insertBefore(btn, document.querySelector('.avatar-hint'));
+                    }
+                };
+                reader.readAsDataURL(file);
+
+                // Auto-upload immediately
+                uploadAvatar(file);
+            });
+        }
+
+        function handleRemoveAvatar() {
+            if (!confirm('Hapus foto profil?')) return;
+            pendingRemove = true;
+            pendingAvatarFile = null;
+
+            // Reset preview to initial letter
+            const userName = document.getElementById('display-name')?.textContent || 'U';
+            const initial = userName.charAt(0).toUpperCase();
+            avatarPreview.innerHTML = `<div class="avatar-placeholder" id="avatar-placeholder"><i class='bx bx-user'></i><span>${initial}</span></div>`;
+            headerAvatar.innerHTML = `<span>${initial}</span>`;
+
+            // Send remove request
+            removeAvatar();
+        }
+
+        if (btnRemove) {
+            btnRemove.addEventListener('click', handleRemoveAvatar);
+        }
+
+        async function uploadAvatar(file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('name', document.getElementById('input-name').value);
+            formData.append('email', document.getElementById('input-email').value);
+
+            showAvatarToast('Mengupload foto...', 'loading');
+
+            try {
+                const res = await fetch('{{ route("user.profile.update") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                    credentials: 'same-origin',
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showAvatarToast('Foto berhasil diupload! 📸', 'success');
+                    if (data.user?.avatar) {
+                        avatarPreview.innerHTML = `<img src="${data.user.avatar}" alt="Avatar" id="preview-img">`;
+                        headerAvatar.innerHTML = `<img src="${data.user.avatar}" alt="Avatar" class="avatar-img">`;
+
+                        // Update navbar & sidebar avatars
+                        updateGlobalAvatars(data.user.avatar);
+                    }
+                    // Ensure remove button exists
+                    ensureRemoveButton();
+                } else {
+                    let errMsg = data.message || 'Gagal upload';
+                    if (data.errors?.avatar) errMsg = data.errors.avatar[0];
+                    showAvatarToast(errMsg, 'error');
+                }
+            } catch (err) {
+                showAvatarToast('Gagal mengupload foto', 'error');
+            }
+        }
+
+        async function removeAvatar() {
+            const formData = new FormData();
+            formData.append('remove_avatar', '1');
+            formData.append('name', document.getElementById('input-name').value);
+            formData.append('email', document.getElementById('input-email').value);
+
+            showAvatarToast('Menghapus foto...', 'loading');
+
+            try {
+                const res = await fetch('{{ route("user.profile.update") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                    credentials: 'same-origin',
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showAvatarToast('Foto berhasil dihapus', 'success');
+                    // Remove the remove button
+                    const rb = document.getElementById('btn-remove-avatar');
+                    if (rb) rb.remove();
+
+                    // Reset global avatars
+                    updateGlobalAvatars(null);
+                } else {
+                    showAvatarToast('Gagal menghapus foto', 'error');
+                }
+            } catch (err) {
+                showAvatarToast('Gagal menghapus foto', 'error');
+            }
+        }
+
+        function updateGlobalAvatars(avatarUrl) {
+            // Update sidebar avatar
+            const sidebarImg = document.querySelector('.user-img img');
+            if (sidebarImg && avatarUrl) {
+                sidebarImg.src = avatarUrl;
+            }
+            // Update navbar avatar
+            const navImg = document.querySelector('.profile-img-nav img');
+            if (navImg && avatarUrl) {
+                navImg.src = avatarUrl;
+            }
+        }
+
+        function ensureRemoveButton() {
+            if (!document.getElementById('btn-remove-avatar')) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-remove-avatar';
+                btn.id = 'btn-remove-avatar';
+                btn.innerHTML = "<i class='bx bx-trash'></i> Hapus Foto";
+                btn.addEventListener('click', handleRemoveAvatar);
+                const hint = document.querySelector('.avatar-hint');
+                if (hint) hint.parentElement.insertBefore(btn, hint);
+            }
+        }
+
+        function showAvatarToast(msg, type) {
+            // Remove existing toast
+            const existing = document.getElementById('avatar-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'avatar-toast';
+            toast.className = `avatar-toast ${type}`;
+
+            let icon = '';
+            if (type === 'success') icon = "<i class='bx bx-check-circle'></i>";
+            else if (type === 'error') icon = "<i class='bx bx-error-circle'></i>";
+            else if (type === 'loading') icon = "<i class='bx bx-loader-alt bx-spin'></i>";
+
+            toast.innerHTML = `${icon} <span>${msg}</span>`;
+            document.querySelector('.avatar-editor')?.appendChild(toast);
+
+            if (type !== 'loading') {
+                setTimeout(() => toast.classList.add('fade-out'), 3000);
+                setTimeout(() => toast.remove(), 3500);
+            }
+        }
+    })();
+
+    // ── Submit profile form via AJAX ──────────────────────────────
     (function() {
         const form    = document.getElementById('form-profile');
         const msgBox  = document.getElementById('form-message');
@@ -237,11 +486,18 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        overflow: hidden;
     }
     .avatar-circle span {
         color: #fff;
         font-size: 24px;
         font-weight: 700;
+    }
+    .avatar-circle .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
     }
     .account-info h3 {
         color: #E6E0E9;
@@ -265,6 +521,180 @@
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+    }
+
+    /* ── Avatar Editor ────────────── */
+    .avatar-editor {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .avatar-preview-wrap {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+    .avatar-preview {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #2a2c3a;
+        transition: border-color 0.3s ease;
+    }
+    .avatar-preview-wrap:hover .avatar-preview {
+        border-color: #6366f1;
+    }
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .avatar-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+    }
+    .avatar-placeholder i {
+        color: rgba(255,255,255,0.4);
+        font-size: 28px;
+    }
+    .avatar-placeholder span {
+        color: #fff;
+        font-size: 28px;
+        font-weight: 700;
+    }
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.55);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+    .avatar-preview-wrap:hover .avatar-overlay {
+        opacity: 1;
+    }
+    .avatar-overlay i {
+        color: #fff;
+        font-size: 24px;
+    }
+    .avatar-overlay span {
+        color: #fff;
+        font-size: 11px;
+        font-weight: 500;
+    }
+    .avatar-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-upload-avatar {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid #2a2c3a;
+        background: #13121c;
+        color: #E6E0E9;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-upload-avatar:hover {
+        border-color: #6366f1;
+        background: #1a1930;
+        transform: translateY(-1px);
+    }
+    .btn-upload-avatar i {
+        font-size: 16px;
+        color: #6366f1;
+    }
+    .btn-remove-avatar {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid #991b1b;
+        background: transparent;
+        color: #f87171;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-remove-avatar:hover {
+        background: #2d1215;
+        transform: translateY(-1px);
+    }
+    .btn-remove-avatar i {
+        font-size: 16px;
+    }
+    .avatar-hint {
+        color: #555;
+        font-size: 11px;
+        margin: 0;
+    }
+
+    /* ── Avatar Toast ─────────────── */
+    .avatar-toast {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        margin-top: 12px;
+        width: 100%;
+        animation: toastSlideIn 0.3s ease;
+    }
+    .avatar-toast.success {
+        background: #0d2818;
+        border: 1px solid #166534;
+        color: #4ade80;
+    }
+    .avatar-toast.error {
+        background: #2d1215;
+        border: 1px solid #991b1b;
+        color: #f87171;
+    }
+    .avatar-toast.loading {
+        background: #1a1930;
+        border: 1px solid #2a2c3a;
+        color: #75bbed;
+    }
+    .avatar-toast.fade-out {
+        animation: toastFadeOut 0.5s ease forwards;
+    }
+    @keyframes toastSlideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastFadeOut {
+        from { opacity: 1; }
+        to   { opacity: 0; transform: translateY(-8px); }
     }
 
     /* ── Section ──────────────────── */

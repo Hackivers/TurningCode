@@ -6,7 +6,11 @@
             <nav class="box-nav-profile">
                 <div class="profile-img-nav btnAside">
                     <div>
-                        <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
+                        @if(Auth::user()->avatar)
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
+                        @else
+                            <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
+                        @endif
                         <h5>Guest</h5>
                     </div>
                 </div>
