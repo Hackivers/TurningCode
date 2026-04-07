@@ -4,6 +4,13 @@
 @include('spa.fragments.user-progres', ['mainMateri' => $mainMateri])
 
 <script>
+(function() {
+    // ── Cleanup previous interval (SPA re-navigation) ─────────────
+    if (window._dashboardClockInterval) {
+        clearInterval(window._dashboardClockInterval);
+        window._dashboardClockInterval = null;
+    }
+
     // ── Asset base URL ─────────────────────────────────────────────
     const assetBase = "{{ asset('assets/img') }}";
 
@@ -41,7 +48,7 @@
         const dateLabel = document.getElementById('date-label');
 
         if (hour)   hour.textContent   = String(h).padStart(2, '0');
-        if (minute) minute.textContent = ':' + String(now.getMinutes()).padStart(2, '0');
+        if (minute) minute.textContent = String(now.getMinutes()).padStart(2, '0');
         if (dayLabel)  dayLabel.textContent  = hariNames[now.getDay()] + ' ' + now.getDate();
         if (dateLabel) dateLabel.textContent = now.getDate() + ', ' + bulanNames[now.getMonth()] + ', ' + now.getFullYear();
 
@@ -74,8 +81,6 @@
     }
 
     // ── Intro transition sequence ──────────────────────────────────
-    // Always starts from img005cloud (tengah malam) and cycles
-    // through the day: tengah malam → pagi → siang → sore → malam
     function playIntroSequence() {
         const img1 = document.getElementById('img1');
         const img2 = document.getElementById('img2');
@@ -86,10 +91,8 @@
         const startIdx  = 4; // tengah malam
         const delay     = 900;
 
-        // Day cycle order: 4(tengah malam) → 0(pagi) → 1(siang) → 2(sore) → 3(malam)
         const dayOrder = [4, 0, 1, 2, 3];
 
-        // Build the sequence of steps from startIdx to targetIdx
         const startPos  = dayOrder.indexOf(startIdx);
         const targetPos = dayOrder.indexOf(targetIdx);
         const sequence  = [];
@@ -98,24 +101,20 @@
             sequence.push(dayOrder[i]);
         }
 
-        // img1 already shows img005cloud from blade, mark it
         img1.classList.add('active');
         img2.classList.remove('active');
         currentTimeIndex = startIdx;
 
-        // If already tengah malam, done
         if (sequence.length <= 1) {
             introFinished = true;
             return;
         }
 
-        // Preload all images in the sequence
         for (let i = 1; i < sequence.length; i++) {
             const pre = new Image();
             pre.src = assetBase + '/' + cloudImages[sequence[i]] + '.png';
         }
 
-        // Chain transitions: step through each image
         let step = 1;
 
         function nextStep() {
@@ -153,7 +152,7 @@
     // ── Init ───────────────────────────────────────────────────────
     updateClock();
     playIntroSequence();
-    setInterval(updateClock, 1000);
+    window._dashboardClockInterval = setInterval(updateClock, 1000);
 
     // ── Time-based greeting ────────────────────────────────────────
     const timeText = document.getElementById('time-text');
@@ -165,4 +164,5 @@
         else if (h >= 18 && h < 23) timeText.textContent = 'udah malam nih, istirahat atau lanjut ngoding?';
         else timeText.textContent = 'masih begadang ngoding ya? semangat!';
     }
+})();
 </script>

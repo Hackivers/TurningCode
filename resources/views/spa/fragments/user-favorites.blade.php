@@ -1,14 +1,12 @@
+<div class="title-example">
+    <div>
+        <h4>materi apa yang kamu suka</h4>
+        <h5>yok, kumpulin semua materi kesukaan</h5>
+    </div>
+</div>
 <div class="container-favorites">
     <main class="main-favorites">
         <div class="wrapper-favorites">
-
-            <div class="fav-header">
-                <div>
-                    <h4>materi favorit mu</h4>
-                    <h5>akses cepat materi yang sudah kamu simpan</h5>
-                </div>
-            </div>
-
             {{-- Tab filter --}}
             <div class="fav-tabs">
                 <button class="fav-tab active" data-target="fav-materi-list">
@@ -24,18 +22,35 @@
             {{-- Materi list --}}
             <div class="fav-list" id="fav-materi-list">
                 @forelse ($favMateris as $materi)
-                    <a href="?page=submateri&materi_id={{ $materi->id }}" class="link-spa fav-card">
+                <a href="?page=submateri&materi_id={{ $materi->id }}" class="link-spa favorites-item">
+                        <section class="box-favorites">
+                            <div class="ico-favorites">
+                                <i class="bx bxs-star active archive-btn" data-id="{{ $materi->id }}" data-type="materi"
+                                style="color:#f59e0b; font-size:20px; cursor:pointer; transition: transform 0.2s;"></i>
+                            </div>
+                            <div class="cover-favorites">
+                                <div class="desc-favorites">
+                                    <h4>{{ $materi->title }}</h4>
+                                    <h5>{{ $materi->mainMateri->title ?? '-' }}</h5>
+                                </div>
+                            </div>
+                            <div class="thumb-favorites">
+                                <div class="thumb-cover-favorites"></div>
+                                <img src="{{ asset('assets/img/img002non.jpg') }}" alt="">
+                            </div>
+                        </section>
+                    </a>
+                    {{-- <a href="?page=submateri&materi_id={{ $materi->id }}" class="link-spa fav-card">
                         <div class="fav-color" style="background: #6366f1"></div>
                         <div class="fav-info">
                             <h4>{{ $materi->title }}</h4>
                             <h6>{{ $materi->mainMateri->title ?? '-' }}</h6>
                         </div>
                         <div class="fav-action">
-                            <i class="bx bxs-star active archive-btn"
-                               data-id="{{ $materi->id }}" data-type="materi"
-                               style="color:#f59e0b; font-size:20px; cursor:pointer; transition: transform 0.2s;"></i>
+                            <i class="bx bxs-star active archive-btn" data-id="{{ $materi->id }}" data-type="materi"
+                                style="color:#f59e0b; font-size:20px; cursor:pointer; transition: transform 0.2s;"></i>
                         </div>
-                    </a>
+                    </a> --}}
                 @empty
                     <div class="fav-empty">
                         <i class='bx bx-star'></i>
@@ -48,7 +63,26 @@
             {{-- Sub Materi list --}}
             <div class="fav-list" id="fav-sub-list" style="display:none;">
                 @forelse ($favSubs as $sub)
-                    <a href="?page=detail&submateri_id={{ $sub->id }}" class="link-spa fav-card">
+                    <a href="?page=detail&submateri_id={{ $sub->id }}" class="link-spa favorites-item">
+                        <section class="box-favorites">
+                            <div class="ico-favorites">
+                                <i class="bx bxs-star active archive-btn" data-id="{{ $sub->id }}" data-type="sub"
+                                    style="color:#f59e0b; font-size:20px; cursor:pointer; transition: transform 0.2s;"></i>
+                            </div>
+                            <div class="cover-favorites">
+                                <div class="desc-favorites">
+                                    <h4>{{ $sub->title }}</h4>
+                                    <h5>{{ $sub->materi->mainMateri->title ?? '-' }} →
+                                        {{ $sub->materi->title ?? '-' }}</h5>
+                                </div>
+                            </div>
+                            <div class="thumb-favorites">
+                                <div class="thumb-cover-favorites"></div>
+                                <img src="{{ asset('assets/img/img002non.jpg') }}" alt="">
+                            </div>
+                        </section>
+                    </a>
+                    {{-- <a href="?page=detail&submateri_id={{ $sub->id }}" class="link-spa fav-card">
                         <div class="fav-color" style="background: #8b5cf6"></div>
                         <div class="fav-info">
                             <h4>{{ $sub->title }}</h4>
@@ -59,7 +93,7 @@
                                data-id="{{ $sub->id }}" data-type="sub"
                                style="color:#f59e0b; font-size:20px; cursor:pointer; transition: transform 0.2s;"></i>
                         </div>
-                    </a>
+                    </a> --}}
                 @empty
                     <div class="fav-empty">
                         <i class='bx bx-star'></i>
@@ -74,18 +108,18 @@
 </div>
 
 <script>
-(function() {
-    document.querySelectorAll('.fav-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.fav-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+    (function() {
+        document.querySelectorAll('.fav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.fav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
 
-            document.querySelectorAll('.fav-list').forEach(l => l.style.display = 'none');
-            const target = document.getElementById(tab.dataset.target);
-            if (target) target.style.display = '';
+                document.querySelectorAll('.fav-list').forEach(l => l.style.display = 'none');
+                const target = document.getElementById(tab.dataset.target);
+                if (target) target.style.display = '';
+            });
         });
-    });
-})();
+    })();
 </script>
 
 <style>
@@ -95,11 +129,13 @@
         margin-top: 1.5em;
         padding-bottom: 6em;
     }
+
     .main-favorites {
         width: 100%;
         max-width: 79em;
         margin: 0 10px;
     }
+
     .wrapper-favorites {
         display: flex;
         flex-direction: column;
@@ -113,6 +149,7 @@
         color: #E6E0E9;
         text-transform: capitalize;
     }
+
     .fav-header h5 {
         margin-top: 6px;
         font-size: 12px;
@@ -124,6 +161,7 @@
         display: flex;
         gap: 8px;
     }
+
     .fav-tab {
         display: flex;
         align-items: center;
@@ -137,17 +175,20 @@
         cursor: pointer;
         transition: all 0.2s;
     }
+
     .fav-tab.active {
         background: #6366f1;
         border-color: #6366f1;
         color: #fff;
     }
+
     .fav-badge {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         padding: 1px 8px;
         border-radius: 20px;
         font-size: 11px;
     }
+
     .fav-tab:not(.active) .fav-badge {
         background: #222430;
         color: #75bbed;
@@ -159,6 +200,7 @@
         flex-direction: column;
         gap: 8px;
     }
+
     .fav-card {
         display: flex;
         align-items: center;
@@ -170,20 +212,24 @@
         text-decoration: none;
         transition: all 0.2s;
     }
+
     .fav-card:hover {
         border-color: #2a2c3a;
         background: #1d1c2c;
     }
+
     .fav-color {
         width: 4px;
         height: 36px;
         border-radius: 4px;
         flex-shrink: 0;
     }
+
     .fav-info {
         flex: 1;
         min-width: 0;
     }
+
     .fav-info h4 {
         color: #E6E0E9;
         font-size: 14px;
@@ -193,11 +239,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
     .fav-info h6 {
         color: #8a898a;
         font-size: 11px;
         margin-top: 3px;
     }
+
     .fav-action {
         flex-shrink: 0;
     }
@@ -208,16 +256,19 @@
         padding: 3em 1em;
         color: #555;
     }
+
     .fav-empty i {
         font-size: 36px;
         margin-bottom: 10px;
         display: block;
         color: #8a898a;
     }
+
     .fav-empty p {
         font-size: 14px;
         color: #8a898a;
     }
+
     .fav-empty h6 {
         font-size: 12px;
         color: #555;

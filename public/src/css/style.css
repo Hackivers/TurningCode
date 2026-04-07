@@ -157,7 +157,6 @@
     height: 0;
     opacity: 0;
     transform: translateY(-100%);
-    /* overflow-y: hidden; */
     position: relative;
 }
 .container-nav.scrolled .box-nav-profile{
@@ -184,7 +183,7 @@
     display: flex;
     flex-direction: column;
     backdrop-filter: blur(10px);
-    background-color: #e6e0e97e;
+    background-color: #EDEDED;
 }
 .box-nav-profile{
     display: flex;
@@ -291,6 +290,7 @@
     margin: 0 10px;
     border-radius: 30px;
     border: 1px solid #1f1e2e;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 .wrapper-header{
     display: flex;
@@ -303,6 +303,7 @@
     text-transform: capitalize;
 }
 .tittle-header h5{
+    margin-top: 10px;
     color: #8a898a;
 }
 .thumb-header{
@@ -325,8 +326,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #13121c;
-    border-top: 1px solid #1f1e2e;
+    background: #EDEDED;
+    border-top: 1px solid #a7a7aa;
 }
 .main-nav-bottom{
     width: 100%;
@@ -353,18 +354,18 @@
 }
 .icon-nav-bottom i{
     font-size: 20px;
-    color: #E6E0E9;
+    color: #1f1e2e;
     padding: 6px 6px;
     border-radius: 20px;
     background: #1f1e2e00;
 }
 .icon-nav-bottom.active i{
-    color: #9894cd;
+    color: #75bbed;
     padding: 6px 20px;
-    background: #1f1e2e;
+    background: #222430;
 }
 .subtittle-nav-bottom h5{
-    color: #b8b6b9;
+    color: #464646;
     text-align: center;
     font-size: 11px;
     text-transform: capitalize;
@@ -372,6 +373,27 @@
 /* =================================================================================================== */
 /* ================================================================== Main Time ====================== */
 /* =================================================================================================== */
+.title-example{
+    margin-top: 3em;
+    display: flex;
+    justify-content: center;
+}
+.title-example>div{
+    width: 100%;
+    max-width: 79em;
+    margin: 0 15px 20px 15px;
+}
+.title-example h4{
+    font-weight: 550;
+    font-size: 16px;
+    color: #2a2c3a;
+    text-transform: capitalize;
+}
+.title-example h5{
+    margin-top: 10px;
+    font-size: 12px;
+    color: #464646;
+}
 .container-time{
     display: flex;
     justify-content: center;
@@ -1234,4 +1256,143 @@
     margin-top: 10px;
     font-size: 12px;
     color: #464646;
+}
+/* =================================================================================================== */
+/* ================================================================ Main Schedule ==================== */
+/* =================================================================================================== */
+.box-schedule{
+    position: relative;
+    min-height: 8em;
+    display: flex;
+    background: #13121c;
+    border-radius: 20px;
+    border: 1px solid #1f1e2e;
+}
+.cover-schedule{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    z-index: 2;
+    align-items: center;
+    position: absolute;
+}
+.cover-schedule>div{
+    margin: 0 15px;
+}
+.desc-schedule{
+    width: 100%;
+}
+.desc-schedule h4{
+    color: #E6E0E9;
+    font-weight: 450;
+    text-transform: capitalize;
+}
+.desc-schedule h5{
+    font-size: 12px;
+    color: #b8b6b9;
+}
+.sched-actions{
+    display: flex;
+    gap: 3px;
+    align-items: end;
+    min-height: 5em;
+}
+.date-schedule{
+    position: absolute;
+    right: 0;
+    flex-direction: column;
+    display: flex;
+}
+.date-schedule h5{
+    margin: 8px 15px 0 15px;
+    font-weight: 450;
+    color: #EDEDED;
+}
+.date-schedule h6{
+    color: #afadca;
+}
+.thumb-schedule{
+    display: flex;
+    height: 8em;
+    width: 100%;
+    position: relative;
+}
+.thumb-schedule img{
+    width: 50%;
+    border-radius: 20px 0 0 20px;
+    object-fit: cover;
+}
+.thumb-cover-schedule{
+    width: 100%;
+    height: 100%;
+    max-width: 50%;
+    position: absolute;
+    background: linear-gradient(90deg, transparent, #13121c);
+    border-radius: 20px 0 0 20px;
+}
+/* =================================================================================================== */
+/* =============================================================== Main Favorites ==================== */
+/* =================================================================================================== */
+.box-favorites{
+    position: relative;
+    min-height: 8em;
+    display: flex;
+    background: #13121c;
+    border-radius: 20px;
+    border: 1px solid #1f1e2e;
+}
+.cover-favorites{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    z-index: 2;
+    align-items: center;
+    position: absolute;
+}
+.cover-favorites>div{
+    margin: 0 15px;
+}
+.desc-favorites{
+    width: 100%;
+}
+.desc-favorites h4{
+    color: #E6E0E9;
+    font-weight: 450;
+    text-transform: capitalize;
+}
+.desc-favorites h5{
+    font-size: 12px;
+    color: #b8b6b9;
+}
+.sched-actions{
+    display: flex;
+    gap: 3px;
+    align-items: end;
+    min-height: 5em;
+}
+.ico-favorites{
+    position: absolute;
+    right: 0;
+    margin: 15px;
+    flex-direction: column;
+    display: flex;
+}
+.thumb-favorites{
+    display: flex;
+    height: 8em;
+    width: 100%;
+    position: relative;
+}
+.thumb-favorites img{
+    width: 50%;
+    border-radius: 20px 0 0 20px;
+    object-fit: cover;
+}
+.thumb-cover-favorites{
+    width: 100%;
+    height: 100%;
+    max-width: 50%;
+    position: absolute;
+    background: linear-gradient(90deg, transparent, #13121c);
+    border-radius: 20px 0 0 20px;
 }

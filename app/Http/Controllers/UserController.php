@@ -45,20 +45,52 @@ class UserController extends Controller
 
         // ── Dashboard ────────────────────────────────────────────────
         if ($page === 'dashboard') {
+            $userId = Auth::id();
+
+            // Ambil semua sub_materi_id yang sudah di-view user
+            $viewedSubIds = $userId
+                ? UserHistory::where('user_id', $userId)->pluck('sub_materi_id')->toArray()
+                : [];
+
+            // Ambil history terakhir per sub_materi untuk info "last studied"
+            $lastHistories = $userId
+                ? UserHistory::where('user_id', $userId)
+                    ->with('submateri')
+                    ->orderByDesc('viewed_at')
+                    ->get()
+                : collect();
+
             $mainMateri = MainMateri::withCount('materis')
                 ->with('materis.subMateris')
                 ->get()
-                ->map(function ($main) {
+                ->map(function ($main) use ($viewedSubIds, $lastHistories) {
                     $totalSub = 0;
+                    $doneSub  = 0;
+                    $allSubIds = [];
+
                     foreach ($main->materis as $m) {
-                        $totalSub += $m->subMateris->count();
+                        foreach ($m->subMateris as $sub) {
+                            $totalSub++;
+                            $allSubIds[] = $sub->id;
+                            if (in_array($sub->id, $viewedSubIds)) {
+                                $doneSub++;
+                            }
+                        }
                     }
 
                     $main->total_materi     = $main->materis_count;
                     $main->total_submateri  = $totalSub;
                     $main->is_coming_soon   = false;
-                    $main->is_completed     = false;
-                    $main->progress_percent = 0;
+                    $main->progress_percent = $totalSub > 0 ? round(($doneSub / $totalSub) * 100) : 0;
+                    $main->is_completed     = $totalSub > 0 && $doneSub >= $totalSub;
+
+                    // Cari history terakhir yang sub_materi-nya milik MainMateri ini
+                    $lastHistory = $lastHistories->first(function ($h) use ($allSubIds) {
+                        return in_array($h->sub_materi_id, $allSubIds);
+                    });
+
+                    $main->last_studied_title = $lastHistory?->submateri?->title;
+                    $main->last_studied_at    = $lastHistory?->viewed_at;
 
                     return $main;
                 });
@@ -100,16 +132,25 @@ class UserController extends Controller
                 abort(404);
             }
 
+            $userId = Auth::id();
+            $viewedSubIds = $userId
+                ? UserHistory::where('user_id', $userId)->pluck('sub_materi_id')->toArray()
+                : [];
+
             $materis = Materi::where('main_materi_id', $mainId)
                 ->withCount('subMateris')
+                ->with('subMateris')
                 ->get();
 
             $progressData = [];
             foreach ($materis as $materi) {
+                $total = $materi->sub_materis_count;
+                $done  = $materi->subMateris->whereIn('id', $viewedSubIds)->count();
+
                 $progressData[$materi->id] = [
-                    'total'     => $materi->sub_materis_count,
-                    'done'      => 0,
-                    'completed' => false,
+                    'total'     => $total,
+                    'done'      => $done,
+                    'completed' => $total > 0 && $done >= $total,
                 ];
             }
 
@@ -130,16 +171,26 @@ class UserController extends Controller
                 abort(404);
             }
 
+            $userId = Auth::id();
+
             $subMateris = SubMateri::where('materi_id', $materiId)
                 ->where('is_published', true)
                 ->get();
+
+            // Ambil sub_materi_id yang sudah pernah dilihat user di materi ini
+            $completedSubIds = $userId
+                ? UserHistory::where('user_id', $userId)
+                    ->whereIn('sub_materi_id', $subMateris->pluck('id'))
+                    ->pluck('sub_materi_id')
+                    ->toArray()
+                : [];
 
             return view('spa.fragments.user-subMateriPage', [
                 'materi'      => $materi,
                 'firstMateri' => $materi,
                 'subMateris'  => $subMateris,
                 'arsipSub'    => UserFavorite::getIds(Auth::id(), 'sub'),
-                'completed'   => [],
+                'completed'   => $completedSubIds,
             ]);
         }
 

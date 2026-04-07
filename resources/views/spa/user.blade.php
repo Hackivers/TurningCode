@@ -7,7 +7,7 @@
 <div id="spa-content">
     <p>Memuat…</p>
 </div>
-
+<div class="bottom-space"></div>
 @include('spa.fragments.user-navBottom')
 
 {{-- Toast container for schedule notifications --}}

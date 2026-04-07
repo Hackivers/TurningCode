@@ -1,3 +1,8 @@
+@php
+    $hasProgress = $mainMateri->contains(fn($m) => $m->progress_percent > 0);
+@endphp
+
+@if ($hasProgress)
 <div class="tittle-progres">
     <div>
         <h4>progres mu sampai mana nih!!...</h4>
@@ -8,7 +13,7 @@
     <main class="main-progres">
         <div class="wrapper-progres">
             @foreach ($mainMateri as $main)
-                @if ($main->is_coming_soon)
+                @if ($main->is_coming_soon || $main->progress_percent <= 0)
                     @continue
                 @endif
                 <section class="box-progres">
@@ -18,7 +23,16 @@
                     <div class="cover-progres">
                         <div class="desc-progres">
                             <h4>{{ $main->title }}</h4>
-                            <h5>terakhir kamu belajar : </h5>
+                            <h5>
+                                @if ($main->last_studied_title)
+                                    terakhir belajar : {{ $main->last_studied_title }}
+                                    @if ($main->last_studied_at)
+                                        · {{ $main->last_studied_at->diffForHumans() }}
+                                    @endif
+                                @else
+                                    belum mulai belajar nih, yok gas!
+                                @endif
+                            </h5>
                             @php
                                 $totalBar = 7;
                                 $activeBar = round(($main->progress_percent / 100) * $totalBar);
@@ -54,74 +68,5 @@
         </div>
     </main>
 </div>
+@endif
 
-{{-- <div class="container container-progres">
-    <main class="main-progres">
-
-        <div class="tittle-progres">
-            <h4>Progres</h4>
-        </div>
-
-        <div class="wrapper-progres">
-
-            @foreach ($mainMateri as $main)
-                <section class="box-progres">
-
-                    <div class="progres-tittle-materi">
-                        <h5>{{ $main->title }}</h5>
-                        <h6>{{ $main->progress_percent }}%</h6>
-                    </div>
-
-                    <div class="wrapper-main-progres">
-
-                        @foreach ($main->materis as $materi)
-                            @php
-                                $total = $materi->progress_total ?? 0;
-                                $done = $materi->progress_done ?? 0;
-                                $percent = $materi->progress_percent ?? 0;
-                            @endphp
-
-                            <div class="box-progresbar">
-
-                                <div class="progres-tittle-submateri">
-                                    <h6>{{ $materi->title }}</h6>
-                                </div>
-
-                                <div class="wrapper-progresbar">
-
-                                    <div class="progresbar">
-
-                                        @php
-                                            $doneIndex = -1;
-
-                                            foreach ($materi->submateris as $i => $s) {
-                                                if (in_array($s->id, $arsipSub ?? [])) {
-                                                    $doneIndex = $i;
-                                                }
-                                            }
-                                        @endphp
-
-                                        @foreach ($materi->submateris as $i => $sub)
-                                            <span class="{{ $i <= $doneIndex ? 'active' : '' }}"></span>
-                                        @endforeach
-
-                                    </div>
-
-                                    <div class="persent-progres">
-                                        <h5>{{ $percent }}%</h5>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                </section>
-            @endforeach
-
-        </div>
-
-    </main>
-</div> --}}
