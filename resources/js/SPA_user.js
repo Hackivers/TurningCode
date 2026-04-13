@@ -1,9 +1,9 @@
 import './bootstrap';
 
-const body     = document.body;
-const base     = body.dataset.spaBase;
-const initial  = body.dataset.spaInitial || 'dashboard';
-const el       = document.getElementById('spa-content');
+const body = document.body;
+const base = body.dataset.spaBase;
+const initial = body.dataset.spaInitial || 'dashboard';
+const el = document.getElementById('spa-content');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MATERIAL SLIDER
@@ -87,8 +87,8 @@ function initMaterialSlider() {
     // ── Expose centerCard & setActive agar bisa dipakai body handler ──
     // Simpan referensi ke wrapper ini (support multi-instance)
     wrapper._sliderCenterCard = centerCard;
-    wrapper._sliderSetActive  = setActive;
-    wrapper._sliderCards      = cards;
+    wrapper._sliderSetActive = setActive;
+    wrapper._sliderCards = cards;
 
     // ── Posisi awal: card tengah auto-center tanpa animasi ────────────
     // double-rAF: frame pertama untuk commit layout,
@@ -97,7 +97,7 @@ function initMaterialSlider() {
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             setTimeout(() => {
-                const mid       = Math.floor(cards.length / 2);
+                const mid = Math.floor(cards.length / 2);
                 const startCard = cards[mid] ?? cards[0];
                 setActive(startCard);
                 centerCard(startCard, false); // langsung, tanpa smooth
@@ -113,8 +113,8 @@ function initMaterialSlider() {
 /** Parse href ?page=X&key=val → { page, params } */
 function parseSpaLink(href) {
     try {
-        const url    = new URL(href, location.origin);
-        const page   = url.searchParams.get('page');
+        const url = new URL(href, location.origin);
+        const page = url.searchParams.get('page');
         const params = {};
         url.searchParams.forEach((val, key) => {
             if (key !== 'page') params[key] = val;
@@ -298,7 +298,7 @@ function stopConnectivityPolling() {
 }
 
 // Retry button handler — manual retry
-window.__retryConnection = async function() {
+window.__retryConnection = async function () {
     const btn = document.getElementById('offline-retry-btn');
     if (btn) btn.classList.add('loading');
 
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function toggleFavorite(btn) {
-    const id   = btn.dataset.id;
+    const id = btn.dataset.id;
     const type = btn.dataset.type; // 'materi' or 'sub'
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
 
@@ -506,9 +506,9 @@ function initScheduleNotifier() {
     }
 
     // Track notifikasi yang sudah dikirim hari ini (reset tiap hari)
-    const firedKey   = 'schedule_notif_fired';
-    const dayKey     = 'schedule_notif_day';
-    const todayStr   = new Date().toDateString();
+    const firedKey = 'schedule_notif_fired';
+    const dayKey = 'schedule_notif_day';
+    const todayStr = new Date().toDateString();
 
     // Reset jika hari berganti
     if (localStorage.getItem(dayKey) !== todayStr) {
@@ -552,12 +552,12 @@ function initScheduleNotifier() {
     }
 
     function checkSchedules() {
-        const now    = getCurrentHHMM();
-        const fired  = getFired();
+        const now = getCurrentHHMM();
+        const fired = getFired();
 
         todaySchedules.forEach(s => {
             const startKey = `start-${s.id}-${s.start_time}`;
-            const endKey   = `end-${s.id}-${s.end_time}`;
+            const endKey = `end-${s.id}-${s.end_time}`;
 
             // Notif saat jam mulai
             if (s.start_time === now && !fired.includes(startKey)) {
@@ -583,7 +583,7 @@ function initScheduleNotifier() {
 
             // Notif 5 menit sebelum mulai
             const preKey = `pre-${s.id}-${s.start_time}`;
-            const pre5   = subtractMinutes(s.start_time, 5);
+            const pre5 = subtractMinutes(s.start_time, 5);
             if (pre5 === now && !fired.includes(preKey)) {
                 markFired(preKey);
                 sendNotification(
@@ -639,8 +639,8 @@ function initScheduleNotifier() {
 
         if (todaySchedules.length > 0) {
             const titles = todaySchedules.map(s => s.title).slice(0, 3);
-            const extra  = todaySchedules.length > 3 ? ` dan ${todaySchedules.length - 3} lainnya` : '';
-            const body   = titles.join(', ') + extra;
+            const extra = todaySchedules.length > 3 ? ` dan ${todaySchedules.length - 3} lainnya` : '';
+            const body = titles.join(', ') + extra;
 
             // Hanya push ke panel, tanpa toast/browser notif
             if (typeof window.__addNotification === 'function') {
@@ -679,8 +679,8 @@ function showToast(title, body, color, type) {
     if (!container) return;
 
     const icons = {
-        start:    'bx bx-book-open',
-        end:      'bx bx-coffee',
+        start: 'bx bx-book-open',
+        end: 'bx bx-coffee',
         reminder: 'bx bx-bell',
     };
 
