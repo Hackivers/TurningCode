@@ -93,14 +93,13 @@ class AuthController extends Controller
                 ]
             );
 
-            // Kirim email via queue agar tidak blocking (cegah SMTP timeout di Railway)
+            // Kirim email OTP — naikkan time limit karena SMTP bisa lambat di Railway
             $recipient = $adminEntry['recipient'];
-            dispatch(function () use ($code, $recipient) {
-                Mail::raw("Kode login admin Anda: {$code}", function ($message) use ($recipient) {
-                    $message->to($recipient)
-                        ->subject('Kode Login Admin TurningCode');
-                });
-            })->afterResponse();
+            set_time_limit(120);
+            Mail::raw("Kode login admin Anda: {$code}", function ($message) use ($recipient) {
+                $message->to($recipient)
+                    ->subject('Kode Login Admin TurningCode');
+            });
 
             return redirect()->route('login.otp')->with(
                 'info',
@@ -199,10 +198,9 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        // Kirim email verifikasi setelah response dikirim (cegah SMTP timeout)
-        dispatch(function () use ($user) {
-            $user->sendEmailVerificationNotification();
-        })->afterResponse();
+        // Kirim email verifikasi — naikkan time limit karena SMTP bisa lambat di Railway
+        set_time_limit(120);
+        $user->sendEmailVerificationNotification();
 
         return redirect()->route('verification.notice');
     }
