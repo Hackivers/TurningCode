@@ -1,0 +1,78 @@
+{
+  "_bootstrap-DG2U1ArM.js": {
+    "file": "assets/bootstrap-DG2U1ArM.js",
+    "name": "bootstrap"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CBgYMlaP.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/auth.css": {
+    "file": "assets/auth-Dboq8UnT.css",
+    "name": "auth",
+    "names": [
+      "auth.css"
+    ],
+    "src": "resources/css/auth.css",
+    "isEntry": true
+  },
+  "resources/css/global.css": {
+    "file": "assets/global-BQX7d8a5.css",
+    "name": "global",
+    "names": [
+      "global.css"
+    ],
+    "src": "resources/css/global.css",
+    "isEntry": true
+  },
+  "resources/css/style.css": {
+    "file": "assets/style-DzgWzNyJ.css",
+    "name": "style",
+    "names": [
+      "style.css"
+    ],
+    "src": "resources/css/style.css",
+    "isEntry": true
+  },
+  "resources/css/welcome.css": {
+    "file": "assets/welcome-JVvh6U5X.css",
+    "name": "welcome",
+    "names": [
+      "welcome.css"
+    ],
+    "src": "resources/css/welcome.css",
+    "isEntry": true
+  },
+  "resources/js/SPA_admin.js": {
+    "file": "assets/SPA_admin-Cui37V5d.js",
+    "name": "SPA_admin",
+    "src": "resources/js/SPA_admin.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap-DG2U1ArM.js"
+    ]
+  },
+  "resources/js/SPA_user.js": {
+    "file": "assets/SPA_user-DvIMlUJU.js",
+    "name": "SPA_user",
+    "src": "resources/js/SPA_user.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap-DG2U1ArM.js"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BhoUjOve.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap-DG2U1ArM.js"
+    ]
+  }
+}
