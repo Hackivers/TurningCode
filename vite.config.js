@@ -7,6 +7,10 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/global.css',
+                'resources/css/style.css',
+                'resources/css/auth.css',
+                'resources/css/welcome.css',
                 'resources/js/app.js',
                 'resources/js/SPA_user.js',
                 'resources/js/SPA_admin.js',

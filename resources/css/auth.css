@@ -1,144 +1,171 @@
-body{
+body {
     display: flex;
 }
-.thumbnail{
+
+.thumbnail {
     display: flex;
     width: 100%;
     max-width: 50%;
-    /* text-align: center; */
     justify-content: center;
     align-items: center;
     height: 100vh;
     background: #fdfdfd;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
-.thumb-img{
+
+.thumb-img {
     margin-top: 20px;
     display: flex;
     max-width: 33em;
 }
-.thumb-img img{
+
+.thumb-img img {
     width: 100%;
 }
-.title-thumb{
+
+.title-thumb {
     text-align: center;
 }
-.title-thumb h2{
+
+.title-thumb h2 {
     font-size: 28px;
     text-transform: capitalize;
     font-weight: 550;
 }
-.title-thumb h5{
+
+.title-thumb h5 {
     font-size: 14px;
     color: #8a8a8a;
     margin-top: 10px;
 }
-.form-input{
+
+.form-input {
     display: flex;
     width: 100%;
     max-width: 50%;
-    /* text-align: center; */
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
-.wrapper-input{
+
+.wrapper-input {
     width: 100%;
     max-width: 23em;
     display: flex;
     flex-direction: column;
 }
-.title-input h2{
+
+.title-input h2 {
     font-size: 25px;
     color: #131212;
     font-weight: 450;
     text-transform: capitalize;
 }
-.main-input{
+
+.main-input {
     display: flex;
     gap: 10px;
     margin-top: 20px;
     flex-direction: column;
 }
-.main-input.admin-otp{
+
+.main-input.admin-otp {
     margin-top: 10px;
 }
-.main-input.admin-otp label{
+
+.main-input.admin-otp label {
     margin: 0;
     justify-content: center;
 }
-.main-input.admin-otp .input input::placeholder{
+
+.main-input.admin-otp .input input::placeholder {
     text-align: center;
     opacity: 1;
 }
-.main-input.admin-otp .input.fokus input::placeholder{
+
+.main-input.admin-otp .input.fokus input::placeholder {
     margin: 0;
 }
-.main-input.admin-otp .input input{
+
+.main-input.admin-otp .input input {
     text-align: center;
     letter-spacing: 3px;
     font-weight: 550;
 }
-.text-sm{
+
+.text-sm {
     text-align: center;
     font-size: 12px;
     margin-top: 8px;
     color: #8a8a8a;
 }
-.text-sm.error{
+
+.text-sm.error {
     color: #d03838;
 }
-.text-sm.info{
+
+.text-sm.info {
     color: #2e2ecf;
 }
-.text-sm.email{
+
+.text-sm.email {
     color: #d03838;
 }
-.input{
+
+.input {
     display: flex;
     position: relative;
     flex-direction: column;
 }
-.input.fokus label{
+
+.input.fokus label {
     margin: 0;
     transform: translateY(0);
 }
-.input.fokus label h5{
+
+.input.fokus label h5 {
     color: #8a8a8a;
 }
-.input.fokus input::placeholder{
+
+.input.fokus input::placeholder {
     opacity: 1;
-    /* border: 1px solid #8a8a8a; */
 }
-.input.pass.fokus input::placeholder{
+
+.input.pass.fokus input::placeholder {
     margin: 0 10px;
 }
-.input>div{
+
+.input>div {
     display: flex;
     margin-top: 6px;
     align-items: center;
 }
-.input i{
+
+.input i {
     color: #8a8a8a;
     font-size: 17px;
     position: absolute;
     margin: 0 15px;
 }
-.input #togglePassword{
+
+.input #togglePassword {
     right: 0;
 }
-.input label{
+
+.input label {
     display: flex;
     margin: 0 37px;
     transform: translateY(15px);
 }
-.input label h5{
+
+.input label h5 {
     padding: 0 9px;
     font-size: 12px;
     color: #131212;
     background: #EDEDED;
 }
-.input input{
+
+.input input {
     width: 100%;
     font-size: 15px;
     outline: none;
@@ -149,13 +176,15 @@ body{
     border-radius: 25px;
     border: 1px solid #131212;
 }
-.input input::placeholder{
+
+.input input::placeholder {
     color: #999999;
     font-size: 12px;
     text-align: end;
     opacity: 0;
 }
-.btn-resend{
+
+.btn-resend {
     background: transparent;
     color: #202021;
     font-size: 12px;
@@ -164,12 +193,14 @@ body{
     padding: 0;
     cursor: pointer;
 }
-.btn{
+
+.btn {
     gap: 8px;
     margin-top: 2em;
     display: flex;
 }
-button{
+
+button {
     width: 100%;
     background: #202021;
     color: white;
@@ -180,15 +211,18 @@ button{
     border-radius: 30px;
     cursor: pointer;
 }
-.btn button:first-child{
+
+.btn button:first-child {
     background: transparent;
     color: #202021;
     max-width: 7.6em;
     border: 1px solid #202021;
 }
-.register{
+
+.register {
     margin-top: 1em;
 }
+
 .checkbox-wrapper-30 .checkbox {
     --bg: #fff;
     --brdr: #d1d6ee;
@@ -199,25 +233,30 @@ button{
     width: calc(var(--size, 1) * 22px);
     position: relative;
 }
-.remember{
+
+.remember {
     display: flex;
     gap: 5px;
     align-items: center;
 }
-.remember .checkbox-wrapper-30{
+
+.remember .checkbox-wrapper-30 {
     --size: 0.6;
     display: flex;
     align-items: center;
 }
+
 .checkbox-wrapper-30 .checkbox:after {
     content: "";
     width: 100%;
     padding-top: 100%;
     display: block;
 }
+
 .checkbox-wrapper-30 .checkbox > * {
     position: absolute;
 }
+
 .checkbox-wrapper-30 .checkbox input {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -232,21 +271,26 @@ button{
     padding: 0;
     transition: all calc(var(--dur) / 3) linear;
 }
+
 .checkbox-wrapper-30 .checkbox input:hover,
 .checkbox-wrapper-30 .checkbox input:checked {
     --newBrdr: calc(var(--size, 1) * 2);
 }
+
 .checkbox-wrapper-30 .checkbox input:hover {
     --newBrdrClr: var(--brdr-hovr);
 }
+
 .checkbox-wrapper-30 .checkbox input:checked {
     --newBrdrClr: var(--brdr-actv);
     transition-delay: calc(var(--dur) /1.3);
 }
+
 .checkbox-wrapper-30 .checkbox input:checked + svg {
     --dashArray: 16 93;
     --dashOffset: 109;
 }
+
 .checkbox-wrapper-30 .checkbox svg {
     fill: none;
     left: 0;
@@ -260,53 +304,59 @@ button{
     top: 0;
     transition: stroke-dasharray var(--dur), stroke-dashoffset var(--dur);
 }
+
 .checkbox-wrapper-30 .checkbox svg,
 .checkbox-wrapper-30 .checkbox input {
     display: block;
     height: 100%;
     width: 100%;
 }
-/* =================================================================================================== */
-/* ===================================================================== Main OTP ==================== */
-/* =================================================================================================== */
-.profile{
+
+/* ── OTP Section ── */
+.profile {
     display: flex;
     margin-top: 20px;
-    /* background: red; */
     border: 1px solid #8a8a8a;
     border-radius: 30px;
 }
-.wrapper-profile{
+
+.wrapper-profile {
     display: flex;
     gap: 15px;
     width: 100%;
     margin: 10px;
     align-items: center;
 }
-.profile-admin{
+
+.profile-admin {
     display: flex;
     max-width: 2em;
 }
-.profile-admin img{
+
+.profile-admin img {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
 }
-.profile-title h4{
+
+.profile-title h4 {
     font-size: 14px;
     color: #131212;
 }
-.profile-title h5{
+
+.profile-title h5 {
     line-height: 12px;
     font-size: 13px;
     color: #8a8a8a;
 }
-.list{
+
+.list {
     text-align: start;
     margin: 8px 20px 0 20px;
 }
-.list-info{
+
+.list-info {
     color: #d03838;
     font-size: 12px;
 }
