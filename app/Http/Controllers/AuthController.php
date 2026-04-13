@@ -93,10 +93,14 @@ class AuthController extends Controller
                 ]
             );
 
-            Mail::raw("Kode login admin Anda: {$code}", function ($message) use ($adminEntry) {
-                $message->to($adminEntry['recipient'])
-                    ->subject('Kode Login Admin TurningCode');
-            });
+            // Kirim email via queue agar tidak blocking (cegah SMTP timeout di Railway)
+            $recipient = $adminEntry['recipient'];
+            dispatch(function () use ($code, $recipient) {
+                Mail::raw("Kode login admin Anda: {$code}", function ($message) use ($recipient) {
+                    $message->to($recipient)
+                        ->subject('Kode Login Admin TurningCode');
+                });
+            })->afterResponse();
 
             return redirect()->route('login.otp')->with(
                 'info',
@@ -195,7 +199,10 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        $user->sendEmailVerificationNotification();
+        // Kirim email verifikasi setelah response dikirim (cegah SMTP timeout)
+        dispatch(function () use ($user) {
+            $user->sendEmailVerificationNotification();
+        })->afterResponse();
 
         return redirect()->route('verification.notice');
     }
