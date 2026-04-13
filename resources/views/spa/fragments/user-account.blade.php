@@ -1,4 +1,54 @@
-<div class="container-account">
+<div class="container container-account">
+    <main class="main-account">
+        <div class="wrapper-account">
+            <div class="account-profile-user">
+                <div>
+                    <div class="account-profile-emblem">
+                        <div>
+                            <img src="{{ asset('assets/ico/emblem005Trans.png') }}" alt="">
+                            <h6>score</h6>
+                            <h4>1274</h4>
+                        </div>
+                    </div>
+                    <div class="account-profile-name">
+                        <div class="emblem-name">
+                            <h4>{{ $user->name }}</h4>
+                            <img src="{{ asset('assets/ico/emblem005Trans.png') }}" alt="">
+                        </div>
+                        <h5>{{ $user->email }}</h5>
+                    </div>
+                    <div class="account-profile-btn">
+                        <div class="account-profile-role">
+                            <span>
+                                <h5>{{ $user->role }}</h5>
+                            </span>
+                            <span>
+                                <h5>day 12</h5>
+                            </span>
+                        </div>
+                        <button>edit profile</button>
+                    </div>
+                </div>
+            </div>
+            <div class="account-profile-img">
+                @if($user->avatar)
+                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img">
+                @else
+                    <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                @endif
+            </div>
+        </div>
+    </main>
+</div>
+<form class="wrapper-account-logout" action="{{ route('logout') }}" method="POST">
+    @csrf
+    <button type="submit" class="btn-logout">
+        <i class='bx bx-log-out'></i>
+        <h5>Keluar dari akun</h5>
+    </button>
+</form>
+
+<!-- <div class="container-account">
     <main class="main-account">
         <div class="wrapper-account">
 
@@ -152,13 +202,13 @@
 
         </div>
     </main>
-</div>
+</div> -->
 
 <script>
     // Toggle password visibility
     function togglePw(inputId, btn) {
         const input = document.getElementById(inputId);
-        const icon  = btn.querySelector('i');
+        const icon = btn.querySelector('i');
         if (input.type === 'password') {
             input.type = 'text';
             icon.className = 'bx bx-show';
@@ -169,16 +219,16 @@
     }
 
     // ── Avatar Upload ─────────────────────────────────────────────
-    (function() {
-        const inputAvatar     = document.getElementById('input-avatar');
-        const avatarPreview   = document.getElementById('avatar-preview');
-        const avatarOverlay   = document.getElementById('avatar-overlay');
-        const btnRemove       = document.getElementById('btn-remove-avatar');
-        const headerAvatar    = document.getElementById('header-avatar');
-        const csrfToken       = document.querySelector('meta[name="csrf-token"]')?.content;
+    (function () {
+        const inputAvatar = document.getElementById('input-avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarOverlay = document.getElementById('avatar-overlay');
+        const btnRemove = document.getElementById('btn-remove-avatar');
+        const headerAvatar = document.getElementById('header-avatar');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
         let pendingAvatarFile = null;
-        let pendingRemove     = false;
+        let pendingRemove = false;
 
         if (inputAvatar) {
             inputAvatar.addEventListener('change', (e) => {
@@ -374,9 +424,9 @@
     })();
 
     // ── Submit profile form via AJAX ──────────────────────────────
-    (function() {
-        const form    = document.getElementById('form-profile');
-        const msgBox  = document.getElementById('form-message');
+    (function () {
+        const form = document.getElementById('form-profile');
+        const msgBox = document.getElementById('form-message');
         const btnSave = document.getElementById('btn-save');
 
         if (!form) return;
@@ -386,8 +436,8 @@
             msgBox.style.display = 'none';
 
             // Password match check
-            const pw   = form.querySelector('[name="password"]').value;
-            const pwC  = form.querySelector('[name="password_confirmation"]').value;
+            const pw = form.querySelector('[name="password"]').value;
+            const pwC = form.querySelector('[name="password_confirmation"]').value;
             if (pw && pw !== pwC) {
                 msgBox.textContent = 'Password dan konfirmasi tidak sama!';
                 msgBox.className = 'form-message error';
@@ -449,7 +499,7 @@
     })();
 </script>
 
-<style>
+<!-- <style>
     .container-account {
         display: flex;
         justify-content: center;
@@ -894,4 +944,4 @@
     .btn-logout:hover {
         background: #2d1215;
     }
-</style>
+</style> -->

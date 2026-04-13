@@ -60,6 +60,11 @@
 
         </div>
     </main>
+
+    {{-- Tombol Tambah Jadwal (FAB) --}}
+    <button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal">
+        <i class='bx bx-plus'></i>
+    </button>
 </div>
 
 {{-- Modal Form Tambah/Edit --}}
@@ -270,6 +275,23 @@
 
                 if (res.ok && data.success) {
                     modal.style.display = 'none';
+
+                    // Kirim notifikasi konfirmasi
+                    const timeLabel = body.start_time + (body.end_time ? ' - ' + body.end_time : '');
+                    if (typeof window.__addNotification === 'function') {
+                        window.__addNotification(
+                            isEdit ? '✏️ Jadwal Diperbarui' : '📅 Jadwal Baru Dibuat',
+                            `${body.title} — ${timeLabel}`,
+                            body.color || '#6366f1',
+                            'system'
+                        );
+                    }
+
+                    // Re-fetch jadwal untuk notifier
+                    if (typeof window.__refetchSchedules === 'function') {
+                        window.__refetchSchedules();
+                    }
+
                     // Reload halaman schedule lewat SPA
                     loadPage('schedule');
                 } else {
@@ -303,7 +325,12 @@
                         },
                         credentials: 'same-origin',
                     });
-                    if (res.ok) loadPage('schedule');
+                    if (res.ok) {
+                        if (typeof window.__refetchSchedules === 'function') {
+                            window.__refetchSchedules();
+                        }
+                        loadPage('schedule');
+                    }
                 } catch {}
             });
         });
@@ -323,7 +350,20 @@
                         },
                         credentials: 'same-origin',
                     });
-                    if (res.ok) loadPage('schedule');
+                    if (res.ok) {
+                        if (typeof window.__addNotification === 'function') {
+                            window.__addNotification(
+                                '🗑️ Jadwal Dihapus',
+                                'Jadwal berhasil dihapus dari daftar',
+                                '#ef4444',
+                                'system'
+                            );
+                        }
+                        if (typeof window.__refetchSchedules === 'function') {
+                            window.__refetchSchedules();
+                        }
+                        loadPage('schedule');
+                    }
                 } catch {}
             });
         });
@@ -420,23 +460,32 @@
     }
 
     .btn-add-schedule {
-        width: 42px;
-        height: 42px;
+        position: fixed;
+        bottom: 6.5em;
+        right: 1.2em;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         border: none;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: #fff;
-        font-size: 20px;
+        font-size: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45);
+        z-index: 50;
     }
 
     .btn-add-schedule:hover {
         transform: scale(1.1);
+        box-shadow: 0 6px 28px rgba(99, 102, 241, 0.55);
+    }
+
+    .btn-add-schedule:active {
+        transform: scale(0.95);
     }
 
     /* Section */

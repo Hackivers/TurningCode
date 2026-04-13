@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="{{ asset('src/css/global.css') }}">
     @endif
     <link rel="stylesheet" href="{{ asset('src/css/style.css') }}">
+    <script>if(localStorage.getItem('tc_dark_mode')==='true')document.documentElement.classList.add('dark-mode-pending');</script>
 </head>
 
 <body class="min-h-screen bg-zinc-50 text-zinc-900 antialiased" data-spa-initial="{{ $initialPage }}"

@@ -176,6 +176,10 @@ async function loadPage(page, params = {}) {
         // ── Inisialisasi slider setelah konten di-inject ──────────────
         initMaterialSlider();
 
+    } catch (err) {
+        // Network error — store failed page for retry
+        window.__lastFailedPage = { page, params };
+        el.innerHTML = '<p style="text-align:center;padding:2em;color:#ef4444;">Gagal memuat halaman.</p>';
     } finally {
         el.style.opacity = '1';
     }
@@ -185,9 +189,167 @@ async function loadPage(page, params = {}) {
 window.loadPage = loadPage;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// OFFLINE DETECTION & OVERLAY
+// Menggunakan real internet check via external CDN ping, karena
+// navigator.onLine hanya cek interface jaringan lokal (unreliable).
+// ─────────────────────────────────────────────────────────────────────────────
+
+let __isOffline = false;          // state tracking
+let __connectivityTimer = null;   // interval ID
+
+/**
+ * Cek koneksi internet REAL dengan ping ke external resource.
+ * Fetch tiny favicon dari CDN external (unpkg.com) dengan timeout 5 detik.
+ * Return true jika internet tersedia, false jika tidak.
+ */
+async function checkRealInternet() {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    try {
+        // Ping ke CDN external yang sudah dipakai app ini (boxicons dari unpkg)
+        // mode: 'no-cors' agar tidak kena CORS block, kita cuma perlu tahu berhasil/gagal
+        await fetch('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-store',
+            signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        return true;
+    } catch {
+        clearTimeout(timeoutId);
+        return false;
+    }
+}
+
+function showOfflineOverlay() {
+    if (__isOffline) return; // sudah tampil
+    __isOffline = true;
+
+    const overlay = document.getElementById('offline-overlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+    overlay.classList.remove('reconnecting');
+    document.body.classList.add('no-scroll');
+
+    // Reset ke state offline
+    const icon = overlay.querySelector('.offline-icon i');
+    const statusText = overlay.querySelector('.offline-status span:last-child');
+    const title = overlay.querySelector('.offline-title');
+    if (icon) { icon.className = 'bx bx-wifi-off'; }
+    if (statusText) { statusText.textContent = 'Offline'; }
+    if (title) { title.textContent = 'Tidak Ada Koneksi Internet'; }
+
+    // Mulai polling auto-reconnect setiap 5 detik
+    startConnectivityPolling();
+}
+
+function hideOfflineOverlay() {
+    if (!__isOffline) return; // sudah hidden
+
+    const overlay = document.getElementById('offline-overlay');
+    if (!overlay || !overlay.classList.contains('active')) return;
+
+    // Tampilkan animasi "reconnected" sebentar
+    overlay.classList.add('reconnecting');
+
+    const icon = overlay.querySelector('.offline-icon i');
+    const statusText = overlay.querySelector('.offline-status span:last-child');
+    const title = overlay.querySelector('.offline-title');
+    if (icon) { icon.className = 'bx bx-wifi'; }
+    if (statusText) { statusText.textContent = 'Online'; }
+    if (title) { title.textContent = 'Koneksi Terhubung Kembali!'; }
+
+    setTimeout(() => {
+        overlay.classList.remove('active');
+        overlay.classList.remove('reconnecting');
+        document.body.classList.remove('no-scroll');
+        __isOffline = false;
+
+        // Reload halaman terakhir yang gagal
+        const lastFailed = window.__lastFailedPage;
+        if (lastFailed) {
+            loadPage(lastFailed.page, lastFailed.params);
+            window.__lastFailedPage = null;
+        }
+    }, 1200);
+
+    // Stop polling
+    stopConnectivityPolling();
+}
+
+/** Polling otomatis: cek koneksi setiap 5 detik saat offline */
+function startConnectivityPolling() {
+    stopConnectivityPolling();
+    __connectivityTimer = setInterval(async () => {
+        const online = await checkRealInternet();
+        if (online) {
+            hideOfflineOverlay();
+        }
+    }, 5000);
+}
+
+function stopConnectivityPolling() {
+    if (__connectivityTimer) {
+        clearInterval(__connectivityTimer);
+        __connectivityTimer = null;
+    }
+}
+
+// Retry button handler — manual retry
+window.__retryConnection = async function() {
+    const btn = document.getElementById('offline-retry-btn');
+    if (btn) btn.classList.add('loading');
+
+    const online = await checkRealInternet();
+
+    if (btn) btn.classList.remove('loading');
+
+    if (online) {
+        hideOfflineOverlay();
+    } else {
+        // Masih offline — kasih feedback visual: shake icon
+        const iconEl = document.querySelector('.offline-icon');
+        if (iconEl) {
+            iconEl.style.animation = 'none';
+            iconEl.offsetHeight; // trigger reflow
+            iconEl.style.animation = '';
+        }
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // ── Overlay dimulai dalam state "checking" (aktif, menutupi konten) ──
+    // Cek koneksi internet DULU sebelum load halaman
+    const overlay = document.getElementById('offline-overlay');
+    const isOnline = await checkRealInternet();
+
+    if (isOnline) {
+        // Internet ada → buang overlay langsung tanpa animasi
+        if (overlay) {
+            overlay.classList.remove('active', 'checking', 'reconnecting');
+            overlay.style.display = 'none';
+            // Restore display setelah transisi selesai (untuk pakai nanti)
+            setTimeout(() => { overlay.style.display = ''; }, 100);
+        }
+        __isOffline = false;
+        document.body.classList.remove('no-scroll');
+    } else {
+        // Tidak ada internet → transisi dari "checking" ke offline UI
+        if (overlay) {
+            overlay.classList.remove('checking');
+            // Overlay sudah active, sekarang tampilkan konten offline
+        }
+        __isOffline = true;
+        document.body.classList.add('no-scroll');
+        startConnectivityPolling();
+    }
+
+    // Load halaman (dari localhost tetap jalan, overlay di atas menutupi jika offline)
     loadPage(initial);
 
     document.body.addEventListener('click', e => {
@@ -248,6 +410,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Init schedule notification engine ──────────────────────────────
     initScheduleNotifier();
+
+    // ── Browser offline/online events (sebagai trigger cepat) ──────────
+    window.addEventListener('offline', () => {
+        showOfflineOverlay();
+    });
+
+    window.addEventListener('online', async () => {
+        // Browser bilang online, tapi verifikasi dulu dengan ping external
+        const real = await checkRealInternet();
+        if (real) {
+            hideOfflineOverlay();
+        }
+    });
+
+    // ── Monitoring berkala: cek koneksi setiap 10 detik ─────────────────
+    // Menangkap kasus dimana internet putus tanpa trigger event browser
+    setInterval(async () => {
+        const online = await checkRealInternet();
+        if (!online && !__isOffline) {
+            showOfflineOverlay();
+        }
+    }, 10000);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -359,6 +543,9 @@ function initScheduleNotifier() {
         } catch { /* silent */ }
     }
 
+    // ── Expose globally agar bisa dipanggil dari schedule CRUD ──────
+    window.__refetchSchedules = fetchSchedules;
+
     function getCurrentHHMM() {
         const now = new Date();
         return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
@@ -429,24 +616,58 @@ function initScheduleNotifier() {
             } catch { /* mobile browsers may not support */ }
         }
 
-        // 2) In-app toast
+        // 2) Push to notification panel
+        if (typeof window.__addNotification === 'function') {
+            window.__addNotification(title, body, color, type);
+        }
+
+        // 3) In-app toast
         showToast(title, body, color, type);
     }
 
-    // ── Fetch awal + interval ─────────────────────────────
-    fetchSchedules();
+    // ── Expose sendNotification globally ──────────────────────────
+    window.__sendScheduleNotification = sendNotification;
 
-    // Cek setiap 30 detik
+    // ── Welcome notification: ringkasan jadwal hari ini ───────────
+    async function showWelcomeNotif() {
+        await fetchSchedules();
+
+        // Hanya tampilkan sekali per hari
+        const welcomeKey = 'schedule_welcome_' + todayStr;
+        if (localStorage.getItem(welcomeKey)) return;
+        localStorage.setItem(welcomeKey, '1');
+
+        if (todaySchedules.length > 0) {
+            const titles = todaySchedules.map(s => s.title).slice(0, 3);
+            const extra  = todaySchedules.length > 3 ? ` dan ${todaySchedules.length - 3} lainnya` : '';
+            const body   = titles.join(', ') + extra;
+
+            // Hanya push ke panel, tanpa toast/browser notif
+            if (typeof window.__addNotification === 'function') {
+                window.__addNotification(
+                    `📋 ${todaySchedules.length} jadwal hari ini`,
+                    body,
+                    '#6366f1',
+                    'system'
+                );
+            }
+        }
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────
+    showWelcomeNotif();
+
+    // Cek setiap 15 detik (lebih reliable daripada 30 detik)
     setInterval(() => {
-        // Re-fetch setiap 5 menit
-        if (Date.now() - lastFetch > 5 * 60 * 1000) {
+        // Re-fetch setiap 2 menit
+        if (Date.now() - lastFetch > 2 * 60 * 1000) {
             fetchSchedules();
         }
         checkSchedules();
-    }, 30_000);
+    }, 15_000);
 
-    // Cek langsung saat load (delay 2s agar data ter-fetch)
-    setTimeout(checkSchedules, 2000);
+    // Cek langsung saat load (delay 3s agar data ter-fetch)
+    setTimeout(checkSchedules, 3000);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
