@@ -34,15 +34,27 @@ class AdminController extends Controller
         }
 
         if ($page === 'dashboard') {
+            // Combine user counts into single query (8 queries → 4)
+            $userCounts = User::selectRaw("
+                SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) as total_users,
+                SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as total_admins
+            ")->first();
+
+            $subMateriCounts = SubMateri::selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN is_published = 1 THEN 1 ELSE 0 END) as published,
+                SUM(CASE WHEN is_published = 0 THEN 1 ELSE 0 END) as draft
+            ")->first();
+
             return view('spa.fragments.admin-dashboard', [
                 'page'               => $page,
-                'totalUsers'         => User::where('role', 'user')->count(),
-                'totalAdmins'        => User::where('role', 'admin')->count(),
+                'totalUsers'         => (int) $userCounts->total_users,
+                'totalAdmins'        => (int) $userCounts->total_admins,
                 'totalMainMateris'   => MainMateri::count(),
                 'totalMateris'       => Materi::count(),
-                'totalSubMateris'    => SubMateri::count(),
-                'publishedSubMateris'=> SubMateri::where('is_published', true)->count(),
-                'draftSubMateris'    => SubMateri::where('is_published', false)->count(),
+                'totalSubMateris'    => (int) $subMateriCounts->total,
+                'publishedSubMateris'=> (int) $subMateriCounts->published,
+                'draftSubMateris'    => (int) $subMateriCounts->draft,
                 'recentSubMateris'   => SubMateri::with('materi.mainMateri')->latest()->limit(5)->get(),
                 'topMateris'         => Materi::withCount('subMateris')->orderByDesc('sub_materis_count')->limit(5)->get(),
             ]);

@@ -47,21 +47,27 @@ class UserController extends Controller
         if ($page === 'dashboard') {
             $userId = Auth::id();
 
-            // Ambil semua sub_materi_id yang sudah di-view user
+            // Ambil semua sub_materi_id yang sudah di-view user (single query, indexed lookup)
             $viewedSubIds = $userId
-                ? UserHistory::where('user_id', $userId)->pluck('sub_materi_id')->toArray()
+                ? UserHistory::where('user_id', $userId)
+                    ->pluck('sub_materi_id')
+                    ->flip() // flip untuk O(1) lookup via isset() instead of in_array O(n)
+                    ->all()
                 : [];
 
-            // Ambil history terakhir per sub_materi untuk info "last studied"
+            // Ambil HANYA history terakhir per MainMateri (limit, bukan semua)
             $lastHistories = $userId
                 ? UserHistory::where('user_id', $userId)
-                    ->with('submateri')
+                    ->select(['sub_materi_id', 'viewed_at'])
+                    ->with('submateri:id,title,materi_id')
                     ->orderByDesc('viewed_at')
+                    ->limit(50)
                     ->get()
                 : collect();
 
             $mainMateri = MainMateri::withCount('materis')
-                ->with('materis.subMateris')
+                ->with('materis:id,main_materi_id,title')
+                ->with('materis.subMateris:id,materi_id')
                 ->get()
                 ->map(function ($main) use ($viewedSubIds, $lastHistories) {
                     $totalSub = 0;
@@ -72,7 +78,7 @@ class UserController extends Controller
                         foreach ($m->subMateris as $sub) {
                             $totalSub++;
                             $allSubIds[] = $sub->id;
-                            if (in_array($sub->id, $viewedSubIds)) {
+                            if (isset($viewedSubIds[$sub->id])) {
                                 $doneSub++;
                             }
                         }
@@ -85,8 +91,9 @@ class UserController extends Controller
                     $main->is_completed     = $totalSub > 0 && $doneSub >= $totalSub;
 
                     // Cari history terakhir yang sub_materi-nya milik MainMateri ini
-                    $lastHistory = $lastHistories->first(function ($h) use ($allSubIds) {
-                        return in_array($h->sub_materi_id, $allSubIds);
+                    $allSubFlipped = array_flip($allSubIds);
+                    $lastHistory = $lastHistories->first(function ($h) use ($allSubFlipped) {
+                        return isset($allSubFlipped[$h->sub_materi_id]);
                     });
 
                     $main->last_studied_title = $lastHistory?->submateri?->title;
@@ -252,13 +259,17 @@ class UserController extends Controller
             $userId = Auth::id();
             $favs   = UserFavorite::where('user_id', $userId)->orderByDesc('created_at')->get();
 
-            $favMateris = $favs->where('favoritable_type', 'materi')
-                ->map(fn($f) => Materi::with('mainMateri')->find($f->favoritable_id))
-                ->filter();
+            // Batch load instead of N+1 individual find() calls
+            $materiIds = $favs->where('favoritable_type', 'materi')->pluck('favoritable_id');
+            $subIds    = $favs->where('favoritable_type', 'sub')->pluck('favoritable_id');
 
-            $favSubs = $favs->where('favoritable_type', 'sub')
-                ->map(fn($f) => SubMateri::with('materi.mainMateri')->find($f->favoritable_id))
-                ->filter();
+            $favMateris = $materiIds->isNotEmpty()
+                ? Materi::with('mainMateri')->whereIn('id', $materiIds)->get()
+                : collect();
+
+            $favSubs = $subIds->isNotEmpty()
+                ? SubMateri::with('materi.mainMateri')->whereIn('id', $subIds)->get()
+                : collect();
 
             return view('spa.fragments.user-favorites', [
                 'favMateris' => $favMateris,
