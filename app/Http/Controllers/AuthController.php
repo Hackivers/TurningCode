@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendAdminOtpEmail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -93,13 +94,9 @@ class AuthController extends Controller
                 ]
             );
 
-            // Kirim email OTP — naikkan time limit karena SMTP bisa lambat di Railway
+            // Dispatch email via queue — response instant, tidak menunggu SMTP
             $recipient = $adminEntry['recipient'];
-            set_time_limit(120);
-            Mail::raw("Kode login admin Anda: {$code}", function ($message) use ($recipient) {
-                $message->to($recipient)
-                    ->subject('Kode Login Admin TurningCode');
-            });
+            SendAdminOtpEmail::dispatch($recipient, $code);
 
             return redirect()->route('login.otp')->with(
                 'info',
@@ -198,9 +195,15 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        // Kirim email verifikasi — naikkan time limit karena SMTP bisa lambat di Railway
-        set_time_limit(120);
-        $user->sendEmailVerificationNotification();
+        // Email verifikasi dikirim via queue (lihat User::sendEmailVerificationNotification)
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::error('Failed to queue verification email', [
+                'user_id' => $user->id,
+                'error'   => $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('verification.notice');
     }

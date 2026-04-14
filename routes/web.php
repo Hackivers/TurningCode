@@ -38,7 +38,13 @@ Route::middleware('auth')->group(function () {
     })->middleware(['signed'])->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
+        try {
+            $request->user()->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to queue verification email', [
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return back()->with('info', 'Tautan verifikasi baru sudah dikirim.');
     })->middleware('throttle:6,1')->name('verification.send');
