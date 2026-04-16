@@ -39,7 +39,7 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            'scheme' => in_array(env('MAIL_SCHEME'), ['tls']) ? 'smtp' : (in_array(env('MAIL_SCHEME'), ['ssl', 'smtps']) || env('MAIL_PORT') == 465 ? 'smtps' : env('MAIL_SCHEME')),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),
