@@ -9,7 +9,9 @@
     @vite(['resources/css/global.css', 'resources/css/auth.css'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
     <title>Masuk — {{ config('app.name') }}</title>
 </head>
 
@@ -78,11 +80,11 @@
     </main>
     <script>
         document.querySelectorAll('.input input').forEach(input => {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 this.closest('.input').classList.add('fokus');
             });
 
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 if (this.value === '') {
                     this.closest('.input').classList.remove('fokus');
                 }
@@ -117,7 +119,8 @@
 
 
 
-{{-- <!DOCTYPE html>
+{{--
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -131,26 +134,28 @@
 <body class="min-h-screen bg-zinc-100 text-zinc-900 antialiased">
     <div class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4">
         <h1 class="text-center text-2xl font-semibold">Kode OTP</h1>
-        <p class="mt-2 text-center text-sm text-zinc-600">Masukkan 6 digit kode yang dikirim ke inbox email terdaftar.</p>
+        <p class="mt-2 text-center text-sm text-zinc-600">Masukkan 6 digit kode yang dikirim ke inbox email terdaftar.
+        </p>
         <div class="mt-4 rounded-lg border border-zinc-200 bg-white px-4 py-3 text-center text-sm">
             <span class="text-zinc-500">Email admin</span><br>
             <span class="font-medium text-zinc-900">{{ $email }}</span>
         </div>
-        <form method="post" action="{{ route('login') }}" class="mt-6 space-y-4 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <form method="post" action="{{ route('login') }}"
+            class="mt-6 space-y-4 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
             @csrf
             <input type="hidden" name="email" value="{{ $email }}">
             <div>
                 <label for="codeOTP" class="block text-sm font-medium text-zinc-700">Kode OTP</label>
-                <input id="codeOTP" type="text" name="codeOTP" inputmode="numeric" pattern="[0-9]*" maxlength="6" required
-                    autofocus autocomplete="one-time-code"
+                <input id="codeOTP" type="text" name="codeOTP" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                    required autofocus autocomplete="one-time-code"
                     class="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-center text-lg tracking-widest shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
                     placeholder="000000">
             </div>
             @if (session('info'))
-                <p class="text-sm text-blue-700">{{ session('info') }}</p>
+            <p class="text-sm text-blue-700">{{ session('info') }}</p>
             @endif
             @if (session('error'))
-                <p class="text-sm text-red-600">{{ session('error') }}</p>
+            <p class="text-sm text-red-600">{{ session('error') }}</p>
             @endif
             <button type="submit"
                 class="w-full rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
