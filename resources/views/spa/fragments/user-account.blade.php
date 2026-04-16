@@ -34,7 +34,7 @@
                 @if($user->avatar)
                     <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img">
                 @else
-                    <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                    <img src="{{ asset('assets/ico/devlab.jpg') }}" alt="Avatar" class="avatar-img">
                 @endif
             </div>
         </div>

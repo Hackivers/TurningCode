@@ -219,6 +219,17 @@ button {
     border: 1px solid #202021;
 }
 
+.btn-verify {
+    margin-top: 20px;
+}
+
+.btn-verify button {
+    background: transparent;
+    color: #202021;
+    max-width: 100%;
+    border: 1px solid #202021;
+}
+
 .register {
     margin-top: 1em;
 }
@@ -253,7 +264,7 @@ button {
     display: block;
 }
 
-.checkbox-wrapper-30 .checkbox > * {
+.checkbox-wrapper-30 .checkbox>* {
     position: absolute;
 }
 
@@ -286,7 +297,7 @@ button {
     transition-delay: calc(var(--dur) /1.3);
 }
 
-.checkbox-wrapper-30 .checkbox input:checked + svg {
+.checkbox-wrapper-30 .checkbox input:checked+svg {
     --dashArray: 16 93;
     --dashOffset: 109;
 }
@@ -326,6 +337,10 @@ button {
     width: 100%;
     margin: 10px;
     align-items: center;
+}
+
+.wrapper-profile.verify {
+    margin: 10px 20px;
 }
 
 .profile-admin {

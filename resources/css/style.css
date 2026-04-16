@@ -1232,6 +1232,7 @@
     from {
         width: 0%;
     }
+
     to {
         width: 100%;
     }
@@ -1706,6 +1707,7 @@
         transform: scale(0.6);
         opacity: 1;
     }
+
     100% {
         transform: scale(1.5);
         opacity: 0;
@@ -1727,11 +1729,13 @@
 }
 
 @keyframes offline-icon-glow {
+
     0%,
     100% {
         box-shadow: 0 0 40px rgba(239, 68, 68, 0.15),
             inset 0 0 20px rgba(239, 68, 68, 0.05);
     }
+
     50% {
         box-shadow: 0 0 60px rgba(239, 68, 68, 0.25),
             inset 0 0 30px rgba(239, 68, 68, 0.1);
@@ -1745,22 +1749,28 @@
 }
 
 @keyframes offline-icon-shake {
+
     0%,
     100% {
         transform: rotate(0deg);
     }
+
     10% {
         transform: rotate(-8deg);
     }
+
     20% {
         transform: rotate(8deg);
     }
+
     30% {
         transform: rotate(-5deg);
     }
+
     40% {
         transform: rotate(5deg);
     }
+
     50%,
     100% {
         transform: rotate(0deg);
@@ -1787,10 +1797,12 @@
 }
 
 @keyframes offline-dot-blink {
+
     0%,
     100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.3;
     }
@@ -1875,6 +1887,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -2153,9 +2166,11 @@
     0% {
         transform: scale(0);
     }
+
     60% {
         transform: scale(1.3);
     }
+
     100% {
         transform: scale(1);
     }
@@ -2699,6 +2714,7 @@ body.dark-mode .filter-btn.active h5 {
 .btn-logout {
     display: flex;
     width: 100%;
+    max-width: 79em;
     align-items: center;
     gap: 15px;
     border: none;
