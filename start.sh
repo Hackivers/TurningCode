@@ -16,12 +16,13 @@ php artisan cache:clear
 echo "Starting queue worker in background..."
 (
   while true; do
-    php artisan queue:work --daemon --sleep=3 --tries=3 --timeout=90
-    echo "Queue worker stopped or crashed! Restarting in 5 seconds..."
+    echo "Starting worker..." >> storage/logs/worker.log
+    php artisan queue:work --daemon --sleep=3 --tries=3 --timeout=90 >> storage/logs/worker.log 2>&1
+    echo "Queue worker stopped or crashed! Restarting in 5 seconds..." >> storage/logs/worker.log
     sleep 5
   done
 ) &
 
 # 4. Start the main web server in the foreground
 echo "Starting web server on port ${PORT:-8000}..."
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
