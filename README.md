@@ -100,35 +100,85 @@ TurningCode/
 - **Node.js**: >= 18.x
 - **Composer**: Dependency manager untuk PHP
 
-### 2. Instalasi Cepat
+### 2. Panduan Instalasi Lengkap
 
+Ikuti langkah-langkah di bawah ini untuk menyiapkan lingkungan pengembangan Anda:
+
+#### Step 1: Clone Repository
+Clone project ini ke direktori lokal Anda:
 ```bash
-# Clone the repository
 git clone https://github.com/Hackivers/TurningCode.git
 cd TurningCode
+```
 
-# Setup environment (Pilih salah satu)
-# Cara Otomatis:
-composer setup
-
-# Cara Manual:
+#### Step 2: Install Dependencies
+Pastikan Anda sudah menginstal Composer dan Node.js, lalu jalankan:
+```bash
+# Install PHP dependencies
 composer install
+
+# Install JavaScript dependencies
 npm install
+```
+
+#### Step 3: Konfigurasi Environment
+Salin file `.env.example` menjadi `.env` dan buat App Key:
+```bash
 cp .env.example .env
 php artisan key:generate
+```
+> [!IMPORTANT]
+> Buka file `.env` dan konfigurasi bagian **MAIL_HOST**, **MAIL_USERNAME**, dan **MAIL_PASSWORD**. Fitur login TurningCode menggunakan OTP via email, sehingga SMTP yang valid (seperti Gmail) sangat diperlukan.
+
+#### Step 4: Setup Database (SQLite)
+TurningCode menggunakan SQLite secara default. Pastikan file database sudah ada:
+```bash
+# Di Windows (PowerShell):
+New-Item -Path "database/database.sqlite" -ItemType File
+
+# Di Linux/Mac:
+touch database/database.sqlite
+```
+
+#### Step 5: Migrasi & Seeding
+Jalankan migrasi untuk membuat struktur tabel dan mengisi data awal (Materi, Admin, dll):
+```bash
 php artisan migrate --seed
 ```
 
-### 3. Menjalankan Server
-Kami merekomendasikan penggunaan **Concurrently** untuk menjalankan semua proses (Laravel Server + Vite + Queue Worker) dengan satu perintah:
+#### Step 6: Build Assets
+Kompilasi aset CSS dan JavaScript menggunakan Vite:
+```bash
+npm run build
+```
 
+---
+
+### 3. Cara Menjalankan Aplikasi
+
+Anda dapat menjalankan server pengembangan dengan perintah terpadu atau secara terpisah:
+
+**A. Perintah Terpadu (Direkomendasikan):**
+Menjalankan Web Server, Vite, dan Queue Worker sekaligus dalam satu terminal:
 ```bash
 composer dev
 ```
-Atau secara terpisah:
-- `php artisan serve` (Web Server)
-- `npm run dev` (Vite Assets)
-- `php artisan queue:work` (Email Worker)
+
+**B. Perintah Terpisah:**
+Jika ingin memantau log satu per satu, jalankan di terminal berbeda:
+1. `php artisan serve` — Menjalankan Web Server di port 8000.
+2. `npm run dev` — Menjalankan Vite untuk hot-reloading aset.
+3. `php artisan queue:work` — Menjalankan Worker untuk pemrosesan Email OTP.
+
+---
+
+### 🔐 Akun Akses Default
+Setelah berhasil melakukan `migrate --seed`, Anda dapat mencoba masuk dengan akun berikut:
+
+| Role | Email | Password |
+|------|-------|----------|
+| **Admin** | `admin@example.com` | `password` |
+| **User** | `user@example.com` | `password` |
 
 ---
 
@@ -149,6 +199,18 @@ Atau secara terpisah:
 - [ ] **Gamification System**: Dapatkan EXP dan Rank (Pemula -> Legend) setiap kali menyelesaikan sub-materi.
 - [ ] **Dark Mode Toggle**: Dukungan penuh tema gelap untuk kenyamanan mata saat belajar di malam hari.
 - [ ] **Mobile App Wrapper**: Transformasi SPA menjadi aplikasi mobile menggunakan Capacitor.
+
+---
+
+## 👥 Contributors
+
+<p align="center">
+  <a href="https://github.com/Hackivers/TurningCode"><img src="https://img.shields.io/badge/-hanzz-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="hanzz"></a>
+  <a href="https://github.com/Hackivers/TurningCode"><img src="https://img.shields.io/badge/-Jester-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Jester"></a>
+  <a href="https://github.com/Hackivers/TurningCode"><img src="https://img.shields.io/badge/-ghostface-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="ghostface"></a>
+  <a href="https://github.com/Hackivers/TurningCode"><img src="https://img.shields.io/badge/-Mychel09-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Mychel09"></a>
+  <a href="https://github.com/Hackivers/TurningCode"><img src="https://img.shields.io/badge/-maousama-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="maousama"></a>
+</p>
 
 ---
 
