@@ -12,7 +12,8 @@
   <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
   <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
-  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8">
+  <img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+  <img src="https://img.shields.io/badge/phpMyAdmin-5.2+-F8981D?style=flat-square&logo=phpmyadmin&logoColor=white" alt="phpMyAdmin">
 </p>
 
 ---
@@ -48,12 +49,12 @@ Untuk kebutuhan pengelolaan tingkat lanjut, Admin memiliki akses ke **Web Termin
 
 ### Backend Powerhouse
 - **Laravel 13**: Framework PHP paling modern untuk skalabilitas dan keamanan tinggi.
-- **SQLite**: Database yang ringan dan sangat cepat untuk lingkungan pengembangan portable.
+- **MySQL & phpMyAdmin**: Sistem manajemen database relasional yang andal untuk skalabilitas data besar.
 - **Queued Mail Services**: Pengiriman OTP dan verifikasi dilakukan di latar belakang (*background process*) menggunakan Worker, sehingga aplikasi tetap responsif.
 
 ### Frontend Aesthetics
-- **Tailwind CSS 4**: Menggunakan utility-first CSS terbaru untuk styling yang presisi dan modern.
-- **Vite 8**: Build tool super cepat yang menangani kompilasi aset dalam hitungan milidetik.
+- **Vite + Tailwind CSS 4** — Pemanfaatan utility-first CSS terbaru untuk desain premium dan performa aset yang optimal.
+- **MySQL & phpMyAdmin** — Sistem manajemen database relasional yang andal untuk skalabilitas data besar.gan milidetik.
 - **Vanilla JavaScript SPA Engine**: Logika navigasi kustom yang ringan tanpa overhead framework JS berat seperti React atau Vue di sisi Admin.
 
 ---
@@ -130,15 +131,11 @@ php artisan key:generate
 > [!IMPORTANT]
 > Buka file `.env` dan konfigurasi bagian **MAIL_HOST**, **MAIL_USERNAME**, dan **MAIL_PASSWORD**. Fitur login TurningCode menggunakan OTP via email, sehingga SMTP yang valid (seperti Gmail) sangat diperlukan.
 
-#### Step 4: Setup Database (SQLite)
-TurningCode menggunakan SQLite secara default. Pastikan file database sudah ada:
-```bash
-# Di Windows (PowerShell):
-New-Item -Path "database/database.sqlite" -ItemType File
-
-# Di Linux/Mac:
-touch database/database.sqlite
-```
+#### Step 4: Setup Database (MySQL)
+TurningCode menggunakan MySQL sebagai database utama. 
+1. Buka **phpMyAdmin** Anda.
+2. Buat database baru dengan nama `turningcode`.
+3. Pastikan konfigurasi di file `.env` sudah sesuai (DB_HOST, DB_USERNAME, DB_PASSWORD).
 
 #### Step 5: Migrasi & Seeding
 Jalankan migrasi untuk membuat struktur tabel dan mengisi data awal (Materi, Admin, dll):
