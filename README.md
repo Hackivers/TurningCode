@@ -1,166 +1,90 @@
 <p align="center">
-  <img src="public/assets/img/logo-turningcode.png" width="280" alt="TurningCode Logo">
+  <img src="public/assets/img/logo-turningcode.png" width="320" alt="TurningCode Logo">
 </p>
 
 <h1 align="center">🚀 TurningCode</h1>
 
 <p align="center">
-  <b>Platform belajar programming modern — dari nol hingga jadi programmer.</b>
+  <b>Elevate your coding journey from zero to hero with a modern, fast, and interactive learning platform.</b>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel 13">
-  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP 8.3+">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
-  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 8">
-  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8">
 </p>
 
 ---
 
-## 📖 Tentang Project
+## 📖 Vision & Philosophy
 
-**TurningCode** adalah aplikasi web yang dirancang khusus untuk membantu siapa saja yang ingin **belajar menjadi programmer**. Nama "TurningCode" mencerminkan semangat *turning point* — titik balik di mana seseorang mulai memahami dunia pemrograman dan berubah menjadi seorang developer.
+**TurningCode** bukan sekadar materi belajar di layar. Nama ini membawa filosofi **"The Turning Point"** — sebuah momen krusial di mana kebingungan berubah menjadi pemahaman, dan kode yang Anda tulis mulai "hidup". Kami membangun platform ini untuk menjadi jembatan bagi para pemula agar tidak terjebak dalam *tutorial hell*, melainkan bergerak maju melalui kurikulum yang terstruktur dan sistem manajemen belajar yang cerdas.
 
-Platform ini menyajikan materi-materi programming secara **terstruktur dan bertahap**, mulai dari konsep dasar hingga topik lanjutan. Pengguna tidak hanya membaca materi, tetapi juga dapat mengatur **jadwal belajar harian**, melacak **progres** dan **riwayat belajar**, serta menyimpan materi **favorit** — sehingga proses belajar coding menjadi lebih terarah, konsisten, dan efektif.
-
-Dibangun sebagai **Single Page Application (SPA)** menggunakan Laravel Blade Fragments, TurningCode memberikan pengalaman navigasi yang cepat dan mulus layaknya aplikasi modern.
-
-Aplikasi ini memiliki dua sisi utama:
-- **User Panel** — tempat pengguna belajar programming, mengatur jadwal, dan melacak progres belajar.
-- **Admin Panel** — tempat admin mengelola seluruh konten materi pembelajaran dan berkomunikasi melalui global chat.
+Platform ini mengusung estetika **Modern & Premium**, menggabungkan kecepatan navigasi **Single Page Application (SPA)** dengan keandalan backend Laravel. Setiap interaksi dirancang untuk memberikan *feedback* instan, meminimalkan hambatan teknis agar fokus Anda tetap pada satu hal: **Mempelajari Kode.**
 
 ---
 
-## ✨ Fitur
+## ✨ Highlight Fitur Unggulan
 
-### 🔐 Autentikasi & Keamanan
-- Registrasi akun dengan validasi
-- Login dengan **OTP berbasis email** (dikirim ke Gmail)
-- Verifikasi email wajib sebelum akses platform
-- Role-based access control (`admin` / `user`)
-- Middleware proteksi rute berdasarkan role
+### 🌗 Seamless SPA Experience
+Berbeda dengan web konvensional, TurningCode menggunakan arsitektur **Blade Fragments SPA**. Hal ini memungkinkan Anda berpindah halaman — dari membaca materi ke mengatur jadwal — tanpa merasakan jeda pemuatan halaman (*full page reload*). Transisinya halus, cepat, dan menghemat data.
 
-### 👨‍🎓 Panel User
-- **Dashboard** — ringkasan aktivitas & widget waktu belajar
-- **Jelajah Materi** — telusuri materi berdasarkan kategori utama → sub-kategori → konten detail
-- **Detail Sub-Materi** — halaman konten pembelajaran lengkap
-- **Jadwal Belajar (Study Schedule)** — CRUD jadwal dengan pola rekurensi (harian, mingguan, bulanan, kustom), toggle aktif/nonaktif, dan API jadwal hari ini
-- **Notifikasi Real-Time** — pengingat waktu belajar & istirahat langsung di browser
-- **Favorit** — tandai materi favorit untuk akses cepat
-- **Riwayat Belajar** — lacak materi yang sudah dipelajari
-- **Progres Belajar** — visualisasi kemajuan belajar
-- **Profil & Akun** — edit profil, upload avatar, dan pengaturan akun
-- **Navigasi Responsif** — navbar atas + bottom navigation untuk mobile
+### 🛡️ Authentication Level: Secure & Simple
+Akses platform dilindungi oleh sistem **Email OTP (One-Time Password)**. Tidak ada lagi kerumitan menghafal password panjang yang sulit. Cek Gmail Anda, masukkan kodenya, dan Anda langsung berada di dalam lingkungan belajar yang aman.
 
-### 🛠️ Panel Admin
-- **Dashboard Admin (Modern Grid)** — Tata letak 3-kolom dengan widget statistik dan daftar **Issue Reports** terbaru.
-- **Sistem Notifikasi Real-Time** — Ikon lonceng dinamis dengan badge merah untuk memantau laporan pending secara langsung.
-- **Web Terminal (CMD)** — Overlay terminal sistem (`>_`) untuk eksekusi perintah server langsung dari dashboard.
-- **Penyelesaian Masalah (Issue Tracking)** — Fitur "Accept/Resolve" laporan masalah dari pengguna secara instan.
-- **Edit Profil Admin** — Manajemen identitas lengkap (nama, avatar, email dengan konstrain `@gmail.com`) dilengkapi pratinjau gambar otomatis.
-- **Kelola Materi Lengkap** — CRUD Main Materi, Materi, dan Sub-Materi (dilengkapi validasi file & proteksi data loss).
-- **Global Chat** — Sistem komunikasi antar admin yang interaktif dengan fitur reply dan ikon monokrom modern.
+### 🔔 Smart Notification System (Admin ONLY)
+Admin dilengkapi dengan **Dashboard Control Tower**. Melalui ikon lonceng dinamis di header, Admin akan mendapatkan notifikasi real-time jika ada laporan masalah dari pengguna atau aktivitas kritis lainnya. Badge merah yang menyala memastikan tidak ada isu yang terlewatkan.
 
-### ⚙️ Arsitektur & Teknis
-- **SPA dengan Blade Fragments** — Navigasi super cepat antar kontainer tanpa perlu reload seluruh halaman.
-- **Real-Time Polling** — Sinkronisasi data notifikasi dan laporan secara berkala untuk menjaga data tetap aktual.
-- **Vite + Tailwind CSS 4** — Pemanfaatan utility-first CSS terbaru untuk desain premium dan performa aset yang optimal.
-- **SQLite Database** — Penyimpanan data yang efisien dan portabel tanpa ketergantungan server database eksternal.
+### 🚩 Interactive Issue Tracking
+Sistem pelaporan masalah yang terintegrasi memungkinkan pengguna melaporkan bug atau kebingungan materi secara instan. Admin dapat mengelola laporan ini langsung dari Dashboard menggunakan fitur **Accept/Resolve** — mempercepat sirkulasi perbaikan demi pengalaman belajar yang lebih baik.
+
+### ⌨️ Integrated Web Terminal (CMD)
+Untuk kebutuhan pengelolaan tingkat lanjut, Admin memiliki akses ke **Web Terminal Overlay**. Jalankan perintah sistem, cek status server, atau lakukan tugas administratif langsung di browser tanpa perlu membuka SSH Client eksternal.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Architecture
 
-| Layer | Teknologi |
-|-------|-----------|
-| **Backend** | Laravel 13 (PHP 8.3+) |
-| **Frontend** | Blade Templates, Tailwind CSS 4, Vanilla JS |
-| **Build Tool** | Vite 8 |
-| **Database** | SQLite |
-| **HTTP Client** | Axios |
-| **Dev Tools** | Laravel Pail, Laravel Pint, Concurrently |
+### Backend Powerhouse
+- **Laravel 13**: Framework PHP paling modern untuk skalabilitas dan keamanan tinggi.
+- **SQLite**: Database yang ringan dan sangat cepat untuk lingkungan pengembangan portable.
+- **Queued Mail Services**: Pengiriman OTP dan verifikasi dilakukan di latar belakang (*background process*) menggunakan Worker, sehingga aplikasi tetap responsif.
 
----
-
-## 🚀 Instalasi & Setup
-
-### Prasyarat
-- PHP 8.3+
-- Composer
-- Node.js & npm
-- Git
-
-### Langkah Instalasi
-
-```bash
-# 1. Clone repository
-git clone https://github.com/your-org/TurningCode.git
-cd TurningCode
-
-# 2. Jalankan setup otomatis (install deps, generate key, migrate, build assets)
-composer setup
-
-# 3. Jalankan development server (Laravel + Queue + Pail + Vite secara bersamaan)
-composer dev
-```
-
-Atau secara manual:
-
-```bash
-# Install dependencies
-composer install
-npm install
-
-# Konfigurasi environment
-cp .env.example .env
-php artisan key:generate
-
-# Jalankan migrasi database
-php artisan migrate
-
-# Build assets
-npm run dev
-
-# Jalankan server
-php artisan serve
-```
-
-Akses aplikasi di `http://localhost:8000`
+### Frontend Aesthetics
+- **Tailwind CSS 4**: Menggunakan utility-first CSS terbaru untuk styling yang presisi dan modern.
+- **Vite 8**: Build tool super cepat yang menangani kompilasi aset dalam hitungan milidetik.
+- **Vanilla JavaScript SPA Engine**: Logika navigasi kustom yang ringan tanpa overhead framework JS berat seperti React atau Vue di sisi Admin.
 
 ---
 
-## 📁 Struktur Project
+## 📁 Project Structure
 
 ```
 TurningCode/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Admin/              # AdminChatController, AdminMateriController, AdminSubMateriController
-│   │   │   ├── AdminController.php # SPA admin & routing halaman
-│   │   │   ├── AuthController.php  # Login, register, OTP, logout
-│   │   │   └── UserController.php  # SPA user, profil, jadwal, favorit
+│   │   │   ├── Admin/              # Controllers: Chat, Materi, SubMateri
+│   │   │   ├── AdminController.php # Admin SPA & Routing logic
+│   │   │   ├── AuthController.php  # Authentication & OTP logic
+│   │   │   └── UserController.php  # User SPA & Dashboard logic
 │   │   └── Middleware/
-│   │       └── EnsureRole.php      # Middleware role-based access
-│   ├── Models/                     # User, MainMateri, Materi, SubMateri, StudySchedule, dll.
+│   │       └── EnsureRole.php      # Role-based protection
+│   ├── Models/                     # User, Materi, SubMateri, Schedule, IssueReport, dll.
 │   └── Providers/
 ├── config/
-│   └── admin.php                   # Mapping email admin & OTP
 ├── database/
-│   ├── migrations/                 # Schema: users, materis, schedules, chats, favorites, dll.
-│   └── database.sqlite
+│   ├── migrations/                 # Database Schema
+│   └── database.sqlite             # Lightweight portable DB
 ├── resources/
-│   ├── css/
-│   ├── js/
+│   ├── js/                         # SPA_admin.js & SPA_user.js
 │   └── views/
-│       ├── auth/                   # Login, register, OTP, verify email
-│       ├── layouts/
 │       ├── spa/
-│       │   └── fragments/          # Semua halaman SPA (dashboard, materi, jadwal, dll.)
-│       └── welcome.blade.php       # Landing page
+│       │   └── fragments/          # SPA UI components (blade fragments)
+│       └── layouts/                # Main SPA layouts
 ├── routes/
-│   └── web.php                     # Definisi semua route (guest, user, admin)
+│   └── web.php                     # Unified web & API routes
 ├── composer.json
 ├── package.json
 └── vite.config.js
@@ -168,41 +92,70 @@ TurningCode/
 
 ---
 
-## 👥 Kontributor
+## 🚀 Quick Start Guide
 
-<table>
-  <tr>
-    <td align="center">
-      <img src="https://img.shields.io/badge/-hanzz-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="hanzz"><br>
-      <sub><b>hanzz</b></sub>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/badge/-Jester-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Jester"><br>
-      <sub><b>Jester</b></sub>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/badge/-ghostface-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="ghostface"><br>
-      <sub><b>ghostface</b></sub>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/badge/-Mychel09-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="Mychel09"><br>
-      <sub><b>Mychel09</b></sub>
-    </td>
-    <td align="center">
-      <img src="https://img.shields.io/badge/-maousama-7c3aed?style=for-the-badge&logo=github&logoColor=white" alt="maousama"><br>
-      <sub><b>maousama</b></sub>
-    </td>
-  </tr>
-</table>
+### 1. Prasyarat Sistem
+- **PHP**: >= 8.3
+- **Database**: SQLite (built-in support di Laravel)
+- **Node.js**: >= 18.x
+- **Composer**: Dependency manager untuk PHP
+
+### 2. Instalasi Cepat
+
+```bash
+# Clone the repository
+git clone https://github.com/Hackivers/TurningCode.git
+cd TurningCode
+
+# Setup environment (Pilih salah satu)
+# Cara Otomatis:
+composer setup
+
+# Cara Manual:
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+```
+
+### 3. Menjalankan Server
+Kami merekomendasikan penggunaan **Concurrently** untuk menjalankan semua proses (Laravel Server + Vite + Queue Worker) dengan satu perintah:
+
+```bash
+composer dev
+```
+Atau secara terpisah:
+- `php artisan serve` (Web Server)
+- `npm run dev` (Vite Assets)
+- `php artisan queue:work` (Email Worker)
 
 ---
 
-## 📄 Lisensi
+## ⚙️ Environment Configuration
 
-Project ini dikembangkan untuk keperluan pembelajaran dan bersifat open-source di bawah lisensi [MIT](https://opensource.org/licenses/MIT).
+| Key | Description |
+|-----|-------------|
+| `APP_URL` | Domain atau URL akses aplikasi (default: http://localhost:8000) |
+| `MAIL_HOST` | Host SMTP untuk pengiriman OTP (Rekomendasi: smtp.gmail.com) |
+| `MAIL_PASSWORD` | App Password dari Google Account (Jangan gunakan password asli email!) |
+| `SESSION_DRIVER` | Mengatur masa aktif sesi login pengguna (default: file) |
 
 ---
+
+## 🗺️ Future Roadmap
+
+- [ ] **Quiz Integration**: Uji pemahaman materi dengan Passing Threshold 80%.
+- [ ] **Gamification System**: Dapatkan EXP dan Rank (Pemula -> Legend) setiap kali menyelesaikan sub-materi.
+- [ ] **Dark Mode Toggle**: Dukungan penuh tema gelap untuk kenyamanan mata saat belajar di malam hari.
+- [ ] **Mobile App Wrapper**: Transformasi SPA menjadi aplikasi mobile menggunakan Capacitor.
+
+---
+
+## 📄 License & Contribution
+
+Project ini bersifat **Open Source** di bawah lisensi [MIT](https://opensource.org/licenses/MIT). Kami sangat menghargai kontribusi dari komunitas, baik berupa *bug reporting*, saran desain, maupun penambahan materi pembelajaran.
 
 <p align="center">
-  Dibangun dengan ❤️ oleh <b>Tim TurningCode</b>
+  <b>Crafted with passion by the TurningCode Dev Team.</b>
 </p>
