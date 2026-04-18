@@ -54,17 +54,19 @@ Aplikasi ini memiliki dua sisi utama:
 - **Navigasi Responsif** — navbar atas + bottom navigation untuk mobile
 
 ### 🛠️ Panel Admin
-- **Dashboard Admin** — statistik dan overview platform
-- **Kelola Main Materi** — CRUD kategori utama materi
-- **Kelola Materi** — CRUD sub-kategori materi
-- **Kelola Sub-Materi** — upload & manajemen konten pembelajaran dengan metadata
-- **Global Chat** — sistem chat antar admin dengan fitur reply
+- **Dashboard Admin (Modern Grid)** — Tata letak 3-kolom dengan widget statistik dan daftar **Issue Reports** terbaru.
+- **Sistem Notifikasi Real-Time** — Ikon lonceng dinamis dengan badge merah untuk memantau laporan pending secara langsung.
+- **Web Terminal (CMD)** — Overlay terminal sistem (`>_`) untuk eksekusi perintah server langsung dari dashboard.
+- **Penyelesaian Masalah (Issue Tracking)** — Fitur "Accept/Resolve" laporan masalah dari pengguna secara instan.
+- **Edit Profil Admin** — Manajemen identitas lengkap (nama, avatar, email dengan konstrain `@gmail.com`) dilengkapi pratinjau gambar otomatis.
+- **Kelola Materi Lengkap** — CRUD Main Materi, Materi, dan Sub-Materi (dilengkapi validasi file & proteksi data loss).
+- **Global Chat** — Sistem komunikasi antar admin yang interaktif dengan fitur reply dan ikon monokrom modern.
 
 ### ⚙️ Arsitektur & Teknis
-- **SPA dengan Blade Fragments** — navigasi halaman tanpa full reload
-- **AJAX API Endpoints** — komunikasi asinkron untuk jadwal, chat, dan data materi
-- **Vite + Tailwind CSS 4** — build tool modern dengan utility-first CSS
-- **SQLite** — database ringan tanpa konfigurasi server tambahan
+- **SPA dengan Blade Fragments** — Navigasi super cepat antar kontainer tanpa perlu reload seluruh halaman.
+- **Real-Time Polling** — Sinkronisasi data notifikasi dan laporan secara berkala untuk menjaga data tetap aktual.
+- **Vite + Tailwind CSS 4** — Pemanfaatan utility-first CSS terbaru untuk desain premium dan performa aset yang optimal.
+- **SQLite Database** — Penyimpanan data yang efisien dan portabel tanpa ketergantungan server database eksternal.
 
 ---
 
