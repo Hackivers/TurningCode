@@ -122,4 +122,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // Admin Issue Report
     Route::post('/admin/api/report', [AdminController::class, 'storeReport'])->name('admin.report.store');
+    Route::put('/admin/api/report/{issueReport}/resolve', [AdminController::class, 'resolveReport'])->name('admin.report.resolve');
+
+    // Admin Notifications
+    Route::get('/admin/api/notifications', [AdminController::class, 'notifications'])->name('admin.notifications');
+
+    // Admin Profile
+    Route::post('/admin/api/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
 });

@@ -178,15 +178,44 @@
                             placeholder="Search">
                     </div>
 
-                    <div class="flex items-center gap-6 text-zinc-600">
-                        <button type="button"
+                    <div class="flex items-center gap-6 text-zinc-600 relative">
+                        <button type="button" id="notif-toggle"
                             class="flex h-11 w-11 items-center justify-center rounded-[16px] bg-white shadow-sm ring-1 ring-inset ring-zinc-200/50 transition-colors hover:bg-zinc-50 relative shrink-0">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                </path>
-                                <polyline points="22,6 12,13 2,6"></polyline>
+                            <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path>
                             </svg>
+                            <span id="notif-badge" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse" style="display:none;">0</span>
                         </button>
+
+                        {{-- Notification Dropdown Panel --}}
+                        <div id="notif-panel" class="absolute right-0 top-[calc(100%+8px)] w-[380px] max-h-[480px] rounded-2xl bg-white border border-zinc-200 shadow-[0_20px_40px_-8px_rgba(0,0,0,0.12)] z-[200] opacity-0 translate-y-2 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden">
+                            {{-- Panel Header --}}
+                            <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-100">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path></svg>
+                                    </span>
+                                    <div>
+                                        <h3 class="text-sm font-extrabold text-zinc-900">Notifikasi</h3>
+                                        <p class="text-[10px] text-zinc-400 font-medium">Aktivitas terbaru</p>
+                                    </div>
+                                </div>
+                                <button type="button" id="notif-mark-read" class="text-[10px] font-bold uppercase tracking-widest text-indigo-500 hover:text-indigo-700 transition-colors px-2 py-1 rounded-lg hover:bg-indigo-50">Tandai dibaca</button>
+                            </div>
+
+                            {{-- Panel Body --}}
+                            <div id="notif-list" class="flex-1 overflow-y-auto divide-y divide-zinc-50">
+                                <div class="flex items-center justify-center py-10 text-zinc-400">
+                                    <svg class="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                    <span class="text-xs font-medium">Memuat...</span>
+                                </div>
+                            </div>
+
+                            {{-- Panel Footer --}}
+                            <div class="border-t border-zinc-100 px-5 py-3 bg-zinc-50/50">
+                                <p class="text-[10px] text-center text-zinc-400 font-medium uppercase tracking-widest">Menampilkan 10 terbaru</p>
+                            </div>
+                        </div>
 
                         <div
                             class="h-11 w-11 overflow-hidden rounded-[16px] shadow-sm relative shrink-0 ring-1 ring-zinc-200/50">
@@ -305,7 +334,7 @@
     ═══════════════════════════════════════════════════════ --}}
 
     {{-- Floating Action Menu (FAB) --}}
-    <div id="fab-container" class="fixed bottom-6 right-6 z-[9998] flex flex-col-reverse items-end gap-3">
+    <div id="fab-container" class="fixed bottom-6 right-6 z-[9998] flex flex-col-reverse items-end gap-2">
         {{-- Main Toggle --}}
         <button id="fab-main-toggle" type="button" aria-label="Toggle Admin Tools" class="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-[0_8px_24px_rgba(79,70,229,0.4)] transition-transform duration-300 hover:scale-105 active:scale-95 z-[9999] relative">
             <svg id="fab-icon-bars" class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
@@ -314,10 +343,12 @@
         </button>
 
         {{-- Sub Actions --}}
-        <div id="fab-actions" class="flex flex-col-reverse items-end gap-3 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none origin-bottom">
+        <div id="fab-actions" class="flex flex-col-reverse items-end gap-2 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none origin-bottom">
             {{-- Floating toggle button --}}
-            <button id="chat-toggle" type="button" aria-label="Toggle admin chat" class="w-12 h-12 rounded-full border-none bg-[#1C1C1E] text-white flex items-center justify-center text-xl shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:scale-110 relative group">
-                <span id="chat-toggle-icon">💬</span>
+            <button id="chat-toggle" type="button" aria-label="Toggle admin chat" class="w-12 h-12 rounded-full border-none bg-[#1C1C1E] text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:scale-110 relative group">
+                <span id="chat-toggle-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </span>
                 <span id="chat-badge" style="display:none;" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse">0</span>
                 <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Global Chat</span>
             </button>
@@ -1741,7 +1772,185 @@
                 });
             }
 
+            // ── Notification Bell Logic ─────────────────────
+            const notifToggle = document.getElementById('notif-toggle');
+            const notifPanel = document.getElementById('notif-panel');
+            const notifBadge = document.getElementById('notif-badge');
+            const notifList = document.getElementById('notif-list');
+            const notifMarkRead = document.getElementById('notif-mark-read');
+            let isNotifOpen = false;
+            let notifLoaded = false;
+
+            function openNotifPanel() {
+                notifPanel.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+                notifPanel.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                isNotifOpen = true;
+                if (!notifLoaded) {
+                    loadNotifications();
+                    notifLoaded = true;
+                }
+            }
+
+            function closeNotifPanel() {
+                notifPanel.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+                notifPanel.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                isNotifOpen = false;
+            }
+
+            if (notifToggle && notifPanel) {
+                notifToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    isNotifOpen ? closeNotifPanel() : openNotifPanel();
+                });
+
+                // Close on click outside
+                document.addEventListener('click', (e) => {
+                    if (isNotifOpen && !notifPanel.contains(e.target) && !notifToggle.contains(e.target)) {
+                        closeNotifPanel();
+                    }
+                });
+
+                // Mark all as read
+                if (notifMarkRead) {
+                    notifMarkRead.addEventListener('click', () => {
+                        notifBadge.style.display = 'none';
+                        localStorage.setItem('admin_notif_read_at', Date.now());
+                    });
+                }
+            }
+
+            const NOTIF_COLORS = {
+                rose:    { bg: 'bg-rose-50',    text: 'text-rose-600',    ring: 'ring-rose-200' },
+                emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200' },
+                indigo:  { bg: 'bg-indigo-50',  text: 'text-indigo-600',  ring: 'ring-indigo-200' },
+                amber:   { bg: 'bg-amber-50',   text: 'text-amber-600',  ring: 'ring-amber-200' },
+            };
+
+            const STATUS_LABELS = {
+                pending:   { label: 'Pending',   cls: 'bg-amber-100 text-amber-700' },
+                resolved:  { label: 'Resolved',  cls: 'bg-emerald-100 text-emerald-700' },
+                published: { label: 'Published', cls: 'bg-indigo-100 text-indigo-700' },
+                draft:     { label: 'Draft',     cls: 'bg-zinc-100 text-zinc-600' },
+            };
+
+            async function loadNotifications() {
+                try {
+                    const res = await fetch('{{ route("admin.notifications") }}', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) throw new Error('Failed');
+                    const data = await res.json();
+
+                    // Get last read timestamp from localStorage
+                    const lastReadTime = parseInt(localStorage.getItem('admin_notif_read_at')) || 0;
+
+                    // Update badge only if pending > 0 AND the latest pending report is newer than our last read time
+                    if (data.pending_count > 0 && data.latest_pending_time > lastReadTime) {
+                        notifBadge.textContent = data.pending_count > 99 ? '99+' : data.pending_count;
+                        notifBadge.style.display = 'flex';
+                    } else {
+                        notifBadge.style.display = 'none';
+                    }
+
+                    // Render items
+                    if (!data.items || data.items.length === 0) {
+                        notifList.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                                <svg class="w-8 h-8 mb-2 text-zinc-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path></svg>
+                                <p class="text-xs font-medium">Belum ada notifikasi</p>
+                            </div>`;
+                        return;
+                    }
+
+                    notifList.innerHTML = data.items.map(item => {
+                        const c = NOTIF_COLORS[item.color] || NOTIF_COLORS.indigo;
+                        const s = STATUS_LABELS[item.status] || STATUS_LABELS.draft;
+                        return `
+                        <div class="flex items-start gap-3 px-5 py-3.5 hover:bg-zinc-50/80 transition-colors cursor-default">
+                            <span class="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl ${c.bg} ${c.text} text-base ring-1 ${c.ring}">${item.icon}</span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <p class="text-[13px] font-bold text-zinc-800 truncate">${item.title}</p>
+                                    <span class="shrink-0 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${s.cls}">${s.label}</span>
+                                </div>
+                                <p class="text-[11px] text-zinc-500 truncate">${item.body}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-medium text-zinc-400">${item.user}</span>
+                                    <span class="text-zinc-300">·</span>
+                                    <span class="text-[10px] text-zinc-400">${item.time}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('');
+
+                } catch (err) {
+                    notifList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
+                            <p class="text-xs font-medium text-red-400">Gagal memuat notifikasi</p>
+                        </div>`;
+                }
+            }
+
+            // Auto-poll notifications badge every 30 seconds
+            loadNotifications();
+            setInterval(() => {
+                loadNotifications();
+            }, 30000);
+
+            // Listen for manual triggers from other functions
+            window.addEventListener('refreshNotifications', () => {
+                loadNotifications();
+            });
+
         });
+    </script>
+    <script>
+        // Global function for resolving Issue Reports directly from the Dashboard
+        window.resolveIssueReport = async function(id, btn) {
+            if (!confirm('Apakah masalah ini sudah diselesaikan?')) return;
+            
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-pulse">...</span>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('{{ url("/admin/api/report") }}/' + id + '/resolve', {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (res.ok) {
+                    // Update state visually immediately
+                    const parent = btn.parentElement;
+                    btn.remove();
+                    
+                    const resolvedBadge = document.createElement('span');
+                    resolvedBadge.className = 'text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded min-w-[60px] text-center cursor-default';
+                    resolvedBadge.innerText = 'RESOLVED';
+                    
+                    parent.prepend(resolvedBadge);
+                    
+                    // Force refresh notifications badge (if defined in the previous block)
+                    if (typeof window.loadNotifications === 'function') {
+                        window.loadNotifications();
+                    } else {
+                        // The loadNotifications function is local, so we just dispatch a custom event
+                        window.dispatchEvent(new Event('refreshNotifications'));
+                    }
+                } else {
+                    throw new Error('Gagal update status');
+                }
+            } catch (e) {
+                alert(e.message);
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        };
     </script>
 
     {{-- Detail Profile Popup (Moved to top level strictly outside aside constraints) --}}
@@ -1768,8 +1977,8 @@
             </div>
 
             <a href="#" data-spa-page="profile" class="w-full inline-flex justify-center items-center gap-2 rounded-[14px] bg-[#1C1C1E] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-800 shadow-md shadow-zinc-900/10">
-                <span>Verifikasi Profile</span>
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <span>Edit Profile</span>
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             </a>
         </div>
     </div>

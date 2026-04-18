@@ -122,14 +122,27 @@ function sectionBlockHtml(type, idx) {
 
 function renumberSubmSections(rowsWrap) {
     rowsWrap.querySelectorAll('[data-section-row]').forEach((row, i) => {
+        // Update visual label
         const n = row.querySelector('.section-num');
         if (n) {
             n.textContent = `#${i + 1}`;
         }
+
+        // Update order hidden input
         const orderInput = row.querySelector('input[name$="[order]"]');
         if (orderInput) {
             orderInput.value = i;
         }
+
+        // Re-index ALL name attributes from old index → new index `i`
+        row.querySelectorAll('[name]').forEach((input) => {
+            const oldName = input.getAttribute('name');
+            // Match sections[ANY_NUMBER][field]
+            const updated = oldName.replace(/^sections\[\d+\]/, `sections[${i}]`);
+            if (updated !== oldName) {
+                input.setAttribute('name', updated);
+            }
+        });
     });
 }
 
@@ -256,6 +269,54 @@ function setupSubMateriForm(container) {
     if (rowsWrap) {
         rowsWrap.querySelectorAll('[data-section-row]').forEach((block) => {
             attachSectionActions(block, rowsWrap);
+        });
+    }
+
+    // Frontend validation to prevent Silent Data Loss on Validation Error Redirects
+    const form = root.tagName === 'FORM' ? root : root.querySelector('form') || root.closest('form');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            let valid = true;
+            let msg = '';
+
+            // Check file sizes (Max 5MB)
+            const files = form.querySelectorAll('input[type="file"]');
+            files.forEach(f => {
+                if (f.files && f.files.length > 0) {
+                    if (f.files[0].size > 5 * 1024 * 1024) {
+                        valid = false;
+                        msg += `❌ File "${f.files[0].name}" terlalu besar (Max 5MB).\n`;
+                    }
+                }
+            });
+
+            // Check hasContent
+            const activeRows = form.querySelectorAll('[data-section-row]');
+            if (activeRows.length > 0) {
+                let hasContent = false;
+                activeRows.forEach(r => {
+                    const t = r.getAttribute('data-section-type') || r.querySelector('input[name$="[type]"]')?.value;
+                    if (t === 'divider' || t === 'image') {
+                        hasContent = true;
+                    } else {
+                        // Find any text/textarea that contains the word [content]
+                        const txt = r.querySelector('textarea[name$="[content]"], input[type="text"][name$="[content]"]');
+                        if (txt && txt.value.trim() !== '') {
+                            hasContent = true;
+                        }
+                    }
+                });
+
+                if (!hasContent) {
+                    valid = false;
+                    msg += `❌ Minimal satu section harus berisi konten (teks, gambar, atau garis pemisah).\n`;
+                }
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                alert('Terdapat Kesalahan Sebelum Disimpan:\n\n' + msg + '\nMohon perbaiki agar file yang di-upload tidak hilang.');
+            }
         });
     }
 }

@@ -37,7 +37,7 @@
             $colCount = count($tableData['columns']);
             $indexCount = count($tableData['indexes']);
         @endphp
-        <div class="db-table-card relative bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200" data-table="{{ strtolower($tableName) }}">
+        <div class="db-table-card relative bg-white bg-grid-pattern-box rounded-2xl border border-zinc-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200" data-table="{{ strtolower($tableName) }}">
             
             {{-- Table Header (Accordion Trigger) --}}
             <div class="db-accordion-trigger px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-zinc-50/80 transition-colors select-none">

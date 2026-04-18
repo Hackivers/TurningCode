@@ -86,10 +86,10 @@
     ═══════════════════════════════════════════════════ --}}
     <div class="grid gap-6 sm:grid-cols-3">
         
-        <div class="sm:col-span-1 rounded-3xl bg-white border border-zinc-200 p-8 flex flex-col justify-center shadow-sm">
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-3">Content Depth</p>
-            <h2 class="text-5xl font-black tracking-tighter text-zinc-800">{{ number_format($totalSubMateris) }}</h2>
-            <div class="mt-5 flex items-center gap-3">
+        <div class="sm:col-span-1 rounded-3xl bg-white bg-grid-pattern-box relative border border-zinc-200 p-8 flex flex-col justify-center shadow-sm">
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-3 relative z-10">Content Depth</p>
+            <h2 class="text-5xl font-black tracking-tighter text-zinc-800 relative z-10">{{ number_format($totalSubMateris) }}</h2>
+            <div class="mt-5 flex items-center gap-3 relative z-10">
                 <div class="h-2.5 w-2.5 rounded-sm border border-sky-300 animate-pulse bg-sky-400"></div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Total Sub-Materi nodes</p>
             </div>
@@ -159,11 +159,11 @@
     {{-- ═══════════════════════════════════════════════════
          Bottom section : Top Lists Terminal Light Build
     ═══════════════════════════════════════════════════ --}}
-    <div class="grid gap-8 lg:grid-cols-2">
+    <div class="grid gap-8 lg:grid-cols-3">
 
         {{-- Top Materi List --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc] px-6 py-4">
+        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
+            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4">
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-indigo-50 text-indigo-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></span>
                     Heavy Workloads (Top Modules)
@@ -197,8 +197,8 @@
         </div>
 
         {{-- Recent Activity Log --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc] px-6 py-4 flex justify-between items-center">
+        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
+            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-emerald-50 text-emerald-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
                     Activity Log
@@ -241,6 +241,63 @@
                     <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-2">
                         <svg class="h-8 w-8 text-zinc-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         <p class="text-xs font-mono">await content_insert_event</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Issue Reports --}}
+        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
+            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
+                    <span class="flex h-6 w-6 items-center justify-center rounded bg-rose-50 text-rose-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></span>
+                    Issue Reports
+                </h2>
+                <span class="text-[9px] font-mono text-zinc-400 uppercase tracking-widest">{{ $pendingReports }} Pending</span>
+            </div>
+            
+            <div class="p-6 flex-1">
+                @if($recentReports && $recentReports->isNotEmpty())
+                    <ul class="space-y-4">
+                        @foreach($recentReports as $report)
+                            <li class="relative border-l-2 {{ $report->status === 'pending' ? 'border-rose-400' : 'border-emerald-400' }} pl-4 py-1 hover:bg-zinc-50 transition-colors group cursor-default">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            @if($report->status === 'pending')
+                                                <span class="h-1.5 w-1.5 rounded-full bg-rose-400 shrink-0 animate-pulse"></span>
+                                            @else
+                                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                                            @endif
+                                            <p class="truncate text-sm font-semibold text-zinc-700 transition-colors group-hover:text-zinc-900">{{ $report->name }}</p>
+                                        </div>
+                                        <p class="mt-1 text-[10px] font-mono text-zinc-400 uppercase tracking-widest truncate" title="{{ $report->description }}">
+                                            {{ $report->user?->name ?? 'Anonim' }} <span class="text-zinc-300 mx-1">/</span> {{ \Illuminate\Support\Str::limit($report->description, 35) }}
+                                        </p>
+                                    </div>
+                                    <div class="shrink-0 flex flex-col items-end gap-1">
+                                        @if($report->status === 'pending')
+                                            <button onclick="resolveIssueReport({{ $report->id }}, this)" class="group/btn relative overflow-hidden text-[10px] font-bold text-rose-600 bg-rose-50 hover:bg-emerald-50 hover:text-emerald-600 px-2 py-0.5 rounded transition-all duration-300 min-w-[60px] text-center">
+                                                <span class="inline-block transition-opacity duration-300 group-hover/btn:opacity-0">PENDING</span>
+                                                <span class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100 tracking-wider">ACCEPT</span>
+                                            </button>
+                                        @else
+                                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded min-w-[60px] text-center">
+                                                RESOLVED
+                                            </span>
+                                        @endif
+                                        <span class="text-[9px] font-mono text-zinc-400" title="{{ $report->created_at->format('d M Y H:i:s') }}">
+                                            {{ $report->created_at->diffForHumans(['short' => true]) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-2">
+                        <svg class="h-8 w-8 text-zinc-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p class="text-xs font-mono">no_issues_detected</p>
                     </div>
                 @endif
             </div>
@@ -469,7 +526,7 @@
     {{-- ═══════════════════════════════════════════════════
          Bottom / Footer Metric Bar
     ═══════════════════════════════════════════════════ --}}
-    <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm overflow-hidden relative">
+    <div class="rounded-2xl border border-zinc-200 bg-white bg-grid-pattern-box p-6 shadow-sm overflow-hidden relative">
         <div class="absolute inset-0 bg-gradient-to-r from-zinc-50/50 via-white to-zinc-50/50 opacity-90 blur-xl"></div>
         <div class="relative z-10 flex flex-wrap items-center justify-between gap-6">
             <div class="flex items-center gap-4">

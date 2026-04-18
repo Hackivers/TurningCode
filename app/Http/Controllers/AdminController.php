@@ -94,6 +94,7 @@ class AdminController extends Controller
                 'topActiveUsers'     => $topActiveUsers,
                 'totalReports'       => \App\Models\IssueReport::count(),
                 'pendingReports'     => \App\Models\IssueReport::where('status', 'pending')->count(),
+                'recentReports'      => \App\Models\IssueReport::with('user:id,name,avatar')->latest()->limit(5)->get(),
             ]);
         }
 
@@ -166,6 +167,13 @@ class AdminController extends Controller
             ]);
         }
 
+        if ($page === 'profile') {
+            return view('spa.fragments.admin-profile', [
+                'page' => $page,
+                'user' => auth()->user(),
+            ]);
+        }
+
         return view('spa.fragments.admin', ['page' => $page]);
     }
 
@@ -229,5 +237,108 @@ class AdminController extends Controller
         ]);
 
         return response()->json(['message' => 'Laporan telah berhasil dikirim! Tim kami akan meninjaunya.'], 200);
+    }
+
+    /**
+     * API: Mark issue report as resolved/accepted
+     */
+    public function resolveReport(\App\Models\IssueReport $issueReport)
+    {
+        $issueReport->update(['status' => 'resolved']);
+        return response()->json(['message' => 'Laporan berhasil diselesaikan.']);
+    }
+
+    /**
+     * Edit Profile Admin
+     */
+    public function updateProfile(\Illuminate\Http\Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name'       => ['required', 'string', 'max:255'],
+            'email_name' => ['required', 'string', 'max:150', 'regex:/^[a-zA-Z0-9_\-\.]+$/'],
+            'avatar'     => ['nullable', 'file', 'image', 'max:2048', 'mimes:jpeg,png,jpg,webp,gif'],
+        ]);
+
+        // Construct email with const @gmail.com
+        $newEmail = $request->input('email_name') . '@gmail.com';
+
+        // Check if email already exists for another user
+        if (\App\Models\User::where('email', $newEmail)->where('id', '!=', $user->id)->exists()) {
+            return redirect()->route('admin.spa')
+                ->withErrors(['email_name' => 'Email ini sudah digunakan oleh pengguna lain.'])
+                ->withInput()
+                ->with('admin_open_page', 'profile');
+        }
+
+        $user->name = $request->input('name');
+        $user->email = $newEmail;
+
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if not default
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.spa')
+            ->with('success', 'Profile berhasil diperbarui!')
+            ->with('admin_open_page', 'profile');
+    }
+
+    /**
+     * API: Fetch recent notifications for the bell dropdown
+     */
+    public function notifications()
+    {
+        $reports = \App\Models\IssueReport::with('user:id,name,avatar')
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn($r) => [
+                'id'    => 'report-' . $r->id,
+                'type'  => 'report',
+                'icon'  => '🚩',
+                'color' => $r->status === 'pending' ? 'rose' : 'emerald',
+                'title' => $r->name,
+                'body'  => \Illuminate\Support\Str::limit($r->description, 60),
+                'user'  => $r->user?->name ?? 'Unknown',
+                'time'  => $r->created_at->diffForHumans(['short' => true]),
+                'status'=> $r->status,
+            ]);
+
+        $recentSubs = SubMateri::with('materi:id,title')
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn($s) => [
+                'id'    => 'sub-' . $s->id,
+                'type'  => 'submateri',
+                'icon'  => '📄',
+                'color' => $s->is_published ? 'indigo' : 'amber',
+                'title' => $s->title,
+                'body'  => ($s->is_published ? 'Published' : 'Draft') . ' — ' . ($s->materi?->title ?? ''),
+                'user'  => $s->author ?? 'Admin',
+                'time'  => $s->created_at->diffForHumans(['short' => true]),
+                'status'=> $s->is_published ? 'published' : 'draft',
+            ]);
+
+        $items = $reports->merge($recentSubs)
+            ->sortByDesc(fn($i) => $i['time'])
+            ->values()
+            ->take(10);
+
+        $pendingCount = \App\Models\IssueReport::where('status', 'pending')->count();
+        $latestPending = \App\Models\IssueReport::where('status', 'pending')->latest()->first();
+
+        return response()->json([
+            'items'               => $items,
+            'pending_count'       => $pendingCount,
+            'latest_pending_time' => $latestPending ? $latestPending->created_at->timestamp * 1000 : 0,
+        ]);
     }
 }

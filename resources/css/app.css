@@ -9,3 +9,16 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer utilities {
+    .bg-grid-pattern {
+        background-image: radial-gradient(circle, #00000018 1px, transparent 1px);
+        background-size: 16px 16px;
+    }
+    
+    .bg-grid-pattern-box {
+        background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }
+}

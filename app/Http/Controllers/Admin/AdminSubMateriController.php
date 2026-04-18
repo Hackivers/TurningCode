@@ -75,21 +75,25 @@ class AdminSubMateriController extends Controller
         $built = [];
         $hasContent = false;
 
-        // Urutkan sections berdasarkan order
-        $sections = collect($validated['sections'])->sortBy('order')->values();
+        // Iterate using ORIGINAL array keys (to match form field names for file uploads)
+        // then sort the final result by 'order'
+        $rawSections = $request->input('sections', []);
+        $sortedKeys = collect($rawSections)->sortBy('order')->keys();
 
-        foreach ($sections as $i => $row) {
-            $type    = $row['type'];
+        $finalOrder = 0;
+        foreach ($sortedKeys as $origKey) {
+            $row = $rawSections[$origKey];
+            $type    = $row['type'] ?? 'paragraph';
             $content = trim((string) ($row['content'] ?? ''));
 
-            if ($content !== '' || $type === 'divider') {
+            if ($content !== '' || $type === 'divider' || $type === 'image') {
                 $hasContent = true;
             }
 
             $section = [
                 'type'    => $type,
                 'content' => $content,
-                'order'   => (int) ($row['order'] ?? $i),
+                'order'   => $finalOrder++,
             ];
 
             // Data tambahan berdasarkan tipe
@@ -105,9 +109,9 @@ class AdminSubMateriController extends Controller
                 $section['list_type'] = $row['list_type'];
             }
 
-            // Upload gambar section
-            if ($type === 'image' && $request->hasFile("sections.$i.file")) {
-                $section['image_path'] = $request->file("sections.$i.file")
+            // Upload gambar section — use ORIGINAL key to find the file
+            if ($type === 'image' && $request->hasFile("sections.{$origKey}.file")) {
+                $section['image_path'] = $request->file("sections.{$origKey}.file")
                     ->store('sub_materi_images', 'public');
             }
 
@@ -193,10 +197,14 @@ class AdminSubMateriController extends Controller
         $built = [];
         $hasContent = false;
 
-        $sections = collect($validated['sections'])->sortBy('order')->values();
+        // Iterate using ORIGINAL array keys (to match form field names for file uploads)
+        $rawSections = $request->input('sections', []);
+        $sortedKeys = collect($rawSections)->sortBy('order')->keys();
 
-        foreach ($sections as $i => $row) {
-            $type    = $row['type'];
+        $finalOrder = 0;
+        foreach ($sortedKeys as $origKey) {
+            $row = $rawSections[$origKey];
+            $type    = $row['type'] ?? 'paragraph';
             $content = trim((string) ($row['content'] ?? ''));
 
             if ($content !== '' || $type === 'divider' || $type === 'image') {
@@ -206,7 +214,7 @@ class AdminSubMateriController extends Controller
             $section = [
                 'type'    => $type,
                 'content' => $content,
-                'order'   => (int) ($row['order'] ?? $i),
+                'order'   => $finalOrder++,
             ];
 
             if ($type === 'code' && isset($row['language'])) {
@@ -221,10 +229,10 @@ class AdminSubMateriController extends Controller
                 $section['list_type'] = $row['list_type'];
             }
 
-            // Upload gambar section jika ada, jika tidak pakai existing
+            // Upload gambar section — use ORIGINAL key to find the file
             if ($type === 'image') {
-                if ($request->hasFile("sections.$i.file")) {
-                    $section['image_path'] = $request->file("sections.$i.file")->store('sub_materi_images', 'public');
+                if ($request->hasFile("sections.{$origKey}.file")) {
+                    $section['image_path'] = $request->file("sections.{$origKey}.file")->store('sub_materi_images', 'public');
                 } elseif (isset($row['image_path'])) {
                     $section['image_path'] = $row['image_path'];
                 }

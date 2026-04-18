@@ -4,7 +4,7 @@
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-D5QfuFO2.css",
+    "file": "assets/app-bomF210V.css",
     "name": "app",
     "names": [
       "app.css"
@@ -49,7 +49,7 @@
     "isEntry": true
   },
   "resources/js/SPA_admin.js": {
-    "file": "assets/SPA_admin-DMVhDDgE.js",
+    "file": "assets/SPA_admin-CXQbUmA0.js",
     "name": "SPA_admin",
     "src": "resources/js/SPA_admin.js",
     "isEntry": true,
