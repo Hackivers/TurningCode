@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MainMateri;
 use App\Models\Materi;
+use App\Models\Question;
+use App\Models\QuizAttempt;
 use App\Models\SubMateri;
 use App\Models\StudySchedule;
 use App\Models\UserFavorite;
@@ -25,6 +27,7 @@ class UserController extends Controller
         'materi',
         'submateri',
         'detail',
+        'quiz',
     ];
 
     public function spa(): View
@@ -231,9 +234,51 @@ class UserController extends Controller
             $next = $currentIndex < $siblings->count() - 1 ? $siblings[$currentIndex + 1] : null;
 
             return view('spa.fragments.user-detailSubMateriPage', [
-                'subMateri' => $subMateri,
-                'prev'      => $prev,
-                'next'      => $next,
+                'subMateri'    => $subMateri,
+                'prev'         => $prev,
+                'next'         => $next,
+            ]);
+        }
+
+        // ── Quiz (Kuis untuk satu sub-materi) ─────────────────────────
+        if ($page === 'quiz') {
+            $subMateriId = $request->query('submateri_id');
+            $subMateri   = SubMateri::with('materi.mainMateri')->find($subMateriId);
+
+            if (! $subMateri) {
+                abort(404);
+            }
+
+            $siblings = SubMateri::where('materi_id', $subMateri->materi_id)
+                ->where('is_published', true)
+                ->orderBy('id')
+                ->get();
+
+            $currentIndex = $siblings->search(fn($s) => $s->id === $subMateri->id);
+            $prev = $currentIndex > 0 ? $siblings[$currentIndex - 1] : null;
+            $next = $currentIndex < $siblings->count() - 1 ? $siblings[$currentIndex + 1] : null;
+
+            $totalQuestions = Question::where('sub_materi_id', $subMateri->id)->count();
+            // Ambil 30% dari total soal (minimal 1 soal jika ada soal)
+            $takeCount = $totalQuestions > 0 ? max(1, (int) round($totalQuestions * 0.30)) : 0;
+
+            $questions = Question::where('sub_materi_id', $subMateri->id)
+                ->inRandomOrder()
+                ->limit($takeCount)
+                ->get();
+
+            $quizAttempt = Auth::id()
+                ? QuizAttempt::where('user_id', Auth::id())
+                    ->where('sub_materi_id', $subMateri->id)
+                    ->first()
+                : null;
+
+            return view('spa.fragments.user-quizPage', [
+                'subMateri'    => $subMateri,
+                'questions'    => $questions,
+                'quizAttempt'  => $quizAttempt,
+                'prev'         => $prev,
+                'next'         => $next,
             ]);
         }
 
@@ -474,6 +519,154 @@ class UserController extends Controller
             'success'      => true,
             'is_favorited' => $result['is_favorited'],
             'message'      => $result['is_favorited'] ? 'Ditambahkan ke favorit ⭐' : 'Dihapus dari favorit',
+        ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  EXP SYSTEM
+    // ═══════════════════════════════════════════════════════════════
+    
+    public function pingExp(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        if (!$user) {
+            abort(401);
+        }
+
+        $cacheKey = 'exp_ping_user_' . $user->id;
+
+        // Prevent spam - only allow +10 exp if 55 seconds have passed
+        if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Too early for next EXP ping',
+                'exp' => $user->exp,
+            ], 429);
+        }
+
+        $user->exp += 10;
+        $user->save();
+
+        // Lock for 55 seconds (to allow minor latency on 60s intervals)
+        \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addSeconds(55));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'EXP gained!',
+            'exp' => $user->exp,
+        ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  QUIZ SYSTEM
+    // ═══════════════════════════════════════════════════════════════
+
+    public function submitQuiz(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'sub_materi_id' => ['required', 'integer', 'exists:sub_materis,id'],
+            'answers'       => ['required', 'array'],
+        ]);
+
+        $userId      = Auth::id();
+        $subMateriId = $validated['sub_materi_id'];
+        $userAnswers = $validated['answers']; // { "question_id": selected_option_index }
+
+        $totalQuestionsInDb = Question::where('sub_materi_id', $subMateriId)->count();
+
+        if ($totalQuestionsInDb === 0) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada soal'], 400);
+        }
+
+        // Ekspektasi jumlah soal adalah 30% (min 1)
+        $expectedCount = max(1, (int) round($totalQuestionsInDb * 0.30));
+        
+        // Ambil maksimum N id soal dari jawaban user untuk dicegah submit berlebih
+        $submittedIds  = array_slice(array_keys($userAnswers), 0, $expectedCount);
+        
+        $questions = Question::where('sub_materi_id', $subMateriId)
+            ->whereIn('id', $submittedIds)
+            ->get();
+
+        // Hitung skor
+        $correct = 0;
+        $total   = $expectedCount;
+        $results = [];
+
+        foreach ($questions as $q) {
+            $userAnswer   = $userAnswers[$q->id] ?? -1;
+            $isCorrect    = (int) $userAnswer === $q->correct_option;
+            if ($isCorrect) $correct++;
+
+            $results[$q->id] = [
+                'selected'       => (int) $userAnswer,
+                'correct_option' => $q->correct_option,
+                'is_correct'     => $isCorrect,
+            ];
+        }
+
+        $score  = (int) round(($correct / $total) * 100);
+        $passed = $score >= 80;
+
+        // Simpan / update attempt (keep best score)
+        $existing = QuizAttempt::where('user_id', $userId)
+            ->where('sub_materi_id', $subMateriId)
+            ->first();
+
+        $expAwarded  = false;
+        $expGained   = 0;
+
+        if ($existing) {
+            // Update hanya jika skor baru lebih tinggi
+            if ($score > $existing->score) {
+                $existing->update([
+                    'score'   => $score,
+                    'answers' => $results,
+                    'passed'  => $passed,
+                ]);
+            }
+
+            // Beri EXP jika lulus dan belum pernah diberi sebelumnya
+            if ($passed && !$existing->exp_awarded) {
+                $user = Auth::user();
+                $user->exp += 50;
+                $user->save();
+
+                $existing->update(['exp_awarded' => true]);
+                $expAwarded = true;
+                $expGained  = 50;
+            }
+        } else {
+            $attempt = QuizAttempt::create([
+                'user_id'        => $userId,
+                'sub_materi_id'  => $subMateriId,
+                'score'          => $score,
+                'answers'        => $results,
+                'passed'         => $passed,
+                'exp_awarded'    => $passed,
+            ]);
+
+            if ($passed) {
+                $user = Auth::user();
+                $user->exp += 50;
+                $user->save();
+                $expAwarded = true;
+                $expGained  = 50;
+            }
+        }
+
+        return response()->json([
+            'success'     => true,
+            'score'       => $score,
+            'correct'     => $correct,
+            'total'       => $total,
+            'passed'      => $passed,
+            'results'     => $results,
+            'exp_awarded' => $expAwarded,
+            'exp_gained'  => $expGained,
+            'message'     => $passed
+                ? "Selamat! Kamu lulus dengan skor {$score}% 🎉"
+                : "Skor kamu {$score}%. Minimal 80% untuk lulus. Coba lagi! 💪",
         ]);
     }
 }

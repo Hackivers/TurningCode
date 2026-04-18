@@ -2,7 +2,7 @@
     <main class="main-header">
         <div class="wrapper-header">
             <div class="tittle-header">
-                <h2>halo HanzzSama</h2>
+                <h2>halo {{ Auth::user()->name }}</h2>
                 <h5>selamat datang kembali di turning code</h5>
             </div>
             <div class="thumb-header">

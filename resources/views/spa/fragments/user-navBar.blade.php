@@ -11,7 +11,7 @@
                         @else
                             <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
                         @endif
-                        <h5>Guest</h5>
+                        <h5>{{ Auth::user()->name }}</h5>
                     </div>
                 </div>
                 @if (Auth::User()->role == 'user')
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <i class='bx bx-search'></i>
-                    <input type="search" placeholder="Search">
+                    <input type="search" id="global-search-input" placeholder="Search">
                 </div>
             </nav>
         </div>
@@ -142,6 +142,19 @@
         }
     });
 
+    // ── Global Search Handler ─────────────────────────────────────────
+    (function () {
+        const searchInput = document.getElementById('global-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                if (typeof window.__currentSearchHandler === 'function') {
+                    window.__currentSearchHandler(query);
+                }
+            });
+        }
+    })();
+
     // ── Setting Popup ─────────────────────────────────────────────────
     (function () {
         const btnOpen = document.getElementById('btn-setting-popup');
@@ -183,6 +196,7 @@
             document.body.classList.add('dark-mode');
             if (toggleDark) toggleDark.checked = true;
         }
+        document.documentElement.classList.remove('dark-mode-pending');
 
         if (toggleDark) {
             toggleDark.addEventListener('change', () => {
@@ -238,19 +252,19 @@
 
     // ── Notification Popup ──────────────────────────────────────────────
     (function () {
-        const btnOpen   = document.getElementById('btn-notification-popup');
-        const btnClose  = document.getElementById('btn-notif-close');
-        const btnClear  = document.getElementById('btn-notif-clear');
-        const popup     = document.getElementById('notif-popup');
-        const backdrop  = document.getElementById('setting-backdrop');
-        const badge     = document.getElementById('notif-badge');
-        const bodyEl    = document.getElementById('notif-popup-body');
-        const emptyEl   = document.getElementById('notif-empty');
+        const btnOpen = document.getElementById('btn-notification-popup');
+        const btnClose = document.getElementById('btn-notif-close');
+        const btnClear = document.getElementById('btn-notif-clear');
+        const popup = document.getElementById('notif-popup');
+        const backdrop = document.getElementById('setting-backdrop');
+        const badge = document.getElementById('notif-badge');
+        const bodyEl = document.getElementById('notif-popup-body');
+        const emptyEl = document.getElementById('notif-empty');
 
         if (!btnOpen || !popup) return;
 
         const STORAGE_KEY = 'tc_notifications_list';
-        const MAX_NOTIFS  = 50;
+        const MAX_NOTIFS = 50;
 
         // ── Notification Store ──────────────────────────────────────
         function getNotifs() {
@@ -312,10 +326,10 @@
             if (emptyEl) emptyEl.style.display = 'none';
 
             const icons = {
-                start:    'bx bx-book-open',
-                end:      'bx bx-coffee',
+                start: 'bx bx-book-open',
+                end: 'bx bx-coffee',
                 reminder: 'bx bx-bell',
-                system:   'bx bx-info-circle',
+                system: 'bx bx-info-circle',
             };
 
             // Group by date

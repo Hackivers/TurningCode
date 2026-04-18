@@ -120,6 +120,28 @@
             });
         });
     })();
+
+    // ── Search Handler ────────────────────────────────────────────
+    window.__currentSearchHandler = function(query) {
+        document.querySelectorAll('.favorites-item').forEach(card => {
+            const title = card.querySelector('.desc-favorites h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.desc-favorites h5')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (query !== '') {
+            const firstVisible = Array.from(document.querySelectorAll('.favorites-item')).find(c => c.style.display !== 'none');
+            if (firstVisible) {
+                setTimeout(() => {
+                    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 50);
+            }
+        }
+    };
 </script>
 
 <style>

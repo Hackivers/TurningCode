@@ -1,4 +1,4 @@
-<div class="spa-fragment max-w-3xl space-y-6">
+<div class="spa-fragment max-w-3xl mx-auto space-y-6" data-csrf="{{ csrf_token() }}">
     <div>
         <h1 class="text-xl font-semibold text-zinc-900">Materi</h1>
         <p class="mt-1 text-sm text-zinc-600">Pilih main materi, lalu tambah satu atau lebih materi (mis. HTML, CSS, JS di bawah
@@ -77,5 +77,53 @@
                 Simpan semua materi
             </button>
         </form>
+    @endif
+
+    {{-- ── Existing materis list ── --}}
+    @if (isset($materis) && $materis->isNotEmpty())
+        <section class="border-t border-zinc-200 pt-6">
+            <h2 class="text-sm font-semibold text-zinc-800 mb-3">Daftar materi yang ada</h2>
+            <ul class="divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
+                @foreach ($materis as $m)
+                    <li class="px-4 py-3" data-crud-item="materi" data-id="{{ $m->id }}">
+                        <div class="crud-display flex items-start justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                                <p class="font-medium text-zinc-900">{{ $m->title }}</p>
+                                @if ($m->description)
+                                    <p class="mt-0.5 text-sm text-zinc-600 line-clamp-2">{{ $m->description }}</p>
+                                @endif
+                                <p class="mt-1 text-xs text-zinc-400">Main: {{ $m->mainMateri?->title ?? '—' }}</p>
+                            </div>
+                            <div class="flex shrink-0 gap-1">
+                                <button type="button" class="btn-crud-edit rounded border border-zinc-200 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors">✏️ Edit</button>
+                                <button type="button" class="btn-crud-delete rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50 transition-colors">🗑️ Hapus</button>
+                            </div>
+                        </div>
+                        <div class="crud-edit hidden mt-3 space-y-3 rounded-lg border border-indigo-200 bg-indigo-50/30 p-4">
+                            <div>
+                                <label class="text-xs text-zinc-600">Judul</label>
+                                <input type="text" class="edit-title mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" value="{{ $m->title }}">
+                            </div>
+                            <div>
+                                <label class="text-xs text-zinc-600">Deskripsi</label>
+                                <textarea class="edit-description mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" rows="2">{{ $m->description }}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs text-zinc-600">Main Materi</label>
+                                <select class="edit-main-materi-id mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm">
+                                    @foreach ($mainMateris as $mm)
+                                        <option value="{{ $mm->id }}" {{ $m->main_materi_id == $mm->id ? 'selected' : '' }}>{{ $mm->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-crud-save rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors">💾 Simpan</button>
+                                <button type="button" class="btn-crud-cancel rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors">Batal</button>
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
     @endif
 </div>

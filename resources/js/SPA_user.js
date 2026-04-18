@@ -2,7 +2,12 @@ import './bootstrap';
 
 const body = document.body;
 const base = body.dataset.spaBase;
-const initial = body.dataset.spaInitial || 'dashboard';
+const urlParams = new URLSearchParams(window.location.search);
+const initial = urlParams.get('page') || body.dataset.spaInitial || 'dashboard';
+const initialParams = {};
+urlParams.forEach((val, key) => {
+    if (key !== 'page') initialParams[key] = val;
+});
 const el = document.getElementById('spa-content');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,7 +152,7 @@ function rehydrateScripts(container) {
     });
 }
 
-async function loadPage(page, params = {}) {
+async function loadPage(page, params = {}, pushState = true) {
     if (!base || !el) return;
 
     let url = `${base.replace(/\/$/, '')}/${encodeURIComponent(page)}`;
@@ -167,14 +172,33 @@ async function loadPage(page, params = {}) {
             return;
         }
 
+        const searchInput = document.getElementById('global-search-input');
+        if (searchInput) searchInput.value = '';
+        window.__currentSearchHandler = null;
+
         el.innerHTML = await res.text();
         rehydrateScripts(el);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
         updateNavBottom(page);
 
+        const navBar = document.getElementById('navBar');
+        if (navBar) {
+            if (page === 'account') {
+                navBar.style.display = 'none';
+            } else {
+                navBar.style.display = '';
+            }
+        }
+
         // ── Inisialisasi slider setelah konten di-inject ──────────────
         initMaterialSlider();
+
+        // ── Push State ke URL (agar tidak reset saat refresh) ────────────
+        if (pushState) {
+            const qsObj = new URLSearchParams({ page, ...params });
+            window.history.pushState({ page, params }, '', `?${qsObj.toString()}`);
+        }
 
     } catch (err) {
         // Network error — store failed page for retry
@@ -350,7 +374,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Load halaman (dari localhost tetap jalan, overlay di atas menutupi jika offline)
-    loadPage(initial);
+    loadPage(initial, initialParams, false);
+
+    // Handle browser Back/Forward (popstate)
+    window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.page) {
+            loadPage(e.state.page, e.state.params, false);
+        } else {
+            const popParams = new URLSearchParams(window.location.search);
+            const popPage = popParams.get('page') || body.dataset.spaInitial || 'dashboard';
+            const extraParams = {};
+            popParams.forEach((val, key) => {
+                if (key !== 'page') extraParams[key] = val;
+            });
+            loadPage(popPage, extraParams, false);
+        }
+    });
 
     document.body.addEventListener('click', e => {
         // [data-spa-page] — sidebar / bottom nav label

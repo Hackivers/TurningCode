@@ -1,4 +1,4 @@
-<div class="spa-fragment max-w-3xl space-y-8">
+<div class="spa-fragment max-w-3xl mx-auto space-y-8" data-csrf="{{ csrf_token() }}">
     <div>
         <h1 class="text-xl font-semibold text-zinc-900">Main materi</h1>
         <p class="mt-1 text-sm text-zinc-600">Kategori besar (contoh: Web Dev). Isi judul dan deskripsi.</p>
@@ -39,12 +39,36 @@
             <h2 class="text-sm font-semibold text-zinc-800">Daftar main materi</h2>
             <ul class="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
                 @foreach ($mainMateris as $mm)
-                    <li class="px-4 py-3">
-                        <p class="font-medium text-zinc-900">{{ $mm->title }}</p>
-                        @if ($mm->description)
-                            <p class="mt-1 text-sm text-zinc-600 line-clamp-2">{{ $mm->description }}</p>
-                        @endif
-                        <p class="mt-1 text-xs text-zinc-400">{{ $mm->materis_count }} materi</p>
+                    <li class="px-4 py-3" data-crud-item="main-materi" data-id="{{ $mm->id }}">
+                        {{-- Display mode --}}
+                        <div class="crud-display flex items-start justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                                <p class="font-medium text-zinc-900">{{ $mm->title }}</p>
+                                @if ($mm->description)
+                                    <p class="mt-1 text-sm text-zinc-600 line-clamp-2">{{ $mm->description }}</p>
+                                @endif
+                                <p class="mt-1 text-xs text-zinc-400">{{ $mm->materis_count }} materi</p>
+                            </div>
+                            <div class="flex shrink-0 gap-1">
+                                <button type="button" class="btn-crud-edit rounded border border-zinc-200 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors">✏️ Edit</button>
+                                <button type="button" class="btn-crud-delete rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50 transition-colors">🗑️ Hapus</button>
+                            </div>
+                        </div>
+                        {{-- Edit mode (hidden by default) --}}
+                        <div class="crud-edit hidden mt-3 space-y-3 rounded-lg border border-indigo-200 bg-indigo-50/30 p-4">
+                            <div>
+                                <label class="text-xs text-zinc-600">Judul</label>
+                                <input type="text" class="edit-title mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" value="{{ $mm->title }}">
+                            </div>
+                            <div>
+                                <label class="text-xs text-zinc-600">Deskripsi</label>
+                                <textarea class="edit-description mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" rows="3">{{ $mm->description }}</textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-crud-save rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors">💾 Simpan</button>
+                                <button type="button" class="btn-crud-cancel rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors">Batal</button>
+                            </div>
+                        </div>
                     </li>
                 @endforeach
             </ul>

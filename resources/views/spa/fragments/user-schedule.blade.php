@@ -113,8 +113,7 @@
             {{-- Monthly: tanggal --}}
             <div class="form-group type-field" id="field-monthly" style="display:none;">
                 <label>Tanggal</label>
-                <input type="number" id="f-dom" name="day_of_month" min="1" max="31"
-                    placeholder="1-31">
+                <input type="number" id="f-dom" name="day_of_month" min="1" max="31" placeholder="1-31">
             </div>
 
             {{-- Custom: tanggal spesifik --}}
@@ -166,7 +165,7 @@
 </div>
 
 <script>
-    (function() {
+    (function () {
         const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
         const modal = document.getElementById('schedule-modal');
         const form = document.getElementById('schedule-form');
@@ -244,7 +243,7 @@
             // Type-specific
             if (currentType === 'weekly') {
                 body.days_of_week = Array.from(form.querySelectorAll(
-                        'input[name="days_of_week[]"]:checked'))
+                    'input[name="days_of_week[]"]:checked'))
                     .map(c => parseInt(c.value));
             }
             if (currentType === 'monthly') {
@@ -331,7 +330,7 @@
                         }
                         loadPage('schedule');
                     }
-                } catch {}
+                } catch { }
             });
         });
 
@@ -364,7 +363,7 @@
                         }
                         loadPage('schedule');
                     }
-                } catch {}
+                } catch { }
             });
         });
 
@@ -417,436 +416,29 @@
             });
         });
     })();
+
+    // ── Search Handler ────────────────────────────────────────────
+    window.__currentSearchHandler = function(query) {
+        document.querySelectorAll('.modern-sched-card').forEach(card => {
+            const title = card.querySelector('.msc-header h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.msc-body')?.textContent.toLowerCase() || '';
+            const type = card.querySelector('.msc-badge')?.textContent.toLowerCase() || '';
+            const label = card.querySelector('.msc-detail')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query) || type.includes(query) || label.includes(query)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (query !== '') {
+            const firstVisible = Array.from(document.querySelectorAll('.modern-sched-card')).find(c => c.style.display !== 'none');
+            if (firstVisible) {
+                // Gunakan timeout kecil agar DOM layout update sebelum scroll
+                setTimeout(() => {
+                    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 50);
+            }
+        }
+    };
 </script>
-
-<style>
-    .container-schedule {
-        display: flex;
-        justify-content: center;
-        margin-top: 1.5em;
-        padding-bottom: 6em;
-    }
-
-    .main-schedule {
-        width: 100%;
-        max-width: 79em;
-        margin: 0 10px;
-    }
-
-    .wrapper-schedule {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-
-    /* Header */
-    .schedule-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .schedule-header h4 {
-        font-weight: 550;
-        font-size: 16px;
-        color: #E6E0E9;
-        text-transform: capitalize;
-    }
-
-    .schedule-header h5 {
-        margin-top: 6px;
-        font-size: 12px;
-        color: #8a898a;
-    }
-
-    .btn-add-schedule {
-        position: fixed;
-        bottom: 6.5em;
-        right: 1.2em;
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: none;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        color: #fff;
-        font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45);
-        z-index: 50;
-    }
-
-    .btn-add-schedule:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 28px rgba(99, 102, 241, 0.55);
-    }
-
-    .btn-add-schedule:active {
-        transform: scale(0.95);
-    }
-
-    /* Section */
-    .schedule-section-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 10px;
-    }
-
-    .schedule-section-title i {
-        color: #75bbed;
-        font-size: 16px;
-    }
-
-    .schedule-section-title h5 {
-        color: #8a898a;
-        font-size: 13px;
-        text-transform: capitalize;
-    }
-
-    .badge-count {
-        background: #222430;
-        color: #75bbed;
-        padding: 1px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-    }
-
-    /* List */
-    .schedule-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .schedule-empty {
-        text-align: center;
-        padding: 20px;
-        color: #555;
-        font-size: 13px;
-    }
-
-    /* Card */
-    .sched-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        background: #191825;
-        border-radius: 16px;
-        border: 1px solid #1f1e2e;
-        transition: all 0.2s ease;
-    }
-
-    .sched-card:hover {
-        border-color: #2a2c3a;
-    }
-
-    .sched-card.inactive {
-        opacity: 0.45;
-    }
-
-    .sched-color {
-        width: 20px;
-        height: 20px;
-        z-index: 3;
-        margin: 10px;
-        position: absolute;
-        border-radius: 50%;
-        flex-shrink: 0;
-        border: 1px solid #1f1e2e;
-    }
-
-    .sched-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .sched-info h4 {
-        color: #E6E0E9;
-        font-weight: 500;
-        font-size: 14px;
-        text-transform: capitalize;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .sched-info h6 {
-        color: #8a898a;
-        font-size: 11px;
-        margin-top: 3px;
-    }
-
-    .sched-time {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
-    .sched-time h5 {
-        color: #E6E0E9;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .sched-time h6 {
-        color: #555;
-        font-size: 10px;
-        margin-top: 2px;
-    }
-
-    .sched-actions {
-        display: flex;
-        gap: 4px;
-        flex-shrink: 0;
-    }
-
-    .sched-actions button {
-        width: 30px;
-        height: 30px;
-        border-radius: 8px;
-        border: 1px solid #2a2c3a;
-        background: transparent;
-        color: #8a898a;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        transition: all 0.15s;
-    }
-
-    .sched-actions button:hover {
-        background: #222430;
-        color: #E6E0E9;
-    }
-
-    .sched-actions .btn-delete-schedule:hover {
-        color: #f87171;
-        border-color: #991b1b;
-    }
-
-    /* ── Modal ─────────────────────────────── */
-    .schedule-modal-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-    }
-
-    .schedule-modal {
-        background: #191825;
-        border-radius: 24px 24px 0 0;
-        width: 100%;
-        max-width: 500px;
-        max-height: 85vh;
-        overflow-y: auto;
-        border: 1px solid #1f1e2e;
-        border-bottom: none;
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 18px 20px 0;
-    }
-
-    .modal-header h4 {
-        color: #E6E0E9;
-        font-weight: 600;
-        font-size: 16px;
-    }
-
-    .btn-close-modal {
-        background: none;
-        border: none;
-        color: #8a898a;
-        font-size: 22px;
-        cursor: pointer;
-    }
-
-    .modal-body {
-        padding: 16px 20px 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
-
-    .modal-body .form-group label {
-        color: #8a898a;
-        font-size: 12px;
-        margin-bottom: 6px;
-        display: block;
-        text-transform: capitalize;
-    }
-
-    .modal-body input[type="text"],
-    .modal-body input[type="number"],
-    .modal-body input[type="date"],
-    .modal-body input[type="time"],
-    .modal-body textarea {
-        width: 100%;
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: 1px solid #2a2c3a;
-        background: #13121c;
-        color: #E6E0E9;
-        font-size: 14px;
-        outline: none;
-        box-sizing: border-box;
-    }
-
-    .modal-body input:focus,
-    .modal-body textarea:focus {
-        border-color: #6366f1;
-    }
-
-    .modal-body textarea {
-        resize: vertical;
-        min-height: 50px;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 10px;
-    }
-
-    .form-row .form-group {
-        flex: 1;
-    }
-
-    /* Type tabs */
-    .type-tabs {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .type-tab {
-        padding: 7px 16px;
-        border-radius: 20px;
-        border: 1px solid #2a2c3a;
-        background: transparent;
-        color: #8a898a;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .type-tab.active {
-        background: #6366f1;
-        border-color: #6366f1;
-        color: #fff;
-    }
-
-    /* Day picker */
-    .day-picker {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .day-chip {
-        cursor: pointer;
-    }
-
-    .day-chip input {
-        display: none;
-    }
-
-    .day-chip span {
-        display: block;
-        padding: 6px 12px;
-        border-radius: 10px;
-        border: 1px solid #2a2c3a;
-        color: #8a898a;
-        font-size: 13px;
-        transition: all 0.15s;
-    }
-
-    .day-chip input:checked+span {
-        background: #6366f1;
-        border-color: #6366f1;
-        color: #fff;
-    }
-
-    /* Color picker */
-    .color-picker {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .color-chip {
-        cursor: pointer;
-    }
-
-    .color-chip input {
-        display: none;
-    }
-
-    .color-chip span {
-        display: block;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--c);
-        border: 2px solid transparent;
-        transition: all 0.15s;
-    }
-
-    .color-chip.active span {
-        border-color: #fff;
-        box-shadow: 0 0 0 3px var(--c);
-    }
-
-    /* Submit */
-    .btn-submit-schedule {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px;
-        border-radius: 14px;
-        border: none;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        color: #fff;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .btn-submit-schedule:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
-    }
-
-    .btn-submit-schedule:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* Message */
-    .form-message {
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-size: 13px;
-        white-space: pre-line;
-    }
-
-    .form-message.error {
-        background: #2d1215;
-        border: 1px solid #991b1b;
-        color: #f87171;
-    }
-</style>

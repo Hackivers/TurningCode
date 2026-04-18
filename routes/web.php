@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\AdminMateriController;
+use App\Http\Controllers\Admin\AdminQuestionController;
 use App\Http\Controllers\Admin\AdminSubMateriController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
@@ -27,15 +28,7 @@ Route::middleware('auth')->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
 
-        $user = $request->user();
-
-        return $user->role === 'admin'
-            ? redirect()->route('admin.spa')->with('success', 'Email berhasil dikonfirmasi.')
-            : redirect()->route('user.spa')->with('success', 'Email berhasil dikonfirmasi.');
-    })->middleware(['signed'])->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
         try {
@@ -50,11 +43,35 @@ Route::middleware('auth')->group(function () {
     })->middleware('throttle:6,1')->name('verification.send');
 });
 
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    // Cari user berdasarkan ID
+    $user = \App\Models\User::findOrFail($id);
+
+    // Verifikasi hash email
+    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        abort(403, 'Tautan verifikasi tidak valid atau sudah kedaluwarsa.');
+    }
+
+    // Jika belum diverifikasi, tandai sebagai diverifikasi
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new \Illuminate\Auth\Events\Verified($user));
+    }
+
+    // Loginkan user secara otomatis setelah verifikasi sukses
+    \Illuminate\Support\Facades\Auth::login($user);
+
+    // Arahkan ke dashboard yang sesuai
+    return $user->role === 'admin'
+        ? redirect()->route('admin.spa')->with('success', 'Email berhasil dikonfirmasi.')
+        : redirect()->route('user.spa')->with('success', 'Email berhasil dikonfirmasi.');
+})->middleware(['signed'])->name('verification.verify');
+
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/app', [UserController::class, 'spa'])->name('user.spa');
     Route::get('/app/page/{page}', [UserController::class, 'page'])->name('user.page');
     Route::post('/app/profile/update', [UserController::class, 'updateProfile'])->name('user.profile.update');
-
+    Route::post('/app/api/exp/ping', [UserController::class, 'pingExp'])->name('user.exp.ping');
     // Schedule CRUD (JSON API)
     Route::post('/app/schedule', [UserController::class, 'storeSchedule'])->name('user.schedule.store');
     Route::put('/app/schedule/{schedule}', [UserController::class, 'updateSchedule'])->name('user.schedule.update');
@@ -64,17 +81,45 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 
     // Favorites
     Route::post('/app/favorite/toggle', [UserController::class, 'toggleFavorite'])->name('user.favorite.toggle');
+
+    // Quiz
+    Route::post('/app/api/quiz/submit', [UserController::class, 'submitQuiz'])->name('user.quiz.submit');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'spa'])->name('admin.spa');
     Route::get('/admin/page/{page}', [AdminController::class, 'page'])->name('admin.page');
+
+    // Main Materi
     Route::post('/admin/main-materi', [AdminMateriController::class, 'storeMainMateri'])->name('admin.main-materi.store');
+    Route::put('/admin/main-materi/{mainMateri}', [AdminMateriController::class, 'updateMainMateri'])->name('admin.main-materi.update');
+    Route::delete('/admin/main-materi/{mainMateri}', [AdminMateriController::class, 'deleteMainMateri'])->name('admin.main-materi.delete');
+
+    // Materi
     Route::post('/admin/materi', [AdminMateriController::class, 'storeMateri'])->name('admin.materi.store');
+    Route::put('/admin/materi/{materi}', [AdminMateriController::class, 'updateMateri'])->name('admin.materi.update');
+    Route::delete('/admin/materi/{materi}', [AdminMateriController::class, 'deleteMateri'])->name('admin.materi.delete');
+
+    // Sub Materi
     Route::get('/admin/api/main/{mainMateri}/materis', [AdminSubMateriController::class, 'materisByMain'])->name('admin.api.materis-by-main');
     Route::post('/admin/sub-materi', [AdminSubMateriController::class, 'store'])->name('admin.sub-materi.store');
+    Route::post('/admin/sub-materi/{subMateri}/full-update', [AdminSubMateriController::class, 'updateFull'])->name('admin.sub-materi.updateFull');
+    Route::put('/admin/sub-materi/{subMateri}', [AdminSubMateriController::class, 'update'])->name('admin.sub-materi.update');
+    Route::delete('/admin/sub-materi/{subMateri}', [AdminSubMateriController::class, 'destroy'])->name('admin.sub-materi.delete');
+
+    // Questions
+    Route::get('/admin/api/materi/{materi}/sub-materis', [AdminQuestionController::class, 'subMaterisByMateri'])->name('admin.api.sub-materis-by-materi');
+    Route::post('/admin/question', [AdminQuestionController::class, 'store'])->name('admin.question.store');
+    Route::put('/admin/question/{question}', [AdminQuestionController::class, 'update'])->name('admin.question.update');
+    Route::delete('/admin/question/{question}', [AdminQuestionController::class, 'destroy'])->name('admin.question.delete');
 
     // Admin global chat
     Route::get('/admin/api/chat', [AdminChatController::class, 'index'])->name('admin.chat.index');
     Route::post('/admin/api/chat', [AdminChatController::class, 'store'])->name('admin.chat.store');
+
+    // Admin Web Terminal (CMD)
+    Route::post('/admin/api/cmd', [AdminController::class, 'runCommand'])->name('admin.cmd');
+
+    // Admin Issue Report
+    Route::post('/admin/api/report', [AdminController::class, 'storeReport'])->name('admin.report.store');
 });

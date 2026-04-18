@@ -1,3 +1,6 @@
+{{-- ═══════════════════════════════════════════════════════════════
+PROFILE HEADER CARD
+═══════════════════════════════════════════════════════════════ --}}
 <div class="container container-account">
     <main class="main-account">
         <div class="wrapper-account">
@@ -5,41 +8,91 @@
                 <div>
                     <div class="account-profile-emblem">
                         <div>
-                            <img src="{{ asset('assets/ico/emblem005Trans.png') }}" alt="">
+                            <img src="{{ asset('assets/ico/' . $user->emblem_image) }}" alt="">
                             <h6>score</h6>
-                            <h4>1274</h4>
+                            <h4>{{ $user->exp ?? 0 }}</h4>
                         </div>
                     </div>
                     <div class="account-profile-name">
                         <div class="emblem-name">
-                            <h4>{{ $user->name }}</h4>
-                            <img src="{{ asset('assets/ico/emblem005Trans.png') }}" alt="">
+                            <h4 id="display-name">{{ $user->name }}</h4>
+                            <img src="{{ asset('assets/ico/' . $user->emblem_image) }}" alt="">
                         </div>
-                        <h5>{{ $user->email }}</h5>
+                        <h5 id="display-email">{{ $user->email }}</h5>
                     </div>
                     <div class="account-profile-btn">
                         <div class="account-profile-role">
                             <span>
-                                <h5>{{ $user->role }}</h5>
+                                <h5>{{ $user->rank_name }}</h5>
                             </span>
                             <span>
-                                <h5>day 12</h5>
+                                <h5>{{ (int) $user->created_at->diffInDays(now()) }} hari</h5>
                             </span>
                         </div>
-                        <button>edit profile</button>
+                        <button id="btn-open-edit-profile">edit profile</button>
                     </div>
                 </div>
             </div>
             <div class="account-profile-img">
                 @if($user->avatar)
-                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img">
+                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img"
+                        id="profile-cover-img">
                 @else
-                    <img src="{{ asset('assets/ico/devlab.jpg') }}" alt="Avatar" class="avatar-img">
+                    <img src="{{ asset('assets/ico/devlab.jpg') }}" alt="Avatar" class="avatar-img" id="profile-cover-img">
                 @endif
             </div>
         </div>
     </main>
 </div>
+
+{{-- ═══════════════════════════════════════════════════════════════
+STATS SECTION
+═══════════════════════════════════════════════════════════════ --}}
+<div class="container container-edit-profile">
+    <div class="edit-profile-section">
+        <div>
+            <div class="ep-section-title">
+                <i class='bx bx-bar-chart-alt-2'></i>
+                <h4>Statistik</h4>
+            </div>
+            <div class="ep-stats-grid">
+                <div class="ep-stat-card">
+                    <i class='bx bx-time-five'></i>
+                    <div>
+                        <h5>Bergabung</h5>
+                        <h4>{{ $user->created_at->translatedFormat('d M Y') }}</h4>
+                    </div>
+                </div>
+                <div class="ep-stat-card">
+                    <i class='bx bx-envelope'></i>
+                    <div>
+                        <h5>Email terverifikasi</h5>
+                        <h4>{{ $user->email_verified_at ? $user->email_verified_at->translatedFormat('d M Y') : 'Belum' }}
+                        </h4>
+                    </div>
+                </div>
+                <div class="ep-stat-card">
+                    <i class='bx bx-meteor'></i>
+                    <div>
+                        <h5>Total EXP</h5>
+                        <h4>{{ $user->exp ?? 0 }} EXP</h4>
+                    </div>
+                </div>
+                <div class="ep-stat-card">
+                    <i class='bx bx-trophy'></i>
+                    <div>
+                        <h5>Rank</h5>
+                        <h4>{{ $user->rank_name }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ═══════════════════════════════════════════════════════════════
+LOGOUT
+═══════════════════════════════════════════════════════════════ --}}
 <form class="wrapper-account-logout" action="{{ route('logout') }}" method="POST">
     @csrf
     <button type="submit" class="btn-logout">
@@ -48,365 +101,165 @@
     </button>
 </form>
 
-<!-- <div class="container-account">
-    <main class="main-account">
-        <div class="wrapper-account">
+{{-- ═══════════════════════════════════════════════════════════════
+EDIT PROFILE MODAL (Slide-up)
+═══════════════════════════════════════════════════════════════ --}}
+<div class="ep-modal-backdrop" id="ep-modal-backdrop"></div>
+<div class="ep-modal" id="ep-modal">
+    <div class="ep-modal-handle" id="ep-modal-handle"><span></span></div>
 
-            {{-- Profile Header --}}
-            <div class="account-header">
-                <div class="account-avatar">
-                    <div class="avatar-circle" id="header-avatar">
-                        @if($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-img">
-                        @else
+    <div class="ep-modal-header">
+        <h4>Edit Profile</h4>
+        <button class="ep-modal-close" id="ep-modal-close"><i class='bx bx-x'></i></button>
+    </div>
+
+    <div class="ep-modal-body">
+        {{-- Avatar Section --}}
+        <div class="ep-avatar-section">
+            <div class="ep-avatar-wrap">
+                <div class="ep-avatar" id="ep-avatar-preview">
+                    @if($user->avatar)
+                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" id="ep-avatar-img">
+                    @else
+                        <div class="ep-avatar-placeholder">
+                            <i class='bx bx-user'></i>
                             <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
-                <div class="account-info">
-                    <h3 id="display-name">{{ $user->name }}</h3>
-                    <h6>{{ $user->email }}</h6>
-                    <span class="account-badge">{{ $user->role }}</span>
-                </div>
-            </div>
-
-            {{-- Edit Profile Photo --}}
-            <div class="account-section">
-                <div class="section-title">
+                <div class="ep-avatar-overlay" id="ep-avatar-overlay">
                     <i class='bx bx-camera'></i>
-                    <h4>foto profil</h4>
-                </div>
-
-                <div class="avatar-editor">
-                    <div class="avatar-preview-wrap">
-                        <div class="avatar-preview" id="avatar-preview">
-                            @if($user->avatar)
-                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" id="preview-img">
-                            @else
-                                <div class="avatar-placeholder" id="avatar-placeholder">
-                                    <i class='bx bx-user'></i>
-                                    <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="avatar-overlay" id="avatar-overlay" onclick="document.getElementById('input-avatar').click()">
-                            <i class='bx bx-camera'></i>
-                            <span>Ganti Foto</span>
-                        </div>
-                    </div>
-
-                    <div class="avatar-actions">
-                        <input type="file" id="input-avatar" accept="image/jpeg,image/png,image/webp" hidden>
-                        <button type="button" class="btn-upload-avatar" id="btn-upload-avatar" onclick="document.getElementById('input-avatar').click()">
-                            <i class='bx bx-upload'></i> Pilih Foto
-                        </button>
-                        @if($user->avatar)
-                        <button type="button" class="btn-remove-avatar" id="btn-remove-avatar">
-                            <i class='bx bx-trash'></i> Hapus Foto
-                        </button>
-                        @endif
-                        <p class="avatar-hint">Format: JPG, PNG, WEBP · Maks. 2MB</p>
-                    </div>
                 </div>
             </div>
-
-            {{-- Edit Profile Form --}}
-            <div class="account-section">
-                <div class="section-title">
-                    <i class='bx bx-edit-alt'></i>
-                    <h4>edit profile</h4>
-                </div>
-
-                <form id="form-profile" class="account-form">
-                    <div class="form-group">
-                        <label for="input-name">Nama</label>
-                        <input type="text" id="input-name" name="name"
-                               value="{{ $user->name }}" required
-                               placeholder="Masukkan nama kamu">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-email">Email</label>
-                        <input type="email" id="input-email" name="email"
-                               value="{{ $user->email }}" required
-                               placeholder="Masukkan email kamu">
-                    </div>
-
-                    <div class="form-divider">
-                        <span>ganti password (opsional)</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-password">Password Baru</label>
-                        <div class="input-password-wrap">
-                            <input type="password" id="input-password" name="password"
-                                   placeholder="Kosongkan jika tidak ingin ganti" minlength="8">
-                            <button type="button" class="btn-toggle-pw" onclick="togglePw('input-password', this)">
-                                <i class='bx bx-hide'></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-password-confirm">Konfirmasi Password</label>
-                        <div class="input-password-wrap">
-                            <input type="password" id="input-password-confirm" name="password_confirmation"
-                                   placeholder="Ulangi password baru" minlength="8">
-                            <button type="button" class="btn-toggle-pw" onclick="togglePw('input-password-confirm', this)">
-                                <i class='bx bx-hide'></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="form-message" class="form-message" style="display:none;"></div>
-
-                    <button type="submit" class="btn-save" id="btn-save">
-                        <i class='bx bx-check'></i> Simpan Perubahan
+            <div class="ep-avatar-actions">
+                <input type="file" id="ep-input-avatar" accept="image/jpeg,image/png,image/webp" hidden>
+                <button type="button" class="ep-btn-upload" id="ep-btn-upload">
+                    <i class='bx bx-upload'></i> Ganti Foto
+                </button>
+                @if($user->avatar)
+                    <button type="button" class="ep-btn-remove" id="ep-btn-remove">
+                        <i class='bx bx-trash'></i> Hapus
                     </button>
-                </form>
+                @endif
+                <p class="ep-avatar-hint">JPG, PNG, WEBP · Maks. 2MB</p>
             </div>
-
-            {{-- Stats --}}
-            <div class="account-section">
-                <div class="section-title">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <h4>statistik</h4>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <i class='bx bx-time-five'></i>
-                        <div>
-                            <h5>Bergabung</h5>
-                            <h4>{{ $user->created_at->translatedFormat('d M Y') }}</h4>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class='bx bx-envelope'></i>
-                        <div>
-                            <h5>Email terverifikasi</h5>
-                            <h4>{{ $user->email_verified_at ? $user->email_verified_at->translatedFormat('d M Y') : 'Belum' }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Logout --}}
-            <div class="account-section">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-logout">
-                        <i class='bx bx-log-out'></i> Keluar dari akun
-                    </button>
-                </form>
-            </div>
-
         </div>
-    </main>
-</div> -->
+        <div id="ep-avatar-toast"></div>
 
+        {{-- Divider --}}
+        <div class="ep-divider"></div>
+
+        {{-- Profile Form --}}
+        <form id="ep-form-profile" class="ep-form">
+            <div class="ep-form-group">
+                <label for="ep-input-name">Nama</label>
+                <div class="ep-input-wrap">
+                    <i class='bx bx-user'></i>
+                    <input type="text" id="ep-input-name" name="name" value="{{ $user->name }}" required
+                        placeholder="Masukkan nama kamu">
+                </div>
+            </div>
+
+            <div class="ep-form-group">
+                <label for="ep-input-email">Email</label>
+                <div class="ep-input-wrap">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="ep-input-email" name="email" value="{{ $user->email }}" required
+                        placeholder="Masukkan email kamu">
+                </div>
+            </div>
+
+            <div class="ep-form-divider">
+                <span>Ganti Password (Opsional)</span>
+            </div>
+
+            <div class="ep-form-group">
+                <label for="ep-input-password">Password Baru</label>
+                <div class="ep-input-wrap ep-input-password">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="ep-input-password" name="password"
+                        placeholder="Kosongkan jika tidak ingin ganti" minlength="8">
+                    <button type="button" class="ep-btn-toggle-pw" data-target="ep-input-password">
+                        <i class='bx bx-hide'></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ep-form-group">
+                <label for="ep-input-pw-confirm">Konfirmasi Password</label>
+                <div class="ep-input-wrap ep-input-password">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="ep-input-pw-confirm" name="password_confirmation"
+                        placeholder="Ulangi password baru" minlength="8">
+                    <button type="button" class="ep-btn-toggle-pw" data-target="ep-input-pw-confirm">
+                        <i class='bx bx-hide'></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="ep-form-message" class="ep-form-message" style="display:none;"></div>
+
+            <button type="submit" class="ep-btn-save" id="ep-btn-save">
+                <i class='bx bx-check'></i> Simpan Perubahan
+            </button>
+        </form>
+    </div>
+</div>
+
+{{-- ═══════════════════════════════════════════════════════════════
+JAVASCRIPT
+═══════════════════════════════════════════════════════════════ --}}
 <script>
-    // Toggle password visibility
-    function togglePw(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const icon = btn.querySelector('i');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.className = 'bx bx-show';
-        } else {
-            input.type = 'password';
-            icon.className = 'bx bx-hide';
-        }
-    }
-
-    // ── Avatar Upload ─────────────────────────────────────────────
     (function () {
-        const inputAvatar = document.getElementById('input-avatar');
-        const avatarPreview = document.getElementById('avatar-preview');
-        const avatarOverlay = document.getElementById('avatar-overlay');
-        const btnRemove = document.getElementById('btn-remove-avatar');
-        const headerAvatar = document.getElementById('header-avatar');
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        const profileUpdateUrl = '{{ route("user.profile.update") }}';
 
-        let pendingAvatarFile = null;
-        let pendingRemove = false;
+        // ── Modal Open / Close ──────────────────────────────────────
+        const modal = document.getElementById('ep-modal');
+        const backdrop = document.getElementById('ep-modal-backdrop');
+        const btnOpen = document.getElementById('btn-open-edit-profile');
+        const btnClose = document.getElementById('ep-modal-close');
+        const handle = document.getElementById('ep-modal-handle');
 
-        if (inputAvatar) {
-            inputAvatar.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+        function openModal() {
+            modal.classList.add('active');
+            backdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            modal.classList.remove('active');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-                // Validate client-side
-                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    showAvatarToast('Format harus JPG, PNG, atau WEBP', 'error');
-                    return;
+        if (btnOpen) btnOpen.addEventListener('click', openModal);
+        if (btnClose) btnClose.addEventListener('click', closeModal);
+        if (backdrop) backdrop.addEventListener('click', closeModal);
+        if (handle) handle.addEventListener('click', closeModal);
+
+        // ── Password Toggle ─────────────────────────────────────────
+        document.querySelectorAll('.ep-btn-toggle-pw').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'bx bx-show';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'bx bx-hide';
                 }
-                if (file.size > 2 * 1024 * 1024) {
-                    showAvatarToast('Ukuran maksimal 2MB', 'error');
-                    return;
-                }
-
-                pendingAvatarFile = file;
-                pendingRemove = false;
-
-                // Preview
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    avatarPreview.innerHTML = `<img src="${ev.target.result}" alt="Preview" id="preview-img">`;
-                    // Also update header avatar
-                    headerAvatar.innerHTML = `<img src="${ev.target.result}" alt="Avatar" class="avatar-img">`;
-                    // Show remove button
-                    if (!btnRemove) {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'btn-remove-avatar';
-                        btn.id = 'btn-remove-avatar';
-                        btn.innerHTML = "<i class='bx bx-trash'></i> Hapus Foto";
-                        btn.addEventListener('click', handleRemoveAvatar);
-                        document.querySelector('.avatar-actions').insertBefore(btn, document.querySelector('.avatar-hint'));
-                    }
-                };
-                reader.readAsDataURL(file);
-
-                // Auto-upload immediately
-                uploadAvatar(file);
             });
-        }
+        });
 
-        function handleRemoveAvatar() {
-            if (!confirm('Hapus foto profil?')) return;
-            pendingRemove = true;
-            pendingAvatarFile = null;
-
-            // Reset preview to initial letter
-            const userName = document.getElementById('display-name')?.textContent || 'U';
-            const initial = userName.charAt(0).toUpperCase();
-            avatarPreview.innerHTML = `<div class="avatar-placeholder" id="avatar-placeholder"><i class='bx bx-user'></i><span>${initial}</span></div>`;
-            headerAvatar.innerHTML = `<span>${initial}</span>`;
-
-            // Send remove request
-            removeAvatar();
-        }
-
-        if (btnRemove) {
-            btnRemove.addEventListener('click', handleRemoveAvatar);
-        }
-
-        async function uploadAvatar(file) {
-            const formData = new FormData();
-            formData.append('avatar', file);
-            formData.append('name', document.getElementById('input-name').value);
-            formData.append('email', document.getElementById('input-email').value);
-
-            showAvatarToast('Mengupload foto...', 'loading');
-
-            try {
-                const res = await fetch('{{ route("user.profile.update") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                    },
-                    body: formData,
-                    credentials: 'same-origin',
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAvatarToast('Foto berhasil diupload! 📸', 'success');
-                    if (data.user?.avatar) {
-                        avatarPreview.innerHTML = `<img src="${data.user.avatar}" alt="Avatar" id="preview-img">`;
-                        headerAvatar.innerHTML = `<img src="${data.user.avatar}" alt="Avatar" class="avatar-img">`;
-
-                        // Update navbar & sidebar avatars
-                        updateGlobalAvatars(data.user.avatar);
-                    }
-                    // Ensure remove button exists
-                    ensureRemoveButton();
-                } else {
-                    let errMsg = data.message || 'Gagal upload';
-                    if (data.errors?.avatar) errMsg = data.errors.avatar[0];
-                    showAvatarToast(errMsg, 'error');
-                }
-            } catch (err) {
-                showAvatarToast('Gagal mengupload foto', 'error');
-            }
-        }
-
-        async function removeAvatar() {
-            const formData = new FormData();
-            formData.append('remove_avatar', '1');
-            formData.append('name', document.getElementById('input-name').value);
-            formData.append('email', document.getElementById('input-email').value);
-
-            showAvatarToast('Menghapus foto...', 'loading');
-
-            try {
-                const res = await fetch('{{ route("user.profile.update") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                    },
-                    body: formData,
-                    credentials: 'same-origin',
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showAvatarToast('Foto berhasil dihapus', 'success');
-                    // Remove the remove button
-                    const rb = document.getElementById('btn-remove-avatar');
-                    if (rb) rb.remove();
-
-                    // Reset global avatars
-                    updateGlobalAvatars(null);
-                } else {
-                    showAvatarToast('Gagal menghapus foto', 'error');
-                }
-            } catch (err) {
-                showAvatarToast('Gagal menghapus foto', 'error');
-            }
-        }
-
-        function updateGlobalAvatars(avatarUrl) {
-            // Update sidebar avatar
-            const sidebarImg = document.querySelector('.user-img img');
-            if (sidebarImg && avatarUrl) {
-                sidebarImg.src = avatarUrl;
-            }
-            // Update navbar avatar
-            const navImg = document.querySelector('.profile-img-nav img');
-            if (navImg && avatarUrl) {
-                navImg.src = avatarUrl;
-            }
-        }
-
-        function ensureRemoveButton() {
-            if (!document.getElementById('btn-remove-avatar')) {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn-remove-avatar';
-                btn.id = 'btn-remove-avatar';
-                btn.innerHTML = "<i class='bx bx-trash'></i> Hapus Foto";
-                btn.addEventListener('click', handleRemoveAvatar);
-                const hint = document.querySelector('.avatar-hint');
-                if (hint) hint.parentElement.insertBefore(btn, hint);
-            }
-        }
-
-        function showAvatarToast(msg, type) {
-            // Remove existing toast
-            const existing = document.getElementById('avatar-toast');
-            if (existing) existing.remove();
+        // ── Toast Helper ────────────────────────────────────────────
+        function showToast(msg, type) {
+            const container = document.getElementById('ep-avatar-toast');
+            if (!container) return;
+            container.innerHTML = '';
 
             const toast = document.createElement('div');
-            toast.id = 'avatar-toast';
-            toast.className = `avatar-toast ${type}`;
+            toast.className = `ep-toast ${type}`;
 
             let icon = '';
             if (type === 'success') icon = "<i class='bx bx-check-circle'></i>";
@@ -414,45 +267,61 @@
             else if (type === 'loading') icon = "<i class='bx bx-loader-alt bx-spin'></i>";
 
             toast.innerHTML = `${icon} <span>${msg}</span>`;
-            document.querySelector('.avatar-editor')?.appendChild(toast);
+            container.appendChild(toast);
 
             if (type !== 'loading') {
                 setTimeout(() => toast.classList.add('fade-out'), 3000);
                 setTimeout(() => toast.remove(), 3500);
             }
         }
-    })();
 
-    // ── Submit profile form via AJAX ──────────────────────────────
-    (function () {
-        const form = document.getElementById('form-profile');
-        const msgBox = document.getElementById('form-message');
-        const btnSave = document.getElementById('btn-save');
+        // ── Avatar Upload ───────────────────────────────────────────
+        const inputAvatar = document.getElementById('ep-input-avatar');
+        const btnUpload = document.getElementById('ep-btn-upload');
+        const avatarOverlay = document.getElementById('ep-avatar-overlay');
+        const avatarPreview = document.getElementById('ep-avatar-preview');
+        let btnRemove = document.getElementById('ep-btn-remove');
 
-        if (!form) return;
+        if (btnUpload) btnUpload.addEventListener('click', () => inputAvatar.click());
+        if (avatarOverlay) avatarOverlay.addEventListener('click', () => inputAvatar.click());
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            msgBox.style.display = 'none';
+        if (inputAvatar) {
+            inputAvatar.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
 
-            // Password match check
-            const pw = form.querySelector('[name="password"]').value;
-            const pwC = form.querySelector('[name="password_confirmation"]').value;
-            if (pw && pw !== pwC) {
-                msgBox.textContent = 'Password dan konfirmasi tidak sama!';
-                msgBox.className = 'form-message error';
-                msgBox.style.display = 'block';
-                return;
-            }
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    showToast('Format harus JPG, PNG, atau WEBP', 'error');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Ukuran maksimal 2MB', 'error');
+                    return;
+                }
 
-            btnSave.disabled = true;
-            btnSave.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Menyimpan...';
+                // Preview
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    avatarPreview.innerHTML = `<img src="${ev.target.result}" alt="Preview" id="ep-avatar-img">`;
+                };
+                reader.readAsDataURL(file);
 
-            const formData = new FormData(form);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                // Upload
+                uploadAvatar(file);
+            });
+        }
+
+        async function uploadAvatar(file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('name', document.getElementById('ep-input-name').value);
+            formData.append('email', document.getElementById('ep-input-email').value);
+
+            showToast('Mengupload foto...', 'loading');
 
             try {
-                const res = await fetch('{{ route("user.profile.update") }}', {
+                const res = await fetch(profileUpdateUrl, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -466,131 +335,383 @@
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    msgBox.textContent = data.message;
-                    msgBox.className = 'form-message success';
-                    msgBox.style.display = 'block';
-
-                    // Update display name
-                    const dn = document.getElementById('display-name');
-                    if (dn && data.user) dn.textContent = data.user.name;
-
-                    // Clear password fields
-                    form.querySelector('[name="password"]').value = '';
-                    form.querySelector('[name="password_confirmation"]').value = '';
-                } else {
-                    // Validation errors
-                    let errMsg = data.message || 'Gagal menyimpan';
-                    if (data.errors) {
-                        errMsg = Object.values(data.errors).flat().join('\n');
+                    showToast('Foto berhasil diupload! 📸', 'success');
+                    if (data.user?.avatar) {
+                        avatarPreview.innerHTML = `<img src="${data.user.avatar}" alt="Avatar" id="ep-avatar-img">`;
+                        // Update profile cover
+                        const coverImg = document.getElementById('profile-cover-img');
+                        if (coverImg) coverImg.src = data.user.avatar;
+                        // Update navbar avatar
+                        updateGlobalAvatars(data.user.avatar);
                     }
-                    msgBox.textContent = errMsg;
-                    msgBox.className = 'form-message error';
-                    msgBox.style.display = 'block';
+                    ensureRemoveButton();
+                } else {
+                    let errMsg = data.message || 'Gagal upload';
+                    if (data.errors?.avatar) errMsg = data.errors.avatar[0];
+                    showToast(errMsg, 'error');
                 }
             } catch (err) {
-                msgBox.textContent = 'Terjadi kesalahan jaringan';
-                msgBox.className = 'form-message error';
-                msgBox.style.display = 'block';
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerHTML = '<i class="bx bx-check"></i> Simpan Perubahan';
+                showToast('Gagal mengupload foto', 'error');
             }
-        });
+        }
+
+        // ── Avatar Remove ───────────────────────────────────────────
+        function handleRemoveAvatar() {
+            if (!confirm('Hapus foto profil?')) return;
+
+            const userName = document.getElementById('display-name')?.textContent || 'U';
+            const initial = userName.charAt(0).toUpperCase();
+            avatarPreview.innerHTML = `<div class="ep-avatar-placeholder"><i class='bx bx-user'></i><span>${initial}</span></div>`;
+
+            removeAvatar();
+        }
+
+        if (btnRemove) btnRemove.addEventListener('click', handleRemoveAvatar);
+
+        async function removeAvatar() {
+            const formData = new FormData();
+            formData.append('remove_avatar', '1');
+            formData.append('name', document.getElementById('ep-input-name').value);
+            formData.append('email', document.getElementById('ep-input-email').value);
+
+            showToast('Menghapus foto...', 'loading');
+
+            try {
+                const res = await fetch(profileUpdateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                    credentials: 'same-origin',
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showToast('Foto berhasil dihapus', 'success');
+                    const rb = document.getElementById('ep-btn-remove');
+                    if (rb) rb.remove();
+                    // Reset cover
+                    const coverImg = document.getElementById('profile-cover-img');
+                    if (coverImg) coverImg.src = '{{ asset("assets/ico/devlab.jpg") }}';
+                    updateGlobalAvatars(null);
+                } else {
+                    showToast('Gagal menghapus foto', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal menghapus foto', 'error');
+            }
+        }
+
+        function ensureRemoveButton() {
+            if (!document.getElementById('ep-btn-remove')) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'ep-btn-remove';
+                btn.id = 'ep-btn-remove';
+                btn.innerHTML = "<i class='bx bx-trash'></i> Hapus";
+                btn.addEventListener('click', handleRemoveAvatar);
+                const hint = document.querySelector('.ep-avatar-hint');
+                if (hint) hint.parentElement.insertBefore(btn, hint);
+            }
+        }
+
+        function updateGlobalAvatars(avatarUrl) {
+            const sidebarImg = document.querySelector('.user-img img');
+            if (sidebarImg && avatarUrl) sidebarImg.src = avatarUrl;
+            const navImg = document.querySelector('.profile-img-nav img');
+            if (navImg && avatarUrl) navImg.src = avatarUrl;
+        }
+
+        // ── Profile Form Submit ─────────────────────────────────────
+        const form = document.getElementById('ep-form-profile');
+        const msgBox = document.getElementById('ep-form-message');
+        const btnSave = document.getElementById('ep-btn-save');
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                msgBox.style.display = 'none';
+
+                const pw = form.querySelector('[name="password"]').value;
+                const pwC = form.querySelector('[name="password_confirmation"]').value;
+                if (pw && pw !== pwC) {
+                    msgBox.textContent = 'Password dan konfirmasi tidak sama!';
+                    msgBox.className = 'ep-form-message error';
+                    msgBox.style.display = 'block';
+                    return;
+                }
+
+                btnSave.disabled = true;
+                btnSave.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Menyimpan...';
+
+                const formData = new FormData(form);
+
+                try {
+                    const res = await fetch(profileUpdateUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                        credentials: 'same-origin',
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        msgBox.textContent = data.message;
+                        msgBox.className = 'ep-form-message success';
+                        msgBox.style.display = 'block';
+
+                        // Update display
+                        const dn = document.getElementById('display-name');
+                        const de = document.getElementById('display-email');
+                        if (dn && data.user) dn.textContent = data.user.name;
+                        if (de && data.user) de.textContent = data.user.email;
+
+                        // Update navbar name
+                        const navName = document.querySelector('.profile-img-nav h5');
+                        if (navName && data.user) navName.textContent = data.user.name;
+
+                        // Clear password fields
+                        form.querySelector('[name="password"]').value = '';
+                        form.querySelector('[name="password_confirmation"]').value = '';
+                    } else {
+                        let errMsg = data.message || 'Gagal menyimpan';
+                        if (data.errors) {
+                            errMsg = Object.values(data.errors).flat().join('\n');
+                        }
+                        msgBox.textContent = errMsg;
+                        msgBox.className = 'ep-form-message error';
+                        msgBox.style.display = 'block';
+                    }
+                } catch (err) {
+                    msgBox.textContent = 'Terjadi kesalahan jaringan';
+                    msgBox.className = 'ep-form-message error';
+                    msgBox.style.display = 'block';
+                } finally {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = '<i class="bx bx-check"></i> Simpan Perubahan';
+                }
+            });
+        }
     })();
 </script>
 
-<!-- <style>
-    .container-account {
+<style>
+    /* ═══════════════════════════════════════════════════════════════
+   EDIT PROFILE — STATS & MODAL STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+    /* ── Stats Section ──────────────────────────────────────────── */
+    .container-edit-profile {
         display: flex;
         justify-content: center;
-        margin-top: 1.5em;
-        padding-bottom: 6em;
-    }
-    .main-account {
-        width: 100%;
-        max-width: 79em;
-        margin: 0 10px;
-    }
-    .wrapper-account {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+        margin-top: 20px;
+        padding: 0 10px;
     }
 
-    /* ── Header ──────────────────── */
-    .account-header {
-        display: flex;
-        align-items: center;
-        gap: 16px;
+    .edit-profile-section {
+        width: 100%;
+        max-width: 79em;
         background: #191825;
         border-radius: 20px;
         border: 1px solid #1f1e2e;
-        padding: 24px 20px;
     }
-    .avatar-circle {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+    .edit-profile-section>div {
+        margin: 20px;
+    }
+
+    .ep-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .ep-section-title i {
+        color: #8b5cf6;
+        font-size: 20px;
+        background: rgba(139, 92, 246, 0.1);
+        padding: 6px;
+        border-radius: 10px;
+    }
+
+    .ep-section-title h4 {
+        color: #E6E0E9;
+        font-weight: 600;
+        font-size: 15px;
+        text-transform: capitalize;
+    }
+
+    .ep-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .ep-stat-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: rgba(19, 18, 28, 0.6);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        transition: all 0.3s ease;
+    }
+
+    .ep-stat-card:hover {
+        border-color: rgba(139, 92, 246, 0.2);
+        background: rgba(19, 18, 28, 0.9);
+    }
+
+    .ep-stat-card>i {
+        font-size: 22px;
+        color: #8b5cf6;
+        flex-shrink: 0;
+    }
+
+    .ep-stat-card h5 {
+        color: #8a898a;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .ep-stat-card h4 {
+        color: #E6E0E9;
+        font-size: 13px;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* ── Modal ───────────────────────────────────────────────────── */
+    .ep-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 998;
+        background: rgba(9, 8, 14, 0.7);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.35s ease;
+    }
+
+    .ep-modal-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .ep-modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #191825;
+        border-radius: 28px 28px 0 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ep-modal.active {
+        transform: translateY(0);
+    }
+
+    .ep-modal::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .ep-modal::-webkit-scrollbar-thumb {
+        background: #2a2c3a;
+        border-radius: 4px;
+    }
+
+    .ep-modal-handle {
+        display: flex;
+        justify-content: center;
+        padding: 12px 0 4px;
+        cursor: pointer;
+    }
+
+    .ep-modal-handle span {
+        width: 40px;
+        height: 4px;
+        background: #2a2c3a;
+        border-radius: 4px;
+    }
+
+    .ep-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 24px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .ep-modal-header h4 {
+        color: #E6E0E9;
+        font-size: 18px;
+        font-weight: 650;
+    }
+
+    .ep-modal-close {
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-    .avatar-circle span {
-        color: #fff;
-        font-size: 24px;
-        font-weight: 700;
-    }
-    .avatar-circle .avatar-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-    }
-    .account-info h3 {
-        color: #E6E0E9;
-        font-weight: 600;
-        font-size: 18px;
-        text-transform: capitalize;
-    }
-    .account-info h6 {
-        color: #8a898a;
-        font-size: 12px;
-        margin-top: 4px;
-    }
-    .account-badge {
-        display: inline-block;
-        margin-top: 6px;
-        padding: 2px 12px;
-        border-radius: 20px;
-        background: #222430;
-        border: 1px solid #2a2c3a;
-        color: #75bbed;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        border: none;
+        background: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    /* ── Avatar Editor ────────────── */
-    .avatar-editor {
+    .ep-modal-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(90deg);
+    }
+
+    .ep-modal-close i {
+        color: #8a898a;
+        font-size: 20px;
+    }
+
+    .ep-modal-body {
+        padding: 20px 24px 40px;
+    }
+
+    /* ── Avatar Section ──────────────────────────────────────────── */
+    .ep-avatar-section {
         display: flex;
         align-items: center;
-        gap: 24px;
-        flex-wrap: wrap;
+        gap: 20px;
     }
-    .avatar-preview-wrap {
+
+    .ep-avatar-wrap {
         position: relative;
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
+        width: 90px;
+        height: 90px;
         flex-shrink: 0;
+        border-radius: 50%;
         cursor: pointer;
     }
-    .avatar-preview {
-        width: 110px;
-        height: 110px;
+
+    .ep-avatar {
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
         overflow: hidden;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -600,94 +721,98 @@
         border: 3px solid #2a2c3a;
         transition: border-color 0.3s ease;
     }
-    .avatar-preview-wrap:hover .avatar-preview {
+
+    .ep-avatar-wrap:hover .ep-avatar {
         border-color: #6366f1;
     }
-    .avatar-preview img {
+
+    .ep-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    .avatar-placeholder {
+
+    .ep-avatar-placeholder {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
     }
-    .avatar-placeholder i {
-        color: rgba(255,255,255,0.4);
-        font-size: 28px;
+
+    .ep-avatar-placeholder i {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 24px;
     }
-    .avatar-placeholder span {
+
+    .ep-avatar-placeholder span {
         color: #fff;
         font-size: 28px;
         font-weight: 700;
     }
-    .avatar-overlay {
+
+    .ep-avatar-overlay {
         position: absolute;
         top: 0;
         left: 0;
-        width: 110px;
-        height: 110px;
+        width: 90px;
+        height: 90px;
         border-radius: 50%;
         background: rgba(0, 0, 0, 0.55);
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 4px;
         opacity: 0;
         transition: opacity 0.3s ease;
         cursor: pointer;
     }
-    .avatar-preview-wrap:hover .avatar-overlay {
+
+    .ep-avatar-wrap:hover .ep-avatar-overlay {
         opacity: 1;
     }
-    .avatar-overlay i {
+
+    .ep-avatar-overlay i {
         color: #fff;
         font-size: 24px;
     }
-    .avatar-overlay span {
-        color: #fff;
-        font-size: 11px;
-        font-weight: 500;
-    }
-    .avatar-actions {
+
+    .ep-avatar-actions {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
-    .btn-upload-avatar {
+
+    .ep-btn-upload {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
+        gap: 6px;
+        padding: 8px 16px;
         border-radius: 12px;
         border: 1px solid #2a2c3a;
-        background: #13121c;
+        background: rgba(19, 18, 28, 0.6);
         color: #E6E0E9;
         font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    .btn-upload-avatar:hover {
+
+    .ep-btn-upload:hover {
         border-color: #6366f1;
-        background: #1a1930;
-        transform: translateY(-1px);
+        background: rgba(99, 102, 241, 0.1);
     }
-    .btn-upload-avatar i {
+
+    .ep-btn-upload i {
         font-size: 16px;
         color: #6366f1;
     }
-    .btn-remove-avatar {
+
+    .ep-btn-remove {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
+        gap: 6px;
+        padding: 8px 16px;
         border-radius: 12px;
-        border: 1px solid #991b1b;
+        border: 1px solid rgba(153, 27, 27, 0.5);
         background: transparent;
         color: #f87171;
         font-size: 13px;
@@ -695,21 +820,23 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    .btn-remove-avatar:hover {
-        background: #2d1215;
-        transform: translateY(-1px);
+
+    .ep-btn-remove:hover {
+        background: rgba(153, 27, 27, 0.15);
     }
-    .btn-remove-avatar i {
+
+    .ep-btn-remove i {
         font-size: 16px;
     }
-    .avatar-hint {
+
+    .ep-avatar-hint {
         color: #555;
         font-size: 11px;
         margin: 0;
     }
 
-    /* ── Avatar Toast ─────────────── */
-    .avatar-toast {
+    /* ── Toast ────────────────────────────────────────────────────── */
+    .ep-toast {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -717,231 +844,214 @@
         border-radius: 12px;
         font-size: 13px;
         margin-top: 12px;
-        width: 100%;
-        animation: toastSlideIn 0.3s ease;
+        animation: epToastIn 0.3s ease;
     }
-    .avatar-toast.success {
-        background: #0d2818;
+
+    .ep-toast.success {
+        background: rgba(13, 40, 24, 0.8);
         border: 1px solid #166534;
         color: #4ade80;
     }
-    .avatar-toast.error {
-        background: #2d1215;
+
+    .ep-toast.error {
+        background: rgba(45, 18, 21, 0.8);
         border: 1px solid #991b1b;
         color: #f87171;
     }
-    .avatar-toast.loading {
-        background: #1a1930;
+
+    .ep-toast.loading {
+        background: rgba(26, 25, 48, 0.8);
         border: 1px solid #2a2c3a;
         color: #75bbed;
     }
-    .avatar-toast.fade-out {
-        animation: toastFadeOut 0.5s ease forwards;
-    }
-    @keyframes toastSlideIn {
-        from { opacity: 0; transform: translateY(-8px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toastFadeOut {
-        from { opacity: 1; }
-        to   { opacity: 0; transform: translateY(-8px); }
+
+    .ep-toast.fade-out {
+        animation: epToastOut 0.5s ease forwards;
     }
 
-    /* ── Section ──────────────────── */
-    .account-section {
-        background: #191825;
-        border-radius: 20px;
-        border: 1px solid #1f1e2e;
-        padding: 20px;
-    }
-    .section-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 16px;
-    }
-    .section-title i {
-        color: #75bbed;
-        font-size: 18px;
-    }
-    .section-title h4 {
-        color: #E6E0E9;
-        font-weight: 550;
-        font-size: 15px;
-        text-transform: capitalize;
+    @keyframes epToastIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    /* ── Form ─────────────────────── */
-    .account-form {
+    @keyframes epToastOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+    }
+
+    /* ── Divider ──────────────────────────────────────────────────── */
+    .ep-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.04);
+        margin: 20px 0;
+    }
+
+    /* ── Form ─────────────────────────────────────────────────────── */
+    .ep-form {
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 16px;
     }
-    .form-group {
+
+    .ep-form-group {
         display: flex;
         flex-direction: column;
         gap: 6px;
     }
-    .form-group label {
+
+    .ep-form-group label {
         color: #8a898a;
         font-size: 12px;
+        font-weight: 500;
         text-transform: capitalize;
     }
-    .form-group input {
-        width: 100%;
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: 1px solid #2a2c3a;
-        background: #13121c;
+
+    .ep-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(19, 18, 28, 0.6);
+        transition: all 0.2s ease;
+    }
+
+    .ep-input-wrap:focus-within {
+        border-color: #6366f1;
+        background: rgba(19, 18, 28, 0.9);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .ep-input-wrap>i {
+        color: #555;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .ep-input-wrap input {
+        flex: 1;
+        padding: 12px 0;
+        border: none;
+        background: transparent;
         color: #E6E0E9;
         font-size: 14px;
         outline: none;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-    }
-    .form-group input:focus {
-        border-color: #6366f1;
-    }
-    .form-group input::placeholder {
-        color: #555;
+        font-family: inherit;
     }
 
-    /* Password toggle */
-    .input-password-wrap {
-        position: relative;
-        display: flex;
-        align-items: center;
+    .ep-input-wrap input::placeholder {
+        color: #444;
     }
-    .input-password-wrap input {
-        padding-right: 44px;
-    }
-    .btn-toggle-pw {
-        position: absolute;
-        right: 8px;
+
+    .ep-btn-toggle-pw {
         background: none;
         border: none;
         cursor: pointer;
         padding: 4px;
+        flex-shrink: 0;
     }
-    .btn-toggle-pw i {
+
+    .ep-btn-toggle-pw i {
         color: #8a898a;
         font-size: 18px;
     }
 
-    /* Divider between fields */
-    .form-divider {
+    .ep-form-divider {
         display: flex;
         align-items: center;
-        margin: 8px 0;
+        margin: 4px 0;
     }
-    .form-divider::before,
-    .form-divider::after {
+
+    .ep-form-divider::before,
+    .ep-form-divider::after {
         content: '';
         flex: 1;
-        border-top: 1px solid #2a2c3a;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .form-divider span {
+
+    .ep-form-divider span {
         padding: 0 12px;
         color: #555;
         font-size: 12px;
         white-space: nowrap;
-        text-transform: capitalize;
     }
 
-    /* Message box */
-    .form-message {
+    .ep-form-message {
         padding: 10px 14px;
-        border-radius: 10px;
+        border-radius: 12px;
         font-size: 13px;
         white-space: pre-line;
     }
-    .form-message.success {
-        background: #0d2818;
+
+    .ep-form-message.success {
+        background: rgba(13, 40, 24, 0.8);
         border: 1px solid #166534;
         color: #4ade80;
     }
-    .form-message.error {
-        background: #2d1215;
+
+    .ep-form-message.error {
+        background: rgba(45, 18, 21, 0.8);
         border: 1px solid #991b1b;
         color: #f87171;
     }
 
-    /* Save button */
-    .btn-save {
-        display: inline-flex;
+    .ep-btn-save {
+        display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 12px 24px;
-        border-radius: 14px;
+        padding: 14px 24px;
+        border-radius: 16px;
         border: none;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: #fff;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+        margin-top: 4px;
     }
-    .btn-save:hover {
+
+    .ep-btn-save:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4);
     }
-    .btn-save:disabled {
+
+    .ep-btn-save:disabled {
         opacity: 0.7;
         cursor: not-allowed;
         transform: none;
     }
 
-    /* ── Stats ────────────────────── */
-    .stats-grid {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .stat-card {
-        flex: 1;
-        min-width: 140px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px;
-        background: #13121c;
-        border-radius: 14px;
-        border: 1px solid #2a2c3a;
-    }
-    .stat-card > i {
-        font-size: 22px;
-        color: #75bbed;
-    }
-    .stat-card h5 {
-        color: #8a898a;
-        font-size: 11px;
-    }
-    .stat-card h4 {
-        color: #E6E0E9;
-        font-size: 13px;
-        font-weight: 500;
-        margin-top: 2px;
-    }
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+        .ep-stats-grid {
+            grid-template-columns: 1fr;
+        }
 
-    /* ── Logout ───────────────────── */
-    .btn-logout {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-        padding: 12px;
-        border-radius: 14px;
-        border: 1px solid #991b1b;
-        background: transparent;
-        color: #f87171;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        .ep-avatar-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .ep-avatar-actions {
+            align-items: center;
+        }
     }
-    .btn-logout:hover {
-        background: #2d1215;
-    }
-</style> -->
+</style>

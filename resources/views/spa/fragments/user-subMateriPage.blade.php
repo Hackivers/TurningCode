@@ -49,8 +49,29 @@
     </main>
 </div>
 
+<script>
+    // ── Search Handler ────────────────────────────────────────────
+    window.__currentSearchHandler = function(query) {
+        document.querySelectorAll('.box-submateri').forEach(card => {
+            const title = card.querySelector('.desc-submateri h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.desc-submateri h5')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
 
-{{--
+        if (query !== '') {
+            const firstVisible = Array.from(document.querySelectorAll('.box-submateri')).find(c => c.style.display !== 'none');
+            if (firstVisible) {
+                setTimeout(() => {
+                    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 50);
+            }
+        }
+    };
+</script>{{--
 @php
     $subMateris = $subMateris ?? [];
     $arsipSub = $arsipSub ?? [];

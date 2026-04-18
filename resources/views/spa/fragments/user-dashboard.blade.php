@@ -1,4 +1,5 @@
 @include('spa.fragments.user-headerCard')
+@include('spa.fragments.user-expCard')
 @include('spa.fragments.user-timeCard')
 @include('spa.fragments.user-materiCard', ['data' => $data, 'mainMateri' => $mainMateri])
 @include('spa.fragments.user-progres', ['mainMateri' => $mainMateri])
@@ -164,5 +165,82 @@
         else if (h >= 18 && h < 23) timeText.textContent = 'udah malam nih, istirahat atau lanjut ngoding?';
         else timeText.textContent = 'masih begadang ngoding ya? semangat!';
     }
+
+    // ── EXP System Interval (1 menit = +10 EXP) ────────────────────
+    if (window._expPingInterval) {
+        clearInterval(window._expPingInterval);
+    }
+    window._expPingInterval = setInterval(() => {
+        if (typeof axios !== 'undefined') {
+            axios.post('/app/api/exp/ping')
+                .then(res => {
+                    if(res.data.success) {
+                        const expSpan = document.getElementById('current-exp-amount');
+                        if (expSpan) {
+                            expSpan.textContent = res.data.exp;
+                            
+                            const expNeededSpan = document.getElementById('exp-needed');
+                            if (expNeededSpan) {
+                                let needed = parseInt(expNeededSpan.textContent) - 10;
+                                if (needed <= 0) {
+                                    // Rank Up! Reload untuk update badge dan target berikutnya
+                                    window.location.reload();
+                                } else {
+                                    expNeededSpan.textContent = needed;
+                                }
+                            }
+                            
+                            // Optional: Tambah efek animasi kecil saat EXP bertambah
+                            expSpan.style.transition = 'transform 0.3s, -webkit-text-fill-color 0.3s, color 0.3s';
+                            expSpan.style.transform = 'scale(1.3)';
+                            expSpan.style.color = '#ffeb3b';
+                            expSpan.style.webkitTextFillColor = '#ffeb3b';
+                            
+                            setTimeout(() => {
+                                expSpan.style.transform = '';
+                                expSpan.style.color = '';
+                                expSpan.style.webkitTextFillColor = '';
+                                expSpan.style.transition = '';
+                            }, 500);
+                        }
+                    }
+                })
+                .catch(err => console.error('Gagal claim EXP:', err));
+        }
+    }, 60000); // 60,000 ms = 1 menit
+
+    // ── Search Handler ────────────────────────────────────────────
+    window.__currentSearchHandler = function(query) {
+        document.querySelectorAll('.box-materi').forEach(card => {
+            const title = card.querySelector('.txt-materi h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.desc-materi h6')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (query !== '') {
+            // Scroll layar utama ke area materi agar kotak slider terlihat
+            const materiContainer = document.querySelector('.container-materi');
+            if (materiContainer) {
+                materiContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            const wrapper = document.querySelector('.wrapper-materi');
+            if (wrapper && wrapper._sliderCenterCard) {
+                // Find first visible matched card and center it sideways
+                const firstVisible = Array.from(document.querySelectorAll('.box-materi')).find(c => c.style.display !== 'none');
+                if (firstVisible) {
+                    setTimeout(() => {
+                        wrapper._sliderSetActive(firstVisible);
+                        wrapper._sliderCenterCard(firstVisible, true);
+                    }, 50);
+                }
+            }
+        }
+    };
+
 })();
 </script>

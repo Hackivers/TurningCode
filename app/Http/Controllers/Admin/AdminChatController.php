@@ -4,29 +4,50 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminChat;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AdminChatController extends Controller
 {
     /**
      * Ambil pesan chat. Mendukung polling via ?after=<id>.
+     * Sekaligus melacak status online admin.
      */
     public function index(Request $request): JsonResponse
     {
+        $currentUserId = (int) $request->user()->id;
+
+        // Tandai user saat ini sebagai online selama 1 menit ke depan
+        Cache::put('admin_online_' . $currentUserId, true, now()->addMinutes(1));
+
         $query = AdminChat::with(['user:id,name,email', 'replyTo.user:id,name']);
 
         if ($request->filled('after')) {
-            $query->where('id', '>', (int) $request->input('after'));
+            $messages = $query->where('id', '>', (int) $request->input('after'))
+                              ->orderBy('id', 'asc')
+                              ->get();
         } else {
-            $query->latest()->limit(50);
+            $messages = $query->latest()->limit(50)->get()->reverse()->values();
         }
 
-        $messages = $query->orderBy('id', 'asc')->get();
-        $currentUserId = (int) $request->user()->id;
+        // Cari siapa saja admin yang sedang online
+        $admins = User::where('role', 'admin')->get();
+        $onlineAdmins = [];
+        foreach ($admins as $admin) {
+            if (Cache::has('admin_online_' . $admin->id)) {
+                $onlineAdmins[] = [
+                    'id' => $admin->id,
+                    'name' => explode('@', $admin->email)[0],
+                    'is_it_me' => $admin->id === $currentUserId
+                ];
+            }
+        }
 
         return response()->json([
             'messages' => $messages->map(fn (AdminChat $chat) => $this->formatMessage($chat, $currentUserId)),
+            'online_admins' => $onlineAdmins,
         ]);
     }
 
@@ -61,7 +82,7 @@ class AdminChatController extends Controller
         $data = [
             'id'         => $chat->id,
             'user_id'    => $chat->user_id,
-            'user_name'  => $chat->user?->name ?? 'Unknown',
+            'user_name'  => $chat->user ? explode('@', $chat->user->email)[0] : 'Unknown',
             'message'    => $chat->message,
             'created_at' => $chat->created_at->format('H:i'),
             'date'       => $chat->created_at->format('d M Y'),
@@ -72,7 +93,7 @@ class AdminChatController extends Controller
         if ($chat->replyTo) {
             $data['reply_to'] = [
                 'id'        => $chat->replyTo->id,
-                'user_name' => $chat->replyTo->user?->name ?? 'Unknown',
+                'user_name' => $chat->replyTo->user ? explode('@', $chat->replyTo->user->email)[0] : 'Unknown',
                 'message'   => $chat->replyTo->message,
             ];
         }

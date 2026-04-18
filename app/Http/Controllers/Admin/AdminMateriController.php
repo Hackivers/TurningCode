@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MainMateri;
 use App\Models\Materi;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -75,5 +76,50 @@ class AdminMateriController extends Controller
             ->route('admin.spa')
             ->with('success', $count.' materi berhasil disimpan.')
             ->with('admin_open_page', 'materi');
+    }
+
+    // ── Update / Delete Main Materi ──────────────────────
+
+    public function updateMainMateri(Request $request, MainMateri $mainMateri): JsonResponse
+    {
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $mainMateri->update($validated);
+
+        return response()->json(['success' => true, 'message' => 'Main materi berhasil diperbarui.']);
+    }
+
+    public function deleteMainMateri(MainMateri $mainMateri): JsonResponse
+    {
+        $title = $mainMateri->title;
+        $mainMateri->delete();
+
+        return response()->json(['success' => true, 'message' => "Main materi \"{$title}\" berhasil dihapus."]);
+    }
+
+    // ── Update / Delete Materi ───────────────────────────
+
+    public function updateMateri(Request $request, Materi $materi): JsonResponse
+    {
+        $validated = $request->validate([
+            'title'          => ['required', 'string', 'max:255'],
+            'description'    => ['nullable', 'string'],
+            'main_materi_id' => ['required', 'exists:main_materis,id'],
+        ]);
+
+        $materi->update($validated);
+
+        return response()->json(['success' => true, 'message' => 'Materi berhasil diperbarui.']);
+    }
+
+    public function deleteMateri(Materi $materi): JsonResponse
+    {
+        $title = $materi->title;
+        $materi->delete();
+
+        return response()->json(['success' => true, 'message' => "Materi \"{$title}\" berhasil dihapus."]);
     }
 }

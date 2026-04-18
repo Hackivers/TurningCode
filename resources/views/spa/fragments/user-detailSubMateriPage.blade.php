@@ -149,16 +149,10 @@
                                 </a>
                             @endif
                             <hr>
-                            @if (!empty($next))
-                                <a href="?page=detail&submateri_id={{ $next->id }}" class="btn-next link-spa">
-                                    {{ $next->title }}
-                                    <i class='bx bx-right-arrow-alt'></i>
-                                </a>
-                            @else
-                                <a href="?page=submateri&materi_id={{ $subMateri->materi_id }}" class="btn-next link-spa">
-                                    Selesai ✓
-                                </a>
-                            @endif
+                            <a href="?page=quiz&submateri_id={{ $subMateri->id }}" class="btn-next link-spa" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff;">
+                                Uji Pemahaman (Kuis)
+                                <i class='bx bx-right-arrow-alt'></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -172,11 +166,11 @@
     document.addEventListener("click", function(e) {
         if (e.target.closest(".btn-back")) {
             e.preventDefault();
-            // Kembali ke halaman sub-materi list
             loadPage("submateri", { materi_id: "{{ $subMateri->materi_id }}" });
         }
     });
 </script>
+
 
 {{-- Detail page CSS --}}
 <style>
@@ -429,6 +423,8 @@
         display: block;
     }
 
+
+
     /* Navigation prev/next */
     .box-materi-navigation {
         margin-top: 32px;
@@ -475,3 +471,4 @@
         flex-shrink: 0;
     }
 </style>
+

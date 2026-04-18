@@ -4,7 +4,7 @@
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CLloI2QS.css",
+    "file": "assets/app-D5QfuFO2.css",
     "name": "app",
     "names": [
       "app.css"
@@ -31,7 +31,7 @@
     "isEntry": true
   },
   "resources/css/style.css": {
-    "file": "assets/style-BsGPpr4u.css",
+    "file": "assets/style-CcwokmCh.css",
     "name": "style",
     "names": [
       "style.css"
@@ -49,7 +49,7 @@
     "isEntry": true
   },
   "resources/js/SPA_admin.js": {
-    "file": "assets/SPA_admin-Cui37V5d.js",
+    "file": "assets/SPA_admin-DMVhDDgE.js",
     "name": "SPA_admin",
     "src": "resources/js/SPA_admin.js",
     "isEntry": true,
@@ -58,7 +58,7 @@
     ]
   },
   "resources/js/SPA_user.js": {
-    "file": "assets/SPA_user-DvIMlUJU.js",
+    "file": "assets/SPA_user-DVjsTLGF.js",
     "name": "SPA_user",
     "src": "resources/js/SPA_user.js",
     "isEntry": true,

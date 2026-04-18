@@ -20,6 +20,7 @@ return [
         'ghostface@turncode.com' => 'kasogihiqmal01@gmail.com',
         'Mychel09@turncode.com' => 'dandibdr2209@gmail.com',
         'maousama@turncode.com' => 'cyberthang999@gmail.com',
+        'Dyrin20@turncode.com' => 'hafidzilzal12@gmail.com',
     ],
 
 ];

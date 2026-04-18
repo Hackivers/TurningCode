@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SubMateri extends Model
 {
@@ -31,6 +32,16 @@ class SubMateri extends Model
     public function materi(): BelongsTo
     {
         return $this->belongsTo(Materi::class);
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class)->orderBy('order');
+    }
+
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
     }
 
     /**
