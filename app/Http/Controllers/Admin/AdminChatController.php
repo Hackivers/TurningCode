@@ -40,6 +40,7 @@ class AdminChatController extends Controller
                 $onlineAdmins[] = [
                     'id' => $admin->id,
                     'name' => explode('@', $admin->email)[0],
+                    'avatar' => $admin->avatar ? asset('storage/' . $admin->avatar) : null,
                     'is_it_me' => $admin->id === $currentUserId
                 ];
             }

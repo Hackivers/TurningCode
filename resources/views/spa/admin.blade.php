@@ -359,6 +359,12 @@
                 <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">System Terminal</span>
             </button>
 
+            {{-- Floating Settings toggle button --}}
+            <button id="settings-toggle" type="button" aria-label="Settings" class="w-12 h-12 rounded-full border-none bg-zinc-700 text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 hover:scale-110 relative group">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Settings</span>
+            </button>
+
             {{-- Floating Report toggle button --}}
             <button id="report-toggle" type="button" aria-label="Lapor Issue" class="w-12 h-12 rounded-full border-none bg-red-500 text-white flex items-center justify-center text-xl shadow-[0_8px_24px_rgba(239,68,68,0.4)] transition-transform duration-300 hover:scale-110 relative group">
                 <span id="report-toggle-icon">🚩</span>
@@ -367,12 +373,139 @@
         </div>
     </div>
 
+    {{-- ═══════════════════════════════════════════════════════
+    SETTINGS POPUP OVERLAY
+    ═══════════════════════════════════════════════════════ --}}
+    <div id="settings-overlay" class="settings-hidden">
+        <div id="settings-container" class="rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-zinc-700/50" style="width: 560px; max-height: 85vh;">
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-8 py-6 border-b border-zinc-800" style="background: #111113;">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-800 text-zinc-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-white uppercase tracking-widest">Settings</h3>
+                        <p class="text-[10px] text-zinc-500 font-medium">Pengaturan preferensi admin</p>
+                    </div>
+                </div>
+                <button id="settings-close" type="button" aria-label="Close settings" class="flex h-8 w-8 items-center justify-center rounded-xl text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">✕</button>
+            </div>
+
+            {{-- Content Grid --}}
+            <div class="p-6 overflow-y-auto" style="background: #0e0e10; max-height: calc(85vh - 80px);">
+                <div class="grid grid-cols-2 gap-3">
+
+                    {{-- Notifikasi --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path></svg>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-notif" class="sr-only peer" checked>
+                                <div class="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Notifikasi</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Aktifkan push notifikasi untuk jadwal dan update sistem.</p>
+                    </div>
+
+                    {{-- Dark Mode --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-darkmode" class="sr-only peer">
+                                <div class="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Dark Mode</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Mode gelap untuk mengurangi cahaya layar pada malam hari.</p>
+                    </div>
+
+                    {{-- Data & Storage --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Cache</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Data & Storage</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Kelola cache browser dan data sesi admin lokal.</p>
+                        <button type="button" id="btn-clear-cache" class="mt-3 text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors">Clear Cache →</button>
+                    </div>
+
+                    {{-- Bahasa --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400" style="background: #242428;">ID</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Bahasa</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Bahasa antarmuka saat ini dalam Bahasa Indonesia.</p>
+                    </div>
+
+                    {{-- Keamanan --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-security" class="sr-only peer" checked>
+                                <div class="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Keamanan</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">CSRF protection dan session guard aktif secara default.</p>
+                    </div>
+
+                    {{-- Performa --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Auto</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Performa</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Optimasi rendering SPA dan lazy-loading fragment otomatis.</p>
+                    </div>
+
+                </div>
+
+                {{-- Footer Info --}}
+                <div class="mt-6 rounded-2xl p-4 flex items-center gap-4" style="background: #1a1a1e;">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl" style="background: #242428;">
+                        <div class="flex items-center gap-0.5 text-zinc-500">
+                            <div class="h-2.5 w-2.5 bg-zinc-500"></div>
+                            <div class="h-2.5 w-2.5 rounded-full bg-zinc-500"></div>
+                            <div class="h-0 w-0 border-y-[5px] border-l-[6px] border-y-transparent border-l-zinc-500"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[11px] font-bold text-zinc-400">TurningCode Admin Panel</p>
+                        <p class="text-[10px] text-zinc-600 font-mono">v2.0.0 • Laravel {{ app()->version() }} • Built with 💻</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Chat overlay --}}
     <div id="chat-overlay" class="chat-hidden">
         <div id="chat-container">
             <div id="chat-header">
                 <div id="chat-header-info">
-                    <span id="chat-header-icon">💬</span>
+                    <span id="chat-header-icon">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    </span>
                     <div>
                         <h3 class="capitalize">{{ explode('@', auth()->user()->email)[0] }}</h3>
                         <p id="chat-online-status">Global • Menghitung...</p>
@@ -391,7 +524,9 @@
             {{-- Reply preview bar --}}
             <div id="chat-reply-bar" style="display:none;">
                 <div id="chat-reply-info">
-                    <span id="chat-reply-icon">↩️</span>
+                    <span id="chat-reply-icon" class="text-zinc-400 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                    </span>
                     <div id="chat-reply-content">
                         <span id="chat-reply-name"></span>
                         <span id="chat-reply-text"></span>
@@ -493,7 +628,7 @@
 
     <style>
         /* Overlays Configuration */
-        #chat-overlay, #cmd-overlay, #report-overlay {
+        #chat-overlay, #cmd-overlay, #report-overlay, #settings-overlay {
             position: fixed;
             bottom: 24px;
             right: 96px; /* Space for the FAB menus */
@@ -502,13 +637,13 @@
             transform-origin: bottom right;
         }
 
-        #chat-overlay.chat-hidden, #cmd-overlay.cmd-hidden, #report-overlay.report-hidden {
+        #chat-overlay.chat-hidden, #cmd-overlay.cmd-hidden, #report-overlay.report-hidden, #settings-overlay.settings-hidden {
             opacity: 0;
             transform: scale(0.8) translateY(20px);
             pointer-events: none;
         }
 
-        #chat-overlay.chat-visible, #cmd-overlay.cmd-visible, #report-overlay.report-visible {
+        #chat-overlay.chat-visible, #cmd-overlay.cmd-visible, #report-overlay.report-visible, #settings-overlay.settings-visible {
             opacity: 1;
             transform: scale(1) translateY(0);
             pointer-events: auto;
@@ -575,7 +710,7 @@
             ═══════════════════════════════════════════════════ */
         #chat-container {
             width: 360px;
-            max-height: 520px;
+            height: 520px;
             border-radius: 24px;
             background: #fff;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
@@ -706,8 +841,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            min-height: 300px;
-            max-height: 360px;
+            min-height: 0;
             background: #F8F9FB;
             display: flex;
             flex-direction: column;
@@ -818,6 +952,20 @@
             border-bottom-left-radius: 4px;
         }
 
+        .chat-msg-bubble-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-msg.mine .chat-msg-bubble-wrap {
+            flex-direction: row-reverse;
+        }
+
+        .chat-msg.other .chat-msg-bubble-wrap {
+            flex-direction: row;
+        }
+
         .chat-msg-time-row {
             display: flex;
             align-items: center;
@@ -846,7 +994,9 @@
             color: #a1a1aa;
             font-size: 12px;
             cursor: pointer;
-            display: none;
+            display: flex;
+            opacity: 0;
+            pointer-events: none;
             align-items: center;
             justify-content: center;
             transition: all 0.15s;
@@ -855,8 +1005,9 @@
             flex-shrink: 0;
         }
 
-        .chat-msg:hover .chat-msg-reply-btn {
-            display: inline-flex;
+        .chat-msg-bubble-wrap:hover .chat-msg-reply-btn {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .chat-msg-reply-btn:hover {
@@ -1328,7 +1479,8 @@
                         let avatarsHtml = '';
                         onlineAdmins.forEach(adm => {
                             currentOnlineIds.add(adm.id);
-                            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(adm.name)}&background=${adm.is_it_me ? '1C1C1E' : '6366f1'}&color=ffffff&size=100`;
+                            const backupUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(adm.name)}&background=${adm.is_it_me ? '1C1C1E' : '6366f1'}&color=ffffff&size=100`;
+                            const avatarUrl = adm.avatar || backupUrl;
 
                             // Show toast if there's a new admin online
                             if (!isFirstOnlinePoll && !adm.is_it_me && !prevOnlineAdminIds.has(adm.id)) {
@@ -1349,7 +1501,9 @@
                     if (lastMsgId === 0 && msgs.length === 0) {
                         chatMessages.innerHTML = `
                             <div class="chat-empty">
-                                <div class="chat-empty-icon">💬</div>
+                                <div class="chat-empty-icon text-zinc-400">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </div>
                                 <p>Belum ada pesan</p>
                                 <p style="font-size:12px;margin-top:4px;">Mulai percakapan dengan admin lain!</p>
                             </div>`;
@@ -1421,13 +1575,15 @@
 
                 div.innerHTML = `
                     <span class="chat-msg-name">${escapeHtml(msg.user_name)}</span>
-                    <div class="chat-msg-bubble">
-                        ${replyHtml}
-                        ${escapeHtml(msg.message)}
+                    <div class="chat-msg-bubble-wrap">
+                        <div class="chat-msg-bubble">
+                            ${replyHtml}
+                            ${escapeHtml(msg.message)}
+                        </div>
+                        <button type="button" class="chat-msg-reply-btn items-center justify-center pt-0.5" title="Reply"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg></button>
                     </div>
                     <div class="chat-msg-time-row">
                         <span class="chat-msg-time">${msg.created_at}</span>
-                        <button type="button" class="chat-msg-reply-btn" title="Reply">↩</button>
                     </div>
                 `;
 
@@ -1672,7 +1828,78 @@
                     reportOverlay.classList.remove('report-visible');
                     reportOverlay.classList.add('report-hidden');
                 }
+            }
 
+            // ── Settings Logic ─────────────────────────────────
+            const settingsToggle = document.getElementById('settings-toggle');
+            const settingsOverlay = document.getElementById('settings-overlay');
+            const settingsClose = document.getElementById('settings-close');
+            let isSettingsOpen = false;
+
+            if (settingsToggle && settingsOverlay) {
+                settingsToggle.addEventListener('click', () => {
+                    isSettingsOpen = !isSettingsOpen;
+                    if (isSettingsOpen) {
+                        settingsOverlay.classList.remove('settings-hidden');
+                        settingsOverlay.classList.add('settings-visible');
+                        if (isOpen) { isOpen = false; closeChat(); }
+                        if (isCmdOpen) { isCmdOpen = false; closeCmd(); }
+                        if (isReportOpen) { isReportOpen = false; closeReport(); }
+                    } else {
+                        closeSettings();
+                    }
+                });
+
+                settingsClose.addEventListener('click', () => {
+                    isSettingsOpen = false;
+                    closeSettings();
+                });
+
+                function closeSettings() {
+                    settingsOverlay.classList.remove('settings-visible');
+                    settingsOverlay.classList.add('settings-hidden');
+                }
+
+                // Clear cache button
+                const btnClearCache = document.getElementById('btn-clear-cache');
+                if (btnClearCache) {
+                    btnClearCache.addEventListener('click', () => {
+                        if (confirm('Yakin ingin menghapus cache & storage lokal?')) {
+                            localStorage.clear();
+                            sessionStorage.clear();
+                            btnClearCache.textContent = '✓ Cache Cleared!';
+                            setTimeout(() => { btnClearCache.textContent = 'Clear Cache →'; }, 2000);
+                        }
+                    });
+                }
+
+                // Toggle settings persist to localStorage
+                const settingNotif = document.getElementById('setting-notif');
+                const settingDarkmode = document.getElementById('setting-darkmode');
+
+                if (settingNotif) {
+                    settingNotif.checked = localStorage.getItem('setting_notif') !== 'false';
+                    settingNotif.addEventListener('change', () => {
+                        localStorage.setItem('setting_notif', settingNotif.checked);
+                    });
+                }
+                if (settingDarkmode) {
+                    settingDarkmode.checked = localStorage.getItem('setting_darkmode') === 'true';
+                    settingDarkmode.addEventListener('change', () => {
+                        localStorage.setItem('setting_darkmode', settingDarkmode.checked);
+                    });
+                }
+            }
+
+            // Also close settings when other overlays open
+            if (reportToggle && settingsOverlay) {
+                const origReportClick = reportToggle.onclick;
+                reportToggle.addEventListener('click', () => {
+                    if (isSettingsOpen) { isSettingsOpen = false; settingsOverlay.classList.remove('settings-visible'); settingsOverlay.classList.add('settings-hidden'); }
+                });
+            }
+
+            {
                 const reportImageInput = document.getElementById('report-image');
                 const reportImagePreview = document.getElementById('report-image-preview');
                 const reportImagePlaceholder = document.getElementById('report-image-placeholder');

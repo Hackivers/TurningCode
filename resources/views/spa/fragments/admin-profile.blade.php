@@ -30,7 +30,7 @@
                     <label for="avatar-upload" class="absolute bottom-0 right-0 h-8 w-8 bg-indigo-600 rounded-full border-2 border-white flex items-center justify-center text-white cursor-pointer hover:bg-indigo-700 transition shadow-sm">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </label>
-                    <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="hidden" onchange="previewAvatar(event)">
+                    <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="hidden" onchange="window.previewAvatar(event)">
                 </div>
                 <div class="flex-1 space-y-1 text-center sm:text-left">
                     <h3 class="text-lg font-bold text-zinc-900">{{ $user->name }}</h3>
@@ -61,13 +61,13 @@
                                class="w-full rounded-l-lg border-zinc-200 border-r-0 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-zinc-400 bg-white z-10 @error('email_name') border-red-500 @enderror"
                                placeholder="username">
                         <span class="inline-flex items-center px-4 py-2.5 rounded-r-lg border border-zinc-200 border-l-0 bg-zinc-50 text-zinc-500 text-sm font-medium font-mono select-none">
-                            @gmail.com
+                            @turncode.com
                         </span>
                     </div>
                     @error('email_name') 
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p> 
                     @else
-                        <p class="mt-1.5 text-xs text-zinc-400">Email harus berupa suffix <strong>@gmail.com</strong>. Hanya gunakan huruf, angka, titik, strip (-), atau underscore (_).</p>
+                        <p class="mt-1.5 text-xs text-zinc-400">Email harus berupa suffix <strong>@turncode.com</strong>. Hanya gunakan huruf, angka, titik, strip (-), atau underscore (_).</p>
                     @enderror
                 </div>
             </div>
@@ -83,16 +83,3 @@
         </div>
     </form>
 </div>
-
-<script>
-    function previewAvatar(event) {
-        const input = event.target;
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('avatar-preview').src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>

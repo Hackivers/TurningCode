@@ -423,7 +423,9 @@
                         <div class="flex-1 w-full flex flex-col gap-3">
                             <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/50 hover:bg-emerald-50 transition-colors">
                                 <div class="flex items-center gap-3">
-                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600">✅</span>
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </span>
                                     <div>
                                         <span class="block text-sm font-bold text-zinc-700">Lulus</span>
                                         <span class="block text-[9px] uppercase font-mono text-zinc-400">Total Passed</span>
@@ -434,7 +436,9 @@
 
                             <div class="flex items-center justify-between p-3 rounded-xl bg-red-50/50 border border-red-100/50 hover:bg-red-50 transition-colors">
                                 <div class="flex items-center gap-3">
-                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-red-100 text-red-500">❌</span>
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-red-100 text-red-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </span>
                                     <div>
                                         <span class="block text-sm font-bold text-zinc-700">Gagal</span>
                                         <span class="block text-[9px] uppercase font-mono text-zinc-400">Total Failed</span>

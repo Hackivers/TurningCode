@@ -5,6 +5,45 @@ const base = body.dataset.spaBase;
 const initial = body.dataset.spaInitial || 'dashboard';
 const el = document.getElementById('spa-content');
 
+window.previewImage = function(input) {
+    let container = input.nextElementSibling;
+    if (!container || !container.classList.contains('image-preview-container')) {
+        container = document.createElement('div');
+        container.className = 'mt-2 image-preview-container hidden';
+        container.innerHTML = '<img class="h-32 w-auto object-cover rounded-md border border-zinc-200 bg-white p-1 shadow-sm">';
+        input.parentNode.insertBefore(container, input.nextSibling);
+    }
+    const img = container.querySelector('img');
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                container.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+            return;
+        }
+    }
+    img.src = '';
+    container.classList.add('hidden');
+};
+
+window.previewAvatar = function(event) {
+    const input = event.target;
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('avatar-preview');
+            if (preview) {
+                preview.src = e.target.result;
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
 function setupMateriFormRows(container) {
     const wrap = container.querySelector('#materi-rows');
     const btn = container.querySelector('#btn-add-materi-row');
@@ -74,7 +113,7 @@ function sectionInputHtml(type, idx) {
 
         case 'image':
             return `<div><label class="text-xs text-zinc-600">Upload gambar</label>
-                <input type="file" name="sections[${idx}][file]" accept="image/*" class="mt-0.5 block w-full text-sm text-zinc-600 file:mr-2 file:rounded-md file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm"></div>
+                <input type="file" name="sections[${idx}][file]" accept="image/*" class="mt-0.5 block w-full text-sm text-zinc-600 file:mr-2 file:rounded-md file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm" onchange="window.previewImage(this)"></div>
                 <div><label class="text-xs text-zinc-600">Caption</label>
                 <input type="text" name="sections[${idx}][content]" class="${tw}" placeholder="Caption gambar (opsional)"></div>`;
 

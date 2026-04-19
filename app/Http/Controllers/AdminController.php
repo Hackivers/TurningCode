@@ -22,6 +22,7 @@ class AdminController extends Controller
         'materi',
         'questions',
         'database',
+        'profile',
     ];
 
     public function spa(): View
@@ -261,8 +262,8 @@ class AdminController extends Controller
             'avatar'     => ['nullable', 'file', 'image', 'max:2048', 'mimes:jpeg,png,jpg,webp,gif'],
         ]);
 
-        // Construct email with const @gmail.com
-        $newEmail = $request->input('email_name') . '@gmail.com';
+        // Construct email with const @turncode.com
+        $newEmail = $request->input('email_name') . '@turncode.com';
 
         // Check if email already exists for another user
         if (\App\Models\User::where('email', $newEmail)->where('id', '!=', $user->id)->exists()) {
