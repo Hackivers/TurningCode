@@ -110,6 +110,34 @@ class UserController extends Controller
                 ->limit(5)
                 ->get();
 
+            // Compute global achievements for leaderboard
+            $topScorer = \App\Models\QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
+                ->groupBy('user_id')->orderByDesc('max_score')->first();
+            $mostPassed = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
+                ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
+            $mostAttempts = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
+                ->groupBy('user_id')->orderByDesc('attempt_count')->first();
+            $perfectUserIds = \App\Models\QuizAttempt::where('score', 100)->distinct('user_id')->pluck('user_id')->toArray();
+
+            foreach ($topUsers as $u) {
+                $achievements = [];
+                if ($topScorer && $topScorer->user_id === $u->id) {
+                    $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Skor Tertinggi'];
+                }
+                if ($mostPassed && $mostPassed->user_id === $u->id) {
+                    $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Lulus Kuis Terbanyak'];
+                }
+                if (in_array($u->id, $perfectUserIds)) {
+                    $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Nilai Sempurna'];
+                }
+                if ($mostAttempts && $mostAttempts->user_id === $u->id) {
+                    $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling Aktif'];
+                }
+
+                // If a user has more than 3 achievements, we can limit it or show all. Let's show up to 3 to keep UI clean.
+                $u->achievements = array_slice($achievements, 0, 3);
+            }
+
             return view('spa.fragments.user-dashboard', [
                 'data' => ['mainMateri' => $mainMateri],
                 'mainMateri' => $mainMateri,
@@ -344,16 +372,16 @@ class UserController extends Controller
             $hasPerfect = QuizAttempt::where('user_id', $userId)->where('score', 100)->exists();
 
             if ($topScorer && $topScorer->user_id === $userId) {
-                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Meraih skor tertinggi secara global'];
+                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008.png', 'desc' => 'Meraih skor tertinggi secara global'];
             }
             if ($mostPassed && $mostPassed->user_id === $userId) {
-                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
+                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
             }
             if ($hasPerfect) {
-                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
+                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
             }
             if ($mostAttempts && $mostAttempts->user_id === $userId) {
-                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling aktif mencoba kuis'];
+                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006.png', 'desc' => 'Paling aktif mencoba kuis'];
             }
 
             // ── Additional Stats for Admin-style Dashboard ──
