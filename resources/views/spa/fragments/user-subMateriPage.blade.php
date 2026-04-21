@@ -71,7 +71,39 @@
             }
         }
     };
-</script>{{--
+</script>
+
+<style>
+/* ═══ ROTOOD DARK — SUB MATERI PAGE ═══ */
+.container-header.headerbar {
+    background: #111 !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 28px !important;
+    margin: 1rem 24px !important;
+}
+.main-header-materi { background: transparent !important; }
+.tittle-header-materi div h4 { color: #eee !important; }
+.tittle-header-materi div h5 { color: #666 !important; }
+
+.tittle-submateri { padding: 1rem 24px 0 !important; }
+.tittle-submateri div h4 { color: #eee !important; font-size: 18px !important; font-weight: 700 !important; }
+.tittle-submateri div h5 { color: #666 !important; }
+
+.container-submateri { padding: 0 24px !important; }
+.box-submateri {
+    background: #111 !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 28px !important;
+}
+.box-submateri:hover { border-color: #333 !important; }
+.box-submateri.completed { border-color: #1a3a1a !important; }
+.desc-submateri h4 { color: #eee !important; }
+.desc-submateri h5, .desc-submateri h6 { color: #666 !important; }
+.thumb-submateri { border-radius: 20px !important; overflow: hidden !important; }
+.thumb-cover-submateri { background: linear-gradient(to right, #111, transparent) !important; }
+.archive-submateri i { color: #555 !important; }
+.archive-submateri i.active { color: #f59e0b !important; }
+</style>{{--
 @php
     $subMateris = $subMateris ?? [];
     $arsipSub = $arsipSub ?? [];

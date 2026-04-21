@@ -1,72 +1,52 @@
 @php
     $hasProgress = $mainMateri->contains(fn($m) => $m->progress_percent > 0);
+    $activeMateri = $mainMateri->filter(fn($m) => $m->progress_percent > 0 && !$m->is_coming_soon)->take(2);
 @endphp
 
-@if ($hasProgress)
-<div class="tittle-progres">
-    <div>
-        <h4>progres mu sampai mana nih!!...</h4>
-        <h5>waahh!, GG udah mulai berani melangkah</h5>
-    </div>
-</div>
-<div class="container-progres">
-    <main class="main-progres">
-        <div class="wrapper-progres">
-            @foreach ($mainMateri as $main)
-                @if ($main->is_coming_soon || $main->progress_percent <= 0)
-                    @continue
-                @endif
-                <section class="box-progres">
-                    <div class="persent-progres">
-                        <h4>{{ $main->progress_percent }}%</h4>
-                    </div>
-                    <div class="cover-progres">
-                        <div class="desc-progres">
-                            <h4>{{ $main->title }}</h4>
-                            <h5>
-                                @if ($main->last_studied_title)
-                                    terakhir belajar : {{ $main->last_studied_title }}
-                                    @if ($main->last_studied_at)
-                                        · {{ $main->last_studied_at->diffForHumans() }}
-                                    @endif
-                                @else
-                                    belum mulai belajar nih, yok gas!
-                                @endif
-                            </h5>
-                            @php
-                                $totalBar = 7;
-                                $activeBar = round(($main->progress_percent / 100) * $totalBar);
-                            @endphp
-                            <div class="wrapper-progresbar">
-                                @for ($i = 0; $i < $totalBar; $i++)
-                                    <span
-                                        class="
-                                        bar
-                                        {{ $i < $activeBar ? 'active' : 'nonactive' }}
-
-                                        {{-- ACTIVE --}}
-                                        {{ $activeBar == 1 && $i == 0 ? 'single-active' : '' }}
-                                        {{ $activeBar > 1 && $i == 0 ? 'first-active' : '' }}
-                                        {{ $activeBar > 1 && $i == $activeBar - 1 ? 'last-active' : '' }}
-
-                                        {{-- NONACTIVE --}}
-                                        {{ $i == $activeBar ? 'first-nonactive' : '' }}
-                                        {{ $i == $totalBar - 1 && $activeBar < $totalBar ? 'last-nonactive' : '' }}
-                                    "
-                                        style="animation-delay: {{ $i * 0.12 }}s"></span>
-                                @endfor
-                            </div>
-                        </div>
-                    </div>
-                    <div class="thumb-progres">
-                        <div class="thumb-cover-progres"></div>
-                        <img src="{{ asset('assets/img/img00' . (($loop->iteration % 3) + 1) . 'non.jpg') }}"
-                            alt="">
-                    </div>
-                </section>
-            @endforeach
+@if ($hasProgress && $activeMateri->count())
+    @foreach ($activeMateri as $main)
+        <a href="?page=materi&main_id={{ $main->id }}" class="neo-card neo-card-light" style="min-height: 260px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="neo-header">
+                <h3 class="neo-title" style="max-width: 80%;">{{ $main->title }}</h3>
+                <span class="neo-arrow">&#x2197;</span>
+            </div>
+            
+            <div style="display: flex; justify-content: center; align-items: center; padding: 20px 0; flex: 1;">
+                 <img src="{{ asset('assets/img/img00' . (($loop->iteration % 3) + 1) . 'non.jpg') }}" alt="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; filter: grayscale(100%); mix-blend-mode: multiply; opacity: 0.8;">
+            </div>
+            
+            <div>
+                <p class="neo-desc" style="margin-bottom: 16px; font-weight: 500;">
+                    Melanjutkan ke tahap berikutnya.
+                </p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="neo-pill">{{ $main->progress_percent }}% Selesai</span>
+                    @if ($main->last_studied_at)
+                        <span class="neo-pill" title="Terakhir belajar">{{ $main->last_studied_at->diffForHumans() }}</span>
+                    @endif
+                </div>
+            </div>
+        </a>
+    @endforeach
+    
+    @if($activeMateri->count() == 1)
+        <!-- Fill the empty grid slot to maintain structural symmetry -->
+        <div class="neo-card neo-card-light" style="justify-content: center; align-items: center; opacity: 0.4;">
+            <i class='bx bx-book-bookmark' style="font-size: 64px; color: #a1a1aa; margin-bottom: 24px;"></i>
+            <p style="font-size: 14px; font-weight: 500; color: #555; text-align: center;">Eksplor lebih banyak materi.</p>
         </div>
-    </main>
-</div>
+    @endif
+@else
+    <a href="?page=materi" class="neo-card neo-card-light" style="min-height: 240px; grid-column: 1 / -1;">
+        <div class="neo-header">
+            <h3 class="neo-title">Mulai Perjalananmu</h3>
+            <span class="neo-arrow">&#x2197;</span>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; padding: 20px 0; flex: 1;">
+            <i class='bx bx-rocket' style="font-size: 80px; color: #a1a1aa; opacity: 0.5;"></i>
+        </div>
+        <div>
+           <p class="neo-desc" style="font-weight: 500;">Pilih materi pertama yang ingin kamu pelajari hari ini di bawah.</p>
+        </div>
+    </a>
 @endif
-

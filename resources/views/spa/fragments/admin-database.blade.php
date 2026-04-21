@@ -1,4 +1,4 @@
-<div class="space-y-6 animate-fade-in relative" id="db-schema-root">
+<div class="space-y-6 animate-fade-in relative spa-fragment" id="db-schema-root">
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -40,7 +40,7 @@
         <div class="db-table-card relative bg-white bg-grid-pattern-box rounded-2xl border border-zinc-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200" data-table="{{ strtolower($tableName) }}">
             
             {{-- Table Header (Accordion Trigger) --}}
-            <div class="db-accordion-trigger px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-zinc-50/80 transition-colors select-none">
+            <div class="db-accordion-trigger px-5 py-4 flex items-center justify-between cursor-pointer transition-colors select-none" data-dm-trigger>
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-500 shrink-0">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -61,18 +61,26 @@
                     </div>
                 </div>
 
-                {{-- Grid-only: mini stats --}}
-                <div class="db-grid-stats hidden flex-col items-end gap-1">
-                    <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-600">{{ $colCount }} col</span>
-                    @if($fkCount > 0)
-                        <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">{{ $fkCount }} FK</span>
-                    @endif
-                </div>
+                <div class="flex items-center gap-2">
+                    {{-- Lihat Data Button --}}
+                    <button type="button" class="db-data-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-bold hover:bg-indigo-100 transition-colors border border-indigo-100" data-view-table="{{ $tableName }}" title="Lihat isi data tabel {{ $tableName }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M10.875 12c-.621 0-1.125.504-1.125 1.125M12 12c.621 0 1.125.504 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 0v1.5"/></svg>
+                        Data
+                    </button>
 
-                {{-- List-only: arrow --}}
-                <svg class="db-list-arrow w-5 h-5 text-zinc-300 transition-transform duration-300 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
+                    {{-- Grid-only: mini stats --}}
+                    <div class="db-grid-stats hidden flex-col items-end gap-1">
+                        <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-600">{{ $colCount }} col</span>
+                        @if($fkCount > 0)
+                            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">{{ $fkCount }} FK</span>
+                        @endif
+                    </div>
+
+                    {{-- List-only: arrow --}}
+                    <svg class="db-list-arrow w-5 h-5 text-zinc-300 transition-transform duration-300 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </div>
             </div>
 
             {{-- Table Body (Accordion Content) --}}
@@ -99,7 +107,7 @@
                                         }
                                     }
                                 @endphp
-                                <tr class="hover:bg-zinc-50/60 transition-colors">
+                                <tr class="transition-colors" data-dm-row>
                                     <td class="px-5 py-2.5 text-zinc-300 text-xs font-mono">{{ $idx + 1 }}</td>
                                     <td class="px-5 py-2.5">
                                         <span class="font-semibold text-zinc-900 text-[13px]">{{ $col['name'] }}</span>

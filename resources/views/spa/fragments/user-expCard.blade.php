@@ -1,36 +1,32 @@
-<div class="title-example mt-4">
-    <div>
-        <h4>Level & Pengalaman</h4>
-        <h5>Perbanyak waktu belajar untuk menambah EXP kamu!</h5>
+<div class="neo-card neo-card-light" style="height: 100%; display: flex; flex-direction: column;">
+    <div class="neo-header">
+        <h3 class="neo-title">Level &<br>Pengalaman</h3>
+        <span class="neo-arrow">&#x2197;</span>
     </div>
-</div>
-<div class="container container-exp mb-4">
-    <main class="main-exp">
-        <div class="wrapper-exp">
-            <div class="info-exp">
-                <div class="title-exp-section"><i class='bx bx-meteor'></i> EXP Points</div>
-                
-                <h1 class="exp-amount-display">
-                    <span id="current-exp-amount">{{ auth()->user()->exp ?? 0 }}</span> <span class="exp-text">EXP</span>
-                </h1>
-                
-                @if(auth()->user()->next_rank_exp)
-                    <div class="exp-target">
-                        <i class='bx bx-target-lock'></i> Target: <strong>{{ auth()->user()->next_rank_name }}</strong> (Butuh <span id="exp-needed">{{ auth()->user()->next_rank_exp - (auth()->user()->exp ?? 0) }}</span> EXP lagi)
-                    </div>
-                @else
-                    <div class="exp-maxed">
-                        <i class='bx bxs-crown'></i> Kamu sudah mencapai Rank Tertinggi (Legend)!
-                    </div>
-                @endif
-                
-                <div class="exp-hint"><i class='bx bx-info-circle'></i> Kamu mendapatkan +10 EXP secara otomatis setiap 1 menit aktif di dashboard.</div>
-            </div>
-            
-            <div class="icon-exp">
-                <div class="emblem-glow"></div>
-                <img src="{{ asset('assets/ico/' . auth()->user()->emblem_image) }}" alt="Emblem">
-            </div>
+
+    <div style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 0;">
+        <img src="{{ asset('assets/ico/' . auth()->user()->emblem_image) }}" alt="Emblem"
+            style="width: 160px; height: 160px; object-fit: contain; filter: contrast(1.2); mix-blend-mode: multiply; opacity: 0.9;">
+    </div>
+
+    <div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+            <span class="neo-pill" style="font-size: 14px; background: rgba(0,0,0,0.05);">{{ auth()->user()->exp ?? 0 }}
+                EXP</span>
+            <span class="neo-pill"
+                style="font-size: 14px; background: #121212; color: #fff; border-color: #121212;">Rank:
+                {{ auth()->user()->rank_name }}</span>
         </div>
-    </main>
+
+        @if(auth()->user()->next_rank_exp)
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span class="neo-pill" style="border-color: #121212;">Kurang <span
+                        id="exp-needed">{{ auth()->user()->next_rank_exp - (auth()->user()->exp ?? 0) }}</span> exp lagi untuk naik tier {{ auth()->user()->next_rank_name }}</span>
+            </div>
+        @else
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span class="neo-pill" style="background: center; border-color: #121212; color: #121212;">Maxed Out</span>
+            </div>
+        @endif
+    </div>
 </div>

@@ -130,12 +130,18 @@ function parseSpaLink(href) {
     }
 }
 
-/** Highlight icon bottom-nav yang sesuai halaman aktif */
+/** Highlight icon bottom-nav dan sidebar yang sesuai halaman aktif */
 function updateNavBottom(activePage) {
+    // Bottom Nav
     document.querySelectorAll('.box-nav-bottom').forEach(item => {
         const icon = item.querySelector('.icon-nav-bottom');
         if (!icon) return;
         icon.classList.toggle('active', item.dataset.page === activePage);
+    });
+
+    // Sidebar Nav (Neo-Minimalist)
+    document.querySelectorAll('.neo-nav-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.spaPage === activePage);
     });
 }
 
@@ -159,7 +165,20 @@ async function loadPage(page, params = {}, pushState = true) {
     const qs = new URLSearchParams(params).toString();
     if (qs) url += `?${qs}`;
 
-    el.style.opacity = '0.5';
+    el.style.opacity = '1';
+    el.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 4rem 1rem;">
+            <svg class="animate-spin text-indigo-500" style="height:2rem; width:2rem; margin-bottom:1rem; animation: spin 1s linear infinite;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p style="font-size:0.875rem; color:#6b7280; font-weight:500;">Memuat data...</p>
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                .animate-spin { animation: spin 1s linear infinite; }
+            </style>
+        </div>
+    `;
 
     try {
         const res = await fetch(url, {

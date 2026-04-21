@@ -45,46 +45,381 @@ PROFILE HEADER CARD
     </main>
 </div>
 
+
+
 {{-- ═══════════════════════════════════════════════════════════════
-STATS SECTION
+ACHIEVEMENT SECTION (Sci-Fi Arknights Style)
 ═══════════════════════════════════════════════════════════════ --}}
-<div class="container container-edit-profile">
-    <div class="edit-profile-section">
-        <div>
-            <div class="ep-section-title">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <h4>Statistik</h4>
+@if(!empty($achievements))
+    <div class="container container-edit-profile">
+        <div class="ark-achievement-card">
+            {{-- Left Panel: Titles & Tech Info --}}
+            <div class="ark-left-panel">
+                <div class="ark-box-wrapper">
+                    <div class="ark-box-icon">
+                        <span>[</span><span></span><span>]</span>
+                    </div>
+                    <div class="ark-tech-text">
+                        MODEL NO.AKH-0601<br>
+                        INPUT 100V-240V AC -, 500/600Hz 1.0A<br>
+                        OUTPUT 5V DC - 1.0A<br>
+                        CAUTION: INDOOR USE ONLY
+                    </div>
+                </div>
+
+                <h2 class="ark-title">Jalan Kejayaan</h2>
+                <div class="ark-subtitle">GLORY PATH</div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; color: #9ca3af;">
+                    <i class='bx bxl-c-plus-plus' style="font-size: 1.25rem;"></i>
+                    <i class='bx bx-chip' style="font-size: 1.25rem;"></i>
+                    <i class='bx bx-sync' style="font-size: 1.25rem;"></i>
+                </div>
             </div>
-            <div class="ep-stats-grid">
-                <div class="ep-stat-card">
-                    <i class='bx bx-time-five'></i>
-                    <div>
-                        <h5>Bergabung</h5>
-                        <h4>{{ $user->created_at->translatedFormat('d M Y') }}</h4>
-                    </div>
+
+            {{-- Right Panel: Hexagon Medals Grid --}}
+            <div class="ark-medals-area">
+                <div class="ark-medals-wrapper">
+                    @foreach($achievements as $index => $ach)
+                        <div class="ark-medal-item" title="{{ $ach['label'] }} : {{ $ach['desc'] }}">
+                            <img src="{{ asset('assets/ico/' . $ach['icon']) }}" alt="{{ $ach['label'] }}">
+                            <div class="ark-medal-tooltip">
+                                <strong>{{ $ach['label'] }}</strong><br>
+                                <span>{{ $ach['desc'] }}</span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-                <div class="ep-stat-card">
-                    <i class='bx bx-envelope'></i>
-                    <div>
-                        <h5>Email terverifikasi</h5>
-                        <h4>{{ $user->email_verified_at ? $user->email_verified_at->translatedFormat('d M Y') : 'Belum' }}
-                        </h4>
-                    </div>
+            </div>
+
+            {{-- Far Right Ribbon --}}
+            <div class="ark-right-ribbon">
+                <div class="ark-ribbon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="square" stroke-linejoin="miter" d="M7 17L17 7M17 7v9M17 7H8"></path>
+                    </svg>
                 </div>
-                <div class="ep-stat-card">
-                    <i class='bx bx-meteor'></i>
-                    <div>
-                        <h5>Total EXP</h5>
-                        <h4>{{ $user->exp ?? 0 }} EXP</h4>
-                    </div>
-                </div>
-                <div class="ep-stat-card">
-                    <i class='bx bx-trophy'></i>
-                    <div>
-                        <h5>Rank</h5>
-                        <h4>{{ $user->rank_name }}</h4>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Arknights Style Achievements */
+        .ark-achievement-card {
+            background: #e5e7eb;
+            border-radius: 20px;
+            display: flex;
+            /* overflow: hidden; Removed so tooltip and hover zoom don't clip! */
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+            min-height: 180px;
+            /* Made slightly taller for larger icons */
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            margin-top: 20px;
+            border: 1px solid #d1d5db;
+            max-width: 79em;
+            width: 100%;
+        }
+
+        .ark-left-panel {
+            padding: 24px 30px;
+            width: 35%;
+            min-width: 280px;
+            position: relative;
+            z-index: 2;
+            background: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .ark-box-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .ark-box-icon {
+            font-family: monospace;
+            font-size: 28px;
+            font-weight: 300;
+            color: #9ca3af;
+            letter-spacing: -2px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .ark-box-icon span:nth-child(2) {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin: 0 4px;
+            position: relative;
+        }
+
+        .ark-box-icon span:nth-child(2)::before,
+        .ark-box-icon span:nth-child(2)::after {
+            content: '';
+            position: absolute;
+            background: #9ca3af;
+        }
+
+        .ark-box-icon span:nth-child(2)::before {
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1.5px;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .ark-box-icon span:nth-child(2)::after {
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1.5px;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .ark-tech-text {
+            font-size: 8.5px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .ark-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #374151;
+            margin: 12px 0 2px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .ark-subtitle {
+            font-size: 10px;
+            color: #9ca3af;
+            letter-spacing: 3px;
+            font-family: monospace;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Stable Hexagon Grid */
+        .ark-medals-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Changed from flex-end to center */
+            padding: 10px 40px;
+            /* Reset padding to be balanced */
+            z-index: 10;
+            background: linear-gradient(90deg, #e5e7eb 0%, #cbd5e1 100%);
+        }
+
+        .ark-medals-wrapper {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            /* Changed from flex-end to center */
+        }
+
+        .ark-medal-item {
+            position: relative;
+            width: 43px;
+            height: 50px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .ark-medal-item:nth-child(odd) {
+            transform: translateY(-2.33em) scale(1.9);
+        }
+
+        .ark-medal-item:nth-child(even) {
+            transform: translateY(2.33em) scale(1.9);
+        }
+
+        .ark-medal-item:nth-child(odd):hover {
+            transform: translateY(-2.33em) scale(2) !important;
+            z-index: 30 !important;
+            filter: drop-shadow(4px 15px 25px rgba(0, 0, 0, 0.35));
+        }
+
+        .ark-medal-item:nth-child(even):hover {
+            transform: translateY(2.33em) scale(2) !important;
+            z-index: 30 !important;
+            filter: drop-shadow(4px 15px 25px rgba(0, 0, 0, 0.35));
+        }
+
+        .ark-medal-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* background: red; */
+        }
+
+        /* Tooltip */
+        .ark-medal-tooltip {
+            position: absolute;
+            bottom: -35px;
+            /* Position so it doesn't clip below */
+            left: 50%;
+            transform: translateX(-50%) translateY(10px) scale(.6);
+            background: #111827;
+            color: #f3f4f6;
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-in-out;
+            z-index: 40;
+            pointer-events: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.4;
+            border: 1px solid #374151;
+        }
+
+        .ark-medal-tooltip strong {
+            color: #fcd34d;
+        }
+
+        .ark-medal-item:hover .ark-medal-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0) scale(.5);
+        }
+
+        /* Right Ribbon */
+        .ark-right-ribbon {
+            background: #1f2937;
+            width: 25%;
+            /* Increased to 25% width */
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            /* Move button to the top right */
+            padding: 20px;
+            border-left: 6px solid #fbbf24;
+            /* Gold stripe */
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 0 20px 20px 0;
+        }
+
+        .ark-right-ribbon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            background-image: linear-gradient(30deg, #374151 12%, transparent 12.5%, transparent 87%, #374151 87.5%, #374151), linear-gradient(150deg, #374151 12%, transparent 12.5%, transparent 87%, #374151 87.5%, #374151), linear-gradient(30deg, #374151 12%, transparent 12.5%, transparent 87%, #374151 87.5%, #374151), linear-gradient(150deg, #374151 12%, transparent 12.5%, transparent 87%, #374151 87.5%, #374151), linear-gradient(60deg, #9ca3af77 25%, transparent 25.5%, transparent 75%, #9ca3af77 75%, #9ca3af77), linear-gradient(60deg, #9ca3af77 25%, transparent 25.5%, transparent 75%, #9ca3af77 75%, #9ca3af77);
+            background-size: 20px 35px;
+            background-position: 0 0, 0 0, 10px 17.5px, 10px 17.5px, 0 0, 10px 17.5px;
+        }
+
+        .ark-ribbon-btn {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            border-radius: 2px;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ark-ribbon-btn:hover {
+            color: white;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .ark-ribbon-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .ark-achievement-card {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .ark-left-panel {
+                width: 100%;
+                background: transparent;
+                padding: 24px 20px 0 20px;
+                align-items: center;
+                text-align: center;
+            }
+
+            .ark-medals-area {
+                justify-content: center;
+                padding-bottom: 50px;
+                background: transparent;
+            }
+
+            .ark-right-ribbon {
+                display: none;
+            }
+        }
+    </style>
+@endif
+
+{{-- ═══════════════════════════════════════════════════════════════
+STATS SECTION (Minimalist)
+═══════════════════════════════════════════════════════════════ --}}
+<div class="ua-stats-wrapper">
+    <div class="ua-stats-inner">
+        <div class="uas-grid">
+            <div class="uas-item">
+                <span class="uas-label">Bergabung</span>
+                <span class="uas-value">{{ $user->created_at->translatedFormat('d M Y') }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">Status</span>
+                <span class="uas-value" style="color:{{ $user->email_verified_at ? '#10b981' : '#f43f5e' }};">{{ $user->email_verified_at ? 'Terverifikasi' : 'Belum Verifikasi' }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">EXP</span>
+                <span class="uas-value">{{ number_format($user->exp ?? 0) }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">Rank</span>
+                <span class="uas-value">{{ $user->rank_name }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">Kuis Dicoba</span>
+                <span class="uas-value">{{ $totalQuizAttempts }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">Kuis Lulus</span>
+                <span class="uas-value" style="color:#10b981;">{{ $quizPassedCount }}</span>
+            </div>
+            <div class="uas-sep"></div>
+            <div class="uas-item">
+                <span class="uas-label">Hari Aktif</span>
+                <span class="uas-value">{{ $daysActive }}</span>
             </div>
         </div>
     </div>
@@ -510,6 +845,69 @@ JAVASCRIPT
    ═══════════════════════════════════════════════════════════════ */
 
     /* ── Stats Section ──────────────────────────────────────────── */
+    .ua-stats-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+
+    .ua-stats-inner {
+        width: 100%;
+        max-width: 79em;
+    }
+
+    /* ── Minimalist Stats ─────────────────────────────────── */
+    .uas-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+    }
+    .uas-item {
+        flex: 1;
+        min-width: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 18px 12px;
+        gap: 4px;
+    }
+    .uas-label {
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #9ca3af;
+    }
+    .uas-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    .uas-sep {
+        width: 1px;
+        align-self: stretch;
+        margin: 14px 0;
+        background: #e5e7eb;
+    }
+    @media (max-width: 768px) {
+        .uas-grid { flex-direction: column; }
+        .uas-item {
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 12px 20px;
+        }
+        .uas-sep {
+            width: auto;
+            height: 1px;
+            margin: 0 16px;
+        }
+    }
+
     .container-edit-profile {
         display: flex;
         justify-content: center;
@@ -1054,4 +1452,144 @@ JAVASCRIPT
             align-items: center;
         }
     }
+</style>
+
+<style>
+/* ═══ ROTOOD DARK — ACCOUNT PAGE ═══ */
+
+/* Profile Header */
+.container-account {
+    background: transparent !important;
+}
+.main-account {
+    background: transparent !important;
+}
+.wrapper-account {
+    background: #111 !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 28px !important;
+}
+.account-profile-name h4 { color: #eee !important; }
+.account-profile-name h5 { color: #666 !important; }
+.account-profile-role span { background: #1a1a1a !important; border: 1px solid #222 !important; }
+.account-profile-role span h5 { color: #aaa !important; }
+.account-profile-btn button {
+    background: #f3ebd7 !important;
+    color: #000 !important;
+    border: none !important;
+    border-radius: 20px !important;
+}
+.account-profile-btn button:hover { opacity: 0.85 !important; }
+.account-profile-emblem h6 { color: #888 !important; }
+.account-profile-emblem h4 { color: #f3ebd7 !important; }
+.emblem-name img { filter: brightness(0.9) !important; }
+
+/* Achievement Card */
+.ark-achievement-card {
+    background: #111 !important;
+    border: 1px solid #1a1a1a !important;
+    box-shadow: none !important;
+}
+.ark-left-panel {
+    background: #111 !important;
+}
+.ark-title { color: #eee !important; }
+.ark-subtitle { color: #666 !important; }
+.ark-tech-text { color: #444 !important; }
+.ark-box-icon span { color: #444 !important; }
+.ark-box-icon span:nth-child(2)::before,
+.ark-box-icon span:nth-child(2)::after { background: #444 !important; }
+.ark-right-ribbon {
+    background: #0a0a0a !important;
+    border-left: 1px solid #1a1a1a !important;
+}
+.ark-ribbon-btn { color: #888 !important; }
+.ark-medal-tooltip {
+    background: #1a1a1a !important;
+    color: #eee !important;
+    border: 1px solid #222 !important;
+}
+
+/* Stats Section */
+.container-edit-profile {
+    background: transparent !important;
+}
+.uas-card {
+    background: #111 !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 28px !important;
+}
+.uas-title { color: #eee !important; }
+.uas-grid-item { background: #0a0a0a !important; border: 1px solid #1a1a1a !important; border-radius: 20px !important; }
+.uas-grid-item:hover { border-color: #333 !important; }
+.uas-label { color: #666 !important; }
+.uas-value { color: #eee !important; }
+.uas-icon { color: #888 !important; background: #1a1a1a !important; }
+
+/* Edit Profile Modal */
+.ep-overlay {
+    background: rgba(0,0,0,0.7) !important;
+    backdrop-filter: blur(8px) !important;
+}
+.ep-modal {
+    background: #111 !important;
+    border: 1px solid #222 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+}
+.ep-header h3 { color: #eee !important; }
+.ep-close {
+    background: #1a1a1a !important;
+    color: #888 !important;
+    border: 1px solid #222 !important;
+}
+.ep-close:hover { background: #222 !important; color: #fff !important; }
+.ep-divider { background: #1a1a1a !important; }
+.ep-section-title { color: #aaa !important; }
+.ep-stats-grid .ep-stat-card {
+    background: #0a0a0a !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 16px !important;
+}
+.ep-stat-card .ep-stat-label { color: #666 !important; }
+.ep-stat-card .ep-stat-value { color: #eee !important; }
+.ep-avatar-name h4 { color: #eee !important; }
+.ep-avatar-name p { color: #666 !important; }
+.ep-avatar-img { border: 3px solid #222 !important; }
+.ep-btn-change-avatar {
+    background: #1a1a1a !important;
+    color: #aaa !important;
+    border: 1px solid #222 !important;
+}
+.ep-btn-change-avatar:hover { background: #222 !important; color: #fff !important; }
+.ep-btn-remove-avatar { color: #666 !important; }
+.ep-btn-remove-avatar:hover { color: #ef4444 !important; }
+.ep-form-group label { color: #aaa !important; }
+.ep-form-group input {
+    background: #0a0a0a !important;
+    border: 1px solid #222 !important;
+    color: #eee !important;
+    border-radius: 14px !important;
+}
+.ep-form-group input:focus {
+    border-color: #f3ebd7 !important;
+    box-shadow: 0 0 0 3px rgba(243,235,215,0.08) !important;
+}
+.ep-email-suffix {
+    background: #1a1a1a !important;
+    color: #666 !important;
+    border-color: #222 !important;
+}
+.ep-msg { border-radius: 14px !important; }
+.ep-btn-save {
+    background: #f3ebd7 !important;
+    color: #000 !important;
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3) !important;
+}
+.ep-btn-save:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-2px) !important;
+}
 </style>

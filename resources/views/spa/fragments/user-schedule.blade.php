@@ -419,11 +419,11 @@
 
     // ── Search Handler ────────────────────────────────────────────
     window.__currentSearchHandler = function(query) {
-        document.querySelectorAll('.modern-sched-card').forEach(card => {
-            const title = card.querySelector('.msc-header h4')?.textContent.toLowerCase() || '';
-            const desc = card.querySelector('.msc-body')?.textContent.toLowerCase() || '';
-            const type = card.querySelector('.msc-badge')?.textContent.toLowerCase() || '';
-            const label = card.querySelector('.msc-detail')?.textContent.toLowerCase() || '';
+        document.querySelectorAll('.fav-sched-card').forEach(card => {
+            const title = card.querySelector('.fsc-title')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.fsc-body')?.textContent.toLowerCase() || '';
+            const type = card.querySelector('.fsc-badge')?.textContent.toLowerCase() || '';
+            const label = card.querySelector('.fsc-detail-row')?.textContent.toLowerCase() || '';
             if (title.includes(query) || desc.includes(query) || type.includes(query) || label.includes(query)) {
                 card.style.display = '';
             } else {
@@ -432,7 +432,7 @@
         });
 
         if (query !== '') {
-            const firstVisible = Array.from(document.querySelectorAll('.modern-sched-card')).find(c => c.style.display !== 'none');
+            const firstVisible = Array.from(document.querySelectorAll('.fav-sched-card')).find(c => c.style.display !== 'none');
             if (firstVisible) {
                 // Gunakan timeout kecil agar DOM layout update sebelum scroll
                 setTimeout(() => {
@@ -442,3 +442,316 @@
         }
     };
 </script>
+
+<style>
+/* ═══ NEO BENTO LIGHT — SCHEDULE PAGE ═══ */
+.title-example { display: none !important; }
+
+.container-schedule {
+    display: flex;
+    justify-content: center;
+    padding: 0 24px;
+    margin-bottom: 50px;
+    background: transparent;
+}
+.main-schedule {
+    width: 100%;
+    max-width: 79em;
+}
+.wrapper-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+.schedule-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    font-family: 'Inter', sans-serif;
+}
+.schedule-section-title i {
+    font-size: 20px;
+    color: #121212;
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.schedule-section-title h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #121212;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.badge-count {
+    background: #fff;
+    color: #121212;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.schedule-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.fav-sched-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.25s ease;
+    font-family: 'Inter', sans-serif;
+}
+.fav-sched-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.08);
+}
+.fav-sched-card.inactive {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+}
+
+.fsc-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.fsc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fsc-badge {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.fsc-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.fsc-main { }
+.fsc-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #121212;
+    margin: 0;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+}
+.fsc-desc {
+    font-size: 13px;
+    color: #666;
+    margin: 6px 0 0;
+    line-height: 1.4;
+}
+
+.fsc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+}
+.fsc-detail-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+}
+.fsc-detail-pill i { font-size: 14px; color: #666; }
+
+.fsc-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 800;
+}
+.fsc-time i { font-size: 15px; }
+
+.fsc-actions {
+    display: flex;
+    gap: 6px;
+}
+.fsc-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: #fdfdfd;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+.fsc-btn:hover {
+    background: #121212;
+    color: #fff;
+    border-color: #121212;
+}
+.fsc-btn.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: transparent;
+}
+
+.schedule-empty {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    background: #fff;
+    border-radius: 24px;
+    border: 1px dashed rgba(0,0,0,0.1);
+    color: #888;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ─── FAB Button ─── */
+.btn-add-schedule {
+    background: #121212 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+}
+.btn-add-schedule:hover {
+    transform: scale(1.1) !important;
+    background: #000 !important;
+}
+
+/* ─── Modal Light Neo-Bento ─── */
+.schedule-modal-overlay {
+    background: rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(4px) !important;
+}
+.schedule-modal {
+    background: #fff !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1) !important;
+}
+.schedule-modal .modal-header {
+    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+.schedule-modal .modal-header h4 {
+    color: #121212 !important;
+    font-weight: 800 !important;
+}
+.schedule-modal .btn-close-modal {
+    background: rgba(0,0,0,0.03) !important;
+    color: #666 !important;
+    border: none !important;
+}
+.schedule-modal .btn-close-modal:hover {
+    background: #121212 !important;
+    color: #fff !important;
+}
+.schedule-modal label {
+    color: #666 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 11px !important;
+}
+.schedule-modal input[type="text"],
+.schedule-modal input[type="number"],
+.schedule-modal input[type="date"],
+.schedule-modal input[type="time"],
+.schedule-modal textarea {
+    background: #f9f9f9 !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    color: #121212 !important;
+    border-radius: 14px !important;
+}
+.schedule-modal input:focus, .schedule-modal textarea:focus {
+    background: #fff !important;
+    border-color: #121212 !important;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05) !important;
+}
+.schedule-modal .type-tab {
+    background: #f9f9f9 !important;
+    color: #888 !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    font-weight: 600 !important;
+}
+.schedule-modal .type-tab.active {
+    background: #121212 !important;
+    color: #fff !important;
+    border-color: #121212 !important;
+}
+.schedule-modal .day-chip span {
+    background: #f9f9f9 !important;
+    color: #666 !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    font-weight: 600 !important;
+}
+.schedule-modal .day-chip input:checked + span {
+    background: #121212 !important;
+    color: #fff !important;
+    border-color: #121212 !important;
+}
+.schedule-modal .color-chip span {
+    border: 2px solid transparent !important;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+.schedule-modal .color-chip.active span {
+    border-color: #121212 !important;
+    transform: scale(1.1);
+}
+.schedule-modal .btn-submit-schedule {
+    background: #121212 !important;
+    color: #fff !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border: none !important;
+}
+.schedule-modal .btn-submit-schedule:hover {
+    transform: translateY(-2px) !important;
+    opacity: 0.9 !important;
+}
+
+@media (max-width: 768px) {
+    .schedule-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

@@ -399,11 +399,30 @@ function attachSectionActions(block, rowsWrap) {
 }
 
 // ─── Question form management ─────────────────────────────
-function questionRowHtml(idx) {
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe.toString().replace(/[&<"'>]/g, function (m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    });
+}
+
+function questionRowHtml(idx, data = {}) {
     const tw = 'mt-0.5 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500';
     const codeTw = 'mt-0.5 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-mono text-emerald-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500';
+    
+    // Parse options array if it exists
+    const options = data.options ? (typeof data.options === 'string' ? JSON.parse(data.options) : data.options) : [];
+    const optA = options[0] || data.option_a || '';
+    const optB = options[1] || data.option_b || '';
+    const optC = options[2] || data.option_c || '';
+    const optD = options[3] || data.option_d || '';
+    
+    const correctOpt = data.correct_option !== undefined ? parseInt(data.correct_option) : 0;
+    const hasCode = data.code_snippet && data.code_snippet.trim() !== '';
+
     return (
         `<div class="q-block rounded-xl border border-zinc-200 bg-zinc-50/50 p-5 transition-all" data-q-row style="animation: qFadeIn 0.3s ease-out">` +
+        `<input type="hidden" name="questions[${idx}][id]" value="${data.id || ''}">` +
         `<div class="flex items-center justify-between mb-4">` +
         `<span class="q-num inline-flex items-center gap-2 text-sm font-semibold text-zinc-700">` +
         `<span class="q-badge flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500 text-xs font-bold text-white">${idx + 1}</span>` +
@@ -414,7 +433,7 @@ function questionRowHtml(idx) {
         `<div class="space-y-3">` +
         // Question text
         `<div><label class="text-xs text-zinc-600">Pertanyaan</label>` +
-        `<textarea name="questions[${idx}][question]" rows="3" required class="${tw}" placeholder="Tuliskan pertanyaan..."></textarea></div>` +
+        `<textarea name="questions[${idx}][question]" rows="3" required class="${tw}" placeholder="Tuliskan pertanyaan...">${escapeHtml(data.question || '')}</textarea></div>` +
         // Code snippet toggle
         `<div class="q-code-section">` +
         `<button type="button" class="btn-toggle-code inline-flex items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors">` +
@@ -423,32 +442,32 @@ function questionRowHtml(idx) {
         `<div class="q-code-fields mt-3 space-y-2 hidden">` +
         `<div class="flex gap-3">` +
         `<div class="w-40"><label class="text-xs text-zinc-600">Bahasa</label>` +
-        `<input type="text" name="questions[${idx}][code_language]" class="${tw}" placeholder="php, js, python..."></div>` +
+        `<input type="text" name="questions[${idx}][code_language]" value="${escapeHtml(data.code_language || '')}" class="${tw}" placeholder="php, js, python..."></div>` +
         `<div class="flex-1"><label class="text-xs text-zinc-600">Preview bahasa</label>` +
         `<p class="mt-0.5 px-3 py-2 text-xs text-zinc-400 italic">Bahasa ditampilkan di kiri atas blok kode</p></div>` +
         `</div>` +
         `<div><label class="text-xs text-zinc-600">Kode</label>` +
-        `<textarea name="questions[${idx}][code_snippet]" rows="6" class="${codeTw}" placeholder="Tuliskan potongan kode di sini..." spellcheck="false"></textarea></div>` +
+        `<textarea name="questions[${idx}][code_snippet]" rows="6" class="${codeTw}" placeholder="Tuliskan potongan kode di sini..." spellcheck="false">${escapeHtml(data.code_snippet || '')}</textarea></div>` +
         `</div></div>` +
         // Options
         `<div class="grid gap-3 sm:grid-cols-2">` +
         // Option A
         `<div class="relative"><label class="text-xs text-zinc-600">` +
-        `<input type="radio" name="questions[${idx}][correct_option]" value="0" checked class="mr-1"> ` +
+        `<input type="radio" name="questions[${idx}][correct_option]" value="0" ${correctOpt === 0 ? 'checked' : ''} class="mr-1"> ` +
         `Opsi A <span class="text-emerald-500 text-[10px]">(klik = jawaban benar)</span></label>` +
-        `<input type="text" name="questions[${idx}][option_a]" required class="${tw}" placeholder="Opsi A"></div>` +
+        `<input type="text" name="questions[${idx}][option_a]" value="${escapeHtml(optA)}" required class="${tw}" placeholder="Opsi A"></div>` +
         // Option B
         `<div class="relative"><label class="text-xs text-zinc-600">` +
-        `<input type="radio" name="questions[${idx}][correct_option]" value="1" class="mr-1"> Opsi B</label>` +
-        `<input type="text" name="questions[${idx}][option_b]" required class="${tw}" placeholder="Opsi B"></div>` +
+        `<input type="radio" name="questions[${idx}][correct_option]" value="1" ${correctOpt === 1 ? 'checked' : ''} class="mr-1"> Opsi B</label>` +
+        `<input type="text" name="questions[${idx}][option_b]" value="${escapeHtml(optB)}" required class="${tw}" placeholder="Opsi B"></div>` +
         // Option C
         `<div class="relative"><label class="text-xs text-zinc-600">` +
-        `<input type="radio" name="questions[${idx}][correct_option]" value="2" class="mr-1"> Opsi C</label>` +
-        `<input type="text" name="questions[${idx}][option_c]" required class="${tw}" placeholder="Opsi C"></div>` +
+        `<input type="radio" name="questions[${idx}][correct_option]" value="2" ${correctOpt === 2 ? 'checked' : ''} class="mr-1"> Opsi C</label>` +
+        `<input type="text" name="questions[${idx}][option_c]" value="${escapeHtml(optC)}" required class="${tw}" placeholder="Opsi C"></div>` +
         // Option D
         `<div class="relative"><label class="text-xs text-zinc-600">` +
-        `<input type="radio" name="questions[${idx}][correct_option]" value="3" class="mr-1"> Opsi D</label>` +
-        `<input type="text" name="questions[${idx}][option_d]" required class="${tw}" placeholder="Opsi D"></div>` +
+        `<input type="radio" name="questions[${idx}][correct_option]" value="3" ${correctOpt === 3 ? 'checked' : ''} class="mr-1"> Opsi D</label>` +
+        `<input type="text" name="questions[${idx}][option_d]" value="${escapeHtml(optD)}" required class="${tw}" placeholder="Opsi D"></div>` +
         `</div></div></div>`
     );
 }
@@ -607,6 +626,64 @@ function setupQuestionForm(container) {
             attachQuestionRowActions(block, rowsWrap, emptyState);
         });
     }
+
+    // ── Expose loadQuestionGroup to global for the Blade template ──
+    window.loadQuestionGroup = async function(mainId, materiId, subMateriId, questionsJsonStr) {
+        let qs = [];
+        try {
+            qs = JSON.parse(questionsJsonStr);
+        } catch (e) {
+            console.error("Failed to parse questions", e);
+        }
+
+        // Set Main
+        mainSel.value = mainId;
+        await loadMateris(mainId);
+        
+        // Set Materi
+        materiSel.value = materiId;
+        await loadSubMateris(materiId);
+        
+        // Set Sub Materi
+        subMateriSel.value = subMateriId;
+        formWrap.classList.remove('hidden');
+
+        // Set Sync mode to 1 so backend knows to delete missing items
+        let syncInput = container.querySelector('#q-sync-mode');
+        if (!syncInput) {
+            syncInput = document.createElement('input');
+            syncInput.type = 'hidden';
+            syncInput.name = 'sync_mode';
+            syncInput.id = 'q-sync-mode';
+            container.querySelector('form').appendChild(syncInput);
+        }
+        syncInput.value = '1';
+
+        // Clear existing rows
+        rowsWrap.innerHTML = '';
+        if (qs.length === 0) {
+            if (emptyState) emptyState.classList.remove('hidden');
+        } else {
+            if (emptyState) emptyState.classList.add('hidden');
+            qs.forEach((q, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = questionRowHtml(idx, q);
+                const block = wrapper.firstElementChild;
+                if (block) {
+                    rowsWrap.appendChild(block);
+                    attachQuestionRowActions(block, rowsWrap, emptyState);
+                    // Open code section if it has code
+                    if (q.code_snippet && q.code_snippet.trim() !== '') {
+                        block.querySelector('.btn-toggle-code').click();
+                    }
+                }
+            });
+            renumberQuestions(rowsWrap);
+        }
+
+        // Scroll up to form smoothly
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 }
 
 function attachQuestionRowActions(block, rowsWrap, emptyState) {
@@ -809,9 +886,253 @@ function setupDatabase(container) {
         btnList.addEventListener('click', () => setView('list'));
         btnGrid.addEventListener('click', () => setView('grid'));
     }
+
+    // ═══════════════════════════════════════════════════════
+    //  DATABASE TABLE DATA CRUD (View / Edit / Delete)
+    // ═══════════════════════════════════════════════════════
+    let _dbCurrentTable = null;
+    let _dbCurrentColumns = [];
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ── Data button click handlers ──
+    container.querySelectorAll('[data-view-table]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const tableName = btn.dataset.viewTable;
+            openDataModal(tableName);
+        });
+    });
+
+    // ── Modal controls ──
+    const dataModal = document.getElementById('db-data-modal');
+    const dataBackdrop = document.getElementById('db-data-backdrop');
+    const dataContent = document.getElementById('db-data-content');
+    const editModal = document.getElementById('db-edit-modal');
+    const editBackdrop = document.getElementById('db-edit-backdrop');
+    const editContent = document.getElementById('db-edit-content');
+
+    document.getElementById('db-data-close-btn')?.addEventListener('click', closeDataModal);
+    document.getElementById('db-data-refresh-btn')?.addEventListener('click', async () => {
+        if (!_dbCurrentTable) return;
+        const icon = document.getElementById('db-data-refresh-icon');
+        icon.classList.add('animate-spin');
+        await loadTableData(_dbCurrentTable);
+        setTimeout(() => icon.classList.remove('animate-spin'), 500);
+    });
+    document.getElementById('db-edit-close-btn')?.addEventListener('click', closeEditModal);
+    document.getElementById('db-edit-cancel-btn')?.addEventListener('click', closeEditModal);
+    document.getElementById('db-edit-save-btn')?.addEventListener('click', saveEdit);
+
+    dataBackdrop?.addEventListener('click', closeDataModal);
+    editBackdrop?.addEventListener('click', closeEditModal);
+
+    // ── Open Data Modal ──
+    async function openDataModal(tableName) {
+        _dbCurrentTable = tableName;
+        document.getElementById('db-data-title').textContent = tableName;
+        document.getElementById('db-data-body').innerHTML = `
+            <div class="flex items-center justify-center py-16 text-zinc-400">
+                <svg class="w-6 h-6 animate-spin mr-3 text-indigo-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                <span class="text-sm font-medium">Memuat data...</span>
+            </div>`;
+        dataModal.classList.remove('hidden');
+        setTimeout(() => {
+            dataBackdrop.classList.remove('opacity-0');
+            dataContent.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+        await loadTableData(tableName);
+    }
+
+    function closeDataModal() {
+        dataBackdrop.classList.add('opacity-0');
+        dataContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => dataModal.classList.add('hidden'), 300);
+    }
+
+    // ── Load Table Data ──
+    async function loadTableData(tableName) {
+        try {
+            const res = await fetch(`/admin/api/table/${tableName}/rows`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                credentials: 'same-origin',
+            });
+            if (!res.ok) throw new Error('Failed');
+            const data = await res.json();
+
+            _dbCurrentColumns = data.columns;
+            document.getElementById('db-data-count').textContent = `${data.total} total records — menampilkan ${data.rows.length} data terbaru`;
+
+            if (!data.rows.length) {
+                document.getElementById('db-data-body').innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-16 text-zinc-400">
+                        <svg class="w-10 h-10 mb-3 text-zinc-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+                        <p class="text-sm font-semibold">Tabel kosong</p>
+                        <p class="text-xs mt-1">Tidak ada data dalam tabel ini.</p>
+                    </div>`;
+                return;
+            }
+
+            const visibleCols = data.columns.slice(0, 8);
+            const hasMore = data.columns.length > 8;
+
+            let html = `<div class="overflow-x-auto"><table class="w-full text-left text-sm">`;
+            html += `<thead class="bg-zinc-50 text-[11px] uppercase tracking-wider text-zinc-400 font-bold border-b border-zinc-200 sticky top-0 z-10"><tr>`;
+            visibleCols.forEach(col => { html += `<th class="px-4 py-3 whitespace-nowrap">${escapeHtml(col)}</th>`; });
+            if (hasMore) html += `<th class="px-4 py-3 whitespace-nowrap text-zinc-300">+${data.columns.length - 8} more</th>`;
+            html += `<th class="px-4 py-3 text-right whitespace-nowrap">Aksi</th></tr></thead><tbody class="divide-y divide-zinc-100">`;
+
+            data.rows.forEach((row, rowIdx) => {
+                html += `<tr class="hover:bg-zinc-50/80 transition-colors">`;
+                visibleCols.forEach(col => {
+                    let val = row[col];
+                    let display = val === null ? '<span class="text-zinc-300 text-[10px] font-mono">NULL</span>' : escapeHtml(String(val));
+                    if (typeof val === 'string' && val.length > 50) {
+                        display = escapeHtml(val.substring(0, 50)) + '<span class="text-zinc-400">…</span>';
+                    }
+                    html += `<td class="px-4 py-3 text-[13px] text-zinc-700 whitespace-nowrap max-w-[200px] truncate">${display}</td>`;
+                });
+                if (hasMore) html += `<td class="px-4 py-3 text-zinc-300 text-xs">...</td>`;
+
+                html += `<td class="px-4 py-3 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <button data-edit-idx="${rowIdx}" class="db-row-edit inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-100 transition-colors">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+                            Edit
+                        </button>
+                        <button data-delete-id="${row.id || ''}" class="db-row-delete inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-red-50 text-red-500 hover:bg-red-100 border border-red-100 transition-colors">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                            Hapus
+                        </button>
+                    </div>
+                </td></tr>`;
+            });
+            html += `</tbody></table></div>`;
+
+            document.getElementById('db-data-body').innerHTML = html;
+
+            // Attach edit/delete handlers
+            document.querySelectorAll('#db-data-body .db-row-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.editIdx);
+                    openEditModal(data.rows[idx]);
+                });
+            });
+            document.querySelectorAll('#db-data-body .db-row-delete').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const rowId = btn.dataset.deleteId;
+                    if (!confirm('Apakah kamu yakin ingin menghapus data ini?')) return;
+                    try {
+                        const res = await fetch(`/admin/api/table/${_dbCurrentTable}/row/${rowId}`, {
+                            method: 'DELETE',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                            credentials: 'same-origin',
+                        });
+                        if (!res.ok) throw new Error('Gagal menghapus');
+                        await loadTableData(_dbCurrentTable);
+                    } catch (err) { alert('Error: ' + err.message); }
+                });
+            });
+
+        } catch (err) {
+            document.getElementById('db-data-body').innerHTML = `
+                <div class="flex flex-col items-center justify-center py-16 text-red-400">
+                    <p class="text-sm font-semibold">Gagal memuat data</p>
+                    <p class="text-xs mt-1">${err.message}</p>
+                </div>`;
+        }
+    }
+
+    // ── Edit Row Modal ──
+    function openEditModal(rowData) {
+        document.getElementById('db-edit-title').textContent = `Edit Row — ${_dbCurrentTable}`;
+        document.getElementById('db-edit-subtitle').textContent = `ID: ${rowData.id || '?'}`;
+
+        const formContainer = document.getElementById('db-edit-form-container');
+        const skipFields = ['id', 'created_at', 'updated_at', 'remember_token', 'email_verified_at'];
+        let html = '';
+
+        _dbCurrentColumns.forEach(col => {
+            const val = rowData[col];
+            const isReadOnly = skipFields.includes(col);
+            const displayVal = val === null ? '' : String(val);
+
+            if (isReadOnly) {
+                html += `<div>
+                    <label class="block text-[11px] uppercase font-bold text-zinc-400 mb-1.5 tracking-wider">${escapeHtml(col)} <span class="text-zinc-300">(read-only)</span></label>
+                    <div class="w-full px-4 py-2.5 rounded-xl bg-zinc-100 border border-zinc-200 text-sm text-zinc-500 font-mono truncate">${escapeHtml(displayVal) || '<span class="text-zinc-300">NULL</span>'}</div>
+                </div>`;
+            } else {
+                const isLong = displayVal.length > 100;
+                if (isLong) {
+                    html += `<div>
+                        <label class="block text-[11px] uppercase font-bold text-zinc-400 mb-1.5 tracking-wider">${escapeHtml(col)}</label>
+                        <textarea name="${escapeHtml(col)}" rows="4" class="w-full px-4 py-2.5 rounded-xl bg-white border border-zinc-200 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all resize-y font-mono">${escapeHtml(displayVal)}</textarea>
+                    </div>`;
+                } else {
+                    html += `<div>
+                        <label class="block text-[11px] uppercase font-bold text-zinc-400 mb-1.5 tracking-wider">${escapeHtml(col)}</label>
+                        <input type="text" name="${escapeHtml(col)}" value="${escapeHtml(displayVal)}" class="w-full px-4 py-2.5 rounded-xl bg-white border border-zinc-200 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all" />
+                    </div>`;
+                }
+            }
+        });
+
+        formContainer.innerHTML = html;
+        formContainer.dataset.rowId = rowData.id || 0;
+
+        editModal.classList.remove('hidden');
+        editModal.classList.add('flex');
+        setTimeout(() => {
+            editBackdrop.classList.remove('opacity-0');
+            editContent.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+    }
+
+    function closeEditModal() {
+        editBackdrop.classList.add('opacity-0');
+        editContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => { editModal.classList.add('hidden'); editModal.classList.remove('flex'); }, 300);
+    }
+
+    async function saveEdit() {
+        const formContainer = document.getElementById('db-edit-form-container');
+        const rowId = formContainer.dataset.rowId;
+        const saveBtn = document.getElementById('db-edit-save-btn');
+        const inputs = formContainer.querySelectorAll('input[name], textarea[name]');
+
+        const data = {};
+        inputs.forEach(inp => { data[inp.name] = inp.value; });
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Menyimpan...';
+
+        try {
+            const res = await fetch(`/admin/api/table/${_dbCurrentTable}/row/${rowId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                credentials: 'same-origin',
+                body: JSON.stringify(data),
+            });
+            if (!res.ok) throw new Error('Gagal menyimpan');
+            closeEditModal();
+            await loadTableData(_dbCurrentTable);
+        } catch (err) {
+            alert('Error: ' + err.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan';
+        }
+    }
 }
 
-async function loadPage(page) {
+async function loadPage(page, push = true) {
     if (!base || !el) {
         return;
     }
@@ -824,6 +1145,21 @@ async function loadPage(page) {
         url = `${base.replace(/\/$/, '')}/${encodeURIComponent(page)}`;
     }
 
+    el.style.opacity = '1';
+    el.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 4rem 1rem;">
+            <svg class="animate-spin text-indigo-500" style="height:2rem; width:2rem; margin-bottom:1rem; animation: spin 1s linear infinite;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p style="font-size:0.875rem; color:#6b7280; font-weight:500;">Memuat data...</p>
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                .animate-spin { animation: spin 1s linear infinite; }
+            </style>
+        </div>
+    `;
+
     const res = await fetch(url, {
         headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'text/html' },
         credentials: 'same-origin',
@@ -834,8 +1170,21 @@ async function loadPage(page) {
     }
     el.innerHTML = await res.text();
     
+    // Auto-scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     // Update active nav state
     const basePage = page.split('?')[0];
+
+    // Push state and update URL
+    if (push) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('page', page);
+        if (window.history.state?.spaPage !== page) {
+            window.history.pushState({ spaPage: page }, '', newUrl.toString());
+        }
+    }
+
     document.querySelectorAll('#spa-nav .nav-item').forEach(link => {
         if (link.dataset.spaPage === basePage) {
             link.classList.add('active');
@@ -974,7 +1323,13 @@ function setupCrud(container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadPage(initial);
+    // Determine the exact page string from URL search params first, fallback to dataset.spaInitial
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = urlParams.get('page') || initial;
+
+    // Load initial page and set initial history state
+    loadPage(initialPage, true);
+
     document.body.addEventListener('click', (e) => {
         const a = e.target.closest('[data-spa-page]');
         if (!a) {
@@ -983,7 +1338,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const page = a.dataset.spaPage;
         if (page) {
-            loadPage(page);
+            loadPage(page, true);
+        }
+    });
+
+    window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.spaPage) {
+            loadPage(e.state.spaPage, false);
+        } else {
+            loadPage(initialPage, false);
         }
     });
 });

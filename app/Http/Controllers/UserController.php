@@ -33,8 +33,8 @@ class UserController extends Controller
     public function spa(): View
     {
         return view('spa.user', [
-            'title'       => 'Dashboard — User',
-            'viteEntry'   => 'resources/js/SPA_user.js',
+            'title' => 'Dashboard — User',
+            'viteEntry' => 'resources/js/SPA_user.js',
             'pageBaseUrl' => url('/app/page'),
             'initialPage' => 'dashboard',
         ]);
@@ -42,7 +42,7 @@ class UserController extends Controller
 
     public function page(string $page, Request $request): View
     {
-        if (! in_array($page, self::PAGES, true)) {
+        if (!in_array($page, self::PAGES, true)) {
             abort(404);
         }
 
@@ -74,7 +74,7 @@ class UserController extends Controller
                 ->get()
                 ->map(function ($main) use ($viewedSubIds, $lastHistories) {
                     $totalSub = 0;
-                    $doneSub  = 0;
+                    $doneSub = 0;
                     $allSubIds = [];
 
                     foreach ($main->materis as $m) {
@@ -87,11 +87,11 @@ class UserController extends Controller
                         }
                     }
 
-                    $main->total_materi     = $main->materis_count;
-                    $main->total_submateri  = $totalSub;
-                    $main->is_coming_soon   = false;
+                    $main->total_materi = $main->materis_count;
+                    $main->total_submateri = $totalSub;
+                    $main->is_coming_soon = false;
                     $main->progress_percent = $totalSub > 0 ? round(($doneSub / $totalSub) * 100) : 0;
-                    $main->is_completed     = $totalSub > 0 && $doneSub >= $totalSub;
+                    $main->is_completed = $totalSub > 0 && $doneSub >= $totalSub;
 
                     // Cari history terakhir yang sub_materi-nya milik MainMateri ini
                     $allSubFlipped = array_flip($allSubIds);
@@ -100,14 +100,20 @@ class UserController extends Controller
                     });
 
                     $main->last_studied_title = $lastHistory?->submateri?->title;
-                    $main->last_studied_at    = $lastHistory?->viewed_at;
+                    $main->last_studied_at = $lastHistory?->viewed_at;
 
                     return $main;
                 });
 
+            $topUsers = \App\Models\User::where('role', 'user')
+                ->orderByDesc('exp')
+                ->limit(5)
+                ->get();
+
             return view('spa.fragments.user-dashboard', [
-                'data'       => ['mainMateri' => $mainMateri],
+                'data' => ['mainMateri' => $mainMateri],
                 'mainMateri' => $mainMateri,
+                'topUsers' => $topUsers,
             ]);
         }
 
@@ -129,16 +135,16 @@ class UserController extends Controller
 
             return view('spa.fragments.user-history', [
                 'histories' => $histories,
-                'filters'   => $filters,
+                'filters' => $filters,
             ]);
         }
 
         // ── Materi (daftar materi milik satu MainMateri) ─────────────
         if ($page === 'materi') {
-            $mainId     = $request->query('main_id');
+            $mainId = $request->query('main_id');
             $mainMateri = MainMateri::find($mainId);
 
-            if (! $mainMateri) {
+            if (!$mainMateri) {
                 abort(404);
             }
 
@@ -155,29 +161,29 @@ class UserController extends Controller
             $progressData = [];
             foreach ($materis as $materi) {
                 $total = $materi->sub_materis_count;
-                $done  = $materi->subMateris->whereIn('id', $viewedSubIds)->count();
+                $done = $materi->subMateris->whereIn('id', $viewedSubIds)->count();
 
                 $progressData[$materi->id] = [
-                    'total'     => $total,
-                    'done'      => $done,
+                    'total' => $total,
+                    'done' => $done,
                     'completed' => $total > 0 && $done >= $total,
                 ];
             }
 
             return view('spa.fragments.user-materisPage', [
-                'materis'      => $materis,
-                'firstMateri'  => $mainMateri,
+                'materis' => $materis,
+                'firstMateri' => $mainMateri,
                 'progressData' => $progressData,
-                'arsipMateri'  => UserFavorite::getIds(Auth::id(), 'materi'),
+                'arsipMateri' => UserFavorite::getIds(Auth::id(), 'materi'),
             ]);
         }
 
         // ── Sub Materi (daftar sub-materi milik satu Materi) ─────────
         if ($page === 'submateri') {
             $materiId = $request->query('materi_id');
-            $materi   = Materi::with('mainMateri')->find($materiId);
+            $materi = Materi::with('mainMateri')->find($materiId);
 
-            if (! $materi) {
+            if (!$materi) {
                 abort(404);
             }
 
@@ -196,28 +202,28 @@ class UserController extends Controller
                 : [];
 
             return view('spa.fragments.user-subMateriPage', [
-                'materi'      => $materi,
+                'materi' => $materi,
                 'firstMateri' => $materi,
-                'subMateris'  => $subMateris,
-                'arsipSub'    => UserFavorite::getIds(Auth::id(), 'sub'),
-                'completed'   => $completedSubIds,
+                'subMateris' => $subMateris,
+                'arsipSub' => UserFavorite::getIds(Auth::id(), 'sub'),
+                'completed' => $completedSubIds,
             ]);
         }
 
         // ── Detail (satu sub-materi) ──────────────────────────────────
         if ($page === 'detail') {
             $subMateriId = $request->query('submateri_id');
-            $subMateri   = SubMateri::with('materi.mainMateri')->find($subMateriId);
+            $subMateri = SubMateri::with('materi.mainMateri')->find($subMateriId);
 
-            if (! $subMateri) {
+            if (!$subMateri) {
                 abort(404);
             }
 
             // Simpan ke history (upsert: update viewed_at jika sudah ada)
             UserHistory::updateOrCreate(
                 [
-                    'user_id'        => Auth::id(),
-                    'sub_materi_id'  => $subMateri->id,
+                    'user_id' => Auth::id(),
+                    'sub_materi_id' => $subMateri->id,
                 ],
                 [
                     'viewed_at' => now(),
@@ -234,18 +240,18 @@ class UserController extends Controller
             $next = $currentIndex < $siblings->count() - 1 ? $siblings[$currentIndex + 1] : null;
 
             return view('spa.fragments.user-detailSubMateriPage', [
-                'subMateri'    => $subMateri,
-                'prev'         => $prev,
-                'next'         => $next,
+                'subMateri' => $subMateri,
+                'prev' => $prev,
+                'next' => $next,
             ]);
         }
 
         // ── Quiz (Kuis untuk satu sub-materi) ─────────────────────────
         if ($page === 'quiz') {
             $subMateriId = $request->query('submateri_id');
-            $subMateri   = SubMateri::with('materi.mainMateri')->find($subMateriId);
+            $subMateri = SubMateri::with('materi.mainMateri')->find($subMateriId);
 
-            if (! $subMateri) {
+            if (!$subMateri) {
                 abort(404);
             }
 
@@ -274,39 +280,39 @@ class UserController extends Controller
                 : null;
 
             return view('spa.fragments.user-quizPage', [
-                'subMateri'    => $subMateri,
-                'questions'    => $questions,
-                'quizAttempt'  => $quizAttempt,
-                'prev'         => $prev,
-                'next'         => $next,
+                'subMateri' => $subMateri,
+                'questions' => $questions,
+                'quizAttempt' => $quizAttempt,
+                'prev' => $prev,
+                'next' => $next,
             ]);
         }
 
         // ── Schedule ──────────────────────────────────────────────────
         if ($page === 'schedule') {
-            $userId    = Auth::id();
+            $userId = Auth::id();
             $schedules = StudySchedule::where('user_id', $userId)
                 ->orderBy('start_time')
                 ->get();
 
-            $today    = $schedules->filter(fn($s) => $s->isActiveToday());
+            $today = $schedules->filter(fn($s) => $s->isActiveToday());
             $upcoming = $schedules->filter(fn($s) => !$s->isActiveToday() && $s->is_active);
 
             return view('spa.fragments.user-schedule', [
                 'schedules' => $schedules,
-                'today'     => $today,
-                'upcoming'  => $upcoming,
+                'today' => $today,
+                'upcoming' => $upcoming,
             ]);
         }
 
         // ── Favorites ─────────────────────────────────────────────────
         if ($page === 'favorites') {
             $userId = Auth::id();
-            $favs   = UserFavorite::where('user_id', $userId)->orderByDesc('created_at')->get();
+            $favs = UserFavorite::where('user_id', $userId)->orderByDesc('created_at')->get();
 
             // Batch load instead of N+1 individual find() calls
             $materiIds = $favs->where('favoritable_type', 'materi')->pluck('favoritable_id');
-            $subIds    = $favs->where('favoritable_type', 'sub')->pluck('favoritable_id');
+            $subIds = $favs->where('favoritable_type', 'sub')->pluck('favoritable_id');
 
             $favMateris = $materiIds->isNotEmpty()
                 ? Materi::with('mainMateri')->whereIn('id', $materiIds)->get()
@@ -318,14 +324,75 @@ class UserController extends Controller
 
             return view('spa.fragments.user-favorites', [
                 'favMateris' => $favMateris,
-                'favSubs'    => $favSubs,
+                'favSubs' => $favSubs,
             ]);
         }
 
         // ── Account ───────────────────────────────────────────────────
         if ($page === 'account') {
+            $user = Auth::user();
+            $userId = $user->id;
+            $achievements = [];
+
+            // Compute global top values
+            $topScorer = QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
+                ->groupBy('user_id')->orderByDesc('max_score')->first();
+            $mostPassed = QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
+                ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
+            $mostAttempts = QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
+                ->groupBy('user_id')->orderByDesc('attempt_count')->first();
+            $hasPerfect = QuizAttempt::where('user_id', $userId)->where('score', 100)->exists();
+
+            if ($topScorer && $topScorer->user_id === $userId) {
+                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Meraih skor tertinggi secara global'];
+            }
+            if ($mostPassed && $mostPassed->user_id === $userId) {
+                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
+            }
+            if ($hasPerfect) {
+                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
+            }
+            if ($mostAttempts && $mostAttempts->user_id === $userId) {
+                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling aktif mencoba kuis'];
+            }
+
+            // ── Additional Stats for Admin-style Dashboard ──
+            $quizAttempts = QuizAttempt::where('user_id', $userId)->get();
+            $totalQuizAttempts = $quizAttempts->count();
+            $quizPassedCount = $quizAttempts->where('passed', true)->count();
+            $quizAvgScore = $totalQuizAttempts > 0 ? round($quizAttempts->avg('score'), 1) : 0;
+            $quizBestScore = $totalQuizAttempts > 0 ? $quizAttempts->max('score') : 0;
+
+            $totalHistoryViews = UserHistory::where('user_id', $userId)->count();
+            $totalFavorites = UserFavorite::where('user_id', $userId)->count();
+            $daysActive = (int) $user->created_at->diffInDays(now());
+
+            // Learning progress
+            $totalSubMateris = SubMateri::where('is_published', true)->count();
+            $completedSubMateris = UserHistory::where('user_id', $userId)->distinct('sub_materi_id')->count('sub_materi_id');
+            $learningProgress = $totalSubMateris > 0 ? round(($completedSubMateris / $totalSubMateris) * 100) : 0;
+
+            // Recent quiz history (latest 5)
+            $recentQuizzes = QuizAttempt::where('user_id', $userId)
+                ->with('subMateri.materi.mainMateri')
+                ->orderByDesc('updated_at')
+                ->limit(5)
+                ->get();
+
             return view('spa.fragments.user-account', [
-                'user' => Auth::user(),
+                'user' => $user,
+                'achievements' => $achievements,
+                'totalQuizAttempts' => $totalQuizAttempts,
+                'quizPassedCount' => $quizPassedCount,
+                'quizAvgScore' => $quizAvgScore,
+                'quizBestScore' => $quizBestScore,
+                'totalHistoryViews' => $totalHistoryViews,
+                'totalFavorites' => $totalFavorites,
+                'daysActive' => $daysActive,
+                'totalSubMateris' => $totalSubMateris,
+                'completedSubMateris' => $completedSubMateris,
+                'learningProgress' => $learningProgress,
+                'recentQuizzes' => $recentQuizzes,
             ]);
         }
 
@@ -344,20 +411,20 @@ class UserController extends Controller
         $user = Auth::user();
 
         $rules = [
-            'name'   => ['required', 'string', 'max:255'],
-            'email'  => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
 
         // Password opsional — hanya validate jika diisi
         if ($request->filled('password')) {
-            $rules['password']              = ['min:8', 'confirmed'];
+            $rules['password'] = ['min:8', 'confirmed'];
             $rules['password_confirmation'] = ['required'];
         }
 
         $validated = $request->validate($rules);
 
-        $user->name  = $validated['name'];
+        $user->name = $validated['name'];
         $user->email = $validated['email'];
 
         if ($request->filled('password')) {
@@ -386,9 +453,9 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile berhasil diupdate! 🎉',
-            'user'    => [
-                'name'   => $user->name,
-                'email'  => $user->email,
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
                 'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
             ],
         ]);
@@ -401,16 +468,16 @@ class UserController extends Controller
     public function storeSchedule(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'title'         => ['required', 'string', 'max:255'],
-            'description'   => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
             'schedule_type' => ['required', 'in:daily,weekly,monthly,custom'],
-            'days_of_week'  => ['nullable', 'array'],
+            'days_of_week' => ['nullable', 'array'],
             'days_of_week.*' => ['integer', 'between:0,6'],
-            'day_of_month'  => ['nullable', 'integer', 'between:1,31'],
-            'custom_date'   => ['nullable', 'date'],
-            'start_time'    => ['required', 'date_format:H:i'],
-            'end_time'      => ['nullable', 'date_format:H:i'],
-            'color'         => ['nullable', 'string', 'max:20'],
+            'day_of_month' => ['nullable', 'integer', 'between:1,31'],
+            'custom_date' => ['nullable', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['nullable', 'date_format:H:i'],
+            'color' => ['nullable', 'string', 'max:20'],
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -418,41 +485,43 @@ class UserController extends Controller
         $schedule = StudySchedule::create($validated);
 
         return response()->json([
-            'success'  => true,
-            'message'  => 'Jadwal berhasil dibuat! 📅',
+            'success' => true,
+            'message' => 'Jadwal berhasil dibuat! 📅',
             'schedule' => $schedule,
         ]);
     }
 
     public function updateSchedule(Request $request, StudySchedule $schedule): JsonResponse
     {
-        if ($schedule->user_id !== Auth::id()) abort(403);
+        if ($schedule->user_id !== Auth::id())
+            abort(403);
 
         $validated = $request->validate([
-            'title'         => ['required', 'string', 'max:255'],
-            'description'   => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
             'schedule_type' => ['required', 'in:daily,weekly,monthly,custom'],
-            'days_of_week'  => ['nullable', 'array'],
+            'days_of_week' => ['nullable', 'array'],
             'days_of_week.*' => ['integer', 'between:0,6'],
-            'day_of_month'  => ['nullable', 'integer', 'between:1,31'],
-            'custom_date'   => ['nullable', 'date'],
-            'start_time'    => ['required', 'date_format:H:i'],
-            'end_time'      => ['nullable', 'date_format:H:i'],
-            'color'         => ['nullable', 'string', 'max:20'],
+            'day_of_month' => ['nullable', 'integer', 'between:1,31'],
+            'custom_date' => ['nullable', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['nullable', 'date_format:H:i'],
+            'color' => ['nullable', 'string', 'max:20'],
         ]);
 
         $schedule->update($validated);
 
         return response()->json([
-            'success'  => true,
-            'message'  => 'Jadwal berhasil diupdate! ✏️',
+            'success' => true,
+            'message' => 'Jadwal berhasil diupdate! ✏️',
             'schedule' => $schedule->fresh(),
         ]);
     }
 
     public function deleteSchedule(StudySchedule $schedule): JsonResponse
     {
-        if ($schedule->user_id !== Auth::id()) abort(403);
+        if ($schedule->user_id !== Auth::id())
+            abort(403);
 
         $schedule->delete();
 
@@ -464,14 +533,15 @@ class UserController extends Controller
 
     public function toggleSchedule(StudySchedule $schedule): JsonResponse
     {
-        if ($schedule->user_id !== Auth::id()) abort(403);
+        if ($schedule->user_id !== Auth::id())
+            abort(403);
 
         $schedule->update(['is_active' => !$schedule->is_active]);
 
         return response()->json([
-            'success'   => true,
+            'success' => true,
             'is_active' => $schedule->is_active,
-            'message'   => $schedule->is_active ? 'Jadwal diaktifkan' : 'Jadwal dinonaktifkan',
+            'message' => $schedule->is_active ? 'Jadwal diaktifkan' : 'Jadwal dinonaktifkan',
         ]);
     }
 
@@ -487,11 +557,11 @@ class UserController extends Controller
 
         $today = $schedules->filter(fn($s) => $s->isActiveToday())
             ->map(fn($s) => [
-                'id'         => $s->id,
-                'title'      => $s->title,
+                'id' => $s->id,
+                'title' => $s->title,
                 'start_time' => substr($s->start_time, 0, 5), // HH:mm
-                'end_time'   => $s->end_time ? substr($s->end_time, 0, 5) : null,
-                'color'      => $s->color,
+                'end_time' => $s->end_time ? substr($s->end_time, 0, 5) : null,
+                'color' => $s->color,
             ])
             ->values();
 
@@ -506,7 +576,7 @@ class UserController extends Controller
     {
         $request->validate([
             'type' => ['required', 'in:materi,sub'],
-            'id'   => ['required', 'integer'],
+            'id' => ['required', 'integer'],
         ]);
 
         $result = UserFavorite::toggle(
@@ -516,16 +586,16 @@ class UserController extends Controller
         );
 
         return response()->json([
-            'success'      => true,
+            'success' => true,
             'is_favorited' => $result['is_favorited'],
-            'message'      => $result['is_favorited'] ? 'Ditambahkan ke favorit ⭐' : 'Dihapus dari favorit',
+            'message' => $result['is_favorited'] ? 'Ditambahkan ke favorit ⭐' : 'Dihapus dari favorit',
         ]);
     }
 
     // ═══════════════════════════════════════════════════════════════
     //  EXP SYSTEM
     // ═══════════════════════════════════════════════════════════════
-    
+
     public function pingExp(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -565,10 +635,10 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'sub_materi_id' => ['required', 'integer', 'exists:sub_materis,id'],
-            'answers'       => ['required', 'array'],
+            'answers' => ['required', 'array'],
         ]);
 
-        $userId      = Auth::id();
+        $userId = Auth::id();
         $subMateriId = $validated['sub_materi_id'];
         $userAnswers = $validated['answers']; // { "question_id": selected_option_index }
 
@@ -580,32 +650,33 @@ class UserController extends Controller
 
         // Ekspektasi jumlah soal adalah 30% (min 1)
         $expectedCount = max(1, (int) round($totalQuestionsInDb * 0.30));
-        
+
         // Ambil maksimum N id soal dari jawaban user untuk dicegah submit berlebih
-        $submittedIds  = array_slice(array_keys($userAnswers), 0, $expectedCount);
-        
+        $submittedIds = array_slice(array_keys($userAnswers), 0, $expectedCount);
+
         $questions = Question::where('sub_materi_id', $subMateriId)
             ->whereIn('id', $submittedIds)
             ->get();
 
         // Hitung skor
         $correct = 0;
-        $total   = $expectedCount;
+        $total = $expectedCount;
         $results = [];
 
         foreach ($questions as $q) {
-            $userAnswer   = $userAnswers[$q->id] ?? -1;
-            $isCorrect    = (int) $userAnswer === $q->correct_option;
-            if ($isCorrect) $correct++;
+            $userAnswer = $userAnswers[$q->id] ?? -1;
+            $isCorrect = (int) $userAnswer === $q->correct_option;
+            if ($isCorrect)
+                $correct++;
 
             $results[$q->id] = [
-                'selected'       => (int) $userAnswer,
+                'selected' => (int) $userAnswer,
                 'correct_option' => $q->correct_option,
-                'is_correct'     => $isCorrect,
+                'is_correct' => $isCorrect,
             ];
         }
 
-        $score  = (int) round(($correct / $total) * 100);
+        $score = (int) round(($correct / $total) * 100);
         $passed = $score >= 80;
 
         // Simpan / update attempt (keep best score)
@@ -613,16 +684,16 @@ class UserController extends Controller
             ->where('sub_materi_id', $subMateriId)
             ->first();
 
-        $expAwarded  = false;
-        $expGained   = 0;
+        $expAwarded = false;
+        $expGained = 0;
 
         if ($existing) {
             // Update hanya jika skor baru lebih tinggi
             if ($score > $existing->score) {
                 $existing->update([
-                    'score'   => $score,
+                    'score' => $score,
                     'answers' => $results,
-                    'passed'  => $passed,
+                    'passed' => $passed,
                 ]);
             }
 
@@ -634,16 +705,16 @@ class UserController extends Controller
 
                 $existing->update(['exp_awarded' => true]);
                 $expAwarded = true;
-                $expGained  = 50;
+                $expGained = 50;
             }
         } else {
             $attempt = QuizAttempt::create([
-                'user_id'        => $userId,
-                'sub_materi_id'  => $subMateriId,
-                'score'          => $score,
-                'answers'        => $results,
-                'passed'         => $passed,
-                'exp_awarded'    => $passed,
+                'user_id' => $userId,
+                'sub_materi_id' => $subMateriId,
+                'score' => $score,
+                'answers' => $results,
+                'passed' => $passed,
+                'exp_awarded' => $passed,
             ]);
 
             if ($passed) {
@@ -651,20 +722,20 @@ class UserController extends Controller
                 $user->exp += 50;
                 $user->save();
                 $expAwarded = true;
-                $expGained  = 50;
+                $expGained = 50;
             }
         }
 
         return response()->json([
-            'success'     => true,
-            'score'       => $score,
-            'correct'     => $correct,
-            'total'       => $total,
-            'passed'      => $passed,
-            'results'     => $results,
+            'success' => true,
+            'score' => $score,
+            'correct' => $correct,
+            'total' => $total,
+            'passed' => $passed,
+            'results' => $results,
             'exp_awarded' => $expAwarded,
-            'exp_gained'  => $expGained,
-            'message'     => $passed
+            'exp_gained' => $expGained,
+            'message' => $passed
                 ? "Selamat! Kamu lulus dengan skor {$score}% 🎉"
                 : "Skor kamu {$score}%. Minimal 80% untuk lulus. Coba lagi! 💪",
         ]);

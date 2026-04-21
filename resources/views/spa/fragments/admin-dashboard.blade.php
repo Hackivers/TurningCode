@@ -86,7 +86,7 @@
     ═══════════════════════════════════════════════════ --}}
     <div class="grid gap-6 sm:grid-cols-3">
         
-        <div class="sm:col-span-1 rounded-3xl bg-white bg-grid-pattern-box relative border border-zinc-200 p-8 flex flex-col justify-center shadow-sm">
+        <div class="sm:col-span-1 rounded-3xl bg-grid-pattern-box relative border border-zinc-200 p-8 flex flex-col justify-center shadow-sm" data-dm-card>
             <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-3 relative z-10">Content Depth</p>
             <h2 class="text-5xl font-black tracking-tighter text-zinc-800 relative z-10">{{ number_format($totalSubMateris) }}</h2>
             <div class="mt-5 flex items-center gap-3 relative z-10">
@@ -95,11 +95,11 @@
             </div>
         </div>
 
-        <div class="sm:col-span-2 rounded-3xl bg-[#fafafa] border border-zinc-200 p-8 relative overflow-hidden flex flex-col justify-between shadow-inner">
+        <div class="sm:col-span-2 rounded-3xl border border-zinc-200 p-8 relative overflow-hidden flex flex-col justify-between shadow-inner" data-dm-panel>
             <!-- Grid Background Overlay -->
-            <div class="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+            <div class="absolute inset-0" data-dm-grid></div>
             
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 relative z-10 bg-white/80 inline-block px-2 rounded backdrop-blur max-w-max">State Distribution</p>
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 relative z-10 inline-block px-2 rounded backdrop-blur max-w-max" data-dm-label>State Distribution</p>
             
             <div class="flex items-center gap-10 relative z-10 w-full">
                 <!-- Published Metric -->
@@ -157,13 +157,65 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════
+         System Status & Additional Metrics
+    ═══════════════════════════════════════════════════ --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {{-- Pendaftar Baru --}}
+        <div class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm relative overflow-hidden flex items-center justify-between group transition-all hover:shadow-md" data-dm-card>
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors" data-dm-glow-emerald></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Pendaftar Baru</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-black text-zinc-800 tracking-tighter">{{ number_format($newUsersThisWeek) }}</h3>
+                    <span class="text-xs font-semibold text-zinc-400">Minggu Ini</span>
+                </div>
+            </div>
+            <div class="relative z-10 w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform" data-dm-icon-emerald>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" /></svg>
+            </div>
+        </div>
+
+        {{-- Siswa Lulus Kuis --}}
+        <div class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm relative overflow-hidden flex items-center justify-between group transition-all hover:shadow-md" data-dm-card>
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-violet-50 rounded-full blur-2xl group-hover:bg-violet-100 transition-colors" data-dm-glow-violet></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Total Lulus Kuis</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-black text-zinc-800 tracking-tighter">{{ number_format($quizPassedCount) }}</h3>
+                    <span class="text-xs font-semibold text-zinc-400">Passed</span>
+                </div>
+            </div>
+            <div class="relative z-10 w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-500 group-hover:scale-110 transition-transform" data-dm-icon-violet>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 0014.476 0l-.426-3.834A2.031 2.031 0 0016.273 4.5h-8.546a2.03 2.03 0 00-2.037 1.813l-.43 3.834zM12 18.75v-10.5m0 0L9.75 10.5m2.25-2.25L14.25 10.5M4.5 12h15m-15 0a3.375 3.375 0 00-3.375 3.375v1.5c0 1.864 1.512 3.375 3.375 3.375h15a3.375 3.375 0 003.375-3.375v-1.5a3.375 3.375 0 00-3.375-3.375H4.5z" /></svg>
+            </div>
+        </div>
+        
+        {{-- Laporan Masalah --}}
+        <div class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm relative overflow-hidden flex items-center justify-between group transition-all hover:shadow-md" data-dm-card>
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-rose-50 rounded-full blur-2xl group-hover:bg-rose-100 transition-colors" data-dm-glow-rose></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Total Laporan</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-black text-zinc-800 tracking-tighter">{{ number_format($totalReports) }}</h3>
+                    <span class="text-xs font-semibold text-zinc-400">Issues</span>
+                </div>
+            </div>
+            <div class="relative z-10 w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform" data-dm-icon-rose>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a14.267 14.267 0 014.62 0l2.67.668a12.024 12.024 0 003.96 0L21 14.25v-9.58A14.27 14.27 0 0016.38 4L13.71 3.332a12.024 12.024 0 01-3.96 0L6.98 4.025a14.27 14.27 0 00-3.98.65V4.5M3 15V4.5z" /></svg>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- ═══════════════════════════════════════════════════
          Bottom section : Top Lists Terminal Light Build
     ═══════════════════════════════════════════════════ --}}
     <div class="grid gap-8 lg:grid-cols-3">
 
         {{-- Top Materi List --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4">
+        <div class="rounded-3xl border border-zinc-200 bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col" data-dm-card>
+            <div class="border-b border-zinc-100 backdrop-blur-sm px-6 py-4" data-dm-header>
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-indigo-50 text-indigo-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></span>
                     Heavy Workloads (Top Modules)
@@ -197,8 +249,8 @@
         </div>
 
         {{-- Recent Activity Log --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4 flex justify-between items-center">
+        <div class="rounded-3xl border border-zinc-200 bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col" data-dm-card>
+            <div class="border-b border-zinc-100 backdrop-blur-sm px-6 py-4 flex justify-between items-center" data-dm-header>
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-emerald-50 text-emerald-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
                     Activity Log
@@ -247,8 +299,8 @@
         </div>
 
         {{-- Issue Reports --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc]/80 backdrop-blur-sm px-6 py-4 flex justify-between items-center">
+        <div class="rounded-3xl border border-zinc-200 bg-grid-pattern-box shadow-sm overflow-hidden flex flex-col" data-dm-card>
+            <div class="border-b border-zinc-100 backdrop-blur-sm px-6 py-4 flex justify-between items-center" data-dm-header>
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-rose-50 text-rose-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></span>
                     Issue Reports
@@ -389,8 +441,8 @@
     <div class="grid gap-8 lg:grid-cols-2">
 
         {{-- Quiz Performance Gauge --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc] px-6 py-4">
+        <div class="rounded-3xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col" data-dm-card>
+            <div class="border-b border-zinc-100 px-6 py-4" data-dm-header>
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-rose-50 text-rose-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></span>
                     Quiz Performance Overview
@@ -405,7 +457,7 @@
                     @endphp
                     <div class="flex flex-col sm:flex-row items-center gap-6 w-full">
                         {{-- Circular Gauge Container --}}
-                        <div class="relative shrink-0 flex flex-col items-center justify-center p-6 bg-[#fbfbfc] rounded-2xl border border-zinc-100/80 shadow-[inset_0_2px_10px_-4px_rgba(0,0,0,0.03)] w-full sm:w-auto">
+                        <div class="relative shrink-0 flex flex-col items-center justify-center p-6 rounded-2xl border border-zinc-100/80 w-full sm:w-auto" data-dm-gauge>
                             <div class="relative">
                                 <svg class="w-28 h-28 -rotate-90 drop-shadow-sm" viewBox="0 0 120 120">
                                     <circle cx="60" cy="60" r="52" fill="none" stroke="#f4f4f5" stroke-width="12"/>
@@ -416,7 +468,7 @@
                                     <span class="text-3xl font-black text-zinc-800 tracking-tighter">{{ $passRate }}<span class="text-lg text-zinc-400 font-bold">%</span></span>
                                 </div>
                             </div>
-                            <span class="mt-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-white px-4 py-1.5 rounded-full border border-zinc-200 shadow-sm">Pass Rate</span>
+                            <span class="mt-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400 px-4 py-1.5 rounded-full border border-zinc-200 shadow-sm" data-dm-pill>Pass Rate</span>
                         </div>
 
                         {{-- Stats Breakdown --}}
@@ -469,8 +521,8 @@
         </div>
 
         {{-- Top Active Users Leaderboard --}}
-        <div class="rounded-3xl border border-zinc-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div class="border-b border-zinc-100 bg-[#fbfbfc] px-6 py-4 flex justify-between items-center">
+        <div class="rounded-3xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col" data-dm-card>
+            <div class="border-b border-zinc-100 px-6 py-4 flex justify-between items-center" data-dm-header>
                 <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-600 flex items-center gap-3">
                     <span class="flex h-6 w-6 items-center justify-center rounded bg-amber-50 text-amber-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.003 6.003 0 01-3.77 1.523m3.77-1.523V14.25M14.52 9.728a6.003 6.003 0 01-3.77-1.523m0 0V14.25"/></svg></span>
                     Top Active Users
@@ -502,10 +554,23 @@
                                          alt="{{ $activeUser->name }}" class="w-full h-full object-cover">
                                 </div>
 
-                                {{-- Name --}}
+                                {{-- Name + Emblem --}}
                                 <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors">{{ $activeUser->name }}</p>
+                                    <div class="flex items-center gap-1.5">
+                                        <p class="truncate text-sm font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors">{{ $activeUser->name }}</p>
+                                        <img src="{{ asset('assets/ico/' . $activeUser->emblem_image) }}" alt="{{ $activeUser->rank_name }}" class="w-5 h-5 object-contain shrink-0" title="{{ $activeUser->rank_name }}">
+                                    </div>
                                     <p class="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">{{ $activeUser->rank_name }}</p>
+                                    @if(isset($achievements[$activeUser->id]))
+                                        <div class="flex items-center gap-1 mt-1 flex-wrap">
+                                            @foreach($achievements[$activeUser->id] as $ach)
+                                                <span class="inline-flex items-center gap-0.5 bg-amber-50 border border-amber-100 rounded-full px-1.5 py-0.5 text-[9px] font-bold text-amber-700">
+                                                    <img src="{{ asset('assets/ico/' . $ach['icon']) }}" alt="{{ $ach['label'] }}" class="w-3 h-3 object-contain">
+                                                    {{ $ach['label'] }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
 
                                 {{-- EXP --}}
@@ -530,7 +595,7 @@
     {{-- ═══════════════════════════════════════════════════
          Bottom / Footer Metric Bar
     ═══════════════════════════════════════════════════ --}}
-    <div class="rounded-2xl border border-zinc-200 bg-white bg-grid-pattern-box p-6 shadow-sm overflow-hidden relative">
+    <div class="rounded-2xl border border-zinc-200 bg-grid-pattern-box p-6 shadow-sm overflow-hidden relative" data-dm-card>
         <div class="absolute inset-0 bg-gradient-to-r from-zinc-50/50 via-white to-zinc-50/50 opacity-90 blur-xl"></div>
         <div class="relative z-10 flex flex-wrap items-center justify-between gap-6">
             <div class="flex items-center gap-4">

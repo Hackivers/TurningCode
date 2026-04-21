@@ -8,7 +8,27 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-bg-primary: #EDEDED;
+    --color-bg-secondary: #FFFFFF;
+    --color-text-primary: #1D1D1F;
+    --color-text-secondary: #464646;
 }
+
+@variant dark (&:where(.dark-mode, .dark-mode *));
+
+:root {
+    --bg-primary: #F8F9FB;
+    --text-primary: #1D1D1F;
+    --border-color: #E2E2E2;
+}
+
+.dark-mode {
+    --bg-primary: #0D0C14;
+    --text-primary: #F5F5F7;
+    --border-color: #2A2C3A;
+}
+
 
 @layer utilities {
     .bg-grid-pattern {

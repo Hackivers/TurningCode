@@ -1,114 +1,136 @@
-<div class="container container-nav navbar @if (Auth::User()->role == "admin")
-    admin
-@endif" id="navBar">
-    <main class="main-nav">
-        <div class="wrapper-nav">
-            <nav class="box-nav-profile">
-                <div class="profile-img-nav btnAside">
-                    <div>
-                        @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
-                        @else
-                            <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
-                        @endif
-                        <h5>{{ Auth::user()->name }}</h5>
-                    </div>
-                </div>
-                @if (Auth::User()->role == 'user')
-                    <div class="wrapper-profile-nav">
-                        <div class="profile-setting-nav" id="btn-notification-popup">
-                            <div>
-                                <i class='bx bx-bell'></i>
-                                <span class="notif-badge" id="notif-badge"></span>
-                            </div>
-                        </div>
-                        <div class="profile-setting-nav" id="btn-setting-popup">
-                            <div>
-                                <i class='bx bx-dots-vertical-rounded'></i>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            </nav>
-            <nav class="box-nav-search">
-                <div class="menu-nav-header btnAside">
-                    <div>
-                        <i class='bx bx-menu'></i>
-                    </div>
-                </div>
-                <div>
-                    <i class='bx bx-search'></i>
-                    <input type="search" id="global-search-input" placeholder="Search">
-                </div>
-            </nav>
+<!-- ROTOOD MODERN NAVBAR -->
+<div class="rtd-top-nav @if (Auth::User()->role == 'admin') admin @endif" id="navBar">
+    <div class="rtd-nav-left">
+        <button class="rtd-btn-icon btnAside">
+            <i class='bx bx-menu'></i>
+        </button>
+        <div class="rtd-nav-title">
+            <h4>ROTOOD</h4>
+            <p>Care with {{ explode(' ', Auth::user()->name)[0] }}</p>
         </div>
-    </main>
+    </div>
+
+    <div class="rtd-nav-center">
+        <div class="rtd-search-pill">
+            <i class='bx bx-search'></i>
+            <input type="search" id="global-search-input" placeholder="Search for courses, hints...">
+        </div>
+    </div>
+
+    <div class="rtd-nav-right">
+        @if (Auth::User()->role == 'user')
+            <button class="rtd-btn-icon" id="btn-notification-popup">
+                <i class='bx bx-bell'></i>
+                <span class="notif-badge" id="notif-badge"></span>
+            </button>
+            <button class="rtd-btn-icon" id="btn-setting-popup">
+                <i class='bx bx-slider-alt'></i>
+            </button>
+            <div class="rtd-nav-profile btnAside">
+                @if(Auth::user()->avatar)
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
+                @else
+                    <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
+                @endif
+            </div>
+        @endif
+    </div>
 </div>
 
 {{-- Setting Popup Backdrop --}}
 <div class="setting-backdrop" id="setting-backdrop"></div>
 
-{{-- Setting Popup (di luar nav agar tidak terperangkap stacking context) --}}
-@if (Auth::User()->role == 'user')
-    <div class="setting-popup" id="setting-popup">
-        <div class="setting-popup-header">
-            <h4>Pengaturan</h4>
-            <button class="setting-popup-close" id="btn-setting-close">
-                <i class='bx bx-x'></i>
-            </button>
-        </div>
-        <div class="setting-popup-body">
-            {{-- Dark Mode --}}
-            <div class="setting-item">
-                <div class="setting-item-info">
-                    <div class="setting-item-icon">
-                        <i class='bx bx-moon'></i>
+    {{-- ═══════════════════════════════════════════════════════
+    SETTINGS POPUP OVERLAY (ADMIN STYLE)
+    ═══════════════════════════════════════════════════════ --}}
+    @if (Auth::User()->role == 'user')
+        <div class="setting-popup-dark" id="setting-popup">
+            <div class="spd-header">
+                <div class="spd-header-left">
+                    <div class="spd-icon-wrapper">
+                        <i class='bx bx-slider-alt'></i>
                     </div>
                     <div>
-                        <h5>Mode Gelap</h5>
-                        <h6>Tampilan lebih nyaman di malam hari</h6>
+                        <h3>Pengaturan</h3>
+                        <p>Kelola preferensi akun dan tampilan</p>
                     </div>
                 </div>
-                <label class="setting-toggle">
-                    <input type="checkbox" id="toggle-darkmode">
-                    <span class="setting-toggle-slider"></span>
-                </label>
+                <button class="spd-close" id="btn-setting-close"><i class='bx bx-x'></i></button>
             </div>
+            <div class="spd-body">
+                <div class="spd-grid">
+                    
+                    {{-- Notifikasi --}}
+                    <label class="spd-card" for="toggle-notification">
+                        <div class="spd-card-header">
+                            <div class="spd-card-icon"><i class='bx bx-bell'></i></div>
+                            <div class="spd-toggle">
+                                <input type="checkbox" id="toggle-notification">
+                                <span class="spd-slider"></span>
+                            </div>
+                        </div>
+                        <h4>Notifikasi</h4>
+                        <p>Aktifkan pengingat jadwal belajar.</p>
+                    </label>
 
-            <div class="setting-divider"></div>
+                    {{-- Dark Mode --}}
+                    <label class="spd-card" for="toggle-darkmode">
+                        <div class="spd-card-header">
+                            <div class="spd-card-icon"><i class='bx bx-moon'></i></div>
+                            <div class="spd-toggle">
+                                <input type="checkbox" id="toggle-darkmode">
+                                <span class="spd-slider"></span>
+                            </div>
+                        </div>
+                        <h4>Mode Gelap</h4>
+                        <p>Tampilan yang nyaman untuk malam hari.</p>
+                    </label>
 
-            {{-- Notifikasi --}}
-            <div class="setting-item">
-                <div class="setting-item-info">
-                    <div class="setting-item-icon">
-                        <i class='bx bx-bell'></i>
+                    {{-- Data & Storage --}}
+                    <div class="spd-card" style="cursor: default; opacity: 0.7;">
+                        <div class="spd-card-header">
+                            <div class="spd-card-icon"><i class='bx bx-data'></i></div>
+                            <span class="spd-badge">BETA</span>
+                        </div>
+                        <h4>Data & Penyimpanan</h4>
+                        <p>Kelola riwayat cache perangkat.</p>
                     </div>
-                    <div>
-                        <h5>Notifikasi</h5>
-                        <h6>Pengingat jadwal belajar</h6>
+
+                    {{-- Bahasa --}}
+                    <div class="spd-card" style="cursor: default;">
+                        <div class="spd-card-header">
+                            <div class="spd-card-icon"><i class='bx bx-globe'></i></div>
+                            <span class="spd-badge-green">ID</span>
+                        </div>
+                        <h4>Bahasa Server</h4>
+                        <p>Bahasa standar sistem Indonesia.</p>
                     </div>
+                    
                 </div>
-                <label class="setting-toggle">
-                    <input type="checkbox" id="toggle-notification">
-                    <span class="setting-toggle-slider"></span>
-                </label>
             </div>
         </div>
-    </div>
     {{-- Notification Popup --}}
-    <div class="notif-popup" id="notif-popup">
-        <div class="notif-popup-header">
-            <h4>Notifikasi</h4>
-            <div class="notif-popup-actions">
-                <button class="notif-clear-btn" id="btn-notif-clear" title="Hapus semua">
-                    <i class='bx bx-trash'></i>
+    <div class="notif-popup-dark" id="notif-popup">
+        <div class="npd-header">
+            <div class="npd-header-left">
+                <div class="npd-icon-wrapper">
+                    <i class='bx bx-bell'></i>
+                </div>
+                <div>
+                    <h3>Notifikasi</h3>
+                    <p>Pemberitahuan jadwal belajar</p>
+                </div>
+            </div>
+            <div class="npd-actions">
+                <button class="npd-btn" id="btn-notif-clear" title="Hapus semua">
+                    <i class='bx bx-check-double'></i>
                 </button>
-                <button class="setting-popup-close" id="btn-notif-close">
+                <button class="npd-btn" id="btn-notif-close">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
         </div>
-        <div class="notif-popup-body" id="notif-popup-body">
+        <div class="npd-body" id="notif-popup-body">
             {{-- Notifications will be injected here by JS --}}
             <div class="notif-empty" id="notif-empty">
                 <div class="notif-empty-icon">
@@ -190,25 +212,27 @@
 
         // ── Dark Mode ──────────────────────────────────────────────
         const darkKey = 'tc_dark_mode';
-        const isDark = localStorage.getItem(darkKey) === 'true';
 
-        if (isDark) {
-            document.body.classList.add('dark-mode');
-            if (toggleDark) toggleDark.checked = true;
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            if (toggleDark) toggleDark.checked = isDark;
+
+            // Update icon
+            const icon = toggleDark ? toggleDark.closest('.spd-card').querySelector('.spd-card-icon i') : null;
+            if (icon) {
+                icon.className = isDark ? 'bx bxs-moon' : 'bx bx-moon';
+            }
         }
-        document.documentElement.classList.remove('dark-mode-pending');
+
+        // Initial apply
+        const isDark = localStorage.getItem(darkKey) === 'true';
+        applyTheme(isDark);
 
         if (toggleDark) {
             toggleDark.addEventListener('change', () => {
                 const on = toggleDark.checked;
-                document.body.classList.toggle('dark-mode', on);
                 localStorage.setItem(darkKey, on);
-
-                // Update icon
-                const icon = toggleDark.closest('.setting-item').querySelector('.setting-item-icon i');
-                if (icon) {
-                    icon.className = on ? 'bx bxs-moon' : 'bx bx-moon';
-                }
+                applyTheme(on);
             });
         }
 
@@ -492,6 +516,653 @@
         window.__renderNotifs = renderNotifs;
     })();
 </script>
+
+<style>
+    /* ═══ NEO-LIGHT NAVBAR GLOBAL ═══ */
+    .rtd-top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 32px;
+        background: transparent;
+        transition: background 0.3s, backdrop-filter 0.3s, padding 0.3s;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .rtd-top-nav.scrolled {
+        background: rgba(236, 236, 236, 0.85); /* syncs with var(--neo-bg) */
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 12px 32px;
+    }
+
+    .rtd-nav-left,
+    .rtd-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .rtd-nav-title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 12px;
+    }
+
+    .rtd-nav-title h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 800;
+        color: #121212;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+    }
+
+    .rtd-nav-title p {
+        margin: 0;
+        font-size: 11px;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .rtd-btn-icon {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        padding: 0;
+    }
+
+    .rtd-btn-icon:hover {
+        background: #121212;
+        color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        border-color: #121212;
+    }
+
+    .notif-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 16px;
+        height: 16px;
+        background: #121212;
+        border-radius: 50%;
+        color: white;
+        border: 2px solid white;
+        font-size: 9px;
+        font-weight: bold;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notif-badge.active {
+        display: flex;
+    }
+
+    .rtd-search-pill {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        padding: 10px 24px;
+        gap: 12px;
+        width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rtd-search-pill:focus-within {
+        border-color: #121212;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+    }
+
+    .rtd-search-pill i {
+        color: #888;
+        font-size: 18px;
+    }
+
+    .rtd-search-pill input {
+        background: transparent;
+        border: none;
+        color: #121212;
+        outline: none;
+        font-size: 14px;
+        font-weight: 500;
+        width: 100%;
+        font-family: inherit;
+    }
+
+    .rtd-search-pill input::placeholder {
+        color: #aaa;
+        font-weight: 400;
+    }
+
+    .rtd-nav-profile {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+    }
+
+    .rtd-nav-profile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-color: #121212;
+    }
+
+    .rtd-nav-profile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @media (max-width: 820px) {
+        .rtd-top-nav {
+            padding: 12px 16px;
+        }
+
+        .rtd-search-pill {
+            width: 180px;
+        }
+    }
+
+    /* ═══ ADMIN-STYLE SETTING POPUP ═══ */
+    .setting-backdrop.active {
+        background: rgba(0, 0, 0, 0.1) !important;
+        backdrop-filter: blur(2px);
+        opacity: 1;
+        visibility: visible;
+        position: fixed;
+        inset: 0;
+        z-index: 99;
+        transition: all 0.3s;
+    }
+
+    .setting-popup-dark {
+        position: fixed;
+        top: 90px;
+        right: 32px;
+        transform: translateY(-10px) scale(0.95);
+        transform-origin: top right;
+        opacity: 0;
+        visibility: hidden;
+        width: calc(100% - 64px);
+        max-width: 440px;
+        background: #111113;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        z-index: 100;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .setting-popup-dark.active {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+        .setting-popup-dark {
+            top: 80px;
+            right: 16px;
+            width: calc(100% - 32px);
+            max-width: 400px;
+        }
+    }
+
+    .spd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 32px;
+        border-bottom: 1px solid #27272a;
+    }
+
+    .spd-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .spd-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        background: #27272a;
+        color: #d4d4d8;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .spd-header-left h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #fff;
+    }
+
+    .spd-header-left p {
+        margin: 0;
+        font-size: 12px;
+        color: #a1a1aa;
+    }
+
+    .spd-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: transparent;
+        border: none;
+        color: #71717a;
+        font-size: 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .spd-close:hover {
+        background: #27272a;
+        color: #f4f4f5;
+    }
+
+    .spd-body {
+        background: #111113;
+        padding: 24px;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .spd-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .spd-card {
+        background: #1a1a1e;
+        border-radius: 18px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid #27272a;
+        display: block;
+    }
+
+    .spd-card:hover {
+        border-color: #3f3f46;
+        background: #222226;
+        transform: translateY(-2px);
+    }
+
+    .spd-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .spd-card-icon {
+        width: 44px;
+        height: 44px;
+        background: #27272a;
+        color: #a1a1aa;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        transition: color 0.3s;
+    }
+    .spd-card:hover .spd-card-icon {
+        color: #fff;
+    }
+
+    .spd-card h4 {
+        margin: 0 0 6px 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: #f4f4f5;
+    }
+
+    .spd-card p {
+        margin: 0;
+        font-size: 12px;
+        color: #a1a1aa;
+        line-height: 1.5;
+    }
+
+    .spd-badge, .spd-badge-green {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+    .spd-badge { color: #a1a1aa; background: #27272a; }
+    .spd-badge-green { color: #34d399; background: rgba(52, 211, 153, 0.1); }
+
+    .spd-toggle {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+    }
+    .spd-toggle input { display: none; }
+    .spd-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #3f3f46;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    .spd-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .spd-toggle input:checked + .spd-slider {
+        background-color: #10b981;
+    }
+    .spd-toggle input:checked + .spd-slider:before {
+        transform: translateX(20px);
+    }
+
+    /* ═══ NOTIFICATION POPUP DARK ═══ */
+    .notif-popup-dark {
+        position: fixed;
+        top: 90px;
+        right: 84px; /* Shift slightly left of profile */
+        transform: translateY(-10px) scale(0.95);
+        transform-origin: top right;
+        opacity: 0;
+        visibility: hidden;
+        width: calc(100% - 64px);
+        max-width: 420px;
+        max-height: 520px;
+        background: #111113;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        z-index: 100;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .notif-popup-dark.active {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+        .notif-popup-dark {
+            top: 80px;
+            right: 16px;
+            width: calc(100% - 32px);
+            max-width: 400px;
+        }
+    }
+
+    .npd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid #27272a;
+        flex-shrink: 0;
+    }
+
+    .npd-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .npd-icon-wrapper {
+        width: 38px;
+        height: 38px;
+        background: rgba(99,102,241,0.1);
+        color: #818cf8;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .npd-header-left h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .npd-header-left p {
+        margin: 0;
+        font-size: 11px;
+        color: #a1a1aa;
+    }
+
+    .npd-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .npd-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: transparent;
+        border: none;
+        color: #71717a;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .npd-btn:hover {
+        background: #27272a;
+        color: #fff;
+    }
+
+    .npd-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        background: #0e0e10;
+    }
+
+    .notif-date-header h6 {
+        margin: 12px 8px 8px 8px;
+        font-size: 11px;
+        color: #71717a;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .notif-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-bottom: 4px;
+        position: relative;
+    }
+
+    .notif-item:hover {
+        background: #1a1a1e;
+    }
+
+    .notif-item.unread {
+        background: rgba(255,255,255,0.03);
+    }
+    .notif-item.unread:hover {
+        background: #1a1a1e;
+    }
+
+    .notif-item-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        border: 1px solid transparent;
+    }
+
+    .notif-item-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notif-item-content h5 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #f4f4f5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .notif-item-content p {
+        margin: 0 0 8px 0;
+        font-size: 12px;
+        color: #a1a1aa;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .notif-item-time {
+        font-size: 10px;
+        color: #52525b;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 600;
+    }
+
+    .notif-item-dismiss {
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: none;
+        color: #52525b;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transition: all 0.2s;
+    }
+
+    .notif-item:hover .notif-item-dismiss {
+        opacity: 1;
+    }
+
+    .notif-item-dismiss:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+    }
+
+    .notif-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+        height: 100%;
+        min-height: 240px;
+    }
+
+    .notif-empty-icon {
+        width: 56px;
+        height: 56px;
+        background: #1a1a1e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #3f3f46;
+        margin-bottom: 20px;
+    }
+
+    .notif-empty h5 {
+        margin: 0 0 8px 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: #d4d4d8;
+    }
+
+    .notif-empty p {
+        margin: 0;
+        font-size: 12px;
+        color: #71717a;
+    }
+
+    .notif-badge.active {
+        background: #ef4444 !important;
+        color: #fff !important;
+        border-color: #121212 !important;
+    }
+</style>
 
 
 

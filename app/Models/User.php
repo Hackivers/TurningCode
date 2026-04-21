@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'avatar', 'exp'])]
+#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'last_page', 'avatar', 'exp'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -42,40 +42,102 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getRankNameAttribute(): string
     {
         $exp = $this->exp ?? 0;
-        if ($exp >= 20000) return 'Legend';
-        if ($exp >= 10000) return 'Master';
-        if ($exp >= 5000) return 'Senior';
-        if ($exp >= 1000) return 'Junior';
+        if ($exp >= 1000000)
+            return 'Penguasa Sektor';
+        if ($exp >= 500000)
+            return 'Venerable';
+        if ($exp >= 250000)
+            return 'Immortal';
+        if ($exp >= 100000)
+            return 'Domain';
+        if ($exp >= 80000)
+            return 'Universe';
+        if ($exp >= 40000)
+            return 'Legend';
+        if ($exp >= 10000)
+            return 'Master';
+        if ($exp >= 5000)
+            return 'Senior';
+        if ($exp >= 1000)
+            return 'Junior';
         return 'Pemula';
     }
 
     public function getEmblemImageAttribute(): string
     {
         $exp = $this->exp ?? 0;
-        if ($exp >= 20000) return 'emblem005Trans.png';
-        if ($exp >= 10000) return 'emblem004Trans.png';
-        if ($exp >= 5000) return 'emblem003Trans.png';
-        if ($exp >= 1000) return 'emblem002Trans.png';
+        if ($exp >= 1000000)
+            return 'emblem011Trans.png';
+        if ($exp >= 500000)
+            return 'emblem010Trans.png';
+        if ($exp >= 250000)
+            return 'emblem009Trans.png';
+        if ($exp >= 100000)
+            return 'emblem008Trans.png';
+        if ($exp >= 80000)
+            return 'emblem007Trans.png';
+        if ($exp >= 40000)
+            return 'emblem006Trans.png';
+        if ($exp >= 20000)
+            return 'emblem005Trans.png';
+        if ($exp >= 10000)
+            return 'emblem004Trans.png';
+        if ($exp >= 5000)
+            return 'emblem003Trans.png';
+        if ($exp >= 1000)
+            return 'emblem002Trans.png';
         return 'emblem001Trans.png';
     }
 
     public function getNextRankNameAttribute(): ?string
     {
         $exp = $this->exp ?? 0;
-        if ($exp < 1000) return 'Junior';
-        if ($exp < 5000) return 'Senior';
-        if ($exp < 10000) return 'Master';
-        if ($exp < 20000) return 'Legend';
+        if ($exp < 1000)
+            return 'Junior';
+        if ($exp < 5000)
+            return 'Senior';
+        if ($exp < 10000)
+            return 'Master';
+        if ($exp < 20000)
+            return 'Legend';
+        if ($exp < 40000)
+            return 'Master';
+        if ($exp < 80000)
+            return 'Universe';
+        if ($exp < 100000)
+            return 'Domain';
+        if ($exp < 250000)
+            return 'Immortal';
+        if ($exp < 500000)
+            return 'Venerable';
+        if ($exp < 1000000)
+            return 'Penguasa Sektor';
         return null; // Max rank reached
     }
 
     public function getNextRankExpAttribute(): ?int
     {
         $exp = $this->exp ?? 0;
-        if ($exp < 1000) return 1000;
-        if ($exp < 5000) return 5000;
-        if ($exp < 10000) return 10000;
-        if ($exp < 20000) return 20000;
+        if ($exp < 1000)
+            return 1000;
+        if ($exp < 5000)
+            return 5000;
+        if ($exp < 10000)
+            return 10000;
+        if ($exp < 20000)
+            return 20000;
+        if ($exp < 40000)
+            return 40000;
+        if ($exp < 80000)
+            return 80000;
+        if ($exp < 100000)
+            return 100000;
+        if ($exp < 250000)
+            return 250000;
+        if ($exp < 500000)
+            return 500000;
+        if ($exp < 1000000)
+            return 1000000;
         return null; // Max rank reached
     }
 }

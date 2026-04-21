@@ -41,6 +41,14 @@ class AdminController extends Controller
             abort(404);
         }
 
+        $user = auth()->user();
+        if ($user && $user->role === 'admin') {
+            $user->update([
+                'last_seen' => now(),
+                'last_page' => $page,
+            ]);
+        }
+
         if ($page === 'dashboard') {
             // Combine user counts into single query (8 queries → 4)
             $userCounts = User::selectRaw("
@@ -71,7 +79,22 @@ class AdminController extends Controller
                 ->where('exp', '>', 0)
                 ->orderByDesc('exp')
                 ->limit(5)
-                ->get(['name', 'exp', 'avatar']);
+                ->get(['id', 'name', 'exp', 'avatar']);
+
+            // Compute achievements per user
+            $achievements = [];
+            $topScorer = QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
+                ->groupBy('user_id')->orderByDesc('max_score')->first();
+            $mostPassed = QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
+                ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
+            $perfectScorer = QuizAttempt::where('score', 100)->first();
+            $mostAttempts = QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
+                ->groupBy('user_id')->orderByDesc('attempt_count')->first();
+
+            if ($topScorer) $achievements[$topScorer->user_id][] = ['label' => 'Top Scorer', 'icon' => 'emblemPath001.png'];
+            if ($mostPassed) $achievements[$mostPassed->user_id][] = ['label' => 'Quiz Master', 'icon' => 'emblemPath001.png'];
+            if ($perfectScorer) $achievements[$perfectScorer->user_id][] = ['label' => 'Perfect Score', 'icon' => 'emblemPath001.png'];
+            if ($mostAttempts) $achievements[$mostAttempts->user_id][] = ['label' => 'Most Active', 'icon' => 'emblemPath001.png'];
 
             return view('spa.fragments.admin-dashboard', [
                 'page'               => $page,
@@ -93,6 +116,7 @@ class AdminController extends Controller
                 'totalFavorites'     => $totalFavorites,
                 'newUsersThisWeek'   => $newUsersThisWeek,
                 'topActiveUsers'     => $topActiveUsers,
+                'achievements'       => $achievements,
                 'totalReports'       => \App\Models\IssueReport::count(),
                 'pendingReports'     => \App\Models\IssueReport::where('status', 'pending')->count(),
                 'recentReports'      => \App\Models\IssueReport::with('user:id,name,avatar')->latest()->limit(5)->get(),
@@ -140,14 +164,31 @@ class AdminController extends Controller
         }
 
         if ($page === 'questions') {
+            // Load all questions grouped by hierarchy
+            $groupedQuestions = MainMateri::query()
+                ->orderBy('title')
+                ->with([
+                    'materis' => fn($q) => $q->orderBy('title'),
+                    'materis.subMateris' => fn($q) => $q->where('is_published', true)->orderBy('title'),
+                    'materis.subMateris.questions' => fn($q) => $q->orderBy('order'),
+                ])
+                ->get()
+                ->filter(function ($main) {
+                    // Only include main materis that have at least one question somewhere
+                    return $main->materis->contains(function ($materi) {
+                        return $materi->subMateris->contains(function ($sub) {
+                            return $sub->questions->isNotEmpty();
+                        });
+                    });
+                });
+
+            $totalQuestions = Question::count();
+
             return view('spa.fragments.admin-questions', [
-                'page'            => $page,
-                'mainMateris'     => MainMateri::query()->orderBy('title')->get(),
-                'recentQuestions' => Question::query()
-                    ->with('subMateri.materi.mainMateri')
-                    ->latest()
-                    ->limit(10)
-                    ->get(),
+                'page'             => $page,
+                'mainMateris'      => MainMateri::query()->orderBy('title')->get(),
+                'groupedQuestions' => $groupedQuestions,
+                'totalQuestions'   => $totalQuestions,
             ]);
         }
 
@@ -341,5 +382,106 @@ class AdminController extends Controller
             'pending_count'       => $pendingCount,
             'latest_pending_time' => $latestPending ? $latestPending->created_at->timestamp * 1000 : 0,
         ]);
+    }
+
+    public function onlineAdmins(): \Illuminate\Http\JsonResponse
+    {
+        // Get all admins, mark as online if last_seen is within the last 5 minutes
+        $admins = \App\Models\User::where('role', 'admin')
+            ->select('id', 'name', 'email', 'avatar', 'last_seen', 'last_page')
+            ->orderBy('last_seen', 'desc')
+            ->get()
+            ->map(function ($admin) {
+                $isOnline = $admin->last_seen && $admin->last_seen->diffInMinutes(now()) <= 5;
+                
+                // Format the page name to be more readable
+                $pageMap = [
+                    'dashboard' => 'Dashboard',
+                    'addsubmateri' => 'Tambah Sub Materi',
+                    'editsubmateri' => 'Edit Sub Materi',
+                    'main-materi' => 'Main Materi',
+                    'materi' => 'Materi',
+                    'questions' => 'Bank Soal',
+                    'database' => 'Database',
+                    'profile' => 'Profile',
+                ];
+                
+                $pageDisplay = 'Dashboard';
+                if ($admin->last_page && isset($pageMap[$admin->last_page])) {
+                    $pageDisplay = $pageMap[$admin->last_page];
+                } elseif ($admin->last_page) {
+                    $pageDisplay = ucfirst($admin->last_page);
+                }
+
+                return [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'avatar_url' => $admin->avatar ? asset('storage/' . $admin->avatar) : "https://ui-avatars.com/api/?name=" . urlencode($admin->name) . "&background=6366f1&color=ffffff",
+                    'is_online' => $isOnline,
+                    'last_page_display' => $pageDisplay,
+                    'last_seen_human' => $admin->last_seen ? $admin->last_seen->diffForHumans() : 'Never'
+                ];
+            });
+
+        return response()->json($admins);
+    }
+
+    /**
+     * Database Table CRUD
+     */
+    public function tableRows(string $table): \Illuminate\Http\JsonResponse
+    {
+        // Validate table exists
+        if (!\Illuminate\Support\Facades\Schema::hasTable($table)) {
+            return response()->json(['error' => 'Table not found'], 404);
+        }
+
+        $columns = collect(\Illuminate\Support\Facades\Schema::getColumns($table))
+            ->pluck('name')
+            ->toArray();
+
+        $rows = \Illuminate\Support\Facades\DB::table($table)
+            ->limit(100)
+            ->orderByDesc('id')
+            ->get();
+
+        return response()->json([
+            'columns' => $columns,
+            'rows'    => $rows,
+            'total'   => \Illuminate\Support\Facades\DB::table($table)->count(),
+        ]);
+    }
+
+    public function updateRow(string $table, string $id, \Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
+    {
+        if (!\Illuminate\Support\Facades\Schema::hasTable($table)) {
+            return response()->json(['error' => 'Table not found'], 404);
+        }
+
+        $data = $request->except(['_method', '_token']);
+
+        // Remove id and timestamp fields from update
+        unset($data['id'], $data['created_at']);
+
+        // Set updated_at if exists
+        if (\Illuminate\Support\Facades\Schema::hasColumn($table, 'updated_at')) {
+            $data['updated_at'] = now();
+        }
+
+        \Illuminate\Support\Facades\DB::table($table)->where('id', $id)->update($data);
+
+        return response()->json(['message' => 'Data berhasil diperbarui.']);
+    }
+
+    public function deleteRow(string $table, string $id): \Illuminate\Http\JsonResponse
+    {
+        if (!\Illuminate\Support\Facades\Schema::hasTable($table)) {
+            return response()->json(['error' => 'Table not found'], 404);
+        }
+
+        \Illuminate\Support\Facades\DB::table($table)->where('id', $id)->delete();
+
+        return response()->json(['message' => 'Data berhasil dihapus.']);
     }
 }

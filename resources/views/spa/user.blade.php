@@ -67,3 +67,129 @@
         </div>
     </div>
 @endsection
+
+@section('styles')
+    <style>
+        /* ═══ ROTOOD — GLOBAL DARK BODY ═══ */
+        :root {
+            --bg-primary: #060606 !important;
+            --text-primary: #ffffff !important;
+        }
+
+        body {
+            background-color: #060606 !important;
+            color: #ffffff !important;
+        }
+
+        /* Loading Page */
+        .loading-page {
+            color: #888 !important;
+        }
+
+        .loading-page i {
+            color: #f3ebd7 !important;
+        }
+
+        /* Offline overlay */
+        .offline-overlay {
+            background: #060606 !important;
+        }
+
+        .offline-content {
+            color: #eee !important;
+        }
+
+        .offline-title {
+            color: #eee !important;
+        }
+
+        .offline-desc {
+            color: #888 !important;
+        }
+
+        .offline-retry-btn {
+            background: #f3ebd7 !important;
+            color: #000 !important;
+            border: none !important;
+            border-radius: 20px !important;
+        }
+
+        .offline-icon i {
+            color: #f3ebd7 !important;
+        }
+
+        .offline-status span {
+            color: #888 !important;
+        }
+
+        .offline-tip {
+            color: #666 !important;
+        }
+
+        .offline-tip i {
+            color: #555 !important;
+        }
+
+        .offline-tip-divider {
+            background: #222 !important;
+        }
+
+        .offline-pulse-ring {
+            border-color: rgba(243, 235, 215, 0.15) !important;
+        }
+
+        /* Toast */
+        #toast-container .toast {
+            background: #111 !important;
+            border: 1px solid #222 !important;
+            color: #eee !important;
+            border-radius: 20px !important;
+        }
+
+        /* Detail sub materi page */
+        .container-detail-submateri {
+            background: transparent !important;
+        }
+
+        .detail-submateri-card {
+            background: #111 !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 28px !important;
+            color: #ddd !important;
+        }
+
+        .detail-submateri-card h1,
+        .detail-submateri-card h2,
+        .detail-submateri-card h3,
+        .detail-submateri-card h4 {
+            color: #eee !important;
+        }
+
+        .detail-submateri-card pre {
+            background: #0a0a0a !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 16px !important;
+        }
+
+        .detail-submateri-card code {
+            background: #0a0a0a !important;
+            color: #f3ebd7 !important;
+        }
+
+        .btn-mark-done {
+            background: #f3ebd7 !important;
+            color: #000 !important;
+            border: none !important;
+            border-radius: 20px !important;
+        }
+
+        /* Quiz override */
+        .quiz-container,
+        .quiz-card {
+            background: #111 !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 28px !important;
+            color: #eee !important;
+        }
+    </style>
+@endsection

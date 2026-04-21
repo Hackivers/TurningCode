@@ -129,4 +129,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // Admin Profile
     Route::post('/admin/api/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+
+    // Admin Friend List
+    Route::get('/admin/api/online-admins', [AdminController::class, 'onlineAdmins'])->name('admin.online-admins');
+
+    // Database Table CRUD
+    Route::get('/admin/api/table/{table}/rows', [AdminController::class, 'tableRows'])->name('admin.table.rows');
+    Route::put('/admin/api/table/{table}/row/{id}', [AdminController::class, 'updateRow'])->name('admin.table.update');
+    Route::delete('/admin/api/table/{table}/row/{id}', [AdminController::class, 'deleteRow'])->name('admin.table.delete');
 });

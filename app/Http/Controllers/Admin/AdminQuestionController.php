@@ -32,7 +32,9 @@ class AdminQuestionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'sub_materi_id'              => ['required', 'exists:sub_materis,id'],
+            'sync_mode'                  => ['nullable', 'string'],
             'questions'                  => ['required', 'array', 'min:1'],
+            'questions.*.id'             => ['nullable', 'integer'],
             'questions.*.question'       => ['required', 'string', 'max:2000'],
             'questions.*.code_snippet'   => ['nullable', 'string', 'max:5000'],
             'questions.*.code_language'  => ['nullable', 'string', 'max:50'],
@@ -52,15 +54,28 @@ class AdminQuestionController extends Controller
 
         $validated = $validator->validated();
         $subMateriId = (int) $validated['sub_materi_id'];
+        $isSyncMode = !empty($validated['sync_mode']);
 
-        // Tentukan order awal dari jumlah question yang sudah ada
-        $currentMax = Question::where('sub_materi_id', $subMateriId)->max('order') ?? -1;
+        if ($isSyncMode) {
+            $submittedIds = collect($validated['questions'])
+                                ->filter(fn($q) => !empty($q['id']))
+                                ->pluck('id')
+                                ->toArray();
+                                
+            Question::where('sub_materi_id', $subMateriId)
+                ->whereNotIn('id', $submittedIds)
+                ->delete();
+                
+            $currentMax = -1; // Reset order in sync mode
+        } else {
+            $currentMax = Question::where('sub_materi_id', $subMateriId)->max('order') ?? -1;
+        }
 
         foreach ($validated['questions'] as $i => $q) {
             $codeSnippet = trim($q['code_snippet'] ?? '');
             $codeLang    = trim($q['code_language'] ?? '');
 
-            Question::create([
+            $data = [
                 'sub_materi_id'  => $subMateriId,
                 'question'       => $q['question'],
                 'code_snippet'   => $codeSnippet !== '' ? $codeSnippet : null,
@@ -72,8 +87,14 @@ class AdminQuestionController extends Controller
                     $q['option_d'],
                 ],
                 'correct_option' => (int) $q['correct_option'],
-                'order'          => $currentMax + $i + 1,
-            ]);
+                'order'          => $isSyncMode ? ($i + 1) : ($currentMax + $i + 1),
+            ];
+
+            if (!empty($q['id'])) {
+                Question::where('id', $q['id'])->update($data);
+            } else {
+                Question::create($data);
+            }
         }
 
         $count = count($validated['questions']);

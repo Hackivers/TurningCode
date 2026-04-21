@@ -1,10 +1,10 @@
 @extends('layouts.spa')
 
 @section('content')
-    <div class="flex min-h-screen bg-[#F8F9FB] text-zinc-800">
+    <div class="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
         {{-- ── ASIDE ── --}}
         <aside id="app-sidebar"
-            class="fixed top-0 left-0 z-50 h-screen w-[260px] flex-col bg-white p-6 pt-10 border-r border-zinc-100 transition-all duration-300 flex overflow-y-auto overflow-x-hidden no-scrollbar">
+            class="fixed top-0 left-0 z-50 h-screen w-[260px] flex-col bg-white dark:bg-[#111113] p-6 pt-10 border-r border-zinc-100 dark:border-zinc-800 transition-all duration-300 flex overflow-y-auto overflow-x-hidden no-scrollbar">
             {{-- Logo --}}
             <div class="mb-14 flex items-center justify-center shrink-0">
                 <div class="flex items-center gap-2 text-zinc-900 sidebar-logo">
@@ -151,7 +151,7 @@
         {{-- ── MAIN CONTENT ── --}}
         <main id="app-main" class="flex-1 flex flex-col min-w-0 ml-[260px] transition-all duration-300">
             {{-- Header --}}
-            <header class="flex items-center justify-between px-8 lg:px-[60px] py-10 bg-[#F8F9FB] mt-2 shrink-0">
+            <header class="flex items-center justify-between px-8 lg:px-[60px] py-10 bg-[var(--bg-primary)] mt-2 shrink-0">
                 <div class="flex items-center gap-6">
                     <button id="sidebar-toggle"
                         class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-inset ring-zinc-200/50 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900 shrink-0">
@@ -179,12 +179,48 @@
                     </div>
 
                     <div class="flex items-center gap-6 text-zinc-600 relative">
+                        {{-- Online Admins Toggle --}}
+                        <div class="relative group">
+                            <button type="button" id="online-admins-toggle" class="flex h-11 w-11 items-center justify-center rounded-[16px] bg-white shadow-sm ring-1 ring-inset ring-zinc-200/50 transition-colors hover:bg-emerald-50 relative shrink-0">
+                                <svg class="h-[18px] w-[18px] text-zinc-500 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <span id="online-admins-badge" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse" style="display:none;">0</span>
+                                <span class="absolute right-0 top-[calc(100%+8px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[300]">Admin Online</span>
+                            </button>
+
+                            {{-- Online Admins Dropdown Panel --}}
+                            <div id="online-admins-panel" class="absolute right-0 top-[calc(100%+8px)] w-[320px] max-h-[480px] rounded-2xl bg-white border border-zinc-200 shadow-[0_20px_40px_-8px_rgba(0,0,0,0.12)] z-[200] opacity-0 translate-y-2 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden">
+                                <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-100 bg-zinc-50/50">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100/50 text-emerald-600">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                        </span>
+                                        <div>
+                                            <h3 class="text-sm font-extrabold text-zinc-900">Admin Staff</h3>
+                                            <p class="text-[10px] text-zinc-500 font-medium">Status Kehadiran</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="online-admins-refresh" class="text-zinc-400 hover:text-emerald-500 transition-colors p-1" title="Refresh">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    </button>
+                                </div>
+                                <div id="online-admins-list" class="flex-1 overflow-y-auto divide-y divide-zinc-50">
+                                    <div class="flex flex-col items-center justify-center py-10 text-zinc-400">
+                                        <svg class="w-5 h-5 animate-spin mb-3 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        <span class="text-xs font-medium">Memuat...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <button type="button" id="notif-toggle"
-                            class="flex h-11 w-11 items-center justify-center rounded-[16px] bg-white shadow-sm ring-1 ring-inset ring-zinc-200/50 transition-colors hover:bg-zinc-50 relative shrink-0">
-                            <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            class="flex h-11 w-11 items-center justify-center rounded-[16px] bg-white shadow-sm ring-1 ring-inset ring-zinc-200/50 transition-colors hover:bg-zinc-50 relative shrink-0 group">
+                            <svg class="h-[18px] w-[18px] text-zinc-500 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path>
                             </svg>
                             <span id="notif-badge" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse" style="display:none;">0</span>
+                            <span class="absolute right-0 top-[calc(100%+8px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[300]">Notifikasi</span>
                         </button>
 
                         {{-- Notification Dropdown Panel --}}
@@ -333,42 +369,51 @@
     ADMIN GLOBAL CHAT WIDGET
     ═══════════════════════════════════════════════════════ --}}
 
-    {{-- Floating Action Menu (FAB) --}}
-    <div id="fab-container" class="fixed bottom-6 right-6 z-[9998] flex flex-col-reverse items-end gap-2">
+
+
+    {{-- ═══════════════════════════════════════════════════════
+    SCROLL TO TOP BUTTON
+    ═══════════════════════════════════════════════════════ --}}
+    <button id="scroll-to-top-btn" type="button" aria-label="Scroll to Top" class="fixed bottom-6 right-24 z-[9990] w-12 h-12 rounded-full bg-white text-zinc-600 flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none hover:scale-110 hover:text-indigo-600 border border-zinc-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    {{-- ═══════════════════════════════════════════════════════
+    ADMIN GLOBAL WIDGET (FAB)
+    ═══════════════════════════════════════════════════════ --}}
+    <div id="fab-container" class="fixed bottom-6 right-6 z-[9998] flex flex-col-reverse items-end gap-3">
         {{-- Main Toggle --}}
-        <button id="fab-main-toggle" type="button" aria-label="Toggle Admin Tools" class="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-[0_8px_24px_rgba(79,70,229,0.4)] transition-transform duration-300 hover:scale-105 active:scale-95 z-[9999] relative">
-            <svg id="fab-icon-bars" class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            <svg id="fab-icon-close" class="w-6 h-6 absolute transition-transform duration-300 scale-0 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        <button id="fab-main-toggle" type="button" aria-label="Toggle Admin Tools" class="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-[0_10px_25px_rgba(79,70,229,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 z-[9999] relative">
+            <svg id="fab-icon-bars" class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <svg id="fab-icon-close" class="w-6 h-6 absolute transition-transform duration-300 scale-0 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
             <span id="chat-badge-main" class="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-[5px] rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center shadow-sm animate-pulse" style="display:none;">0</span>
         </button>
 
         {{-- Sub Actions --}}
-        <div id="fab-actions" class="flex flex-col-reverse items-end gap-2 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none origin-bottom">
-            {{-- Floating toggle button --}}
-            <button id="chat-toggle" type="button" aria-label="Toggle admin chat" class="w-12 h-12 rounded-full border-none bg-[#1C1C1E] text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:scale-110 relative group">
-                <span id="chat-toggle-icon">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                </span>
-                <span id="chat-badge" style="display:none;" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse">0</span>
-                <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Global Chat</span>
+        <div id="fab-actions" class="flex flex-col-reverse items-end gap-3 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none origin-bottom">
+            {{-- Chat --}}
+            <button id="chat-toggle" type="button" aria-label="Toggle admin chat" class="w-12 h-12 rounded-full border-none bg-white text-zinc-600 flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-110 hover:text-indigo-600 relative group">
+                <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                <span id="chat-badge" style="display:none;" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[4px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm animate-pulse ring-2 ring-white">0</span>
+                <span class="absolute right-[calc(100%+12px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden md:block">Global Chat</span>
             </button>
 
-            {{-- Floating CMD toggle button --}}
-            <button id="cmd-toggle" type="button" aria-label="Toggle System Terminal" class="w-12 h-12 rounded-full border-none bg-[#121214] text-emerald-400 flex items-center justify-center text-sm font-mono font-bold shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:scale-110 relative group">
-                <span id="cmd-toggle-icon">>_</span>
-                <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">System Terminal</span>
+            {{-- CMD --}}
+            <button id="cmd-toggle" type="button" aria-label="Toggle System Terminal" class="w-12 h-12 rounded-full border-none bg-white text-zinc-600 flex items-center justify-center font-mono font-bold text-[15px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-110 hover:text-emerald-500 relative group">
+                >_
+                <span class="absolute right-[calc(100%+12px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden md:block">Terminal</span>
             </button>
 
-            {{-- Floating Settings toggle button --}}
-            <button id="settings-toggle" type="button" aria-label="Settings" class="w-12 h-12 rounded-full border-none bg-zinc-700 text-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 hover:scale-110 relative group">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Settings</span>
+            {{-- Report --}}
+            <button id="report-toggle" type="button" aria-label="Report Issue" class="w-12 h-12 rounded-full border-none bg-white text-zinc-600 flex items-center justify-center text-[15px] grayscale opacity-80 shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-all duration-300 hover:scale-110 hover:grayscale-0 hover:opacity-100 relative group">
+                🚩
+                <span class="absolute right-[calc(100%+12px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden md:block">Lapor Masalah</span>
             </button>
 
-            {{-- Floating Report toggle button --}}
-            <button id="report-toggle" type="button" aria-label="Lapor Issue" class="w-12 h-12 rounded-full border-none bg-red-500 text-white flex items-center justify-center text-xl shadow-[0_8px_24px_rgba(239,68,68,0.4)] transition-transform duration-300 hover:scale-110 relative group">
-                <span id="report-toggle-icon">🚩</span>
-                <span class="absolute right-full mr-3 bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Lapor Masalah</span>
+            {{-- Settings --}}
+            <button id="settings-toggle" type="button" aria-label="Settings" class="w-12 h-12 rounded-full border-none bg-white text-zinc-600 flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-110 hover:text-zinc-900 relative group">
+                <svg class="w-[20px] h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span class="absolute right-[calc(100%+12px)] bg-zinc-800 text-white text-[10px] uppercase font-bold tracking-widest px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden md:block">Pengaturan</span>
             </button>
         </div>
     </div>
@@ -440,15 +485,15 @@
                     </div>
 
                     {{-- Bahasa --}}
-                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                    <div id="setting-lang-card" class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
                                 <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
                             </div>
-                            <span class="inline-flex items-center rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400" style="background: #242428;">ID</span>
+                            <span id="setting-lang-badge" class="inline-flex items-center rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400" style="background: #242428;">ID</span>
                         </div>
-                        <h4 class="text-sm font-bold text-white mb-1">Bahasa</h4>
-                        <p class="text-[11px] text-zinc-500 leading-relaxed">Bahasa antarmuka saat ini dalam Bahasa Indonesia.</p>
+                        <h4 id="setting-lang-title" class="text-sm font-bold text-white mb-1">Bahasa</h4>
+                        <p id="setting-lang-desc" class="text-[11px] text-zinc-500 leading-relaxed">Bahasa antarmuka saat ini dalam Bahasa Indonesia.</p>
                     </div>
 
                     {{-- Keamanan --}}
@@ -467,17 +512,46 @@
                     </div>
 
                     {{-- Performa --}}
-                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                    <div id="setting-perf-card" class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
                                 <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
-                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Auto</span>
+                            <span id="setting-perf-badge" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Auto</span>
                         </div>
                         <h4 class="text-sm font-bold text-white mb-1">Performa</h4>
-                        <p class="text-[11px] text-zinc-500 leading-relaxed">Optimasi rendering SPA dan lazy-loading fragment otomatis.</p>
+                        <p id="setting-perf-desc" class="text-[11px] text-zinc-500 leading-relaxed">Optimasi rendering SPA dan lazy-loading fragment otomatis.</p>
                     </div>
 
+                    {{-- Compact Mode --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16"></path></svg>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-compact" class="sr-only peer">
+                                <div class="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Tampilan Ringkas</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Mengurangi jarak margin dan padding untuk memampatkan data tabel.</p>
+                    </div>
+
+                    {{-- Sound Effects --}}
+                    <div class="settings-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:ring-1 hover:ring-zinc-600" style="background: #1a1a1e;">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors" style="background: #242428;">
+                                <svg class="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9m-11.3-9.9h-3a1 1 0 00-1 1v6a1 1 0 001 1h3l4 4V4l-4 4z"></path></svg>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-sound" class="sr-only peer" checked>
+                                <div class="w-9 h-5 bg-zinc-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1">Efek Suara</h4>
+                        <p class="text-[11px] text-zinc-500 leading-relaxed">Putar konfirmasi audio saat menyimpan data atau terjadi error.</p>
+                    </div>
                 </div>
 
                 {{-- Footer Info --}}
@@ -627,6 +701,780 @@
     </div>
 
     <style>
+        /* ═══════════════════════════════════════════════════════
+           ADMIN DARK MODE — Full Coverage
+        ═══════════════════════════════════════════════════════ */
+
+        /* ── Base transitions ── */
+        .dark-mode *,
+        .dark-mode *::before,
+        .dark-mode *::after {
+            transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        /* ── Performance Modes ── */
+        .perf-eco *, 
+        .perf-eco *::before, 
+        .perf-eco *::after {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        /* ── Compact UI Mode ── */
+        .ui-compact .spa-fragment {
+            gap: 1rem !important;
+        }
+        .ui-compact .spa-fragment .p-4,
+        .ui-compact .spa-fragment .p-5,
+        .ui-compact .spa-fragment .p-6,
+        .ui-compact .spa-fragment .p-8 {
+            padding: 1rem !important;
+        }
+        .ui-compact .spa-fragment td, 
+        .ui-compact .spa-fragment th {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        .ui-compact .spa-fragment .py-6 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+
+        /* ── Sidebar ── */
+        .dark-mode #app-sidebar {
+            background: #111113 !important;
+            border-color: #1e1e22 !important;
+        }
+        .dark-mode #app-sidebar .nav-item {
+            color: #71717a !important;
+        }
+        .dark-mode #app-sidebar .nav-item:hover:not(.active) {
+            background: rgba(255,255,255,0.04) !important;
+            color: #e4e4e7 !important;
+        }
+        .dark-mode #app-sidebar .nav-item.active {
+            background: #6366f1 !important;
+            color: #fff !important;
+            box-shadow: 0 8px 24px -4px rgba(99,102,241,0.35) !important;
+        }
+        .dark-mode #app-sidebar .sidebar-text {
+            color: inherit;
+        }
+        .dark-mode #app-sidebar form button {
+            color: #71717a !important;
+        }
+        .dark-mode #app-sidebar form button:hover {
+            background: rgba(239,68,68,0.08) !important;
+            color: #f87171 !important;
+        }
+        .dark-mode #app-sidebar [class*="border-zinc-100"] {
+            border-color: #27272a !important;
+        }
+        .dark-mode #detail-profile-trigger {
+            background: #1a1a1e !important;
+            border-color: #27272a !important;
+        }
+        .dark-mode #detail-profile-trigger:hover {
+            background: #222226 !important;
+            border-color: #3f3f46 !important;
+        }
+        .dark-mode #detail-profile-trigger h3 {
+            color: #e4e4e7 !important;
+        }
+        .dark-mode #detail-profile-trigger p {
+            color: #71717a !important;
+        }
+        .dark-mode #detail-profile-trigger .text-zinc-400 {
+            color: #52525b !important;
+        }
+        .dark-mode #detail-profile-trigger .border-zinc-200 {
+            border-color: #3f3f46 !important;
+        }
+        .dark-mode #detail-profile-trigger .border-white {
+            border-color: #27272a !important;
+        }
+
+        /* Logo shapes */
+        .dark-mode .sidebar-logo > div {
+            background: #e4e4e7 !important;
+        }
+        .dark-mode .sidebar-logo > div:last-child {
+            border-left-color: #e4e4e7 !important;
+            background: transparent !important;
+        }
+
+        /* ── Header ── */
+        .dark-mode #app-main > header {
+            background: var(--bg-primary, #0D0C14) !important;
+        }
+        .dark-mode #sidebar-toggle {
+            background: #1a1a1e !important;
+            color: #a1a1aa !important;
+            box-shadow: none !important;
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+        .dark-mode #sidebar-toggle:hover {
+            background: #27272a !important;
+            color: #e4e4e7 !important;
+        }
+        .dark-mode #app-main > header h1 {
+            color: #f4f4f5 !important;
+        }
+        .dark-mode #app-main > header p {
+            color: #71717a !important;
+        }
+
+        /* Search */
+        .dark-mode #app-main > header input[type="text"] {
+            background: #1a1a1e !important;
+            color: #e4e4e7 !important;
+            border-color: #27272a !important;
+        }
+        .dark-mode #app-main > header input[type="text"]::placeholder {
+            color: #52525b !important;
+        }
+        .dark-mode #app-main > header input[type="text"]:hover,
+        .dark-mode #app-main > header input[type="text"]:focus {
+            background: #222226 !important;
+        }
+        .dark-mode #app-main > header .text-zinc-500 {
+            color: #52525b !important;
+        }
+
+        /* Notification bell */
+        .dark-mode #notif-toggle {
+            background: #1a1a1e !important;
+            color: #a1a1aa !important;
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+        .dark-mode #notif-toggle:hover {
+            background: #27272a !important;
+        }
+        .dark-mode #notif-panel {
+            background: #18181b !important;
+            border-color: #27272a !important;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6) !important;
+        }
+        .dark-mode #notif-panel [class*="border-zinc-100"],
+        .dark-mode #notif-panel [class*="border-zinc-200"] {
+            border-color: #27272a !important;
+        }
+        .dark-mode #notif-panel .text-zinc-900 {
+            color: #f4f4f5 !important;
+        }
+        .dark-mode #notif-panel [class*="bg-zinc-50"] {
+            background: #111113 !important;
+        }
+        .dark-mode .ring-zinc-200\/50 {
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+
+        /* Avatar ring */
+        .dark-mode #app-main > header .ring-zinc-200\/50 {
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+
+        /* ── SPA Content Area ── */
+        .dark-mode #spa-content .text-zinc-500 {
+            color: #71717a !important;
+        }
+
+        /* ── Dashboard Stat Cards ── */
+        .dark-mode .spa-fragment [class*="bg-white"] {
+            background: #18181b !important;
+        }
+        .dark-mode .spa-fragment [class*="border-zinc-200"] {
+            border-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment [class*="border-zinc-100"] {
+            border-color: #1e1e22 !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-800,
+        .dark-mode .spa-fragment h2.text-zinc-800 {
+            color: #f4f4f5 !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-700 {
+            color: #d4d4d8 !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-600 {
+            color: #a1a1aa !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-500 {
+            color: #71717a !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-400 {
+            color: #52525b !important;
+        }
+        .dark-mode .spa-fragment .text-zinc-300 {
+            color: #3f3f46 !important;
+        }
+
+        /* Card hover states */
+        .dark-mode .spa-fragment [class*="hover\\:border-indigo"]:hover {
+            border-color: rgba(99,102,241,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-violet"]:hover {
+            border-color: rgba(139,92,246,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-emerald"]:hover {
+            border-color: rgba(16,185,129,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-amber"]:hover {
+            border-color: rgba(245,158,11,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-cyan"]:hover {
+            border-color: rgba(6,182,212,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-rose"]:hover {
+            border-color: rgba(244,63,94,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-sky"]:hover {
+            border-color: rgba(14,165,233,0.4) !important;
+        }
+        .dark-mode .spa-fragment [class*="hover\\:border-pink"]:hover {
+            border-color: rgba(236,72,153,0.4) !important;
+        }
+
+        /* Stat card accent circles (top-right decorative) */
+        .dark-mode .spa-fragment [class*="bg-indigo-50"] {
+            background: rgba(99,102,241,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-violet-50"] {
+            background: rgba(139,92,246,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-emerald-50"] {
+            background: rgba(16,185,129,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-amber-50"] {
+            background: rgba(245,158,11,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-cyan-50"] {
+            background: rgba(6,182,212,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-rose-50"] {
+            background: rgba(244,63,94,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-sky-50"] {
+            background: rgba(14,165,233,0.1) !important;
+        }
+        .dark-mode .spa-fragment [class*="bg-pink-50"] {
+            background: rgba(236,72,153,0.1) !important;
+        }
+
+        /* Grid pattern backgrounds */
+        .dark-mode .spa-fragment .bg-grid-pattern-box {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px) !important;
+        }
+        .dark-mode .spa-fragment .bg-grid-pattern {
+            background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px) !important;
+        }
+
+        /* ── data-dm-card: All card containers ── */
+        [data-dm-card] {
+            background: #ffffff;
+        }
+        .dark-mode [data-dm-card] {
+            background: #18181b !important;
+            border-color: #27272a !important;
+        }
+
+        /* ── data-dm-header: Section headers ── */
+        [data-dm-header] {
+            background: #fbfbfc;
+        }
+        .dark-mode [data-dm-header] {
+            background: #111113 !important;
+            border-color: #1e1e22 !important;
+        }
+
+        /* ── data-dm-panel: State Distribution panel ── */
+        [data-dm-panel] {
+            background: #fafafa;
+        }
+        .dark-mode [data-dm-panel] {
+            background: #111113 !important;
+            border-color: #27272a !important;
+            box-shadow: inset 0 2px 10px -4px rgba(0,0,0,0.3) !important;
+        }
+
+        /* ── data-dm-grid: Grid overlay ── */
+        [data-dm-grid] {
+            background: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        .dark-mode [data-dm-grid] {
+            background: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px) !important;
+            background-size: 16px 16px !important;
+        }
+
+        /* ── data-dm-label: State Distribution label ── */
+        [data-dm-label] {
+            background: rgba(255,255,255,0.8);
+        }
+        .dark-mode [data-dm-label] {
+            background: rgba(24,24,27,0.8) !important;
+            color: #71717a !important;
+        }
+
+        /* ── data-dm-gauge: Quiz circular gauge container ── */
+        [data-dm-gauge] {
+            background: #fbfbfc;
+            box-shadow: inset 0 2px 10px -4px rgba(0,0,0,0.03);
+        }
+        .dark-mode [data-dm-gauge] {
+            background: #111113 !important;
+            border-color: #27272a !important;
+            box-shadow: inset 0 2px 10px -4px rgba(0,0,0,0.3) !important;
+        }
+
+        /* ── data-dm-pill: Pass Rate label ── */
+        [data-dm-pill] {
+            background: #ffffff;
+        }
+        .dark-mode [data-dm-pill] {
+            background: #1a1a1e !important;
+            border-color: #27272a !important;
+            color: #71717a !important;
+        }
+
+        /* ── Engagement Analytics Colors ── */
+        .dark-mode [data-dm-glow-sky] {
+            background-color: rgba(14, 165, 233, 0.05) !important;
+        }
+        .dark-mode [data-dm-icon-sky] {
+            background-color: rgba(14, 165, 233, 0.1) !important;
+            border-color: rgba(14, 165, 233, 0.2) !important;
+        }
+        .dark-mode [data-dm-glow-amber] {
+            background-color: rgba(245, 158, 11, 0.05) !important;
+        }
+        .dark-mode [data-dm-icon-amber] {
+            background-color: rgba(245, 158, 11, 0.1) !important;
+            border-color: rgba(245, 158, 11, 0.2) !important;
+        }
+        .dark-mode [data-dm-glow-indigo] {
+            background-color: rgba(99, 102, 241, 0.05) !important;
+        }
+        .dark-mode [data-dm-icon-indigo] {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+            border-color: rgba(99, 102, 241, 0.2) !important;
+        }
+
+        /* ── Segmented bar tracks ── */
+        .dark-mode .spa-fragment .h-2.w-full {
+            background: rgba(63,63,70,0.3) !important;
+        }
+        .dark-mode .spa-fragment .h-2.w-full > div {
+            border-color: rgba(39,39,42,0.5) !important;
+        }
+
+        /* ── Divider lines ── */
+        .dark-mode .spa-fragment .w-px {
+            background-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment .border-dashed {
+            border-color: #27272a !important;
+        }
+
+        /* ── List items ── */
+        .dark-mode .spa-fragment li {
+            border-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment li:hover {
+            background: rgba(255,255,255,0.03) !important;
+        }
+        .dark-mode .spa-fragment li .border-b,
+        .dark-mode .spa-fragment li .border-dashed {
+            border-color: #27272a !important;
+        }
+
+        /* Activity items left-border (keep status colors) */
+        .dark-mode .spa-fragment li.border-l-2 {
+            background: transparent !important;
+        }
+        .dark-mode .spa-fragment li.border-l-2:hover {
+            background: rgba(255,255,255,0.03) !important;
+        }
+
+        /* ── Zinc utility backgrounds ── */
+        .dark-mode .spa-fragment .bg-zinc-50 {
+            background: #1e1e22 !important;
+        }
+        .dark-mode .spa-fragment .bg-zinc-100 {
+            background: #222226 !important;
+        }
+        .dark-mode .spa-fragment .bg-zinc-200 {
+            background: #3f3f46 !important;
+        }
+        .dark-mode .spa-fragment .ring-zinc-200\/50 {
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+        .dark-mode .spa-fragment .ring-zinc-200 {
+            --tw-ring-color: #3f3f46 !important;
+        }
+
+        /* Time badges in activity log */
+        .dark-mode .spa-fragment span.bg-zinc-100 {
+            background: #27272a !important;
+            color: #a1a1aa !important;
+        }
+
+        /* ── Quiz gauge circle track ── */
+        .dark-mode .spa-fragment svg circle[stroke="#f4f4f5"] {
+            stroke: #27272a !important;
+        }
+
+        /* Quiz stats rows */
+        .dark-mode .spa-fragment .rounded-xl.bg-emerald-50\/50,
+        .dark-mode .spa-fragment .rounded-xl[class*="bg-emerald"] {
+            background: rgba(16,185,129,0.08) !important;
+            border-color: rgba(16,185,129,0.15) !important;
+        }
+        .dark-mode .spa-fragment .rounded-xl.bg-red-50\/50,
+        .dark-mode .spa-fragment .rounded-xl[class*="bg-red"] {
+            background: rgba(239,68,68,0.08) !important;
+            border-color: rgba(239,68,68,0.15) !important;
+        }
+        .dark-mode .spa-fragment .rounded-xl.bg-zinc-50 {
+            background: #1a1a1e !important;
+            border-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment .rounded-lg.bg-emerald-100 {
+            background: rgba(16,185,129,0.15) !important;
+        }
+        .dark-mode .spa-fragment .rounded-lg.bg-red-100 {
+            background: rgba(239,68,68,0.15) !important;
+        }
+        .dark-mode .spa-fragment .rounded-lg.bg-zinc-200 {
+            background: #3f3f46 !important;
+        }
+
+        /* ── Bottom metric bar gradient ── */
+        .dark-mode .spa-fragment .bg-gradient-to-r {
+            background: linear-gradient(to right, rgba(17,17,19,0.5), rgba(24,24,27,0.8), rgba(17,17,19,0.5)) !important;
+        }
+
+        /* ── Accent -50 backgrounds ── */
+        .dark-mode .spa-fragment .bg-indigo-50 {
+            background: rgba(99,102,241,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-violet-50 {
+            background: rgba(139,92,246,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-emerald-50 {
+            background: rgba(16,185,129,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-amber-50 {
+            background: rgba(245,158,11,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-cyan-50 {
+            background: rgba(6,182,212,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-rose-50 {
+            background: rgba(244,63,94,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-sky-50 {
+            background: rgba(14,165,233,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-pink-50 {
+            background: rgba(236,72,153,0.12) !important;
+        }
+        .dark-mode .spa-fragment .bg-red-50 {
+            background: rgba(239,68,68,0.1) !important;
+        }
+
+        /* ── Profile Popup ── */
+        .dark-mode #detail-profile-popup {
+            background: #18181b !important;
+            border-color: #27272a !important;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
+        }
+        .dark-mode #detail-profile-popup .text-zinc-900 {
+            color: #f4f4f5 !important;
+        }
+        .dark-mode #detail-profile-popup .text-zinc-500 {
+            color: #71717a !important;
+        }
+        .dark-mode #detail-profile-popup .text-zinc-400 {
+            color: #52525b !important;
+        }
+        .dark-mode #detail-profile-popup .bg-zinc-50 {
+            background: #111113 !important;
+        }
+        .dark-mode #detail-profile-popup [class*="border-zinc-100"] {
+            border-color: #27272a !important;
+        }
+        .dark-mode #detail-profile-popup .border-white {
+            border-color: #18181b !important;
+        }
+        .dark-mode #detail-profile-popup .border-2.border-white {
+            border-color: #18181b !important;
+        }
+
+        /* ── Success alert ── */
+        .dark-mode [class*="bg-emerald-50"][class*="border-emerald-100"] {
+            background: rgba(16,185,129,0.08) !important;
+            border-color: rgba(16,185,129,0.2) !important;
+        }
+
+        /* ── Scrollbar Dark ── */
+        .dark-mode ::-webkit-scrollbar-thumb {
+            background: #3f3f46 !important;
+        }
+        .dark-mode ::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+
+        /* ── Admin Data Tables (Materi, Questions, etc.) ── */
+        .dark-mode .spa-fragment table {
+            border-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment th {
+            background: #111113 !important;
+            color: #a1a1aa !important;
+            border-color: #27272a !important;
+        }
+        .dark-mode .spa-fragment td {
+            border-color: #1e1e22 !important;
+            color: #d4d4d8 !important;
+        }
+        .dark-mode .spa-fragment tr:hover td {
+            background: rgba(255,255,255,0.02) !important;
+        }
+
+        /* ── Form inputs in admin fragments ── */
+        .dark-mode .spa-fragment input:not([type="checkbox"]):not([type="radio"]),
+        .dark-mode .spa-fragment textarea,
+        .dark-mode .spa-fragment select {
+            background: #1a1a1e !important;
+            color: #e4e4e7 !important;
+            border-color: #3f3f46 !important;
+        }
+        .dark-mode .spa-fragment input:focus,
+        .dark-mode .spa-fragment textarea:focus,
+        .dark-mode .spa-fragment select:focus {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 2px rgba(99,102,241,0.15) !important;
+        }
+
+        /* ── Buttons ── */
+        .dark-mode .spa-fragment button[class*="bg-white"],
+        .dark-mode .spa-fragment a[class*="bg-white"] {
+            background: #1a1a1e !important;
+            color: #d4d4d8 !important;
+            border-color: #3f3f46 !important;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           BOX SHADOWS — Dark Mode Overrides
+        ═══════════════════════════════════════════════════════ */
+        .dark-mode .spa-fragment .shadow-sm {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        }
+        .dark-mode .spa-fragment .shadow-md,
+        .dark-mode .spa-fragment [class*="hover:shadow-md"]:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        }
+        .dark-mode .spa-fragment .shadow-lg {
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5) !important;
+        }
+        .dark-mode .spa-fragment .shadow-inner {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+        }
+        /* Stat card hover shadows → dark, tinted with accent */
+        .dark-mode .spa-fragment .group:hover {
+            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.4) !important;
+        }
+        /* Ring shadows in dark */
+        .dark-mode .spa-fragment .ring-1 {
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           STRUKTUR DATABASE — Dark Mode
+        ═══════════════════════════════════════════════════════ */
+
+        /* Page title */
+        .dark-mode #db-schema-root .text-zinc-900 {
+            color: #f4f4f5 !important;
+        }
+        .dark-mode #db-schema-root .text-zinc-500 {
+            color: #71717a !important;
+        }
+        .dark-mode #db-schema-root .text-zinc-400 {
+            color: #52525b !important;
+        }
+        .dark-mode #db-schema-root .text-zinc-600 {
+            color: #a1a1aa !important;
+        }
+        .dark-mode #db-schema-root .text-zinc-700 {
+            color: #d4d4d8 !important;
+        }
+        .dark-mode #db-schema-root .text-zinc-300 {
+            color: #52525b !important;
+        }
+
+        /* Search input */
+        .dark-mode #db-search {
+            background: #1a1a1e !important;
+            border-color: #3f3f46 !important;
+            color: #e4e4e7 !important;
+        }
+        .dark-mode #db-search:focus {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 2px rgba(99,102,241,0.15) !important;
+        }
+
+        /* View toggle buttons */
+        .dark-mode #db-schema-root .bg-zinc-100 {
+            background: #1a1a1e !important;
+        }
+        .dark-mode #db-schema-root .db-view-btn {
+            color: #52525b !important;
+        }
+        .dark-mode #db-schema-root .db-view-btn.active {
+            background: #27272a !important;
+            color: #e4e4e7 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        }
+
+        /* Table cards */
+        .dark-mode .db-table-card {
+            background: #18181b !important;
+            border-color: #27272a !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        }
+        .dark-mode .db-table-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        }
+        .dark-mode .db-table-card .bg-grid-pattern-box {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px) !important;
+        }
+
+        /* Accordion trigger hover and active states */
+        [data-dm-trigger]:hover {
+            background: rgba(250,250,250,0.8);
+        }
+        .dark-mode [data-dm-trigger]:hover {
+            background: rgba(255,255,255,0.03) !important;
+        }
+        .dark-mode .db-accordion-trigger.bg-zinc-50 {
+            background: #1e1e22 !important;
+        }
+
+        /* Table icon circle */
+        .dark-mode .db-accordion-trigger .bg-zinc-100 {
+            background: #222226 !important;
+        }
+        .dark-mode .db-accordion-trigger .text-zinc-500 {
+            color: #71717a !important;
+        }
+
+        /* Accordion arrow */
+        .dark-mode .db-list-arrow {
+            color: #52525b !important;
+        }
+
+        /* Grid stats badges */
+        .dark-mode .db-grid-stats .bg-zinc-100 {
+            background: #27272a !important;
+            color: #a1a1aa !important;
+        }
+
+        /* Accordion content dropdown (Grid mode inline style overrides) */
+        .dark-mode .db-accordion-content {
+            background: #18181b !important;
+            border-color: #27272a !important;
+            box-shadow: 0 12px 32px -4px rgba(0,0,0,0.6) !important;
+        }
+
+        /* Table inside accordion */
+        .dark-mode .db-accordion-content table {
+            color: #d4d4d8 !important;
+        }
+        .dark-mode .db-accordion-content thead {
+            background: #111113 !important;
+            color: #52525b !important;
+            border-color: #27272a !important;
+        }
+        .dark-mode .db-accordion-content th {
+            background: #111113 !important;
+            color: #52525b !important;
+        }
+        .dark-mode .db-accordion-content tbody {
+            border-color: #1e1e22 !important;
+        }
+        .dark-mode .db-accordion-content td {
+            border-color: #1e1e22 !important;
+            color: #d4d4d8 !important;
+        }
+        
+        /* Table Row Hover */
+        [data-dm-row]:hover {
+            background-color: rgba(250,250,250,0.6);
+        }
+        .dark-mode [data-dm-row]:hover {
+            background-color: rgba(255,255,255,0.02) !important;
+        }
+        
+        .dark-mode .db-accordion-content .divide-y > * + * {
+            border-color: #1e1e22 !important;
+        }
+
+        /* Column name bold text */
+        .dark-mode .db-accordion-content .text-zinc-900 {
+            color: #f4f4f5 !important;
+        }
+
+        /* Code/type badges */
+        .dark-mode .db-accordion-content code {
+            background: #222226 !important;
+            color: #a1a1aa !important;
+            --tw-ring-color: rgba(63,63,70,0.5) !important;
+        }
+
+        /* Attribute badges */
+        .dark-mode .db-accordion-content .bg-amber-50 {
+            background: rgba(245,158,11,0.1) !important;
+            border-color: rgba(245,158,11,0.2) !important;
+        }
+        .dark-mode .db-accordion-content .bg-emerald-50 {
+            background: rgba(16,185,129,0.1) !important;
+            border-color: rgba(16,185,129,0.2) !important;
+        }
+        .dark-mode .db-accordion-content .bg-sky-50 {
+            background: rgba(14,165,233,0.1) !important;
+            border-color: rgba(14,165,233,0.2) !important;
+        }
+        .dark-mode .db-accordion-content .bg-indigo-50 {
+            background: rgba(99,102,241,0.1) !important;
+        }
+
+        /* PK / FK relation badges */
+        .dark-mode .db-accordion-content .ring-amber-200\/60 {
+            --tw-ring-color: rgba(245,158,11,0.2) !important;
+        }
+        .dark-mode .db-accordion-content .ring-indigo-200\/60 {
+            --tw-ring-color: rgba(99,102,241,0.2) !important;
+        }
+        .dark-mode .db-accordion-content .ring-zinc-200\/60 {
+            --tw-ring-color: rgba(63,63,70,0.4) !important;
+        }
+
+        /* Foreign Keys Summary section */
+        .dark-mode .db-accordion-content .bg-indigo-50\/40 {
+            background: rgba(99,102,241,0.06) !important;
+            border-color: rgba(99,102,241,0.15) !important;
+        }
+        .dark-mode .db-accordion-content .bg-indigo-50\/40 .bg-white {
+            background: #1a1a1e !important;
+            border-color: #3f3f46 !important;
+        }
+
         /* Overlays Configuration */
         #chat-overlay, #cmd-overlay, #report-overlay, #settings-overlay {
             position: fixed;
@@ -1328,6 +2176,7 @@
             const chatForm = document.getElementById('chat-form');
             const chatInput = document.getElementById('chat-input');
             const chatBadge = document.getElementById('chat-badge');
+            const chatBadgeMain = document.getElementById('chat-badge-main');
 
             // Reply elements
             const replyBar = document.getElementById('chat-reply-bar');
@@ -1340,6 +2189,10 @@
             const POLL_MS = 3000;
 
             let isOpen = false;
+            let isFabOpen = false;
+            let isCmdOpen = false;
+            let isReportOpen = false;
+            let isSettingsOpen = false;
             let lastMsgId = 0;
             let pollTimer = null;
             let unreadCount = 0;
@@ -1416,13 +2269,53 @@
 
             replyCancel.addEventListener('click', clearReply);
 
+            // ── Helper: close other overlays ────────────────
+            function closeOtherOverlays(except) {
+                if (except !== 'chat') {
+                    isOpen = false;
+                    const chatO = document.getElementById('chat-overlay');
+                    if (chatO) { chatO.classList.remove('chat-visible'); chatO.classList.add('chat-hidden'); }
+                    const ct = document.getElementById('chat-toggle');
+                    if (ct) ct.classList.remove('chat-open');
+                }
+                if (except !== 'cmd') {
+                    isCmdOpen = false;
+                    const cmdO = document.getElementById('cmd-overlay');
+                    if (cmdO) { cmdO.classList.remove('cmd-visible'); cmdO.classList.add('cmd-hidden'); }
+                }
+                if (except !== 'report') {
+                    isReportOpen = false;
+                    const repO = document.getElementById('report-overlay');
+                    if (repO) { repO.classList.remove('report-visible'); repO.classList.add('report-hidden'); }
+                }
+                if (except !== 'settings') {
+                    isSettingsOpen = false;
+                    const setO = document.getElementById('settings-overlay');
+                    if (setO) { setO.classList.remove('settings-visible'); setO.classList.add('settings-hidden'); }
+                }
+            }
+
+            // ── Helper: collapse FAB menu visually ──────────
+            function collapseFab() {
+                const fa = document.getElementById('fab-actions');
+                const ib = document.getElementById('fab-icon-bars');
+                const ic = document.getElementById('fab-icon-close');
+                if (fa) fa.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                if (ib) { ib.classList.remove('scale-0', '-rotate-90'); }
+                if (ic) { ic.classList.add('scale-0', 'rotate-90'); }
+                isFabOpen = false;
+            }
+
             // ── Toggle chat ─────────────────────────────────
             chatToggle.addEventListener('click', () => {
                 isOpen = !isOpen;
                 if (isOpen) {
+                    closeOtherOverlays('chat');
                     chatOverlay.classList.remove('chat-hidden');
                     chatOverlay.classList.add('chat-visible');
                     chatToggle.classList.add('chat-open');
+                    chatBadge.style.display = 'none';
+                    if (chatBadgeMain) chatBadgeMain.style.display = 'none';
                     unreadCount = 0;
                     updateBadge();
                     if (initialLoad) {
@@ -1431,6 +2324,7 @@
                     }
                     startPolling();
                     setTimeout(() => chatInput.focus(), 350);
+                    if (isFabOpen) { collapseFab(); }
                 } else {
                     closeChat();
                 }
@@ -1706,34 +2600,29 @@
             const cmdToggle = document.getElementById('cmd-toggle');
             const cmdOverlay = document.getElementById('cmd-overlay');
             const cmdClose = document.getElementById('cmd-close');
-            let isCmdOpen = false;
+
 
             if (cmdToggle && cmdOverlay) {
                 cmdToggle.addEventListener('click', () => {
                     isCmdOpen = !isCmdOpen;
                     if (isCmdOpen) {
+                        closeOtherOverlays('cmd');
                         cmdOverlay.classList.remove('cmd-hidden');
                         cmdOverlay.classList.add('cmd-visible');
-                        // Auto close chat if open
-                        if (isOpen) {
-                            isOpen = false;
-                            closeChat();
-                        }
                         setTimeout(() => document.getElementById('cmd-input').focus(), 350);
+                        if (isFabOpen) { collapseFab(); }
                     } else {
-                        closeCmd();
+                        cmdOverlay.classList.remove('cmd-visible');
+                        cmdOverlay.classList.add('cmd-hidden');
                     }
                 });
 
                 cmdClose.addEventListener('click', () => {
                     isCmdOpen = false;
-                    closeCmd();
-                });
-
-                function closeCmd() {
                     cmdOverlay.classList.remove('cmd-visible');
                     cmdOverlay.classList.add('cmd-hidden');
-                }
+                });
+
 
                 // Command Execution logic
                 const __cmdForm = document.getElementById('cmd-form');
@@ -1804,63 +2693,74 @@
             const reportToggle = document.getElementById('report-toggle');
             const reportOverlay = document.getElementById('report-overlay');
             const reportClose = document.getElementById('report-close');
-            let isReportOpen = false;
+
 
             if (reportToggle && reportOverlay) {
                 reportToggle.addEventListener('click', () => {
                     isReportOpen = !isReportOpen;
                     if (isReportOpen) {
+                        closeOtherOverlays('report');
                         reportOverlay.classList.remove('report-hidden');
                         reportOverlay.classList.add('report-visible');
-                        if (isOpen) { isOpen = false; closeChat(); }
-                        if (isCmdOpen) { isCmdOpen = false; closeCmd(); }
+                        if (isFabOpen) { collapseFab(); }
                     } else {
-                        closeReport();
+                        reportOverlay.classList.remove('report-visible');
+                        reportOverlay.classList.add('report-hidden');
                     }
                 });
 
                 reportClose.addEventListener('click', () => {
                     isReportOpen = false;
-                    closeReport();
-                });
-
-                function closeReport() {
                     reportOverlay.classList.remove('report-visible');
                     reportOverlay.classList.add('report-hidden');
-                }
+                });
+
             }
 
             // ── Settings Logic ─────────────────────────────────
             const settingsToggle = document.getElementById('settings-toggle');
             const settingsOverlay = document.getElementById('settings-overlay');
             const settingsClose = document.getElementById('settings-close');
-            let isSettingsOpen = false;
+
 
             if (settingsToggle && settingsOverlay) {
                 settingsToggle.addEventListener('click', () => {
                     isSettingsOpen = !isSettingsOpen;
                     if (isSettingsOpen) {
+                        closeOtherOverlays('settings');
                         settingsOverlay.classList.remove('settings-hidden');
                         settingsOverlay.classList.add('settings-visible');
-                        if (isOpen) { isOpen = false; closeChat(); }
-                        if (isCmdOpen) { isCmdOpen = false; closeCmd(); }
-                        if (isReportOpen) { isReportOpen = false; closeReport(); }
+                        if (isFabOpen) { collapseFab(); }
                     } else {
-                        closeSettings();
+                        settingsOverlay.classList.remove('settings-visible');
+                        settingsOverlay.classList.add('settings-hidden');
                     }
                 });
 
                 settingsClose.addEventListener('click', () => {
                     isSettingsOpen = false;
-                    closeSettings();
-                });
-
-                function closeSettings() {
                     settingsOverlay.classList.remove('settings-visible');
                     settingsOverlay.classList.add('settings-hidden');
-                }
+                });
 
-                // Clear cache button
+
+                // ── Scroll To Top Logic ─────────────────────────────────
+                const scrollTopBtn = document.getElementById('scroll-to-top-btn');
+                if (scrollTopBtn) {
+                    window.addEventListener('scroll', () => {
+                        if (window.scrollY > 300) {
+                            scrollTopBtn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                            scrollTopBtn.classList.add('opacity-100', 'translate-y-0');
+                        } else {
+                            scrollTopBtn.classList.remove('opacity-100', 'translate-y-0');
+                            scrollTopBtn.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                        }
+                    });
+
+                    scrollTopBtn.addEventListener('click', () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                }                // Clear cache button
                 const btnClearCache = document.getElementById('btn-clear-cache');
                 if (btnClearCache) {
                     btnClearCache.addEventListener('click', () => {
@@ -1884,20 +2784,141 @@
                     });
                 }
                 if (settingDarkmode) {
-                    settingDarkmode.checked = localStorage.getItem('setting_darkmode') === 'true';
+                    const darkKey = 'tc_dark_mode';
+                    const isDark = localStorage.getItem(darkKey) === 'true';
+                    
+                    const applyTheme = (on) => {
+                        document.documentElement.classList.toggle('dark-mode', on);
+                        settingDarkmode.checked = on;
+                    };
+
+                    applyTheme(isDark);
+                    
                     settingDarkmode.addEventListener('change', () => {
-                        localStorage.setItem('setting_darkmode', settingDarkmode.checked);
+                        const on = settingDarkmode.checked;
+                        localStorage.setItem(darkKey, on);
+                        applyTheme(on);
+                    });
+                }
+
+                // ── Language Setting ──
+                const langCard = document.getElementById('setting-lang-card');
+                const langBadge = document.getElementById('setting-lang-badge');
+                const langDesc = document.getElementById('setting-lang-desc');
+
+                if (langCard && langBadge && langDesc) {
+                    const langKey = 'tc_lang';
+                    let currentLang = localStorage.getItem(langKey) || 'id';
+
+                    const updateLangUI = (lang) => {
+                        if (lang === 'en') {
+                            langBadge.textContent = 'EN';
+                            langDesc.textContent = 'Interface language is currently in English.';
+                        } else {
+                            langBadge.textContent = 'ID';
+                            langDesc.textContent = 'Bahasa antarmuka saat ini dalam Bahasa Indonesia.';
+                        }
+                    };
+
+                    updateLangUI(currentLang);
+
+                    langCard.addEventListener('click', () => {
+                        currentLang = currentLang === 'id' ? 'en' : 'id';
+                        localStorage.setItem(langKey, currentLang);
+                        updateLangUI(currentLang);
+                        // Optional: You could reload or trigger a re-render here if full i18n is implemented
+                        // location.reload();
+                    });
+                }
+
+                // ── Performance Setting ──
+                const perfCard = document.getElementById('setting-perf-card');
+                const perfBadge = document.getElementById('setting-perf-badge');
+                const perfDesc = document.getElementById('setting-perf-desc');
+
+                if (perfCard && perfBadge && perfDesc) {
+                    const perfKey = 'tc_perf';
+                    const perfModes = ['auto', 'max', 'eco'];
+                    let currentPerf = localStorage.getItem(perfKey) || 'auto';
+                    if (!perfModes.includes(currentPerf)) currentPerf = 'auto';
+
+                    const updatePerfUI = (perf) => {
+                        if (perf === 'max') {
+                            perfBadge.textContent = 'MAX';
+                            perfBadge.className = 'text-[10px] font-bold text-red-500 uppercase tracking-widest';
+                            perfDesc.textContent = 'Performa maksimal tanpa delay. Animasi berjalan penuh.';
+                        } else if (perf === 'eco') {
+                            perfBadge.textContent = 'ECO';
+                            perfBadge.className = 'text-[10px] font-bold text-emerald-500 uppercase tracking-widest';
+                            perfDesc.textContent = 'Hemat daya. Beberapa efek visual dan animasi direduksi.';
+                        } else {
+                            perfBadge.textContent = 'AUTO';
+                            perfBadge.className = 'text-[10px] font-bold text-zinc-500 uppercase tracking-widest';
+                            perfDesc.textContent = 'Optimasi rendering SPA dan lazy-loading fragment otomatis.';
+                        }
+                    };
+
+                    updatePerfUI(currentPerf);
+
+                    perfCard.addEventListener('click', () => {
+                        const nextIndex = (perfModes.indexOf(currentPerf) + 1) % perfModes.length;
+                        currentPerf = perfModes[nextIndex];
+                        localStorage.setItem(perfKey, currentPerf);
+                        updatePerfUI(currentPerf);
+                        
+                        // Handle generic performance toggles visually (lazy-load, transitions)
+                        if (currentPerf === 'eco') {
+                            document.documentElement.style.setProperty('--animate-duration', '0s');
+                            document.body.classList.add('perf-eco');
+                        } else {
+                            document.documentElement.style.removeProperty('--animate-duration');
+                            document.body.classList.remove('perf-eco');
+                        }
+                    });
+
+                    // Initial application of performance state
+                    if (currentPerf === 'eco') {
+                        document.documentElement.style.setProperty('--animate-duration', '0s');
+                        document.body.classList.add('perf-eco');
+                    }
+                }
+
+                // ── Compact UI Setting ──
+                const settingCompact = document.getElementById('setting-compact');
+                if (settingCompact) {
+                    const compactKey = 'tc_compact';
+                    const isCompact = localStorage.getItem(compactKey) === 'true';
+                    
+                    const applyCompact = (on) => {
+                        document.body.classList.toggle('ui-compact', on);
+                        settingCompact.checked = on;
+                    };
+
+                    applyCompact(isCompact);
+                    
+                    settingCompact.addEventListener('change', () => {
+                        const on = settingCompact.checked;
+                        localStorage.setItem(compactKey, on);
+                        applyCompact(on);
+                    });
+                }
+
+                // ── Sound Effects Setting ──
+                const settingSound = document.getElementById('setting-sound');
+                if (settingSound) {
+                    const soundKey = 'tc_sound';
+                    // Default to true if not set
+                    const storedSound = localStorage.getItem(soundKey);
+                    const isSoundOn = storedSound === null ? true : storedSound === 'true';
+                    
+                    settingSound.checked = isSoundOn;
+                    
+                    settingSound.addEventListener('change', () => {
+                        localStorage.setItem(soundKey, settingSound.checked);
                     });
                 }
             }
 
-            // Also close settings when other overlays open
-            if (reportToggle && settingsOverlay) {
-                const origReportClick = reportToggle.onclick;
-                reportToggle.addEventListener('click', () => {
-                    if (isSettingsOpen) { isSettingsOpen = false; settingsOverlay.classList.remove('settings-visible'); settingsOverlay.classList.add('settings-hidden'); }
-                });
-            }
 
             {
                 const reportImageInput = document.getElementById('report-image');
@@ -1974,30 +2995,6 @@
                 }
             }
 
-            // ── FAB Logic ───────────────────────────────────
-            const fabMainToggle = document.getElementById('fab-main-toggle');
-            const fabActions = document.getElementById('fab-actions');
-            const fabIconBars = document.getElementById('fab-icon-bars');
-            const fabIconClose = document.getElementById('fab-icon-close');
-            let isFabOpen = false;
-
-            if (fabMainToggle) {
-                fabMainToggle.addEventListener('click', () => {
-                    isFabOpen = !isFabOpen;
-                    if (isFabOpen) {
-                        fabActions.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
-                        fabIconBars.classList.add('scale-0', '-rotate-90');
-                        fabIconClose.classList.remove('scale-0', 'rotate-90');
-                    } else {
-                        fabActions.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-                        fabIconBars.classList.remove('scale-0', '-rotate-90');
-                        fabIconClose.classList.add('scale-0', 'rotate-90');
-                        if (isOpen) { isOpen = false; closeChat(); }
-                        if (isCmdOpen) { isCmdOpen = false; closeCmd(); }
-                        if (isReportOpen) { isReportOpen = false; closeReport(); }
-                    }
-                });
-            }
 
             // ── Notification Bell Logic ─────────────────────
             const notifToggle = document.getElementById('notif-toggle');
@@ -2028,6 +3025,7 @@
                 notifToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     isNotifOpen ? closeNotifPanel() : openNotifPanel();
+                    if (isOnlineAdminsOpen) closeOnlineAdminsPanel();
                 });
 
                 // Close on click outside
@@ -2043,6 +3041,123 @@
                         notifBadge.style.display = 'none';
                         localStorage.setItem('admin_notif_read_at', Date.now());
                     });
+                }
+            }
+
+            // ── Online Admins Logic ─────────────────────
+            const onlineAdminsToggle = document.getElementById('online-admins-toggle');
+            const onlineAdminsPanel = document.getElementById('online-admins-panel');
+            const onlineAdminsBadge = document.getElementById('online-admins-badge');
+            const onlineAdminsList = document.getElementById('online-admins-list');
+            const onlineAdminsRefresh = document.getElementById('online-admins-refresh');
+            let isOnlineAdminsOpen = false;
+            let onlineAdminsLoaded = false;
+
+            function openOnlineAdminsPanel() {
+                onlineAdminsPanel.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+                onlineAdminsPanel.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                isOnlineAdminsOpen = true;
+                if (!onlineAdminsLoaded) {
+                    loadOnlineAdmins();
+                    onlineAdminsLoaded = true;
+                }
+            }
+
+            function closeOnlineAdminsPanel() {
+                onlineAdminsPanel.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+                onlineAdminsPanel.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                isOnlineAdminsOpen = false;
+            }
+
+            if (onlineAdminsToggle && onlineAdminsPanel) {
+                onlineAdminsToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    isOnlineAdminsOpen ? closeOnlineAdminsPanel() : openOnlineAdminsPanel();
+                    if (isNotifOpen) closeNotifPanel();
+                });
+
+                // Close on click outside
+                document.addEventListener('click', (e) => {
+                    if (isOnlineAdminsOpen && !onlineAdminsPanel.contains(e.target) && !onlineAdminsToggle.contains(e.target)) {
+                        closeOnlineAdminsPanel();
+                    }
+                });
+
+                if (onlineAdminsRefresh) {
+                    onlineAdminsRefresh.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Add spin class temporarily
+                        const icon = onlineAdminsRefresh.querySelector('svg');
+                        icon.classList.add('animate-spin');
+                        loadOnlineAdmins().finally(() => {
+                            setTimeout(() => icon.classList.remove('animate-spin'), 500);
+                        });
+                    });
+                }
+            }
+
+            async function loadOnlineAdmins() {
+                try {
+                    const res = await fetch('{{ route("admin.online-admins") }}', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) throw new Error('Failed');
+                    const admins = await res.json();
+                    
+                    const onlineCount = admins.filter(a => a.is_online).length;
+                    
+                    if (onlineCount > 0) {
+                        onlineAdminsBadge.textContent = onlineCount;
+                        onlineAdminsBadge.style.display = 'flex';
+                    } else {
+                        onlineAdminsBadge.style.display = 'none';
+                    }
+
+                    if (!admins || admins.length === 0) {
+                        onlineAdminsList.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-10 text-zinc-400">
+                                <p class="text-xs font-medium">Tidak ada admin lain</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    onlineAdminsList.innerHTML = admins.map(admin => {
+                        const statusColor = admin.is_online ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-zinc-300';
+                        const statusText = admin.is_online 
+                            ? 'Online di ' + (admin.last_page_display || 'Aplikasi')
+                            : 'Terakhir di ' + (admin.last_page_display || 'Aplikasi') + ' (' + admin.last_seen_human + ')';
+                        
+                        const statusHtml = admin.is_online 
+                            ? '<span class="text-emerald-600 font-bold">Online</span> di <span class="font-medium text-emerald-700">' + (admin.last_page_display || 'Aplikasi') + '</span>' 
+                            : 'Terakhir di <span class="font-medium text-zinc-600">' + (admin.last_page_display || 'Aplikasi') + '</span> (' + admin.last_seen_human + ')';
+                        
+                        const safeAdmin = JSON.stringify({
+                            name: admin.name,
+                            email: admin.email,
+                            avatar: admin.avatar_url,
+                            statusText: statusText,
+                            is_online: admin.is_online
+                        }).replace(/"/g, '&quot;');
+
+                        return `
+                        <div onclick="showAdminPreview(${safeAdmin})" class="flex items-center gap-3 px-5 py-3.5 hover:bg-zinc-50/80 transition-colors cursor-pointer">
+                            <div class="relative shrink-0">
+                                <img src="${admin.avatar_url}" alt="${admin.name}" class="h-10 w-10 rounded-xl object-cover ring-1 ring-zinc-200 shadow-sm" loading="lazy">
+                                <div class="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white ${statusColor}"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[13px] font-bold text-zinc-800 truncate">${admin.name}</p>
+                                <p class="text-[10px] text-zinc-400 truncate">${admin.email}</p>
+                                <p class="text-[10px] mt-0.5 ${admin.is_online ? '' : 'text-zinc-500'}">${statusHtml}</p>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+
+                } catch (err) {
+                    onlineAdminsList.innerHTML = `<div class="py-10 text-center text-xs text-red-500">Gagal memuat daftar admin.</div>`;
                 }
             }
 
@@ -2130,6 +3245,28 @@
                 loadNotifications();
             });
 
+            // ── Restore FAB logic ───────────────────────────────────
+            const fabMainToggle = document.getElementById('fab-main-toggle');
+            const fabActions = document.getElementById('fab-actions');
+            const fabIconBars = document.getElementById('fab-icon-bars');
+            const fabIconClose = document.getElementById('fab-icon-close');
+
+            if (fabMainToggle) {
+                fabMainToggle.addEventListener('click', () => {
+                    isFabOpen = !isFabOpen;
+                    if (isFabOpen) {
+                        fabActions.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                        fabIconBars.classList.add('scale-0', '-rotate-90');
+                        fabIconClose.classList.remove('scale-0', 'rotate-90');
+                    } else {
+                        fabActions.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                        fabIconBars.classList.remove('scale-0', '-rotate-90');
+                        fabIconClose.classList.add('scale-0', 'rotate-90');
+
+                    }
+                });
+            }
+
         });
     </script>
     <script>
@@ -2178,6 +3315,49 @@
                 btn.disabled = false;
             }
         };
+        window.showAdminPreview = function(admin) {
+            const modal = document.getElementById('admin-preview-modal');
+            const backdrop = document.getElementById('admin-preview-backdrop');
+            const content = document.getElementById('admin-preview-content');
+            
+            document.getElementById('admin-preview-img').src = admin.avatar;
+            document.getElementById('admin-preview-name').textContent = admin.name;
+            document.getElementById('admin-preview-email').textContent = admin.email;
+            document.getElementById('admin-preview-status').innerHTML = admin.statusText;
+            
+            const dot = document.getElementById('admin-preview-status-dot');
+            if (admin.is_online) {
+                dot.className = 'absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white bg-emerald-500 shadow-sm';
+            } else {
+                dot.className = 'absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white bg-zinc-300 shadow-sm';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('pointer-events-auto');
+                content.classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        };
+
+        window.closeAdminPreview = function() {
+            const modal = document.getElementById('admin-preview-modal');
+            const backdrop = document.getElementById('admin-preview-backdrop');
+            const content = document.getElementById('admin-preview-content');
+            
+            backdrop.classList.add('opacity-0');
+            backdrop.classList.remove('pointer-events-auto');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+
+        document.getElementById('admin-preview-backdrop')?.addEventListener('click', window.closeAdminPreview);
     </script>
 
     {{-- Detail Profile Popup (Moved to top level strictly outside aside constraints) --}}
@@ -2209,4 +3389,94 @@
             </a>
         </div>
     </div>
+
+    {{-- Admin Preview Modal --}}
+    <div id="admin-preview-modal" class="fixed inset-0 z-[500] hidden items-center justify-center pointer-events-none">
+        <div id="admin-preview-backdrop" class="absolute inset-0 bg-zinc-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+        
+        <div id="admin-preview-content" class="relative z-10 w-full max-w-sm rounded-[24px] bg-white p-6 shadow-2xl scale-95 opacity-0 transition-all duration-300 pointer-events-auto">
+            <button onclick="window.closeAdminPreview()" class="absolute top-4 right-4 h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700 transition-colors">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="flex flex-col items-center text-center mt-2">
+                <div class="relative mb-4 h-24 w-24 rounded-full p-1 bg-gradient-to-tr from-emerald-400 to-teal-500">
+                    <img id="admin-preview-img" src="" alt="Profile" class="h-full w-full rounded-full object-cover border-[3px] border-white backdrop-blur-md">
+                    <div id="admin-preview-status-dot" class="absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white bg-emerald-500 shadow-sm"></div>
+                </div>
+                <h3 id="admin-preview-name" class="text-lg font-[800] text-zinc-900 mb-1 tracking-tight">Name</h3>
+                <p id="admin-preview-email" class="text-xs font-medium text-zinc-500 mb-6">email</p>
+                
+                <div class="w-full rounded-[16px] bg-zinc-50 border border-zinc-100 p-4 text-left">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[10px] uppercase font-bold text-zinc-400">Role</span>
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md capitalize tracking-wide">Admin Staff</span>
+                    </div>
+                    <div class="flex flex-col gap-1.5 pt-3 border-t border-zinc-200/60">
+                        <span class="text-[10px] uppercase font-bold text-zinc-400">Status Aktivitas</span>
+                        <span id="admin-preview-status" class="text-xs font-medium text-zinc-700">Online di Dashboard</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══ Database Data Viewer Modal ═══ --}}
+    <div id="db-data-modal" class="fixed inset-0 z-[600] hidden">
+        <div id="db-data-backdrop" class="absolute inset-0 bg-zinc-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+        <div id="db-data-content" class="absolute inset-4 md:inset-8 lg:inset-12 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden scale-95 opacity-0 transition-all duration-300">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50/50 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375"/></svg>
+                    </div>
+                    <div>
+                        <h3 id="db-data-title" class="text-base font-extrabold text-zinc-900 tracking-tight">Table</h3>
+                        <p id="db-data-count" class="text-[11px] text-zinc-400 font-medium">0 records</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="db-data-refresh-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-100 text-zinc-600 text-xs font-bold hover:bg-zinc-200 transition-colors">
+                        <svg id="db-data-refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Refresh
+                    </button>
+                    <button type="button" id="db-data-close-btn" class="h-9 w-9 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div id="db-data-body" class="flex-1 overflow-auto px-1">
+                <div class="flex items-center justify-center py-16 text-zinc-400">
+                    <svg class="w-6 h-6 animate-spin mr-3 text-indigo-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    <span class="text-sm font-medium">Memuat data...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══ Database Edit Row Modal ═══ --}}
+    <div id="db-edit-modal" class="fixed inset-0 z-[700] hidden items-center justify-center">
+        <div id="db-edit-backdrop" class="absolute inset-0 bg-zinc-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+        <div id="db-edit-content" class="relative z-10 w-full max-w-lg max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden scale-95 opacity-0 transition-all duration-300">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50/50 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    </div>
+                    <div>
+                        <h3 id="db-edit-title" class="text-sm font-extrabold text-zinc-900">Edit Row</h3>
+                        <p id="db-edit-subtitle" class="text-[11px] text-zinc-400">ID: 0</p>
+                    </div>
+                </div>
+                <button type="button" id="db-edit-close-btn" class="h-8 w-8 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="db-edit-form-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+            <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-zinc-100 bg-zinc-50/30 shrink-0">
+                <button type="button" id="db-edit-cancel-btn" class="px-4 py-2 rounded-xl text-xs font-bold text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition-colors">Batal</button>
+                <button type="button" id="db-edit-save-btn" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">Simpan</button>
+            </div>
+        </div>
+    </div>
+
 @endsection

@@ -1,38 +1,90 @@
+:root {
+    --bg-primary: #EDEDED;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #F5F5F7;
+    --text-primary: #1D1D1F;
+    --text-secondary: #464646;
+    --text-muted: #8a898a;
+    --border-color: #E2E2E2;
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --sidebar-bg: linear-gradient(180deg, #191825 0%, #13121c 100%);
+    --nav-bg: rgba(237, 237, 237, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode {
+    --bg-primary: #0D0C14;
+    --bg-secondary: #13121C;
+    --bg-tertiary: #191825;
+    --text-primary: #F5F5F7;
+    --text-secondary: #E6E0E9;
+    --text-muted: #8A898A;
+    --border-color: #2A2C3A;
+    --accent-primary: #818cf8;
+    --accent-secondary: #a78bfa;
+    --sidebar-bg: linear-gradient(180deg, #13121C 0%, #0D0C14 100%);
+    --nav-bg: rgba(13, 12, 20, 0.8);
+    --glass-bg: rgba(30, 30, 46, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
 * {
     margin: 0;
     padding: 0;
-    color: #464646;
+    color: var(--text-secondary);
     font-family: "Poppins", sans-serif;
     font-weight: 400;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    transition: all .3s ease-in-out;
+    transition: background-color .3s ease, border-color .3s ease, color .3s ease;
     text-decoration: none;
     animation: all-content 0.3s ease-in-out;
     -webkit-tap-highlight-color: transparent;
 }
 
 *::selection {
-    background: transparent;
+    background: var(--accent-primary);
+    color: #fff;
 }
 
 *::-moz-selection {
-    background: transparent;
+    background: var(--accent-primary);
+    color: #fff;
 }
 
 *::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+    height: 6px;
 }
 
 *::-webkit-scrollbar-track {
     background: transparent;
 }
 
+*::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
 body {
-    background-color: #EDEDED;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+}
+
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .no-scroll {
@@ -67,12 +119,12 @@ body {
 .title-example h4 {
     font-weight: 550;
     font-size: 16px;
-    color: #2a2c3a;
+    color: var(--text-primary);
     text-transform: capitalize;
 }
 
 .title-example h5 {
     margin-top: 10px;
     font-size: 12px;
-    color: #464646;
+    color: var(--text-muted);
 }
