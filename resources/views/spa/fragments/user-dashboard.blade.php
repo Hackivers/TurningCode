@@ -29,6 +29,11 @@
             @include('spa.fragments.user-tierList')
         </div>
 
+        <!-- Season Timer Section -->
+        <div class="neo-season-timer-section">
+            @include('spa.fragments.user-seasonTimer')
+        </div>
+
         <!-- Leaderboard Section -->
         <div class="neo-leaderboard-section">
             @include('spa.fragments.user-leaderboard')
