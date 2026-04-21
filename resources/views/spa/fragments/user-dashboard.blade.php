@@ -24,6 +24,11 @@
             @include('spa.fragments.user-materiCard', ['data' => $data, 'mainMateri' => $mainMateri])
         </div>
 
+        <!-- Tier List Section -->
+        <div class="neo-tier-list-section">
+            @include('spa.fragments.user-tierList')
+        </div>
+
         <!-- Leaderboard Section -->
         <div class="neo-leaderboard-section">
             @include('spa.fragments.user-leaderboard')
