@@ -119,23 +119,52 @@ class UserController extends Controller
                 ->groupBy('user_id')->orderByDesc('attempt_count')->first();
             $perfectUserIds = \App\Models\QuizAttempt::where('score', 100)->distinct('user_id')->pluck('user_id')->toArray();
 
+            $historyCounts = \App\Models\UserHistory::whereIn('user_id', $topUsers->pluck('id'))
+                ->selectRaw('user_id, COUNT(DISTINCT sub_materi_id) as c')
+                ->groupBy('user_id')->pluck('c', 'user_id');
+            $favCounts = \App\Models\UserFavorite::whereIn('user_id', $topUsers->pluck('id'))
+                ->selectRaw('user_id, COUNT(*) as c')
+                ->groupBy('user_id')->pluck('c', 'user_id');
+            $scheduleCounts = \App\Models\StudySchedule::whereIn('user_id', $topUsers->pluck('id'))
+                ->selectRaw('user_id, COUNT(*) as c')
+                ->groupBy('user_id')->pluck('c', 'user_id');
+
             foreach ($topUsers as $u) {
                 $achievements = [];
+                $histCount = $historyCounts[$u->id] ?? 0;
+                $fCount = $favCounts[$u->id] ?? 0;
+                $schedCount = $scheduleCounts[$u->id] ?? 0;
+
+                if ($histCount >= 1) {
+                    $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
+                }
+                if ($histCount >= 50) {
+                    $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
+                }
+                if ($fCount >= 10) {
+                    $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
+                }
+                if ($schedCount >= 1) {
+                    $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
+                }
+                if ($u->exp >= 10000) {
+                    $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
+                }
+                if ($mostAttempts && $mostAttempts->user_id === $u->id) {
+                    $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling Aktif'];
+                }
+                if (in_array($u->id, $perfectUserIds)) {
+                    $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Nilai Sempurna'];
+                }
                 if ($topScorer && $topScorer->user_id === $u->id) {
                     $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Skor Tertinggi'];
                 }
                 if ($mostPassed && $mostPassed->user_id === $u->id) {
                     $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Lulus Kuis Terbanyak'];
                 }
-                if (in_array($u->id, $perfectUserIds)) {
-                    $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Nilai Sempurna'];
-                }
-                if ($mostAttempts && $mostAttempts->user_id === $u->id) {
-                    $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling Aktif'];
-                }
 
-                // If a user has more than 3 achievements, we can limit it or show all. Let's show up to 3 to keep UI clean.
-                $u->achievements = array_slice($achievements, 0, 3);
+                // Tampilkan maksimal 5 lencana agar UI rapi
+                $u->achievements = array_slice($achievements, 0, 5);
             }
 
             return view('spa.fragments.user-dashboard', [
@@ -371,17 +400,36 @@ class UserController extends Controller
                 ->groupBy('user_id')->orderByDesc('attempt_count')->first();
             $hasPerfect = QuizAttempt::where('user_id', $userId)->where('score', 100)->exists();
 
-            if ($topScorer && $topScorer->user_id === $userId) {
-                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008.png', 'desc' => 'Meraih skor tertinggi secara global'];
+            $distinctHistoryViews = \App\Models\UserHistory::where('user_id', $userId)->distinct('sub_materi_id')->count('sub_materi_id');
+            $totalFavorites = \App\Models\UserFavorite::where('user_id', $userId)->count();
+            $totalSchedules = \App\Models\StudySchedule::where('user_id', $userId)->count();
+
+            if ($distinctHistoryViews >= 1) {
+                $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
             }
-            if ($mostPassed && $mostPassed->user_id === $userId) {
-                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
+            if ($distinctHistoryViews >= 50) {
+                $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
             }
-            if ($hasPerfect) {
-                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
+            if ($totalFavorites >= 10) {
+                $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
+            }
+            if ($totalSchedules >= 1) {
+                $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
+            }
+            if ($user->exp >= 10000) {
+                $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
             }
             if ($mostAttempts && $mostAttempts->user_id === $userId) {
-                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006.png', 'desc' => 'Paling aktif mencoba kuis'];
+                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling aktif mencoba kuis'];
+            }
+            if ($hasPerfect) {
+                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
+            }
+            if ($topScorer && $topScorer->user_id === $userId) {
+                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Meraih skor tertinggi secara global'];
+            }
+            if ($mostPassed && $mostPassed->user_id === $userId) {
+                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
             }
 
             // ── Additional Stats for Admin-style Dashboard ──
