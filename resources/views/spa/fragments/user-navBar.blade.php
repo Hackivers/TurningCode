@@ -19,6 +19,9 @@
 
     <div class="rtd-nav-right">
         @if (Auth::User()->role == 'user')
+            <button class="rtd-btn-icon" id="btn-friend-search-popup" title="Cari Teman">
+                <i class='bx bx-user-plus'></i>
+            </button>
             <button class="rtd-btn-icon" id="btn-notification-popup">
                 <i class='bx bx-bell'></i>
                 <span class="notif-badge" id="notif-badge"></span>
@@ -139,6 +142,44 @@
                 <h5>Belum ada notifikasi</h5>
                 <p>Notifikasi jadwal belajar akan muncul di sini</p>
             </div>
+        </div>
+    </div>
+
+    {{-- Friend Search Popup --}}
+    <div class="notif-popup-dark fs-popup" id="friend-search-popup">
+        <div class="fs-header">
+            <div class="fs-header-top">
+                <div class="npd-header-left">
+                    <div class="npd-icon-wrapper" style="background: rgba(16,185,129,0.1); color: #34d399;">
+                        <i class='bx bx-user-plus'></i>
+                    </div>
+                    <div>
+                        <h3>Cari Teman</h3>
+                        <p>Tambahkan teman baru</p>
+                    </div>
+                </div>
+                <button class="npd-btn" id="btn-friend-search-close">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="fs-search-bar">
+                <i class='bx bx-search'></i>
+                <input type="text" id="input-friend-search" placeholder="Cari nama atau email..." autocomplete="off">
+            </div>
+        </div>
+        <div class="fs-body" id="friend-search-body">
+            <div class="fs-state" id="friend-search-empty">
+                <div class="fs-state-icon">
+                    <i class='bx bx-group'></i>
+                </div>
+                <h5>Ketik untuk mencari</h5>
+                <p>Cari pengguna berdasarkan nama/email</p>
+            </div>
+            <div class="fs-state" id="friend-search-loading" style="display: none;">
+                <i class='bx bx-loader-alt bx-spin' style="font-size: 28px; color: #52525b;"></i>
+                <h5>Mencari...</h5>
+            </div>
+            <div class="fs-results" id="friend-search-results"></div>
         </div>
     </div>
 @endif
@@ -514,6 +555,141 @@
         // Expose for schedule notifier
         window.__updateNotifBadge = updateBadge;
         window.__renderNotifs = renderNotifs;
+    })();
+
+    // ── Friend Search Popup ─────────────────────────────────────────────
+    (function () {
+        const btnOpen = document.getElementById('btn-friend-search-popup');
+        const btnClose = document.getElementById('btn-friend-search-close');
+        const popup = document.getElementById('friend-search-popup');
+        const backdrop = document.getElementById('setting-backdrop');
+        const input = document.getElementById('input-friend-search');
+        const resultsContainer = document.getElementById('friend-search-results');
+        const emptyState = document.getElementById('friend-search-empty');
+        const loadingState = document.getElementById('friend-search-loading');
+
+        if (!btnOpen || !popup) return;
+
+        let searchTimeout = null;
+
+        function openPopup() {
+            const settingPopup = document.getElementById('setting-popup');
+            if (settingPopup) settingPopup.classList.remove('active');
+            const notifPopup = document.getElementById('notif-popup');
+            if (notifPopup) notifPopup.classList.remove('active');
+
+            popup.classList.add('active');
+            if (backdrop) backdrop.classList.add('active');
+            input.focus();
+        }
+
+        function closePopup() {
+            popup.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
+        btnOpen.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (popup.classList.contains('active')) {
+                closePopup();
+            } else {
+                openPopup();
+            }
+        });
+
+        if (btnClose) btnClose.addEventListener('click', closePopup);
+
+        if (backdrop) {
+            backdrop.addEventListener('click', () => {
+                closePopup();
+            });
+        }
+
+        input.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            clearTimeout(searchTimeout);
+
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '';
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'flex';
+                emptyState.querySelector('h5').innerText = 'Ketik untuk mencari';
+                emptyState.querySelector('p').innerText = 'Cari pengguna berdasarkan nama/email';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            resultsContainer.innerHTML = '';
+            loadingState.style.display = 'flex';
+
+            searchTimeout = setTimeout(() => {
+                fetchFriends(query);
+            }, 500);
+        });
+
+        async function fetchFriends(query) {
+            try {
+                const res = await fetch(`{{ route('user.friend.search') }}?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+
+                loadingState.style.display = 'none';
+
+                if (data.length === 0) {
+                    emptyState.style.display = 'flex';
+                    emptyState.querySelector('h5').innerText = 'Tidak ditemukan';
+                    emptyState.querySelector('p').innerText = 'Coba kata kunci lain';
+                    return;
+                }
+
+                resultsContainer.innerHTML = '';
+                data.forEach(u => {
+                    const el = document.createElement('div');
+                    el.className = 'fs-user-row';
+
+                    let actionHtml = '';
+                    if (!u.friendship_status) {
+                        actionHtml = `
+                            <form action="/app/friend/add/${u.id}" method="POST" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="fs-btn fs-btn-add">
+                                    <i class='bx bx-user-plus'></i> Add
+                                </button>
+                            </form>
+                        `;
+                    } else if (u.friendship_status === 'pending') {
+                        actionHtml = `
+                            <button disabled class="fs-btn fs-btn-pending">
+                                <i class='bx bx-time'></i> Pending
+                            </button>
+                        `;
+                    } else if (u.friendship_status === 'accepted') {
+                        actionHtml = `
+                            <button disabled class="fs-btn fs-btn-friends">
+                                <i class='bx bx-check'></i> Friends
+                            </button>
+                        `;
+                    }
+
+                    el.innerHTML = `
+                        <div class="fs-user-info">
+                            <img src="${u.avatar}" class="fs-user-avatar" alt="${u.name}">
+                            <div class="fs-user-meta">
+                                <span class="fs-user-name">${u.name}</span>
+                                <span class="fs-user-rank"><i class='bx bxs-star'></i> ${u.rank_name}</span>
+                            </div>
+                        </div>
+                        <div class="fs-user-action">${actionHtml}</div>
+                    `;
+                    resultsContainer.appendChild(el);
+                });
+
+            } catch (err) {
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'flex';
+                emptyState.querySelector('h5').innerText = 'Terjadi kesalahan';
+                emptyState.querySelector('p').innerText = 'Silakan coba lagi nanti';
+            }
+        }
     })();
 </script>
 
@@ -1161,6 +1337,211 @@
         background: #ef4444 !important;
         color: #fff !important;
         border-color: #121212 !important;
+    }
+
+    /* ═══ FRIEND SEARCH POPUP ═══ */
+    .fs-popup {
+        max-height: 560px;
+    }
+
+    .fs-header {
+        padding: 20px 20px 16px;
+        border-bottom: 1px solid #27272a;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .fs-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fs-search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #1a1a1c;
+        border: 1px solid #2a2a2e;
+        border-radius: 12px;
+        padding: 10px 14px;
+        transition: border-color 0.2s;
+    }
+
+    .fs-search-bar:focus-within {
+        border-color: #34d399;
+    }
+
+    .fs-search-bar i {
+        color: #52525b;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .fs-search-bar input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #f4f4f5;
+        font-size: 14px;
+        font-family: inherit;
+        width: 100%;
+    }
+
+    .fs-search-bar input::placeholder {
+        color: #52525b;
+    }
+
+    .fs-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        background: #0e0e10;
+    }
+
+    .fs-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 20px;
+        text-align: center;
+        min-height: 200px;
+    }
+
+    .fs-state-icon {
+        width: 52px;
+        height: 52px;
+        background: #1a1a1e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #3f3f46;
+        margin-bottom: 16px;
+    }
+
+    .fs-state h5 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #d4d4d8;
+    }
+
+    .fs-state p {
+        margin: 0;
+        font-size: 12px;
+        color: #52525b;
+    }
+
+    .fs-results {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .fs-user-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-radius: 12px;
+        transition: background 0.15s;
+    }
+
+    .fs-user-row:hover {
+        background: #1a1a1e;
+    }
+
+    .fs-user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fs-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 2px solid #27272a;
+    }
+
+    .fs-user-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .fs-user-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #f4f4f5;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .fs-user-rank {
+        font-size: 12px;
+        color: #71717a;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .fs-user-rank i {
+        color: #f59e0b;
+        font-size: 12px;
+    }
+
+    .fs-user-action {
+        flex-shrink: 0;
+        margin-left: 12px;
+    }
+
+    .fs-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .fs-btn-add {
+        background: #fff;
+        color: #121212;
+    }
+
+    .fs-btn-add:hover {
+        background: #34d399;
+        color: #fff;
+    }
+
+    .fs-btn-pending {
+        background: rgba(255,255,255,0.06);
+        color: #71717a;
+        cursor: not-allowed;
+    }
+
+    .fs-btn-friends {
+        background: rgba(16,185,129,0.1);
+        color: #34d399;
+        cursor: default;
     }
 </style>
 

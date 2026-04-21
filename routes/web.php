@@ -84,6 +84,13 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 
     // Quiz
     Route::post('/app/api/quiz/submit', [UserController::class, 'submitQuiz'])->name('user.quiz.submit');
+
+    // Friends
+    Route::get('/app/friend/search', [UserController::class, 'searchFriend'])->name('user.friend.search');
+    Route::post('/app/friend/add/{friend_id}', [UserController::class, 'addFriend'])->name('user.friend.add');
+    Route::post('/app/friend/accept/{friend_id}', [UserController::class, 'acceptFriend'])->name('user.friend.accept');
+    Route::post('/app/friend/reject/{friend_id}', [UserController::class, 'rejectFriend'])->name('user.friend.reject');
+    Route::delete('/app/friend/remove/{friend_id}', [UserController::class, 'removeFriend'])->name('user.friend.remove');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {

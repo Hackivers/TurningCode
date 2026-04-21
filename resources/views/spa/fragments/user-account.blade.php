@@ -426,6 +426,91 @@ STATS SECTION (Minimalist)
 </div>
 
 {{-- ═══════════════════════════════════════════════════════════════
+FRIENDS SECTION
+═══════════════════════════════════════════════════════════════ --}}
+<div class="container" style="margin-top: 32px; margin-bottom: 32px;">
+    @if(session('success'))
+        <div style="background: #ecfdf5; color: #10b981; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #10b981;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div style="background: #fef2f2; color: #f43f5e; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #f43f5e;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        
+        <!-- Friend Requests -->
+        <div class="neo-card neo-card-light" style="padding: 24px;">
+            <h4 style="margin: 0 0 16px 0; font-size: 18px; color: #121212; display: flex; justify-content: space-between; align-items: center;">
+                Permintaan Masuk
+                @if(isset($friendRequests) && $friendRequests->count() > 0)
+                    <span style="background: #ef4444; color: white; font-size: 12px; padding: 2px 8px; border-radius: 12px;">{{ $friendRequests->count() }}</span>
+                @endif
+            </h4>
+            
+            @if(isset($friendRequests) && $friendRequests->count() > 0)
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    @foreach($friendRequests as $req)
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="{{ $req->sender->avatar ? asset('storage/'.$req->sender->avatar) : asset('assets/ico/'.($req->sender->emblem_image ?? 'default-user.jpg')) }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #121212;">{{ $req->sender->name }}</div>
+                                    <div style="font-size: 12px; color: #888;">{{ $req->sender->rank_name }}</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <form action="{{ route('user.friend.accept', $req->sender->id) }}" method="POST">
+                                    @csrf
+                                    <button style="padding: 6px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;" title="Terima"><i class='bx bx-check'></i></button>
+                                </form>
+                                <form action="{{ route('user.friend.reject', $req->sender->id) }}" method="POST">
+                                    @csrf
+                                    <button style="padding: 6px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;" title="Tolak"><i class='bx bx-x'></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div style="text-align: center; padding: 24px; color: #888; font-size: 14px;">Tidak ada permintaan masuk.</div>
+            @endif
+        </div>
+
+        <!-- Friends List -->
+        <div class="neo-card neo-card-light" style="padding: 24px;">
+            <h4 style="margin: 0 0 16px 0; font-size: 18px; color: #121212;">Daftar Teman ({{ isset($friends) ? $friends->count() : 0 }})</h4>
+            
+            @if(isset($friends) && $friends->count() > 0)
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    @foreach($friends as $friend)
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="{{ $friend->avatar ? asset('storage/'.$friend->avatar) : asset('assets/ico/'.($friend->emblem_image ?? 'default-user.jpg')) }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 14px; color: #121212;">{{ $friend->name }}</div>
+                                    <div style="font-size: 12px; color: #888;">{{ $friend->rank_name }}</div>
+                                </div>
+                            </div>
+                            <form action="{{ route('user.friend.remove', $friend->id) }}" method="POST" onsubmit="return confirm('Hapus dari daftar teman?');">
+                                @csrf @method('DELETE')
+                                <button type="submit" style="padding: 6px 10px; font-size: 12px; background: #fff; border: 1px solid #ddd; color: #ef4444; border-radius: 8px; cursor: pointer;"><i class='bx bx-user-minus'></i> Hapus</button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div style="text-align: center; padding: 24px; color: #888; font-size: 14px;">Belum ada teman. Cari teman di Peringkat Teratas!</div>
+            @endif
+        </div>
+
+    </div>
+</div>
+
+{{-- ═══════════════════════════════════════════════════════════════
 LOGOUT
 ═══════════════════════════════════════════════════════════════ --}}
 <form class="wrapper-account-logout" action="{{ route('logout') }}" method="POST">

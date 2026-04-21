@@ -66,6 +66,32 @@
                         @endif
                     </div>
 
+                    <!-- Add Friend Action -->
+                    @if ($u->id !== auth()->id() && isset($myFriendships))
+                        @php
+                            $friendship = $myFriendships->where('user_id', $u->id)->where('friend_id', auth()->id())->first() 
+                                        ?? $myFriendships->where('friend_id', $u->id)->where('user_id', auth()->id())->first();
+                        @endphp
+                        <div style="margin-right: 16px;">
+                            @if (!$friendship)
+                                <form action="{{ route('user.friend.add', $u->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="neo-btn" style="padding: 6px 12px; font-size: 12px; background: #fff; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+                                        <i class='bx bx-user-plus'></i> Add
+                                    </button>
+                                </form>
+                            @elseif ($friendship->status === 'pending')
+                                <button disabled style="padding: 6px 12px; font-size: 12px; background: #f1f5f9; border: 1px solid #ddd; color: #64748b; border-radius: 8px; display: flex; align-items: center; gap: 4px; cursor: not-allowed;">
+                                    <i class='bx bx-time'></i> Pending
+                                </button>
+                            @elseif ($friendship->status === 'accepted')
+                                <button disabled style="padding: 6px 12px; font-size: 12px; background: #ecfdf5; border: 1px solid #10b981; color: #10b981; border-radius: 8px; display: flex; align-items: center; gap: 4px; cursor: default;">
+                                    <i class='bx bx-check'></i> Friends
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+
                     <!-- EXP points -->
                     <div style="text-align: right;">
                         <div style="font-size: 18px; font-weight: 800; color: #121212;">{{ number_format($u->exp) }}</div>

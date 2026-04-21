@@ -39,6 +39,25 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->notify(new QueuedVerifyEmail);
     }
 
+    public function friendRequestsSent()
+    {
+        return $this->hasMany(Friendship::class, 'user_id')->where('status', 'pending');
+    }
+
+    public function friendRequestsReceived()
+    {
+        return $this->hasMany(Friendship::class, 'friend_id')->where('status', 'pending');
+    }
+
+    public function getFriendsAttribute()
+    {
+        $initiated = Friendship::where('user_id', $this->id)->where('status', 'accepted')->pluck('friend_id');
+        $received = Friendship::where('friend_id', $this->id)->where('status', 'accepted')->pluck('user_id');
+        $friendIds = $initiated->merge($received)->unique();
+        
+        return User::whereIn('id', $friendIds)->get();
+    }
+
     public function getRankNameAttribute(): string
     {
         $exp = $this->exp ?? 0;

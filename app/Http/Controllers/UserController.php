@@ -171,6 +171,7 @@ class UserController extends Controller
                 'data' => ['mainMateri' => $mainMateri],
                 'mainMateri' => $mainMateri,
                 'topUsers' => $topUsers,
+                'myFriendships' => \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get(),
             ]);
         }
 
@@ -455,6 +456,9 @@ class UserController extends Controller
                 ->limit(5)
                 ->get();
 
+            $friends = $user->friends;
+            $friendRequests = $user->friendRequestsReceived()->with('sender')->get();
+
             return view('spa.fragments.user-account', [
                 'user' => $user,
                 'achievements' => $achievements,
@@ -469,6 +473,8 @@ class UserController extends Controller
                 'completedSubMateris' => $completedSubMateris,
                 'learningProgress' => $learningProgress,
                 'recentQuizzes' => $recentQuizzes,
+                'friends' => $friends,
+                'friendRequests' => $friendRequests,
             ]);
         }
 
@@ -815,5 +821,75 @@ class UserController extends Controller
                 ? "Selamat! Kamu lulus dengan skor {$score}% 🎉"
                 : "Skor kamu {$score}%. Minimal 80% untuk lulus. Coba lagi! 💪",
         ]);
+    }
+
+    // ── Friendship Methods ──
+    public function searchFriend(Request $request)
+    {
+        $query = $request->input('q');
+        if (!$query || strlen($query) < 2) return response()->json([]);
+
+        $users = \App\Models\User::where('role', 'user')
+            ->where('id', '!=', Auth::id())
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })->limit(10)->get();
+
+        $myFriendships = \App\Models\Friendship::where('user_id', Auth::id())
+            ->orWhere('friend_id', Auth::id())->get();
+
+        return response()->json($users->map(function($u) use ($myFriendships) {
+            $f = $myFriendships->where('user_id', $u->id)->where('friend_id', Auth::id())->first()
+               ?? $myFriendships->where('friend_id', $u->id)->where('user_id', Auth::id())->first();
+            return [
+                'id' => $u->id, 'name' => $u->name, 'email' => $u->email,
+                'rank_name' => $u->rank_name,
+                'avatar' => $u->avatar ? asset('storage/'.$u->avatar) : asset('assets/ico/'.($u->emblem_image ?? 'default-user.jpg')),
+                'friendship_status' => $f ? $f->status : null,
+            ];
+        }));
+    }
+
+    public function addFriend(Request $request, $friendId)
+    {
+        if ($friendId == Auth::id()) return back()->with('error', 'Tidak bisa menambahkan diri sendiri.');
+
+        $existing = \App\Models\Friendship::where(function($q) use ($friendId) {
+            $q->where('user_id', Auth::id())->where('friend_id', $friendId);
+        })->orWhere(function($q) use ($friendId) {
+            $q->where('user_id', $friendId)->where('friend_id', Auth::id());
+        })->first();
+
+        if ($existing) return back()->with('error', 'Permintaan sudah ada atau kalian sudah berteman.');
+
+        \App\Models\Friendship::create(['user_id' => Auth::id(), 'friend_id' => $friendId, 'status' => 'pending']);
+        return back()->with('success', 'Permintaan pertemanan terkirim!');
+    }
+
+    public function acceptFriend($friendId)
+    {
+        $f = \App\Models\Friendship::where('user_id', $friendId)->where('friend_id', Auth::id())->where('status', 'pending')->first();
+        if ($f) { $f->update(['status' => 'accepted']); return back()->with('success', 'Permintaan pertemanan diterima!'); }
+        return back()->with('error', 'Permintaan tidak ditemukan.');
+    }
+
+    public function rejectFriend($friendId)
+    {
+        $f = \App\Models\Friendship::where('user_id', $friendId)->where('friend_id', Auth::id())->where('status', 'pending')->first();
+        if ($f) { $f->delete(); return back()->with('success', 'Permintaan pertemanan ditolak.'); }
+        return back()->with('error', 'Permintaan tidak ditemukan.');
+    }
+
+    public function removeFriend($friendId)
+    {
+        $f = \App\Models\Friendship::where(function($q) use ($friendId) {
+            $q->where('user_id', Auth::id())->where('friend_id', $friendId);
+        })->orWhere(function($q) use ($friendId) {
+            $q->where('user_id', $friendId)->where('friend_id', Auth::id());
+        })->where('status', 'accepted')->first();
+
+        if ($f) { $f->delete(); return back()->with('success', 'Teman dihapus.'); }
+        return back()->with('error', 'Teman tidak ditemukan.');
     }
 }
