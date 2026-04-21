@@ -5,7 +5,7 @@
             <i class='bx bx-menu'></i>
         </button>
         <div class="rtd-nav-title">
-            <h4>ROTOOD</h4>
+            <h4>TurningCode</h4>
             <p>Care with {{ explode(' ', Auth::user()->name)[0] }}</p>
         </div>
     </div>
