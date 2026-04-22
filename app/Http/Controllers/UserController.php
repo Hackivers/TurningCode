@@ -853,7 +853,9 @@ class UserController extends Controller
 
     public function addFriend(Request $request, $friendId)
     {
-        if ($friendId == Auth::id()) return back()->with('error', 'Tidak bisa menambahkan diri sendiri.');
+        if ($friendId == Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'Tidak bisa menambahkan diri sendiri.'], 422);
+        }
 
         $existing = \App\Models\Friendship::where(function($q) use ($friendId) {
             $q->where('user_id', Auth::id())->where('friend_id', $friendId);
@@ -861,24 +863,32 @@ class UserController extends Controller
             $q->where('user_id', $friendId)->where('friend_id', Auth::id());
         })->first();
 
-        if ($existing) return back()->with('error', 'Permintaan sudah ada atau kalian sudah berteman.');
+        if ($existing) {
+            return response()->json(['success' => false, 'message' => 'Permintaan sudah ada atau kalian sudah berteman.'], 422);
+        }
 
         \App\Models\Friendship::create(['user_id' => Auth::id(), 'friend_id' => $friendId, 'status' => 'pending']);
-        return back()->with('success', 'Permintaan pertemanan terkirim!');
+        return response()->json(['success' => true, 'message' => 'Permintaan pertemanan terkirim! 🤝']);
     }
 
     public function acceptFriend($friendId)
     {
         $f = \App\Models\Friendship::where('user_id', $friendId)->where('friend_id', Auth::id())->where('status', 'pending')->first();
-        if ($f) { $f->update(['status' => 'accepted']); return back()->with('success', 'Permintaan pertemanan diterima!'); }
-        return back()->with('error', 'Permintaan tidak ditemukan.');
+        if ($f) {
+            $f->update(['status' => 'accepted']);
+            return response()->json(['success' => true, 'message' => 'Permintaan pertemanan diterima! ✅']);
+        }
+        return response()->json(['success' => false, 'message' => 'Permintaan tidak ditemukan.'], 404);
     }
 
     public function rejectFriend($friendId)
     {
         $f = \App\Models\Friendship::where('user_id', $friendId)->where('friend_id', Auth::id())->where('status', 'pending')->first();
-        if ($f) { $f->delete(); return back()->with('success', 'Permintaan pertemanan ditolak.'); }
-        return back()->with('error', 'Permintaan tidak ditemukan.');
+        if ($f) {
+            $f->delete();
+            return response()->json(['success' => true, 'message' => 'Permintaan pertemanan ditolak.']);
+        }
+        return response()->json(['success' => false, 'message' => 'Permintaan tidak ditemukan.'], 404);
     }
 
     public function removeFriend($friendId)
@@ -889,7 +899,10 @@ class UserController extends Controller
             $q->where('user_id', $friendId)->where('friend_id', Auth::id());
         })->where('status', 'accepted')->first();
 
-        if ($f) { $f->delete(); return back()->with('success', 'Teman dihapus.'); }
-        return back()->with('error', 'Teman tidak ditemukan.');
+        if ($f) {
+            $f->delete();
+            return response()->json(['success' => true, 'message' => 'Teman berhasil dihapus.']);
+        }
+        return response()->json(['success' => false, 'message' => 'Teman tidak ditemukan.'], 404);
     }
 }
