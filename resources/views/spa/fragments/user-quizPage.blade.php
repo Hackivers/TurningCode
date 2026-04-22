@@ -1,899 +1,339 @@
-<div class="container conatiner-quiz-materi">
-    <main class="main-quiz-materi">
-        <div class="wrapper-quiz-materi">
+{{-- QUIZ PAGE — Neo Bento + Per-Page Questions --}}
+<div class="neo-dashboard rtd-dashboard">
+<div class="qz-container">
 
-            {{-- Breadcrumb --}}
-            <div class="breadcrumb">
-                <h6>
-                    <a href="?page=dashboard" class="link-spa breadcrumb-link">
-                        {{ $subMateri->materi->mainMateri->title ?? '-' }}
-                    </a>
-                    <i class='bx bx-chevron-right'></i>
-                    <a href="?page=materi&main_id={{ $subMateri->materi->mainMateri->id ?? '' }}"
-                        class="link-spa breadcrumb-link">
-                        {{ $subMateri->materi->title ?? '-' }}
-                    </a>
-                    <i class='bx bx-chevron-right'></i>
-                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa breadcrumb-link">
-                        {{ $subMateri->title }}
-                    </a>
-                    <i class='bx bx-chevron-right'></i>
-                    <span>Kuis</span>
-                </h6>
+    {{-- Breadcrumb --}}
+    <div class="qz-breadcrumb">
+        <a href="?page=materi&main_id={{ $subMateri->materi->mainMateri->id ?? '' }}" class="link-spa">{{ $subMateri->materi->mainMateri->title ?? '-' }}</a>
+        <span>/</span>
+        <a href="?page=submateri&materi_id={{ $subMateri->materi_id }}" class="link-spa">{{ $subMateri->materi->title ?? '-' }}</a>
+        <span>/</span>
+        <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa">{{ $subMateri->title }}</a>
+        <span>/</span>
+        <span class="qz-bc-current">Kuis</span>
+    </div>
+
+    @if(isset($questions) && $questions->count() > 0)
+        @php $totalQ = $questions->count(); @endphp
+
+        {{-- Progress Bar --}}
+        <div class="qz-progress-wrap">
+            <div class="qz-progress-bar"><div class="qz-progress-fill" id="qz-progress-fill"></div></div>
+            <span class="qz-progress-text" id="qz-progress-text">1 / {{ $totalQ }}</span>
+        </div>
+
+        {{-- Already Passed Banner --}}
+        @if(isset($quizAttempt) && $quizAttempt && $quizAttempt->passed)
+            <div class="qz-passed-banner" id="qz-passed-banner">
+                <i class='bx bx-check-circle'></i>
+                <div><strong>Kuis Sudah Lulus!</strong><br><span>Skor terbaik: {{ $quizAttempt->score }}%</span></div>
+                <button class="qz-btn-retake" id="qz-btn-retake">Ulang Kuis</button>
             </div>
+        @endif
 
-            {{-- Back button --}}
-            <div class="back-button">
-                <button class="btn-back">
-                    <i class='bx bx-arrow-back'></i> Kembali ke Materi
-                </button>
-            </div>
-
-            {{-- Quiz Content --}}
-            <main class="box-quiz-materi">
-                <div>
-                    {{-- Title --}}
-                    <div class="box-tittle-materi">
-                        <h2>Kuis: {{ $subMateri->title }}</h2>
+        {{-- Question Cards (one per page) --}}
+        <form id="qz-form" class="{{ isset($quizAttempt) && $quizAttempt && $quizAttempt->passed ? 'qz-hidden' : '' }}">
+            @foreach($questions as $i => $q)
+                <div class="qz-card {{ $i === 0 ? 'qz-active' : '' }}" data-idx="{{ $i }}" data-qid="{{ $q->id }}">
+                    <div class="qz-card-head">
+                        <span class="qz-card-num">Soal {{ $i + 1 }}</span>
+                        <span class="qz-card-total">dari {{ $totalQ }}</span>
                     </div>
+                    <h3 class="qz-question">{{ $q->question }}</h3>
 
-                    @if(isset($questions) && $questions->count() > 0)
-                        <div class="quiz-section" id="quiz-section">
-                            <div class="quiz-header">
-                                <div class="quiz-header-icon">
-                                    <i class='bx bx-brain'></i>
-                                </div>
-                                <div>
-                                    <h3>Uji Pemahamanmu</h3>
-                                    <p>{{ $questions->count() }} soal · Skor minimal 80% untuk lulus</p>
-                                </div>
-                            </div>
-
-                            @if(isset($quizAttempt) && $quizAttempt && $quizAttempt->passed)
-                                <div class="quiz-passed-badge" id="quiz-passed-badge">
-                                    <i class='bx bx-check-circle'></i>
-                                    <div>
-                                        <h4>Kuis Sudah Lulus! ✓</h4>
-                                        <p>Skor terbaik: {{ $quizAttempt->score }}% · EXP sudah diterima</p>
-                                    </div>
-                                    <button class="btn-retake" id="btn-retake">
-                                        <i class='bx bx-revision'></i> Ulang
-                                    </button>
-                                </div>
-                            @endif
-
-                            <form id="quiz-form"
-                                class="quiz-form {{ isset($quizAttempt) && $quizAttempt && $quizAttempt->passed ? 'hidden-quiz' : '' }}">
-                                @foreach($questions as $i => $q)
-                                    <div class="quiz-card" data-question-id="{{ $q->id }}">
-                                        <div class="quiz-card-number">{{ $i + 1 }}</div>
-                                        <h4 class="quiz-card-question">{{ $q->question }}</h4>
-
-                                        @if($q->code_snippet)
-                                            <div class="quiz-code-block">
-                                                @if($q->code_language)
-                                                    <div class="quiz-code-header">
-                                                        <span class="quiz-code-lang">{{ $q->code_language }}</span>
-                                                    </div>
-                                                @endif
-                                                <pre class="quiz-code-pre"><code>{{ $q->code_snippet }}</code></pre>
-                                            </div>
-                                        @endif
-
-                                        <div class="quiz-options">
-                                            @foreach($q->options as $optIdx => $option)
-                                                <label class="quiz-option" data-option-idx="{{ $optIdx }}">
-                                                    <input type="radio" name="q_{{ $q->id }}" value="{{ $optIdx }}">
-                                                    <span class="quiz-option-indicator">{{ chr(65 + $optIdx) }}</span>
-                                                    <span class="quiz-option-text">{{ $option }}</span>
-                                                    <i class='bx bx-check quiz-icon-correct'></i>
-                                                    <i class='bx bx-x quiz-icon-wrong'></i>
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endforeach
-
-                                <div id="quiz-result" class="quiz-result" style="display:none;"></div>
-
-                                <button type="submit" class="quiz-btn-submit" id="quiz-btn-submit">
-                                    <i class='bx bx-send'></i> Kirim Jawaban
-                                </button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="sec-empty">
-                            <i class='bx bx-x-circle'></i>
-                            <p>Belum ada soal kuis untuk materi ini.</p>
+                    @if($q->code_snippet)
+                        <div class="qz-code">
+                            @if($q->code_language)<span class="qz-code-lang">{{ $q->code_language }}</span>@endif
+                            <pre><code>{{ $q->code_snippet }}</code></pre>
                         </div>
                     @endif
 
-                    {{-- Navigation prev/next --}}
-                    <div class="box-materi-navigation">
-                        <hr>
-                        <div id="quiz-nav-container" style="gap: 12px;">
-                            @if (!empty($next))
-                                <a href="?page=detail&submateri_id={{ $next->id }}" class="btn-next link-spa">
-                                    Materi Selanjutnya: {{ $next->title }}
-                                    <i class='bx bx-right-arrow-alt'></i>
-                                </a>
-                            @else
-                                <a href="?page=submateri&materi_id={{ $subMateri->materi_id }}" class="btn-next link-spa">
-                                    Selesai ✓
-                                </a>
-                            @endif
-                        </div>
+                    <div class="qz-options">
+                        @foreach($q->options as $oi => $opt)
+                            <label class="qz-opt" data-oi="{{ $oi }}">
+                                <input type="radio" name="q_{{ $q->id }}" value="{{ $oi }}">
+                                <span class="qz-opt-letter">{{ chr(65 + $oi) }}</span>
+                                <span class="qz-opt-text">{{ $opt }}</span>
+                                <i class='bx bx-check qz-ico-ok'></i>
+                                <i class='bx bx-x qz-ico-no'></i>
+                            </label>
+                        @endforeach
                     </div>
                 </div>
-            </main>
+            @endforeach
+
+            {{-- Nav Buttons --}}
+            <div class="qz-nav-row">
+                <button type="button" class="qz-btn qz-btn-prev" id="qz-prev" style="display:none;">
+                    <i class='bx bx-left-arrow-alt'></i> Sebelumnya
+                </button>
+                <div style="flex:1;"></div>
+                <button type="button" class="qz-btn qz-btn-next" id="qz-next">
+                    Selanjutnya <i class='bx bx-right-arrow-alt'></i>
+                </button>
+                <button type="submit" class="qz-btn qz-btn-submit" id="qz-submit" style="display:none;">
+                    <i class='bx bx-send'></i> Kirim Jawaban
+                </button>
+            </div>
+        </form>
+
+        {{-- Result Screen --}}
+        <div class="qz-result-screen" id="qz-result-screen" style="display:none;">
+            <div class="qz-result-circle" id="qz-result-circle">
+                <svg viewBox="0 0 120 120"><circle class="qz-rc-bg" cx="60" cy="60" r="52"/><circle class="qz-rc-fill" id="qz-rc-fill" cx="60" cy="60" r="52"/></svg>
+                <span class="qz-rc-pct" id="qz-rc-pct">0%</span>
+            </div>
+            <h2 class="qz-result-title" id="qz-result-title"></h2>
+            <p class="qz-result-sub" id="qz-result-sub"></p>
+            <div class="qz-result-exp" id="qz-result-exp" style="display:none;"><i class='bx bx-bolt-circle'></i> <span id="qz-exp-val"></span></div>
+            <div class="qz-result-actions">
+                <button class="qz-btn qz-btn-retry" id="qz-retry" style="display:none;" onclick="loadPage('quiz',{submateri_id:{{ $subMateri->id }}})">
+                    <i class='bx bx-refresh'></i> Coba Lagi
+                </button>
+                @if (!empty($next))
+                    <a href="?page=detail&submateri_id={{ $next->id }}" class="link-spa qz-btn qz-btn-next-materi">
+                        Materi Selanjutnya <i class='bx bx-right-arrow-alt'></i>
+                    </a>
+                @else
+                    <a href="?page=submateri&materi_id={{ $subMateri->materi_id }}" class="link-spa qz-btn qz-btn-next-materi">
+                        Selesai <i class='bx bx-check'></i>
+                    </a>
+                @endif
+            </div>
         </div>
-    </main>
+
+    @else
+        <div style="text-align:center;padding:80px 20px;">
+            <i class='bx bx-x-circle' style="font-size:48px;color:#ccc;display:block;margin-bottom:12px;"></i>
+            <p style="color:#888;font-size:15px;">Belum ada soal kuis untuk materi ini.</p>
+        </div>
+    @endif
+
+</div>
 </div>
 
-{{-- Back button script --}}
 <script>
-    document.addEventListener("click", function (e) {
-        if (e.target.closest(".btn-back")) {
-            e.preventDefault();
-            loadPage("detail", { submateri_id: "{{ $subMateri->id }}" }); // Back to reading
-        }
-    });
-</script>
+(function(){
+    const form = document.getElementById('qz-form');
+    if (!form) return;
+    const cards = Array.from(form.querySelectorAll('.qz-card'));
+    const total = cards.length;
+    const btnPrev = document.getElementById('qz-prev');
+    const btnNext = document.getElementById('qz-next');
+    const btnSubmit = document.getElementById('qz-submit');
+    const progFill = document.getElementById('qz-progress-fill');
+    const progText = document.getElementById('qz-progress-text');
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    let cur = 0;
 
-{{-- Quiz Script --}}
-<script>
-    (function () {
-        const quizForm = document.getElementById('quiz-form');
-        const btnSubmit = document.getElementById('quiz-btn-submit');
-        const resultBox = document.getElementById('quiz-result');
-        const passedBadge = document.getElementById('quiz-passed-badge');
-        const btnRetake = document.getElementById('btn-retake');
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        const subMateriId = {{ $subMateri->id }};
+    function show(idx) {
+        cards.forEach((c,i) => c.classList.toggle('qz-active', i === idx));
+        btnPrev.style.display = idx === 0 ? 'none' : '';
+        btnNext.style.display = idx === total - 1 ? 'none' : '';
+        btnSubmit.style.display = idx === total - 1 ? '' : 'none';
+        progFill.style.width = ((idx + 1) / total * 100) + '%';
+        progText.textContent = (idx + 1) + ' / ' + total;
+        cur = idx;
+    }
 
-        if (btnRetake) {
-            btnRetake.addEventListener('click', () => {
-                passedBadge.style.display = 'none';
-                quizForm.classList.remove('hidden-quiz');
-                // Reset all selections
-                quizForm.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-                quizForm.querySelectorAll('.quiz-option').forEach(o => {
-                    o.classList.remove('correct', 'wrong', 'disabled');
-                });
-                quizForm.querySelectorAll('.quiz-card').forEach(c => {
-                    c.classList.remove('answered');
-                });
-                resultBox.style.display = 'none';
-                btnSubmit.style.display = '';
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<i class="bx bx-send"></i> Kirim Jawaban';
-            });
-        }
+    btnPrev.onclick = () => { if (cur > 0) show(cur - 1); };
+    btnNext.onclick = () => { if (cur < total - 1) show(cur + 1); };
 
-        if (!quizForm) return;
+    // Retake
+    const retakeBtn = document.getElementById('qz-btn-retake');
+    if (retakeBtn) {
+        retakeBtn.onclick = () => {
+            document.getElementById('qz-passed-banner').style.display = 'none';
+            form.classList.remove('qz-hidden');
+            form.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+            form.querySelectorAll('.qz-opt').forEach(o => o.className = 'qz-opt');
+            show(0);
+        };
+    }
 
-        quizForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Collect answers
-            const answers = {};
-            let unanswered = 0;
-            quizForm.querySelectorAll('.quiz-card').forEach(card => {
-                const qId = card.dataset.questionId;
-                const selected = card.querySelector('input[type="radio"]:checked');
-                if (selected) {
-                    answers[qId] = parseInt(selected.value);
-                } else {
-                    unanswered++;
-                }
-            });
-
-            if (unanswered > 0) {
-                if (!confirm(`Masih ada ${unanswered} soal yang belum dijawab. Kirim sekarang?`)) return;
-            }
-
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Mengirim...';
-
-            try {
-                const res = await fetch('{{ route("user.quiz.submit") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ sub_materi_id: subMateriId, answers }),
-                    credentials: 'same-origin',
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    // Highlight correct/wrong
-                    Object.entries(data.results).forEach(([qId, r]) => {
-                        const card = quizForm.querySelector(`.quiz-card[data-question-id="${qId}"]`);
-                        if (!card) return;
-                        card.classList.add('answered');
-
-                        card.querySelectorAll('.quiz-option').forEach(opt => {
-                            const idx = parseInt(opt.dataset.optionIdx);
-                            opt.classList.add('disabled');
-                            if (idx === r.correct_option) {
-                                opt.classList.add('correct');
-                            }
-                            if (idx === r.selected && !r.is_correct) {
-                                opt.classList.add('wrong');
-                            }
-                        });
-                    });
-
-                    // Tambahkan tombol Coba Lagi jika tidak lulus di sebelah Selesai/Next
-                    if (!data.passed) {
-                        const navContainer = document.getElementById('quiz-nav-container');
-                        if (navContainer && !document.getElementById('btn-coba-lagi')) {
-                            navContainer.insertAdjacentHTML('afterbegin', `
-                            <button id="btn-coba-lagi" class="btn-prev" onclick="loadPage('quiz', { submateri_id: ${subMateriId} })" style="background: rgba(220, 38, 38, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); cursor: pointer; padding: 10px 18px; border-radius: 20px; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
-                                <i class='bx bx-refresh'></i> Coba Lagi
-                            </button>
-                        `);
-                        }
-                    }
-
-                    // Show result
-                    const icon = data.passed ? 'bx-trophy' : 'bx-error';
-                    const cls = data.passed ? 'success' : 'failed';
-                    let expHtml = '';
-                    if (data.exp_awarded) {
-                        expHtml = `<div class="quiz-exp-reward"><i class='bx bx-bolt-circle'></i> +${data.exp_gained} EXP</div>`;
-                    }
-
-                    resultBox.innerHTML = `
-                    <div class="quiz-result-card ${cls}">
-                        <i class='bx ${icon}'></i>
-                        <h4>${data.message}</h4>
-                        <p>${data.correct} dari ${data.total} soal benar</p>
-                        <div class="quiz-score-bar">
-                            <div class="quiz-score-fill" style="width: ${data.score}%"></div>
-                        </div>
-                        <span class="quiz-score-text">${data.score}%</span>
-                        ${expHtml}
-                    </div>
-                `;
-                    resultBox.style.display = 'block';
-                    btnSubmit.style.display = 'none';
-
-                    // Scroll to result
-                    setTimeout(() => {
-                        resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 200);
-                }
-            } catch (err) {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<i class="bx bx-send"></i> Kirim Jawaban';
-                alert('Gagal mengirim jawaban. Coba lagi.');
-            }
+    // Submit
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const answers = {};
+        let unanswered = 0;
+        cards.forEach(c => {
+            const sel = c.querySelector('input:checked');
+            if (sel) answers[c.dataset.qid] = parseInt(sel.value);
+            else unanswered++;
         });
-    })();
+        if (unanswered > 0 && !confirm('Masih ada ' + unanswered + ' soal belum dijawab. Kirim?')) return;
+
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Mengirim...';
+
+        try {
+            const res = await fetch('{{ route("user.quiz.submit") }}', {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': csrf, 'X-Requested-With':'XMLHttpRequest', 'Accept':'application/json' },
+                body: JSON.stringify({ sub_materi_id: {{ $subMateri->id }}, answers }),
+                credentials: 'same-origin',
+            });
+            const data = await res.json();
+            if (data.success) {
+                // Highlight answers
+                Object.entries(data.results).forEach(([qId, r]) => {
+                    const card = form.querySelector('[data-qid="'+qId+'"]');
+                    if (!card) return;
+                    card.querySelectorAll('.qz-opt').forEach(o => {
+                        const idx = parseInt(o.dataset.oi);
+                        o.classList.add('qz-locked');
+                        if (idx === r.correct_option) o.classList.add('qz-correct');
+                        if (idx === r.selected && !r.is_correct) o.classList.add('qz-wrong');
+                    });
+                });
+
+                // Show result
+                form.style.display = 'none';
+                document.querySelector('.qz-progress-wrap').style.display = 'none';
+                const screen = document.getElementById('qz-result-screen');
+                screen.style.display = '';
+
+                const pct = data.score;
+                const circ = document.getElementById('qz-rc-fill');
+                const circumference = 2 * Math.PI * 52;
+                circ.style.strokeDasharray = circumference;
+                circ.style.strokeDashoffset = circumference;
+                setTimeout(() => { circ.style.strokeDashoffset = circumference - (pct / 100) * circumference; }, 100);
+
+                // Animate percentage number
+                let counter = 0;
+                const pctEl = document.getElementById('qz-rc-pct');
+                const interval = setInterval(() => {
+                    counter += 1;
+                    if (counter >= pct) { counter = pct; clearInterval(interval); }
+                    pctEl.textContent = counter + '%';
+                }, 20);
+
+                document.getElementById('qz-result-title').textContent = data.passed ? '🎉 Selamat, Kuis Lulus!' : 'Belum Lulus';
+                document.getElementById('qz-result-sub').textContent = data.correct + ' dari ' + data.total + ' soal benar';
+                circ.style.stroke = data.passed ? '#10b981' : '#ef4444';
+
+                if (data.exp_awarded) {
+                    const expDiv = document.getElementById('qz-result-exp');
+                    expDiv.style.display = '';
+                    document.getElementById('qz-exp-val').textContent = '+' + data.exp_gained + ' EXP';
+                }
+                if (!data.passed) document.getElementById('qz-retry').style.display = '';
+
+                screen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        } catch {
+            alert('Gagal mengirim jawaban.');
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="bx bx-send"></i> Kirim Jawaban';
+        }
+    };
+})();
 </script>
 
 <style>
-    .conatiner-quiz-materi {
-        display: flex;
-        justify-content: center;
-        margin-top: 1em;
-        padding-bottom: 6em;
-    }
-
-    .main-quiz-materi {
-        width: 100%;
-        max-width: 79em;
-        margin: 0 10px;
-    }
-
-    .wrapper-quiz-materi {
-        width: 100%;
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-        margin-bottom: 12px;
-    }
-
-    .breadcrumb h6 {
-        color: #8a898a;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
-    .breadcrumb i {
-        font-size: 14px;
-        color: #555;
-    }
-
-    .breadcrumb span {
-        color: #E6E0E9;
-    }
-
-    .breadcrumb-link {
-        color: #8a898a;
-        text-decoration: none;
-    }
-
-    .breadcrumb-link:hover {
-        color: #75bbed;
-    }
-
-    /* Back button */
-    .back-button {
-        margin-bottom: 20px;
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
-        border-radius: 20px;
-        border: 1px solid #2a2c3a;
-        background: #191825;
-        color: #E6E0E9;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .btn-back:hover {
-        background: #222430;
-        border-color: #75bbed;
-        color: #75bbed;
-    }
-
-    /* Detail box */
-    .box-quiz-materi {
-        background: #191825;
-        border-radius: 20px;
-        border: 1px solid #1f1e2e;
-        padding: 24px 16px;
-    }
-
-    .box-tittle-materi h2 {
-        color: #E6E0E9;
-        font-size: 20px;
-        font-weight: 600;
-        text-transform: capitalize;
-        line-height: 1.4;
-        margin-bottom: 20px;
-    }
-
-    .sec-empty {
-        text-align: center;
-        padding: 3em 1em;
-        color: #8a898a;
-    }
-
-    .sec-empty i {
-        font-size: 40px;
-        margin-bottom: 12px;
-        display: block;
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       QUIZ STYLES
-       ═══════════════════════════════════════════════════════════ */
-    .quiz-section {
-        padding-top: 10px;
-    }
-
-    .quiz-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 20px;
-    }
-
-    .quiz-header-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .quiz-header-icon i {
-        font-size: 24px;
-        color: #8b5cf6;
-    }
-
-    .quiz-header h3 {
-        color: #E6E0E9;
-        font-size: 17px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .quiz-header p {
-        color: #8a898a;
-        font-size: 12px;
-        margin: 4px 0 0;
-    }
-
-    /* ── Passed Badge ─────────────────────────── */
-    .quiz-passed-badge {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px 20px;
-        background: rgba(13, 40, 24, 0.5);
-        border: 1px solid rgba(22, 101, 52, 0.5);
-        border-radius: 16px;
-        margin-bottom: 16px;
-        animation: quizFadeIn 0.4s ease;
-    }
-
-    .quiz-passed-badge>i {
-        font-size: 28px;
-        color: #4ade80;
-        flex-shrink: 0;
-    }
-
-    .quiz-passed-badge h4 {
-        color: #4ade80;
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .quiz-passed-badge p {
-        color: #86efac;
-        font-size: 12px;
-        margin: 2px 0 0;
-    }
-
-    .btn-retake {
-        margin-left: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(22, 101, 52, 0.5);
-        background: transparent;
-        color: #86efac;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        flex-shrink: 0;
-    }
-
-    .btn-retake:hover {
-        background: rgba(22, 101, 52, 0.2);
-    }
-
-    /* ── Quiz Form ────────────────────────────── */
-    .quiz-form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .quiz-form.hidden-quiz {
-        display: none;
-    }
-
-    /* ── Quiz Card ────────────────────────────── */
-    .quiz-card {
-        position: relative;
-        background: rgba(19, 18, 28, 0.6);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        padding: 20px;
-        transition: all 0.3s ease;
-    }
-
-    .quiz-card:hover {
-        border-color: rgba(139, 92, 246, 0.15);
-    }
-
-    .quiz-card-number {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: rgba(139, 92, 246, 0.1);
-        color: #8b5cf6;
-        font-size: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .quiz-card-question {
-        color: #E6E0E9;
-        font-size: 14px;
-        font-weight: 550;
-        line-height: 1.6;
-        margin: 0 0 14px;
-        padding-right: 36px;
-    }
-
-    /* ── Quiz Options ─────────────────────────── */
-    .quiz-options {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .quiz-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        background: rgba(25, 24, 37, 0.6);
-        cursor: pointer;
-        transition: all 0.25s ease;
-        position: relative;
-    }
-
-    .quiz-option input[type="radio"] {
-        display: none;
-    }
-
-    .quiz-option-indicator {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.04);
-        color: #8a898a;
-        font-size: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: all 0.25s ease;
-    }
-
-    .quiz-option-text {
-        color: #b8b6b9;
-        font-size: 13px;
-        flex: 1;
-        line-height: 1.4;
-    }
-
-    .quiz-icon-correct,
-    .quiz-icon-wrong {
-        display: none;
-        font-size: 18px;
-        flex-shrink: 0;
-    }
-
-    .quiz-option:hover {
-        border-color: rgba(139, 92, 246, 0.3);
-        background: rgba(139, 92, 246, 0.05);
-    }
-
-    .quiz-option:has(input:checked) {
-        border-color: #6366f1;
-        background: rgba(99, 102, 241, 0.08);
-    }
-
-    .quiz-option:has(input:checked) .quiz-option-indicator {
-        background: #6366f1;
-        color: #fff;
-    }
-
-    .quiz-option:has(input:checked) .quiz-option-text {
-        color: #E6E0E9;
-    }
-
-    /* After submit states */
-    .quiz-option.disabled {
-        pointer-events: none;
-        opacity: 0.7;
-    }
-
-    .quiz-option.correct {
-        border-color: #166534 !important;
-        background: rgba(13, 40, 24, 0.4) !important;
-        opacity: 1 !important;
-    }
-
-    .quiz-option.correct .quiz-option-indicator {
-        background: #16a34a !important;
-        color: #fff !important;
-    }
-
-    .quiz-option.correct .quiz-option-text {
-        color: #4ade80 !important;
-    }
-
-    .quiz-option.correct .quiz-icon-correct {
-        display: block;
-        color: #4ade80;
-    }
-
-    .quiz-option.wrong {
-        border-color: #991b1b !important;
-        background: rgba(45, 18, 21, 0.4) !important;
-        opacity: 1 !important;
-    }
-
-    .quiz-option.wrong .quiz-option-indicator {
-        background: #dc2626 !important;
-        color: #fff !important;
-    }
-
-    .quiz-option.wrong .quiz-option-text {
-        color: #f87171 !important;
-    }
-
-    .quiz-option.wrong .quiz-icon-wrong {
-        display: block;
-        color: #f87171;
-    }
-
-    /* ── Submit Button ────────────────────────── */
-    .quiz-btn-submit {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 14px 24px;
-        border-radius: 16px;
-        border: none;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        color: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
-        margin-top: 4px;
-    }
-
-    .quiz-btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4);
-    }
-
-    .quiz-btn-submit:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* ── Result ───────────────────────────────── */
-    .quiz-result-card {
-        text-align: center;
-        padding: 28px 20px;
-        border-radius: 20px;
-        animation: quizFadeIn 0.5s ease;
-    }
-
-    .quiz-result-card.success {
-        background: rgba(13, 40, 24, 0.4);
-        border: 1px solid rgba(22, 101, 52, 0.5);
-    }
-
-    .quiz-result-card.failed {
-        background: rgba(45, 18, 21, 0.3);
-        border: 1px solid rgba(153, 27, 27, 0.5);
-    }
-
-    .quiz-result-card>i {
-        font-size: 40px;
-        margin-bottom: 8px;
-    }
-
-    .quiz-result-card.success>i {
-        color: #4ade80;
-    }
-
-    .quiz-result-card.failed>i {
-        color: #f87171;
-    }
-
-    .quiz-result-card h4 {
-        color: #E6E0E9;
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0 0 4px;
-    }
-
-    .quiz-result-card p {
-        color: #8a898a;
-        font-size: 13px;
-        margin: 0 0 16px;
-    }
-
-    .quiz-score-bar {
-        width: 100%;
-        max-width: 300px;
-        height: 8px;
-        background: rgba(255, 255, 255, 0.06);
-        border-radius: 8px;
-        margin: 0 auto 8px;
-        overflow: hidden;
-    }
-
-    .quiz-score-fill {
-        height: 100%;
-        border-radius: 8px;
-        background: linear-gradient(90deg, #6366f1, #8b5cf6);
-        transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .quiz-result-card.failed .quiz-score-fill {
-        background: linear-gradient(90deg, #ef4444, #f87171);
-    }
-
-    .quiz-score-text {
-        color: #E6E0E9;
-        font-size: 24px;
-        font-weight: 700;
-    }
-
-    .quiz-exp-reward {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 12px;
-        padding: 8px 16px;
-        border-radius: 20px;
-        background: rgba(99, 102, 241, 0.15);
-        color: #a78bfa;
-        font-size: 14px;
-        font-weight: 600;
-        animation: quizPulse 0.6s ease;
-    }
-
-    .quiz-exp-reward i {
-        font-size: 18px;
-        color: #facc15;
-    }
-
-    @keyframes quizFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(12px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes quizPulse {
-        0% {
-            transform: scale(0.8);
-            opacity: 0;
-        }
-
-        50% {
-            transform: scale(1.1);
-        }
-
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
-    /* Navigation prev/next */
-    .box-materi-navigation {
-        margin-top: 32px;
-    }
-
-    .box-materi-navigation>hr {
-        border: none;
-        border-top: 1px solid #2a2c3a;
-        margin-bottom: 16px;
-    }
-
-    .box-materi-navigation>div {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    .btn-next {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 18px;
-        border-radius: 20px;
-        background: #222430;
-        color: #E6E0E9;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        max-width: 60%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .btn-next:hover {
-        background: #2a2c3a;
-        color: #75bbed;
-    }
-
-    .btn-next i {
-        font-size: 18px;
-        flex-shrink: 0;
-    }
-
-    /* ── Code Snippet Block ──────────────────── */
-    .quiz-code-block {
-        margin-bottom: 16px;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        background: #0d0c14;
-    }
-
-    .quiz-code-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.03);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .quiz-code-lang {
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #8b5cf6;
-        background: rgba(139, 92, 246, 0.1);
-        padding: 2px 8px;
-        border-radius: 6px;
-    }
-
-    .quiz-code-pre {
-        margin: 0;
-        padding: 16px;
-        overflow-x: auto;
-        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-        font-size: 13px;
-        line-height: 1.7;
-        color: #a5f3c4;
-        white-space: pre;
-        tab-size: 4;
-    }
-
-    .quiz-code-pre code {
-        font-family: inherit;
-        color: inherit;
-    }
-
-    .quiz-code-pre::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    .quiz-code-pre::-webkit-scrollbar-thumb {
-        background: rgba(139, 92, 246, 0.3);
-        border-radius: 2px;
-    }
-
-    .quiz-code-pre::-webkit-scrollbar-track {
-        background: transparent;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root { --neo-bg:#ececec; --neo-card:#e5e5e5; --neo-r:32px; --neo-t:#121212; }
+body { background: var(--neo-bg) !important; }
+.neo-dashboard { background:var(--neo-bg); font-family:'Inter',sans-serif; min-height:100vh; width:100%; }
+.qz-container { max-width:720px; margin:0 auto; padding:32px 24px 80px; }
+
+/* Breadcrumb */
+.qz-breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:#888; margin-bottom:32px; flex-wrap:wrap; }
+.qz-breadcrumb a { color:#888; text-decoration:none; font-weight:500; transition:color 0.2s; }
+.qz-breadcrumb a:hover { color:#121212; }
+.qz-breadcrumb span { color:#ccc; }
+.qz-bc-current { color:#121212; font-weight:600; }
+
+/* Progress */
+.qz-progress-wrap { display:flex; align-items:center; gap:16px; margin-bottom:32px; }
+.qz-progress-bar { flex:1; height:6px; background:rgba(0,0,0,0.08); border-radius:100px; overflow:hidden; }
+.qz-progress-fill { height:100%; background:#121212; border-radius:100px; transition:width 0.4s cubic-bezier(0.16,1,0.3,1); width:0; }
+.qz-progress-text { font-size:13px; font-weight:700; color:#121212; white-space:nowrap; }
+
+/* Passed Banner */
+.qz-passed-banner { display:flex; align-items:center; gap:12px; padding:16px 20px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:20px; margin-bottom:24px; }
+.qz-passed-banner > i { font-size:28px; color:#10b981; }
+.qz-passed-banner strong { color:#121212; font-size:15px; }
+.qz-passed-banner span { color:#666; font-size:13px; }
+.qz-btn-retake { margin-left:auto; padding:8px 16px; border-radius:100px; border:1px solid rgba(0,0,0,0.1); background:transparent; color:#121212; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.qz-btn-retake:hover { background:#121212; color:#fff; }
+
+/* Card */
+.qz-card { display:none; animation:qzSlideIn 0.3s ease; }
+.qz-card.qz-active { display:block; }
+.qz-card-head { display:flex; justify-content:space-between; margin-bottom:20px; }
+.qz-card-num { font-size:13px; font-weight:800; color:#121212; text-transform:uppercase; letter-spacing:1px; }
+.qz-card-total { font-size:13px; color:#888; font-weight:500; }
+.qz-question { font-size:20px; font-weight:800; color:#121212; line-height:1.4; margin:0 0 24px; letter-spacing:-0.02em; }
+
+/* Code */
+.qz-code { margin-bottom:24px; border-radius:16px; overflow:hidden; background:#1a1a2e; border:1px solid rgba(0,0,0,0.06); position:relative; }
+.qz-code-lang { position:absolute; top:10px; right:14px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6366f1; background:rgba(99,102,241,0.1); padding:3px 10px; border-radius:8px; }
+.qz-code pre { padding:20px; margin:0; overflow-x:auto; }
+.qz-code code { font-family:'Fira Code','Consolas',monospace; font-size:13px; color:#a6e3a1; line-height:1.7; white-space:pre; }
+
+/* Options */
+.qz-options { display:flex; flex-direction:column; gap:10px; }
+.qz-opt { display:flex; align-items:center; gap:12px; padding:16px 18px; border-radius:16px; background:var(--neo-card); border:2px solid transparent; cursor:pointer; transition:all 0.2s; }
+.qz-opt input { display:none; }
+.qz-opt-letter { width:32px; height:32px; border-radius:10px; background:rgba(0,0,0,0.06); color:#888; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+.qz-opt-text { flex:1; font-size:15px; color:#444; line-height:1.4; }
+.qz-ico-ok, .qz-ico-no { display:none; font-size:20px; flex-shrink:0; }
+
+.qz-opt:hover { border-color:rgba(0,0,0,0.1); }
+.qz-opt:has(input:checked) { border-color:#121212; background:#fff; }
+.qz-opt:has(input:checked) .qz-opt-letter { background:#121212; color:#fff; }
+.qz-opt:has(input:checked) .qz-opt-text { color:#121212; font-weight:600; }
+
+/* After submit */
+.qz-opt.qz-locked { pointer-events:none; }
+.qz-opt.qz-correct { border-color:#10b981 !important; background:rgba(16,185,129,0.06) !important; }
+.qz-opt.qz-correct .qz-opt-letter { background:#10b981 !important; color:#fff !important; }
+.qz-opt.qz-correct .qz-opt-text { color:#065f46 !important; }
+.qz-opt.qz-correct .qz-ico-ok { display:block; color:#10b981; }
+.qz-opt.qz-wrong { border-color:#ef4444 !important; background:rgba(239,68,68,0.06) !important; }
+.qz-opt.qz-wrong .qz-opt-letter { background:#ef4444 !important; color:#fff !important; }
+.qz-opt.qz-wrong .qz-opt-text { color:#991b1b !important; }
+.qz-opt.qz-wrong .qz-ico-no { display:block; color:#ef4444; }
+
+/* Nav Buttons */
+.qz-nav-row { display:flex; align-items:center; gap:12px; margin-top:32px; }
+.qz-btn { display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:100px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; border:none; text-decoration:none; }
+.qz-btn i { font-size:18px; }
+.qz-btn-prev { background:transparent; color:#666; border:1px solid rgba(0,0,0,0.12); }
+.qz-btn-prev:hover { background:#121212; color:#fff; border-color:#121212; }
+.qz-btn-next { background:#121212; color:#fff; }
+.qz-btn-next:hover { opacity:0.85; }
+.qz-btn-submit { background:#121212; color:#fff; }
+.qz-btn-submit:hover { opacity:0.85; }
+.qz-btn-submit:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Result Screen */
+.qz-result-screen { text-align:center; padding:40px 20px; animation:qzSlideIn 0.5s ease; }
+.qz-result-circle { position:relative; width:160px; height:160px; margin:0 auto 24px; }
+.qz-result-circle svg { width:100%; height:100%; transform:rotate(-90deg); }
+.qz-rc-bg { fill:none; stroke:rgba(0,0,0,0.06); stroke-width:8; }
+.qz-rc-fill { fill:none; stroke:#10b981; stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1); }
+.qz-rc-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:900; color:#121212; letter-spacing:-0.02em; }
+.qz-result-title { font-size:24px; font-weight:800; color:#121212; margin:0 0 8px; }
+.qz-result-sub { font-size:15px; color:#666; margin:0 0 20px; }
+.qz-result-exp { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:100px; background:rgba(99,102,241,0.08); color:#6366f1; font-size:14px; font-weight:700; margin-bottom:24px; }
+.qz-result-exp i { font-size:18px; color:#f59e0b; }
+.qz-result-actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.qz-btn-retry { background:transparent; color:#121212; border:1px solid rgba(0,0,0,0.12); }
+.qz-btn-retry:hover { background:#121212; color:#fff; }
+.qz-btn-next-materi { background:#121212; color:#fff; }
+.qz-btn-next-materi:hover { opacity:0.85; }
+
+.qz-hidden { display:none !important; }
+
+@keyframes qzSlideIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width:768px) {
+    .qz-container { padding:24px 16px 60px; }
+    .qz-question { font-size:18px; }
+    .qz-result-actions { flex-direction:column; }
+    .qz-btn { width:100%; justify-content:center; }
+}
 </style>

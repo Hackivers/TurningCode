@@ -1,78 +1,74 @@
-<div class="fv-page">
-    <div class="fv-container">
+{{-- FAVORITES — Neo Bento Design (synced with Dashboard) --}}
+<div class="neo-dashboard rtd-dashboard">
+    <div class="neo-bento-container">
 
-        {{-- Header --}}
-        <div class="fv-header">
-            <h2 class="fv-title">Favorit</h2>
-            <p class="fv-subtitle">Koleksi materi yang kamu simpan</p>
+        <a href="?page=dashboard" class="link-spa" data-page="dashboard" style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='#121212'" onmouseout="this.style.color='#888'">
+            <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
+        </a>
+
+        <div style="margin-bottom:32px;">
+            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Favorit</h3>
+            <p style="font-size:16px;color:#555;margin:0;">Koleksi materi yang kamu simpan.</p>
         </div>
 
         {{-- Tabs --}}
-        <div class="fv-tabs">
-            <button class="fv-tab active" data-target="fv-materi-list">
-                <i class='bx bx-book'></i>
-                <span>Materi</span>
-                <span class="fv-count">{{ $favMateris->count() }}</span>
+        <div style="display:flex;gap:16px;margin-bottom:24px;border-bottom:1px solid rgba(0,0,0,0.06);padding-bottom:0;">
+            <button class="fv-neo-tab active" data-target="fv-materi-list" style="display:flex;align-items:center;gap:8px;padding:12px 0;border:none;background:none;color:#121212;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid #121212;margin-bottom:-1px;font-family:inherit;">
+                <i class='bx bx-book' style="font-size:18px;"></i> Materi
+                <span style="font-size:11px;font-weight:700;background:#121212;color:#fff;padding:2px 8px;border-radius:12px;">{{ $favMateris->count() }}</span>
             </button>
-            <button class="fv-tab" data-target="fv-sub-list">
-                <i class='bx bx-file'></i>
-                <span>Sub Materi</span>
-                <span class="fv-count">{{ $favSubs->count() }}</span>
+            <button class="fv-neo-tab" data-target="fv-sub-list" style="display:flex;align-items:center;gap:8px;padding:12px 0;border:none;background:none;color:#888;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;">
+                <i class='bx bx-file' style="font-size:18px;"></i> Sub Materi
+                <span style="font-size:11px;font-weight:700;background:rgba(0,0,0,0.05);color:#666;padding:2px 8px;border-radius:12px;">{{ $favSubs->count() }}</span>
             </button>
         </div>
 
         {{-- Materi List --}}
-        <div class="fv-list" id="fv-materi-list">
+        <div class="fv-neo-list" id="fv-materi-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
             @forelse ($favMateris as $materi)
-                <a href="?page=submateri&materi_id={{ $materi->id }}" class="link-spa fv-item favorites-item">
-                    <div class="fv-item__left">
-                        <div class="fv-item__dot" style="background:#6366f1;"></div>
-                        <div class="fv-item__info">
-                            <h4 class="fv-item__title">{{ $materi->title }}</h4>
-                            <p class="fv-item__meta">{{ $materi->mainMateri->title ?? '-' }}</p>
+                <a href="?page=submateri&materi_id={{ $materi->id }}" class="link-spa favorites-item" style="text-decoration:none;">
+                    <div class="neo-card neo-card-light" style="padding:20px 24px;flex-direction:row;align-items:center;gap:16px;">
+                        <div style="width:10px;height:10px;border-radius:50%;background:#6366f1;flex-shrink:0;"></div>
+                        <div style="flex:1;min-width:0;">
+                            <h4 style="margin:0;font-size:15px;font-weight:700;color:#121212;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $materi->title }}</h4>
+                            <p style="margin:4px 0 0;font-size:13px;color:#888;font-weight:500;">{{ $materi->mainMateri->title ?? '-' }}</p>
                         </div>
-                    </div>
-                    <div class="fv-item__right">
-                        <i class="bx bxs-star archive-btn" data-id="{{ $materi->id }}" data-type="materi"
-                           style="color:#f59e0b;font-size:18px;cursor:pointer;"></i>
-                        <i class='bx bx-chevron-right fv-item__arrow'></i>
+                        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                            <i class="bx bxs-star archive-btn" data-id="{{ $materi->id }}" data-type="materi" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault();event.stopPropagation();"></i>
+                            <span class="neo-arrow" style="font-size:20px;">&#x2197;</span>
+                        </div>
                     </div>
                 </a>
             @empty
-                <div class="fv-empty">
-                    <div class="fv-empty__icon">
-                        <i class='bx bx-bookmark'></i>
-                    </div>
-                    <p class="fv-empty__text">Belum ada materi favorit</p>
-                    <p class="fv-empty__hint">Tekan ikon ⭐ di halaman materi untuk menyimpan</p>
+                <div class="neo-card neo-card-light" style="grid-column:1/-1;text-align:center;padding:48px 24px;">
+                    <i class='bx bx-bookmark' style="font-size:48px;color:#ccc;margin-bottom:12px;"></i>
+                    <p style="font-size:16px;font-weight:700;color:#121212;margin:0 0 4px;">Belum ada materi favorit</p>
+                    <p style="font-size:14px;color:#888;margin:0;">Tekan ikon ⭐ di halaman materi untuk menyimpan</p>
                 </div>
             @endforelse
         </div>
 
         {{-- Sub Materi List --}}
-        <div class="fv-list" id="fv-sub-list" style="display:none;">
+        <div class="fv-neo-list" id="fv-sub-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
             @forelse ($favSubs as $sub)
-                <a href="?page=detail&submateri_id={{ $sub->id }}" class="link-spa fv-item favorites-item">
-                    <div class="fv-item__left">
-                        <div class="fv-item__dot" style="background:#8b5cf6;"></div>
-                        <div class="fv-item__info">
-                            <h4 class="fv-item__title">{{ $sub->title }}</h4>
-                            <p class="fv-item__meta">{{ $sub->materi->mainMateri->title ?? '-' }} → {{ $sub->materi->title ?? '-' }}</p>
+                <a href="?page=detail&submateri_id={{ $sub->id }}" class="link-spa favorites-item" style="text-decoration:none;">
+                    <div class="neo-card neo-card-light" style="padding:20px 24px;flex-direction:row;align-items:center;gap:16px;">
+                        <div style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;flex-shrink:0;"></div>
+                        <div style="flex:1;min-width:0;">
+                            <h4 style="margin:0;font-size:15px;font-weight:700;color:#121212;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $sub->title }}</h4>
+                            <p style="margin:4px 0 0;font-size:13px;color:#888;font-weight:500;">{{ $sub->materi->mainMateri->title ?? '-' }} → {{ $sub->materi->title ?? '-' }}</p>
                         </div>
-                    </div>
-                    <div class="fv-item__right">
-                        <i class="bx bxs-star archive-btn" data-id="{{ $sub->id }}" data-type="sub"
-                           style="color:#f59e0b;font-size:18px;cursor:pointer;"></i>
-                        <i class='bx bx-chevron-right fv-item__arrow'></i>
+                        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                            <i class="bx bxs-star archive-btn" data-id="{{ $sub->id }}" data-type="sub" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault();event.stopPropagation();"></i>
+                            <span class="neo-arrow" style="font-size:20px;">&#x2197;</span>
+                        </div>
                     </div>
                 </a>
             @empty
-                <div class="fv-empty">
-                    <div class="fv-empty__icon">
-                        <i class='bx bx-bookmark'></i>
-                    </div>
-                    <p class="fv-empty__text">Belum ada sub materi favorit</p>
-                    <p class="fv-empty__hint">Tekan ikon ⭐ di halaman sub materi untuk menyimpan</p>
+                <div class="neo-card neo-card-light" style="grid-column:1/-1;text-align:center;padding:48px 24px;">
+                    <i class='bx bx-bookmark' style="font-size:48px;color:#ccc;margin-bottom:12px;"></i>
+                    <p style="font-size:16px;font-weight:700;color:#121212;margin:0 0 4px;">Belum ada sub materi favorit</p>
+                    <p style="font-size:14px;color:#888;margin:0;">Tekan ikon ⭐ di halaman sub materi untuk menyimpan</p>
                 </div>
             @endforelse
         </div>
@@ -81,228 +77,70 @@
 </div>
 
 <script>
-    (function() {
-        document.querySelectorAll('.fv-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.fv-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                document.querySelectorAll('.fv-list').forEach(l => l.style.display = 'none');
-                const target = document.getElementById(tab.dataset.target);
-                if (target) target.style.display = '';
+(function() {
+    document.querySelectorAll('.fv-neo-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.fv-neo-tab').forEach(t => {
+                t.style.color = '#888'; t.style.borderBottomColor = 'transparent';
+                t.querySelector('span').style.background = 'rgba(0,0,0,0.05)'; t.querySelector('span').style.color = '#666';
             });
+            tab.style.color = '#121212'; tab.style.borderBottomColor = '#121212';
+            tab.querySelector('span').style.background = '#121212'; tab.querySelector('span').style.color = '#fff';
+            document.querySelectorAll('.fv-neo-list').forEach(l => l.style.display = 'none');
+            const target = document.getElementById(tab.dataset.target);
+            if (target) target.style.display = 'grid';
         });
-    })();
-
-    // ── Search Handler ────────────────────────────────────────────
-    window.__currentSearchHandler = function(query) {
-        document.querySelectorAll('.favorites-item').forEach(card => {
-            const title = card.querySelector('.fv-item__title')?.textContent.toLowerCase() || '';
-            const desc = card.querySelector('.fv-item__meta')?.textContent.toLowerCase() || '';
-            if (title.includes(query) || desc.includes(query)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        if (query !== '') {
-            const firstVisible = Array.from(document.querySelectorAll('.favorites-item')).find(c => c.style.display !== 'none');
-            if (firstVisible) {
-                setTimeout(() => {
-                    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 50);
-            }
-        }
-    };
+    });
+})();
+window.__currentSearchHandler = function(query) {
+    document.querySelectorAll('.favorites-item').forEach(card => {
+        const t = card.querySelector('h4')?.textContent.toLowerCase() || '';
+        const m = card.querySelector('p')?.textContent.toLowerCase() || '';
+        card.style.display = (t.includes(query) || m.includes(query)) ? '' : 'none';
+    });
+};
 </script>
 
 <style>
-    /* ═══ NEO BENTO LIGHT — FAVORITES ═══ */
-    .fv-page {
-        display: flex;
-        justify-content: center;
-        padding: 2rem 24px 6rem;
-        font-family: 'Inter', sans-serif;
-    }
-    .fv-container {
-        width: 100%;
-        max-width: 79em;
-    }
-    .fv-header { margin-bottom: 2rem; }
-    .fv-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: #121212;
-        margin: 0;
-        letter-spacing: -0.5px;
-    }
-    .fv-subtitle {
-        font-size: 15px;
-        color: #666;
-        margin: 4px 0 0;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-    /* Tabs */
-    .fv-tabs {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 1.5rem;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        padding-bottom: 0;
-    }
-    .fv-tab {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 0;
-        border: none;
-        background: none;
-        color: #888;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -1px;
-        transition: color 0.2s, border-color 0.2s;
-    }
-    .fv-tab:hover { color: #121212; }
-    .fv-tab.active {
-        color: #121212;
-        border-bottom-color: #121212;
-    }
-    .fv-tab i { font-size: 18px; }
-    .fv-count {
-        font-size: 11px;
-        font-weight: 700;
-        background: rgba(0,0,0,0.05);
-        color: #666;
-        padding: 2px 8px;
-        border-radius: 12px;
-    }
-    .fv-tab.active .fv-count {
-        background: #121212;
-        color: #fff;
-    }
+:root {
+    --neo-bg: #ececec;
+    --neo-card-light: #e5e5e5;
+    --neo-radius: 32px;
+    --neo-text-dark: #121212;
+}
 
-    /* List */
-    .fv-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
+body { background-color: var(--neo-bg) !important; }
 
-    @media (max-width: 768px) {
-        .fv-list {
-            grid-template-columns: 1fr;
-        }
-    }
+.neo-dashboard {
+    background-color: var(--neo-bg);
+    color: var(--neo-text-dark);
+    font-family: 'Inter', sans-serif;
+    padding: 32px 0;
+    min-height: 100vh;
+    width: 100%;
+}
+.neo-bento-container { max-width: 1400px; margin: 0 auto; width: 100%; }
+.neo-title { font-size: 24px; font-weight: 600; margin: 0; line-height: 1.25; letter-spacing: -0.03em; }
+.neo-card {
+    border-radius: var(--neo-radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+    box-sizing: border-box;
+}
+.neo-card:hover { transform: translateY(-4px); }
+.neo-card-light { background: var(--neo-card-light); color: var(--neo-text-dark); }
+.neo-arrow {
+    font-size: 32px; font-weight: 400; line-height: 1;
+    transition: transform 0.2s; margin-top: -4px;
+}
+.neo-card:hover .neo-arrow { transform: translate(2px, -2px); }
 
-    /* Item Card */
-    .fv-item {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        padding: 16px;
-        border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 20px;
-        text-decoration: none;
-        background: #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        transition: all 0.2s ease;
-    }
-    .fv-item:hover {
-        transform: translateY(-2px);
-        border-color: rgba(0,0,0,0.08);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    }
-
-    .fv-item__left {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        min-width: 0;
-        flex: 1;
-        padding: 4px;
-    }
-    .fv-item__dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        margin-top: 5px;
-    }
-    .fv-item__title {
-        font-size: 15px;
-        font-weight: 700;
-        color: #121212;
-        margin: 0;
-        text-transform: capitalize;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .fv-item__meta {
-        font-size: 13px;
-        color: #888;
-        font-weight: 500;
-        margin: 4px 0 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .fv-item__right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-    }
-    .fv-item__arrow {
-        font-size: 20px;
-        color: #d4d4d8;
-        transition: all 0.2s;
-    }
-    .fv-item:hover .fv-item__arrow {
-        transform: translateX(2px);
-        color: #121212;
-    }
-
-    /* Empty */
-    .fv-empty {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 4rem 1rem;
-        text-align: center;
-        grid-column: 1 / -1;
-    }
-    .fv-empty__icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 16px;
-        background: #fff;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-    .fv-empty__icon i {
-        font-size: 28px;
-        color: #d4d4d8;
-    }
-    .fv-empty__text {
-        font-size: 16px;
-        font-weight: 700;
-        color: #121212;
-        margin: 0 0 4px;
-    }
-    .fv-empty__hint {
-        font-size: 14px;
-        color: #888;
-        font-weight: 500;
-        margin: 0;
-    }
+@media (max-width: 768px) {
+    .neo-dashboard { padding: 24px 16px; }
+    .fv-neo-list { grid-template-columns: 1fr !important; }
+}
 </style>

@@ -6,7 +6,7 @@
 
     <div id="spa-content">
         <div class="loading-page">
-            <i class='bx bx-loader-alt bx-spin' style='font-size: 2.5em;'></i>
+            <div class="loading-spinner"></div>
             <p>Memuat…</p>
         </div>
     </div>
@@ -88,6 +88,19 @@
 
         .loading-page i {
             color: #f3ebd7 !important;
+        }
+
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(243, 235, 215, 0.15);
+            border-top-color: #f3ebd7;
+            border-radius: 50%;
+            animation: spinRotate 0.7s linear infinite;
+        }
+
+        @keyframes spinRotate {
+            to { transform: rotate(360deg); }
         }
 
         /* Offline overlay */

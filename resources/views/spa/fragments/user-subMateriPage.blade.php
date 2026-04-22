@@ -1,181 +1,223 @@
-<div class="container container-header headerbar">
-    <header class="main-header-materi">
-        <div class="tittle-header-materi">
-            <div>
-                <h4>{{ $firstMateri->title ?? '-' }}</h4>
-                <h5>buat apa belajar materi ini...</h5>
+{{-- ═══════════════════════════════════════════════════════════════
+SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
+═══════════════════════════════════════════════════════════════ --}}
+@php $subMateris = $subMateris ?? []; @endphp
+
+<div class="neo-dashboard rtd-dashboard">
+    <div class="neo-bento-container">
+
+        {{-- Back --}}
+        <a href="?page=materi&main_id={{ $firstMateri->main_materi_id ?? '' }}" class="link-spa"
+            style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;"
+            onmouseover="this.style.color='#121212'" onmouseout="this.style.color='#888'">
+            <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke
+            {{ $firstMateri->mainMateri->title ?? 'Materi' }}
+        </a>
+
+        {{-- Hero Header --}}
+        <div class="neo-card"
+            style="min-height:180px;background:#121212;color:#fff;padding:40px;display:flex;align-items:center;margin-bottom:32px;position:relative;overflow:hidden;">
+            <div style="position:absolute;right:0;top:0;width:40%;height:100%;pointer-events:none;z-index:1;">
+                <img src="{{ asset('assets/ico/img001thumb03.jpg') }}" alt=""
+                    style="width:100%;height:100%;object-fit:contain;opacity:0.15;filter:grayscale(100%);">
+            </div>
+            <div style="position:relative;z-index:2;width:100%;">
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+                    <span class="neo-pill"
+                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ $firstMateri->mainMateri->title ?? 'Main' }}</span>
+                    <span class="neo-pill"
+                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ $firstMateri->title ?? 'Bab' }}</span>
+                    <span class="neo-pill"
+                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ count($subMateris) }} Sub
+                        Materi</span>
+                </div>
+                <h3
+                    style="font-size:clamp(28px,3.5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin:0 0 8px;">
+                    {{ $firstMateri->title ?? 'Sub Materi' }}
+                </h3>
+                <p style="font-size:15px;color:#888;margin:0;">Gass pelajari semuanya! Kayaknya seru nih 🚀</p>
             </div>
         </div>
-        <div class="thumb-header-materi">
-            <img src="{{ asset('assets/ico/img005.png') }}" alt="Thumbnail" />
-        </div>
-    </header>
-</div>
-<div class="tittle-submateri">
-    <div>
-        <h4>gass pelajari semuanya!!</h4>
-        <h5>kayaknya seru nih</h5>
-    </div>
-</div>
-@php
-    $subMateris = $subMateris ?? [];
-@endphp
-<div class="container-submateri">
-    <main class="main-submateri">
-        <div class="wrapper-submateri">
-            @foreach ($subMateris as $subMateri)
-                <section class="box-submateri {{ in_array($subMateri->id, $completed ?? []) ? 'completed' : '' }}">
-                    <div class="archive-submateri">
-                        <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star active' : 'bx-star' }} archive-btn"
-                            data-id="{{ $subMateri->id }}" data-type="sub">
-                        </i>
-                    </div>
-                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa">
-                        <div class="cover-submateri">
-                            <div class="desc-submateri sub">
-                                <h6>completed</h6>
-                                <h4>{{ $subMateri->title }}</h4>
-                                <h5>{{ $subMateri->content }}</h5>
+
+        {{-- Sub Materi List --}}
+        <div style="margin-bottom:32px;">
+            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Daftar Sub Materi</h3>
+            <p style="font-size:16px;color:#555;margin:0 0 24px;">Pelajari setiap topik secara mendalam.</p>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                @foreach ($subMateris as $i => $subMateri)
+                    @php $isDone = in_array($subMateri->id, $completed ?? []); @endphp
+                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa"
+                        style="text-decoration:none;display:block;">
+                        <div class="neo-card neo-card-light sub-card-item"
+                            style="padding:24px 32px;flex-direction:row;align-items:center;gap:20px;{{ $isDone ? 'border:2px solid rgba(16,185,129,0.4);' : '' }}">
+                            {{-- Number --}}
+                            <div
+                                style="width:40px;height:40px;border-radius:12px;background:{{ $isDone ? '#ecfdf5' : 'rgba(0,0,0,0.06)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                @if($isDone)
+                                    <i class='bx bx-check' style="font-size:20px;color:#10b981;"></i>
+                                @else
+                                    <span style="font-size:16px;font-weight:800;color:#888;">{{ $i + 1 }}</span>
+                                @endif
+                            </div>
+
+                            {{-- Content --}}
+                            <div style="flex:1;min-width:0;">
+                                <h4
+                                    style="margin:0 0 4px;font-size:16px;font-weight:700;color:#121212;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
+                                    {{ $subMateri->title }}</h4>
+                                <p
+                                    style="margin:0;font-size:13px;color:#888;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    {{ Str::limit(strip_tags($subMateri->content), 100) }}
+                                </p>
+                            </div>
+
+                            {{-- Actions --}}
+                            <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+                                <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star' : 'bx-star' }} archive-btn"
+                                    data-id="{{ $subMateri->id }}" data-type="sub"
+                                    style="font-size:20px;color:{{ in_array($subMateri->id, $arsipSub ?? []) ? '#f59e0b' : '#ccc' }};cursor:pointer;z-index:5;"
+                                    onclick="event.preventDefault();event.stopPropagation();"></i>
+                                <span class="neo-arrow" style="font-size:24px;">&#x2197;</span>
                             </div>
                         </div>
                     </a>
-                    <div class="thumb-submateri">
-                        <div class="thumb-cover-submateri"></div>
-                        <img src="{{ asset('assets/img/img001non.jpg') }}" alt="">
-                    </div>
-                </section>
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    </main>
+
+    </div>
 </div>
 
 <script>
-    // ── Search Handler ────────────────────────────────────────────
-    window.__currentSearchHandler = function(query) {
-        document.querySelectorAll('.box-submateri').forEach(card => {
-            const title = card.querySelector('.desc-submateri h4')?.textContent.toLowerCase() || '';
-            const desc = card.querySelector('.desc-submateri h5')?.textContent.toLowerCase() || '';
-            if (title.includes(query) || desc.includes(query)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+    window.__currentSearchHandler = function (query) {
+        document.querySelectorAll('.sub-card-item').forEach(card => {
+            const a = card.closest('a');
+            const title = card.querySelector('h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query)) { if (a) a.style.display = ''; }
+            else { if (a) a.style.display = 'none'; }
         });
-
         if (query !== '') {
-            const firstVisible = Array.from(document.querySelectorAll('.box-submateri')).find(c => c.style.display !== 'none');
-            if (firstVisible) {
-                setTimeout(() => {
-                    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 50);
-            }
+            const first = Array.from(document.querySelectorAll('.sub-card-item')).find(c => {
+                const a = c.closest('a'); return a ? a.style.display !== 'none' : true;
+            });
+            if (first) setTimeout(() => first.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
         }
     };
 </script>
 
 <style>
-/* ═══ ROTOOD DARK — SUB MATERI PAGE ═══ */
-.container-header.headerbar {
-    background: #111 !important;
-    border: 1px solid #1a1a1a !important;
-    border-radius: 28px !important;
-    margin: 1rem 24px !important;
-}
-.main-header-materi { background: transparent !important; }
-.tittle-header-materi div h4 { color: #eee !important; }
-.tittle-header-materi div h5 { color: #666 !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.tittle-submateri { padding: 1rem 24px 0 !important; }
-.tittle-submateri div h4 { color: #eee !important; font-size: 18px !important; font-weight: 700 !important; }
-.tittle-submateri div h5 { color: #666 !important; }
+    :root {
+        --neo-bg: #ececec;
+        --neo-card-light: #e5e5e5;
+        --neo-radius: 32px;
+        --neo-text-dark: #121212;
+    }
 
-.container-submateri { padding: 0 24px !important; }
-.box-submateri {
-    background: #111 !important;
-    border: 1px solid #1a1a1a !important;
-    border-radius: 28px !important;
-}
-.box-submateri:hover { border-color: #333 !important; }
-.box-submateri.completed { border-color: #1a3a1a !important; }
-.desc-submateri h4 { color: #eee !important; }
-.desc-submateri h5, .desc-submateri h6 { color: #666 !important; }
-.thumb-submateri { border-radius: 20px !important; overflow: hidden !important; }
-.thumb-cover-submateri { background: linear-gradient(to right, #111, transparent) !important; }
-.archive-submateri i { color: #555 !important; }
-.archive-submateri i.active { color: #f59e0b !important; }
-</style>{{--
-@php
-    $subMateris = $subMateris ?? [];
-    $arsipSub = $arsipSub ?? [];
-@endphp
-<div class="page-submateri container container-header headerbar">
-    <header class="main-header-materi">
-        <div class="tittle-header-materi">
-            <div>
-                <h4>{{ $materi->title }}</h4>
-                <h5>buat apa belajar materi ini...</h5>
-            </div>
-        </div>
-        <div class="thumb-header-materi">
-            <img src="{{ asset('assets/ico/img005.png') }}" alt="Thumbnail" />
-        </div>
-    </header>
-</div>
+    body {
+        background-color: var(--neo-bg) !important;
+    }
 
-<div class="container container-show-materi">
-    <main class="main-show-materi">
+    .neo-dashboard {
+        background-color: var(--neo-bg);
+        color: var(--neo-text-dark);
+        font-family: 'Inter', sans-serif;
+        padding: 32px 0;
+        min-height: 100vh;
+        width: 100%;
+    }
 
-        <div class="tittle-show-materi">
-            <h4>about {{ $materi->title }}</h4>
-            <h5>{{ $materi->description }}</h5>
-        </div>
+    .neo-bento-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+    }
 
-        <div class="wrapper-show-materi">
+    .neo-card {
+        border-radius: var(--neo-radius);
+        padding: 32px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
 
-            @foreach ($subMateris as $subMateri)
-                <div>
-                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa">
-                        <figure
-                            class="box-show-materi-thumb {{ in_array($subMateri->id, $completed ?? []) ? 'completed' : '' }}">
-                            <div class="dis-flex">
-                                <div class="subtittle-show-materi-thumb">
-                                    <div class="subtittle-show-materi-thumb-img">
-                                        <img class="wid-full" src="{{ asset('assets/ico/adminUser.jpg') }}"
-                                            alt="" />
-                                        <img class="wid-full" src="{{ asset('assets/ico/adminUser.jpg') }}"
-                                            alt="" />
-                                    </div>
-                                    <div>
-                                        <h5>{{ $materi->title }}</h5>
-                                        <h3 class="bold-55 txt-cap">{{ $subMateri->title }}</h3>
-                                    </div>
-                                </div>
-                                <div class="thum-show-materi-thumb dis-flex">
-                                    <img class="wid-full" src="{{ asset('assets/ico/adminUser.jpg') }}"
-                                        alt="" />
-                                </div>
-                            </div>
-                        </figure>
-                    </a>
-                    <div class="box-show-materi">
-                        <div>
-                            <div class="icon-show-materi">
-                                <i class='bx bx-code'></i>
-                            </div>
-                            <div class="desc-show-materi">
-                                <h5>{{ Str::limit(strip_tags($subMateri->content), 80) }}</h5>
-                            </div>
-                            <div>
-                                <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star active' : 'bx-star' }} archive-btn"
-                                    data-id="{{ $subMateri->id }}" data-type="sub">
-                                </i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+    .neo-card:hover {
+        transform: translateY(-4px);
+    }
 
-        </div>
+    .neo-card-light {
+        background: var(--neo-card-light);
+        color: var(--neo-text-dark);
+    }
 
-    </main>
-</div> --}}
+    .neo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+    }
+
+    .neo-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.25;
+        letter-spacing: -0.03em;
+    }
+
+    .neo-arrow {
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1;
+        transition: transform 0.2s;
+        margin-top: -4px;
+    }
+
+    .neo-card:hover .neo-arrow {
+        transform: translate(2px, -2px);
+    }
+
+    .neo-pill {
+        background: transparent;
+        color: var(--neo-text-dark);
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .neo-desc {
+        font-size: 15px;
+        color: #555;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .sub-card-item {
+        cursor: pointer;
+    }
+
+    @media (max-width:768px) {
+        .neo-dashboard {
+            padding: 24px 16px;
+        }
+
+        .neo-card {
+            padding: 24px;
+        }
+
+        .sub-card-item {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+    }
+</style>

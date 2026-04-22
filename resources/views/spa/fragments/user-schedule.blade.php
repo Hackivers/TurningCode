@@ -1,70 +1,69 @@
-<div class="title-example">
-    <div>
-        <h4>Jadwal mu hari ini apa?</h4>
-        <h5>kapan kamu terakhir berlajar</h5>
+<div class="neo-dashboard rtd-dashboard">
+<div class="neo-bento-container">
+
+<a href="?page=dashboard" class="link-spa" data-page="dashboard" style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='#121212'" onmouseout="this.style.color='#888'">
+    <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
+</a>
+
+<div style="margin-bottom:32px;">
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Jadwal Belajar</h3>
+    <p style="font-size:16px;color:#555;margin:0;">Kelola jadwal belajar harian, mingguan, dan kustom.</p>
+</div>
+
+{{-- Hari Ini --}}
+<div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-sun' style="font-size:20px;color:#121212;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Hari Ini</h4>
+        <span class="neo-pill" style="padding:2px 12px;font-size:12px;" id="today-count">{{ $today->count() }}</span>
+    </div>
+    <div class="schedule-list" id="today-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+        @forelse ($today as $s)
+            @include('spa.fragments.partials.schedule-card', ['s' => $s])
+        @empty
+            <div class="neo-card neo-card-light" style="grid-column:1/-1;text-align:center;padding:40px;"><p style="color:#888;font-size:14px;font-weight:600;margin:0;">Tidak ada jadwal hari ini 😴</p></div>
+        @endforelse
     </div>
 </div>
-<div class="container-schedule">
-    <main class="main-schedule">
-        <div class="wrapper-schedule">
-            <div class="schedule-section">
-                <div class="schedule-section-title">
-                    <i class='bx bx-sun'></i>
-                    <h5>hari ini</h5>
-                    <span class="badge-count" id="today-count">{{ $today->count() }}</span>
-                </div>
-                <div class="schedule-list" id="today-list">
-                    @forelse ($today as $s)
-                        @include('spa.fragments.partials.schedule-card', ['s' => $s])
-                    @empty
-                        <div class="schedule-empty">
-                            <p>Tidak ada jadwal hari ini 😴</p>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
 
-            {{-- Jadwal Mendatang --}}
-            @if ($upcoming->count())
-                <div class="schedule-section">
-                    <div class="schedule-section-title">
-                        <i class='bx bx-calendar-event'></i>
-                        <h5>mendatang</h5>
-                        <span class="badge-count">{{ $upcoming->count() }}</span>
-                    </div>
-                    <div class="schedule-list">
-                        @foreach ($upcoming as $s)
-                            @include('spa.fragments.partials.schedule-card', ['s' => $s])
-                        @endforeach
-                    </div>
-                </div>
-            @endif
+{{-- Mendatang --}}
+@if ($upcoming->count())
+<div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-calendar-event' style="font-size:20px;color:#121212;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Mendatang</h4>
+        <span class="neo-pill" style="padding:2px 12px;font-size:12px;">{{ $upcoming->count() }}</span>
+    </div>
+    <div class="schedule-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+        @foreach ($upcoming as $s)
+            @include('spa.fragments.partials.schedule-card', ['s' => $s])
+        @endforeach
+    </div>
+</div>
+@endif
 
-            {{-- Semua Jadwal --}}
-            <div class="schedule-section">
-                <div class="schedule-section-title">
-                    <i class='bx bx-list-ul'></i>
-                    <h5>semua jadwal</h5>
-                    <span class="badge-count">{{ $schedules->count() }}</span>
-                </div>
-                <div class="schedule-list" id="all-list">
-                    @forelse ($schedules as $s)
-                        @include('spa.fragments.partials.schedule-card', ['s' => $s])
-                    @empty
-                        <div class="schedule-empty">
-                            <p>Belum ada jadwal. Yok buat jadwal pertama!</p>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
+{{-- Semua --}}
+<div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-list-ul' style="font-size:20px;color:#121212;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Semua Jadwal</h4>
+        <span class="neo-pill" style="padding:2px 12px;font-size:12px;">{{ $schedules->count() }}</span>
+    </div>
+    <div class="schedule-list" id="all-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+        @forelse ($schedules as $s)
+            @include('spa.fragments.partials.schedule-card', ['s' => $s])
+        @empty
+            <div class="neo-card neo-card-light" style="grid-column:1/-1;text-align:center;padding:40px;"><p style="color:#888;font-size:14px;font-weight:600;margin:0;">Belum ada jadwal. Yok buat jadwal pertama!</p></div>
+        @endforelse
+    </div>
+</div>
 
-        </div>
-    </main>
+{{-- FAB --}}
+<button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal" style="position:fixed;bottom:90px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:#121212;color:#fff;border:none;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s;">
+    <i class='bx bx-plus'></i>
+</button>
 
-    {{-- Tombol Tambah Jadwal (FAB) --}}
-    <button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal">
-        <i class='bx bx-plus'></i>
-    </button>
+</div>
 </div>
 
 {{-- Modal Form Tambah/Edit --}}
@@ -444,103 +443,80 @@
 </script>
 
 <style>
-/* ═══ NEO BENTO LIGHT — SCHEDULE PAGE ═══ */
-.title-example { display: none !important; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.container-schedule {
-    display: flex;
-    justify-content: center;
-    padding: 0 24px;
-    margin-bottom: 50px;
-    background: transparent;
+:root {
+    --neo-bg: #ececec;
+    --neo-card-light: #e5e5e5;
+    --neo-radius: 32px;
+    --neo-text-dark: #121212;
 }
-.main-schedule {
+
+body { background-color: var(--neo-bg) !important; }
+
+.neo-dashboard {
+    background-color: var(--neo-bg);
+    color: var(--neo-text-dark);
+    font-family: 'Inter', sans-serif;
+    padding: 32px 0;
+    min-height: 100vh;
     width: 100%;
-    max-width: 79em;
 }
-.wrapper-schedule {
+.neo-bento-container { max-width: 1400px; margin: 0 auto; width: 100%; }
+.neo-title { font-size: 24px; font-weight: 600; margin: 0; line-height: 1.25; letter-spacing: -0.03em; }
+.neo-pill {
+    background: transparent;
+    color: var(--neo-text-dark);
+    border: 1px solid rgba(0,0,0,0.3);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.neo-card {
+    border-radius: var(--neo-radius);
+    padding: 32px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    margin-top: 1rem;
+    box-sizing: border-box;
 }
-.schedule-section-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.25rem;
-    font-family: 'Inter', sans-serif;
-}
-.schedule-section-title i {
-    font-size: 20px;
-    color: #121212;
-    background: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-.schedule-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: #121212;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.badge-count {
-    background: #fff;
-    color: #121212;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
+.neo-card-light { background: var(--neo-card-light); color: var(--neo-text-dark); }
 
-.schedule-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-}
+/* ═══ SCHEDULE CARDS ═══ */
+.title-example { display: none !important; }
 
 .fav-sched-card {
-    background: #fff;
+    background: var(--neo-card-light);
     border: 1px solid rgba(0,0,0,0.04);
-    border-radius: 24px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+    border-radius: 28px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative;
-    transition: all 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
     font-family: 'Inter', sans-serif;
 }
 .fav-sched-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0,0,0,0.06);
-    border-color: rgba(0,0,0,0.08);
 }
 .fav-sched-card.inactive {
-    opacity: 0.6;
+    opacity: 0.5;
     filter: grayscale(0.8);
 }
 
 .fsc-content {
-    padding: 20px;
+    padding: 24px;
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
-
 .fsc-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .fsc-badge {
     font-size: 10px;
     font-weight: 800;
@@ -560,8 +536,6 @@
     border-radius: 50%;
     display: inline-block;
 }
-
-.fsc-main { }
 .fsc-title {
     font-size: 17px;
     font-weight: 800;
@@ -576,14 +550,13 @@
     margin: 6px 0 0;
     line-height: 1.4;
 }
-
 .fsc-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
     padding-top: 14px;
-    border-top: 1px solid rgba(0,0,0,0.04);
+    border-top: 1px solid rgba(0,0,0,0.06);
 }
 .fsc-detail-pill {
     display: inline-flex;
@@ -594,7 +567,6 @@
     font-weight: 600;
 }
 .fsc-detail-pill i { font-size: 14px; color: #666; }
-
 .fsc-time {
     display: inline-flex;
     align-items: center;
@@ -603,11 +575,7 @@
     font-weight: 800;
 }
 .fsc-time i { font-size: 15px; }
-
-.fsc-actions {
-    display: flex;
-    gap: 6px;
-}
+.fsc-actions { display: flex; gap: 6px; }
 .fsc-btn {
     display: flex;
     align-items: center;
@@ -615,8 +583,8 @@
     width: 32px;
     height: 32px;
     border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.05);
-    background: #fdfdfd;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.5);
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
@@ -628,57 +596,34 @@
     border-color: #121212;
 }
 .fsc-btn.btn-delete:hover {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(239,68,68,0.1);
     color: #ef4444;
     border-color: transparent;
 }
 
-.schedule-empty {
-    grid-column: 1 / -1;
-    padding: 40px;
-    text-align: center;
-    background: #fff;
-    border-radius: 24px;
-    border: 1px dashed rgba(0,0,0,0.1);
-    color: #888;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* ─── FAB Button ─── */
-.btn-add-schedule {
-    background: #121212 !important;
-    color: #fff !important;
-    border: none !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
-}
-.btn-add-schedule:hover {
-    transform: scale(1.1) !important;
-    background: #000 !important;
-}
-
-/* ─── Modal Light Neo-Bento ─── */
+/* ═══ MODAL ═══ */
 .schedule-modal-overlay {
     background: rgba(0,0,0,0.4) !important;
-    backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(6px) !important;
 }
 .schedule-modal {
-    background: #fff !important;
+    background: #f5f5f5 !important;
     border-radius: 28px !important;
     border: 1px solid rgba(0,0,0,0.05) !important;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
 }
 .schedule-modal .modal-header {
-    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.06) !important;
 }
 .schedule-modal .modal-header h4 {
     color: #121212 !important;
     font-weight: 800 !important;
 }
 .schedule-modal .btn-close-modal {
-    background: rgba(0,0,0,0.03) !important;
+    background: rgba(0,0,0,0.04) !important;
     color: #666 !important;
     border: none !important;
+    border-radius: 50% !important;
 }
 .schedule-modal .btn-close-modal:hover {
     background: #121212 !important;
@@ -696,21 +641,22 @@
 .schedule-modal input[type="date"],
 .schedule-modal input[type="time"],
 .schedule-modal textarea {
-    background: #f9f9f9 !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
+    background: #fff !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
     color: #121212 !important;
     border-radius: 14px !important;
 }
-.schedule-modal input:focus, .schedule-modal textarea:focus {
-    background: #fff !important;
+.schedule-modal input:focus,
+.schedule-modal textarea:focus {
     border-color: #121212 !important;
     box-shadow: 0 0 0 3px rgba(0,0,0,0.05) !important;
 }
 .schedule-modal .type-tab {
-    background: #f9f9f9 !important;
+    background: #fff !important;
     color: #888 !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
     font-weight: 600 !important;
+    border-radius: 12px !important;
 }
 .schedule-modal .type-tab.active {
     background: #121212 !important;
@@ -718,9 +664,9 @@
     border-color: #121212 !important;
 }
 .schedule-modal .day-chip span {
-    background: #f9f9f9 !important;
+    background: #fff !important;
     color: #666 !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
     font-weight: 600 !important;
 }
 .schedule-modal .day-chip input:checked + span {
@@ -730,16 +676,16 @@
 }
 .schedule-modal .color-chip span {
     border: 2px solid transparent !important;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
 }
 .schedule-modal .color-chip.active span {
     border-color: #121212 !important;
-    transform: scale(1.1);
+    transform: scale(1.15);
 }
 .schedule-modal .btn-submit-schedule {
     background: #121212 !important;
     color: #fff !important;
-    border-radius: 14px !important;
+    border-radius: 16px !important;
     font-weight: 700 !important;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
     border: none !important;
@@ -750,8 +696,7 @@
 }
 
 @media (max-width: 768px) {
-    .schedule-list {
-        grid-template-columns: 1fr;
-    }
+    .neo-dashboard { padding: 24px 16px; }
+    .schedule-list { grid-template-columns: 1fr !important; }
 }
 </style>
