@@ -23,16 +23,24 @@
 
                     <!-- Avatar -->
                     <div style="position: relative;">
-                        <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}"
-                            alt="{{ $u->name }}"
-                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); {{ $i === 0 ? 'border: 2px solid #f59e0b;' : '' }}">
+                        <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}">
+                            <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}"
+                                alt="{{ $u->name }}"
+                                style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); {{ $i === 0 ? 'border: 2px solid #f59e0b;' : '' }}; transition: transform 0.2s;"
+                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        </a>
                     </div>
 
                     <!-- Info -->
                     <div style="width: 25%; min-width: 150px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
-                        <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
-                            {{ $u->name }}
-                        </h4>
+                        <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}" style="text-decoration:none; color:inherit;">
+                            <h4 class="{{ $u->isPenguasaSektor() ? 'sovereign-name-leaderboard' : ($u->isElite() ? 'elite-name-leaderboard' : '') }}" style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                @if($u->isPenguasaSektor())
+                                    <i class='bx bxs-crown' style="color:#fbbf24; margin-right:2px; font-size: 14px;"></i>
+                                @endif
+                                {{ $u->name }}
+                            </h4>
+                        </a>
                         <div style="font-size: 13px; color: #555; font-weight: 600; display: flex; align-items: center; gap: 6px;">
                             <span style="color: #f59e0b; font-size: 14px;"><i class='bx bxs-star'></i></span>
                             {{ $u->rank_name ?? 'Beginner' }}
@@ -135,6 +143,23 @@
     @keyframes friendSlideIn {
         from { transform: translateY(20px); opacity: 0; }
         to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .elite-name-leaderboard {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        font-weight: 800 !important;
+    }
+
+    .sovereign-name-leaderboard {
+        background: linear-gradient(135deg, #fbbf24, #d946ef) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.2px;
     }
 </style>
 

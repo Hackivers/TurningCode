@@ -369,7 +369,7 @@ class AdminController extends Controller
                 'status'=> $s->is_published ? 'published' : 'draft',
             ]);
 
-        $items = $reports->merge($recentSubs)
+        $items = collect($reports)->merge(collect($recentSubs))
             ->sortByDesc(fn($i) => $i['time'])
             ->values()
             ->take(10);

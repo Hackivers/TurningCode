@@ -70,95 +70,107 @@
 <div class="schedule-modal-overlay" id="schedule-modal" style="display:none;">
     <div class="schedule-modal">
         <div class="modal-header">
-            <h4 id="modal-title">Buat Jadwal Baru</h4>
-            <button class="btn-close-modal" id="btn-close-modal"><i class='bx bx-x'></i></button>
+            <div class="mh-left">
+                <div class="mh-icon-wrap">
+                    <i class='bx bx-calendar-star'></i>
+                </div>
+                <div class="mh-text">
+                    <h4 id="modal-title">Buat Jadwal</h4>
+                    <p>Atur waktu belajarmu</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" id="btn-close-modal"><i class='bx bx-x'></i></button>
         </div>
         <form id="schedule-form" class="modal-body">
             <input type="hidden" id="edit-id" value="">
 
-            <div class="form-group">
-                <label>Judul</label>
-                <input type="text" id="f-title" name="title" placeholder="contoh: Belajar JavaScript" required>
-            </div>
-
-            <div class="form-group">
-                <label>Deskripsi (opsional)</label>
-                <textarea id="f-desc" name="description" rows="2" placeholder="Catatan tambahan..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Tipe Jadwal</label>
-                <div class="type-tabs" id="type-tabs">
-                    <button type="button" class="type-tab active" data-type="daily">Harian</button>
-                    <button type="button" class="type-tab" data-type="weekly">Mingguan</button>
-                    <button type="button" class="type-tab" data-type="monthly">Bulanan</button>
-                    <button type="button" class="type-tab" data-type="custom">Custom</button>
-                </div>
-            </div>
-
-            {{-- Weekly: hari --}}
-            <div class="form-group type-field" id="field-weekly" style="display:none;">
-                <label>Pilih Hari</label>
-                <div class="day-picker">
-                    @foreach (['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $i => $d)
-                        <label class="day-chip">
-                            <input type="checkbox" name="days_of_week[]" value="{{ $i }}">
-                            <span>{{ $d }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Monthly: tanggal --}}
-            <div class="form-group type-field" id="field-monthly" style="display:none;">
-                <label>Tanggal</label>
-                <input type="number" id="f-dom" name="day_of_month" min="1" max="31" placeholder="1-31">
-            </div>
-
-            {{-- Custom: tanggal spesifik --}}
-            <div class="form-group type-field" id="field-custom" style="display:none;">
-                <label>Pilih Tanggal</label>
-                <input type="date" id="f-date" name="custom_date">
-            </div>
-
-            <div class="form-row">
+            <div class="form-section">
                 <div class="form-group">
-                    <label>Jam Mulai</label>
-                    <input type="time" id="f-start" name="start_time" required>
+                    <label><i class='bx bx-bookmark'></i> Judul Jadwal</label>
+                    <input type="text" id="f-title" name="title" placeholder="contoh: Belajar JavaScript" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Jam Selesai</label>
-                    <input type="time" id="f-end" name="end_time">
+                    <label><i class='bx bx-align-left'></i> Deskripsi <span class="opt-label">(opsional)</span></label>
+                    <textarea id="f-desc" name="description" rows="2" placeholder="Tuliskan catatan tambahan..."></textarea>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Warna</label>
-                <div class="color-picker" id="color-picker">
-                    <label class="color-chip active" style="--c:#6366f1"><input type="radio" name="color"
-                            value="#6366f1" checked><span></span></label>
-                    <label class="color-chip" style="--c:#8b5cf6"><input type="radio" name="color"
-                            value="#8b5cf6"><span></span></label>
-                    <label class="color-chip" style="--c:#ec4899"><input type="radio" name="color"
-                            value="#ec4899"><span></span></label>
-                    <label class="color-chip" style="--c:#f59e0b"><input type="radio" name="color"
-                            value="#f59e0b"><span></span></label>
-                    <label class="color-chip" style="--c:#10b981"><input type="radio" name="color"
-                            value="#10b981"><span></span></label>
-                    <label class="color-chip" style="--c:#3b82f6"><input type="radio" name="color"
-                            value="#3b82f6"><span></span></label>
-                    <label class="color-chip" style="--c:#ef4444"><input type="radio" name="color"
-                            value="#ef4444"><span></span></label>
-                    <label class="color-chip" style="--c:#75bbed"><input type="radio" name="color"
-                            value="#75bbed"><span></span></label>
+            <div class="form-section">
+                <div class="form-group">
+                    <label><i class='bx bx-repeat'></i> Tipe Pengulangan</label>
+                    <div class="type-tabs" id="type-tabs">
+                        <button type="button" class="type-tab active" data-type="daily">Harian</button>
+                        <button type="button" class="type-tab" data-type="weekly">Mingguan</button>
+                        <button type="button" class="type-tab" data-type="monthly">Bulanan</button>
+                        <button type="button" class="type-tab" data-type="custom">Custom</button>
+                    </div>
+                </div>
+
+                {{-- Weekly: hari --}}
+                <div class="form-group type-field" id="field-weekly" style="display:none;">
+                    <label><i class='bx bx-calendar-week'></i> Pilih Hari</label>
+                    <div class="day-picker">
+                        @foreach (['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $i => $d)
+                            <label class="day-chip">
+                                <input type="checkbox" name="days_of_week[]" value="{{ $i }}">
+                                <span>{{ $d }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Monthly: tanggal --}}
+                <div class="form-group type-field" id="field-monthly" style="display:none;">
+                    <label><i class='bx bx-calendar'></i> Tanggal Bulanan</label>
+                    <div class="input-with-icon">
+                        <input type="number" id="f-dom" name="day_of_month" min="1" max="31" placeholder="Pilih tanggal 1-31">
+                    </div>
+                </div>
+
+                {{-- Custom: tanggal spesifik --}}
+                <div class="form-group type-field" id="field-custom" style="display:none;">
+                    <label><i class='bx bx-calendar-event'></i> Tanggal Spesifik</label>
+                    <input type="date" id="f-date" name="custom_date">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class='bx bx-time-five'></i> Jam Mulai</label>
+                        <input type="time" id="f-start" name="start_time" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class='bx bx-time'></i> Jam Selesai</label>
+                        <input type="time" id="f-end" name="end_time">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section" style="border-bottom:none; padding-bottom:0;">
+                <div class="form-group">
+                    <label><i class='bx bx-palette'></i> Label Warna</label>
+                    <div class="color-picker" id="color-picker">
+                        <label class="color-chip active" style="--c:#6366f1"><input type="radio" name="color" value="#6366f1" checked><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#8b5cf6"><input type="radio" name="color" value="#8b5cf6"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#ec4899"><input type="radio" name="color" value="#ec4899"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#f59e0b"><input type="radio" name="color" value="#f59e0b"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#10b981"><input type="radio" name="color" value="#10b981"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#3b82f6"><input type="radio" name="color" value="#3b82f6"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#ef4444"><input type="radio" name="color" value="#ef4444"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                        <label class="color-chip" style="--c:#121212"><input type="radio" name="color" value="#121212"><span class="c-box"><i class='bx bx-check'></i></span></label>
+                    </div>
                 </div>
             </div>
 
             <div id="form-msg" class="form-message" style="display:none;"></div>
 
-            <button type="submit" class="btn-submit-schedule" id="btn-submit">
-                <i class='bx bx-check'></i> Simpan Jadwal
-            </button>
+            <div class="modal-footer">
+                <button type="submit" class="btn-submit-schedule" id="btn-submit">
+                    <i class='bx bx-check-circle'></i> Simpan Jadwal
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -601,98 +613,294 @@ body { background-color: var(--neo-bg) !important; }
     border-color: transparent;
 }
 
-/* ═══ MODAL ═══ */
+/* ═══ PREMIUM MODAL ═══ */
 .schedule-modal-overlay {
-    background: rgba(0,0,0,0.4) !important;
-    backdrop-filter: blur(6px) !important;
+    background: rgba(18, 18, 18, 0.45) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
 }
 .schedule-modal {
-    background: #f5f5f5 !important;
-    border-radius: 28px !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+    background: #ffffff !important;
+    border-radius: 32px !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.06), inset 0 2px 4px rgba(255,255,255,0.8) !important;
+    width: 100%;
+    max-width: 480px !important;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalPop {
+    0% { transform: scale(0.95) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 .schedule-modal .modal-header {
-    border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
 }
-.schedule-modal .modal-header h4 {
+.schedule-modal .mh-left {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.schedule-modal .mh-icon-wrap {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #121212 0%, #2a2a2a 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.schedule-modal .mh-text h4 {
     color: #121212 !important;
     font-weight: 800 !important;
+    font-size: 22px;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+.schedule-modal .mh-text p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0;
+    font-weight: 500;
 }
 .schedule-modal .btn-close-modal {
-    background: rgba(0,0,0,0.04) !important;
-    color: #666 !important;
+    background: #f1f5f9 !important;
+    color: #64748b !important;
     border: none !important;
     border-radius: 50% !important;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .schedule-modal .btn-close-modal:hover {
-    background: #121212 !important;
+    background: #ef4444 !important;
     color: #fff !important;
+    transform: rotate(90deg) scale(1.1);
+}
+.schedule-modal .modal-body {
+    padding: 0 32px 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+.schedule-modal .modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.schedule-modal .modal-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+.schedule-modal .form-section {
+    padding: 24px 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.schedule-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 .schedule-modal label {
-    color: #666 !important;
+    color: #334155 !important;
     font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+.schedule-modal label i {
+    color: #94a3b8;
+    font-size: 16px;
+}
+.schedule-modal .opt-label {
+    color: #94a3b8;
+    font-weight: 500;
+    font-size: 11px;
 }
 .schedule-modal input[type="text"],
 .schedule-modal input[type="number"],
 .schedule-modal input[type="date"],
 .schedule-modal input[type="time"],
 .schedule-modal textarea {
-    background: #fff !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    color: #121212 !important;
-    border-radius: 14px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    border-radius: 16px !important;
+    padding: 14px 16px !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 .schedule-modal input:focus,
 .schedule-modal textarea:focus {
+    background: #fff !important;
     border-color: #121212 !important;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 0 0 4px rgba(18, 18, 18, 0.05) !important;
+    outline: none;
+}
+.schedule-modal textarea {
+    resize: none;
+}
+.schedule-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.schedule-modal .type-tabs {
+    display: flex;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 6px;
+    border-radius: 16px;
 }
 .schedule-modal .type-tab {
-    background: #fff !important;
-    color: #888 !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    font-weight: 600 !important;
+    background: transparent !important;
+    color: #64748b !important;
+    border: none !important;
+    font-weight: 700 !important;
     border-radius: 12px !important;
+    padding: 10px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    flex: 1;
+    text-align: center;
+}
+.schedule-modal .type-tab:hover {
+    color: #121212 !important;
 }
 .schedule-modal .type-tab.active {
-    background: #121212 !important;
-    color: #fff !important;
-    border-color: #121212 !important;
+    background: #fff !important;
+    color: #121212 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+.schedule-modal .day-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.schedule-modal .day-chip input {
+    display: none;
 }
 .schedule-modal .day-chip span {
-    background: #fff !important;
-    color: #666 !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    font-weight: 600 !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 13px;
+}
+.schedule-modal .day-chip span:hover {
+    border-color: #cbd5e1 !important;
+    background: #f1f5f9 !important;
 }
 .schedule-modal .day-chip input:checked + span {
     background: #121212 !important;
     color: #fff !important;
     border-color: #121212 !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+    transform: translateY(-2px);
 }
-.schedule-modal .color-chip span {
-    border: 2px solid transparent !important;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+.schedule-modal .color-picker {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 4px 0;
 }
-.schedule-modal .color-chip.active span {
-    border-color: #121212 !important;
-    transform: scale(1.15);
+.schedule-modal .color-chip input {
+    display: none;
+}
+.schedule-modal .color-chip .c-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c);
+    color: #fff;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.1);
+}
+.schedule-modal .color-chip .c-box i {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 20px;
+}
+.schedule-modal .color-chip.active .c-box {
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+}
+.schedule-modal .color-chip.active .c-box i {
+    opacity: 1;
+    transform: scale(1);
+}
+.schedule-modal .modal-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0,0,0,0.06);
 }
 .schedule-modal .btn-submit-schedule {
     background: #121212 !important;
     color: #fff !important;
-    border-radius: 16px !important;
-    font-weight: 700 !important;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border-radius: 20px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
     border: none !important;
+    width: 100%;
+    padding: 18px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.schedule-modal .btn-submit-schedule i {
+    font-size: 22px;
 }
 .schedule-modal .btn-submit-schedule:hover {
-    transform: translateY(-2px) !important;
-    opacity: 0.9 !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    background: #2a2a2a !important;
 }
 
 @media (max-width: 768px) {

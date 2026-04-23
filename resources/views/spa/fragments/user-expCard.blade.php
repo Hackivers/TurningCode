@@ -32,12 +32,20 @@
             $mixBlend = 'filter: drop-shadow(0 8px 16px rgba(244, 63, 94, 0.4)) contrast(1.1); transform: scale(1.05);';
             break;
         case 'Penguasa Sektor':
-            $tierStyle = 'border: 2px solid rgba(217, 70, 239, 0.8); box-shadow: 0 12px 40px rgba(217, 70, 239, 0.3); background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(250,232,255,1) 100%);';
-            $pillStyle = 'background: #d946ef; color: #fff; border-color: #d946ef; font-weight: 800; letter-spacing: 0.5px;';
-            $mixBlend = 'filter: drop-shadow(0 10px 20px rgba(217, 70, 239, 0.5)) contrast(1.1); transform: scale(1.1);';
+            $tierStyle = 'border: 2px solid rgba(251, 191, 36, 0.8); box-shadow: 0 12px 40px rgba(251, 191, 36, 0.3); background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,251,235,1) 100%); animation: sovereignPulse 3s infinite alternate;';
+            $pillStyle = 'background: linear-gradient(135deg, #fbbf24, #d946ef); color: #fff; border: none; font-weight: 800; letter-spacing: 0.5px;';
+            $mixBlend = 'filter: drop-shadow(0 10px 20px rgba(251, 191, 36, 0.5)) contrast(1.1); transform: scale(1.1);';
             break;
     }
 @endphp
+
+<style>
+    @keyframes sovereignPulse {
+        0% { border-color: rgba(251, 191, 36, 0.5); box-shadow: 0 12px 30px rgba(251, 191, 36, 0.2); }
+        50% { border-color: rgba(217, 70, 239, 0.8); box-shadow: 0 12px 50px rgba(217, 70, 239, 0.4); }
+        100% { border-color: rgba(251, 191, 36, 0.5); box-shadow: 0 12px 30px rgba(251, 191, 36, 0.2); }
+    }
+</style>
 
 <div class="neo-card neo-card-light" style="height: 100%; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s; {{ $tierStyle }}" onmouseover="this.style.transform='translateY(-4px)'; {{ $rank == 'Penguasa Sektor' ? 'this.style.boxShadow=\'0 16px 48px rgba(217, 70, 239, 0.4)\';' : '' }}" onmouseout="this.style.transform=''; {{ $rank == 'Penguasa Sektor' ? 'this.style.boxShadow=\'0 12px 40px rgba(217, 70, 239, 0.3)\';' : '' }}">
     <div class="neo-header">

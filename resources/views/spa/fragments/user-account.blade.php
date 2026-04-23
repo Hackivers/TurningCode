@@ -19,7 +19,7 @@
                 <span class="neo-arrow">&#x2197;</span>
             </div>
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px 0;">
-                <div class="acc-avatar-wrap" id="btn-open-edit-profile" style="cursor:pointer;">
+                <div class="acc-avatar-wrap {{ $user->isPenguasaSektor() ? 'sovereign-aura-lg' : ($user->isElite() ? 'elite-aura-lg' : '') }}" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="openImageViewer()">
                     @if($user->avatar)
                         <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" id="profile-cover-img" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid rgba(0,0,0,0.08);">
                     @else
@@ -29,7 +29,7 @@
                     @endif
                 </div>
                 <div style="text-align:center;">
-                    <h4 id="display-name" style="margin:0 0 4px;font-size:20px;font-weight:700;color:#121212;">{{ $user->name }}</h4>
+                    <h4 id="display-name" class="{{ $user->isPenguasaSektor() ? 'sovereign-name-lg' : ($user->isElite() ? 'elite-name-lg' : '') }}" style="margin:0 0 4px;font-size:20px;font-weight:700;color:#121212;">{{ $user->name }}</h4>
                     <p id="display-email" style="margin:0;font-size:13px;color:#888;">{{ $user->email }}</p>
                 </div>
             </div>
@@ -208,11 +208,13 @@
                     @foreach($friends as $friend)
                     <div class="friend-item" data-friend-id="{{ $friend->id }}" style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.5);border-radius:16px;border:1px solid rgba(0,0,0,0.04);transition:all 0.3s;">
                         <div style="display:flex;align-items:center;gap:12px;">
-                            <img src="{{ $friend->avatar ? asset('storage/'.$friend->avatar) : asset('assets/ico/'.($friend->emblem_image ?? 'default-user.jpg')) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
-                            <div>
-                                <div style="font-weight:600;font-size:14px;color:#121212;">{{ $friend->name }}</div>
-                                <div style="font-size:12px;color:#888;">{{ $friend->rank_name }}</div>
-                            </div>
+                            <a href="?page=profile&id={{ $friend->id }}" class="link-spa" data-page="profile&id={{ $friend->id }}" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                                <img src="{{ $friend->avatar ? asset('storage/'.$friend->avatar) : asset('assets/ico/'.($friend->emblem_image ?? 'default-user.jpg')) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                                <div>
+                                    <div style="font-weight:600;font-size:14px;color:#121212;">{{ $friend->name }}</div>
+                                    <div style="font-size:12px;color:#888;">{{ $friend->rank_name }}</div>
+                                </div>
+                            </a>
                         </div>
                         <button class="btn-remove-friend" data-url="{{ route('user.friend.remove', $friend->id) }}" style="padding:6px 10px;font-size:12px;background:transparent;border:1px solid rgba(0,0,0,0.1);color:#888;border-radius:10px;cursor:pointer;transition:all 0.2s;"><i class='bx bx-user-minus'></i> Hapus</button>
                     </div>
@@ -237,6 +239,59 @@
 
 </div>
 </div>
+
+{{-- ── IMAGE VIEWER MODAL ────────────────────────────────────────── --}}
+<div id="image-viewer-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease;">
+    <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1)';">
+        <i class='bx bx-x' style="font-size: 28px;"></i>
+    </button>
+    <img id="image-viewer-img" src="" alt="Profile Image" style="max-width: 90%; max-height: 90vh; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+</div>
+
+<script>
+    window.openImageViewer = function() {
+        const imgModal = document.getElementById('image-viewer-modal');
+        const imgViewer = document.getElementById('image-viewer-img');
+        const coverImg = document.getElementById('profile-cover-img');
+        if (coverImg && imgModal && imgViewer) {
+            imgViewer.src = coverImg.src;
+            imgModal.style.display = 'flex';
+            // Trigger reflow
+            void imgModal.offsetWidth;
+            imgModal.style.opacity = '1';
+            imgViewer.style.transform = 'scale(1)';
+        }
+    };
+
+    window.closeImageViewer = function() {
+        const imgModal = document.getElementById('image-viewer-modal');
+        const imgViewer = document.getElementById('image-viewer-img');
+        if (imgModal && imgViewer) {
+            imgModal.style.opacity = '0';
+            imgViewer.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                imgModal.style.display = 'none';
+            }, 300);
+        }
+    };
+
+    if (!window._imgViewerEventsBound) {
+        document.addEventListener('click', function(e) {
+            const imgModal = document.getElementById('image-viewer-modal');
+            if (imgModal && e.target === imgModal) {
+                window.closeImageViewer();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            const imgModal = document.getElementById('image-viewer-modal');
+            if (e.key === 'Escape' && imgModal && imgModal.style.display === 'flex') {
+                window.closeImageViewer();
+            }
+        });
+        window._imgViewerEventsBound = true;
+    }
+</script>
 
 {{-- ═══════════════════════════════════════════════════════════════
  EDIT PROFILE MODAL

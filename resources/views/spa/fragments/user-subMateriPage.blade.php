@@ -77,7 +77,7 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
                                 <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star' : 'bx-star' }} archive-btn"
                                     data-id="{{ $subMateri->id }}" data-type="sub"
                                     style="font-size:20px;color:{{ in_array($subMateri->id, $arsipSub ?? []) ? '#f59e0b' : '#ccc' }};cursor:pointer;z-index:5;"
-                                    onclick="event.preventDefault();event.stopPropagation();"></i>
+                                    onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
                                 <span class="neo-arrow" style="font-size:24px;">&#x2197;</span>
                             </div>
                         </div>

@@ -44,6 +44,30 @@ window.previewAvatar = function(event) {
     }
 };
 
+window.triggerExcelImport = function() {
+    const subMateriSelect = document.getElementById('q-submateri-select');
+    if (!subMateriSelect || !subMateriSelect.value) {
+        alert('Silakan pilih Sub Materi terlebih dahulu sebelum import soal.');
+        return;
+    }
+    document.getElementById('import_sub_materi_id').value = subMateriSelect.value;
+    document.getElementById('import_excel_file').click();
+};
+
+window.submitImportExcel = function() {
+    const fileInput = document.getElementById('import_excel_file');
+    if (fileInput.files.length > 0) {
+        document.getElementById('form-import-excel').submit();
+        
+        // Show loading state
+        const btn = document.querySelector('button[onclick="triggerExcelImport()"]') || document.querySelector('button[onclick="window.triggerExcelImport()"]');
+        if (btn) {
+            btn.innerHTML = `<svg class="h-3.5 w-3.5 text-emerald-600 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700">Mengunggah...</span>`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+        }
+    }
+};
+
 function setupMateriFormRows(container) {
     const wrap = container.querySelector('#materi-rows');
     const btn = container.querySelector('#btn-add-materi-row');

@@ -25,8 +25,9 @@ $tiers = [
             @php
                 // Check if user is currently at this tier
                 $isCurrentTier = auth()->user() && auth()->user()->rank_name === $tier['name'];
+                $isSovereign = $tier['name'] === 'Penguasa Sektor';
             @endphp
-            <div class="tier-card {{ $isCurrentTier ? 'current-tier' : '' }}">
+            <div class="tier-card {{ $isCurrentTier ? 'current-tier' : '' }} {{ $isSovereign ? 'tier-card-sovereign' : '' }}">
                 <div class="tier-number">#{{ $index + 1 }}</div>
                 @if($isCurrentTier)
                     <div class="current-badge">Kamu di sini</div>
@@ -141,5 +142,66 @@ $tiers = [
         color: #555;
         font-weight: 600;
         margin-top: 4px;
+    }
+    
+    /* Sovereign Card Special Styling */
+    .tier-card-sovereign {
+        background: linear-gradient(135deg, #1f1f1f, #121212);
+        position: relative;
+    }
+    
+    .tier-card-sovereign::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 22px;
+        padding: 2px;
+        background: linear-gradient(135deg, #fbbf24, #d946ef, #fbbf24);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        animation: sovereignBorderRotate 4s linear infinite;
+    }
+    
+    .tier-card-sovereign .tier-name {
+        background: linear-gradient(135deg, #fbbf24, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+    }
+    
+    .tier-card-sovereign .tier-exp {
+        color: #a1a1aa;
+    }
+    
+    .tier-card-sovereign .tier-number {
+        color: #fbbf24;
+    }
+    
+    .tier-card-sovereign .tier-icon {
+        filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6));
+        animation: sovereignIconPulse 2s ease-in-out infinite alternate;
+    }
+    
+    .tier-card-sovereign:hover {
+        background: linear-gradient(135deg, #262626, #1a1a1a);
+        box-shadow: 0 16px 32px rgba(251, 191, 36, 0.2);
+    }
+    
+    .tier-card-sovereign.current-tier {
+        background: linear-gradient(135deg, #262626, #1a1a1a);
+        box-shadow: 0 8px 16px rgba(251, 191, 36, 0.15);
+    }
+    
+    @keyframes sovereignBorderRotate {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+    
+    @keyframes sovereignIconPulse {
+        0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
+        100% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8)); }
     }
 </style>

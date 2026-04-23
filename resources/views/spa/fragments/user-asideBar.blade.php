@@ -32,15 +32,31 @@
                 <i class="bx bx-history neo-nav-icon"></i>
                 <span>Riwayat</span>
             </a>
+
+            <div class="neo-nav-divider"></div>
+
+            <a href="#" data-spa-page="secret-lab" class="neo-nav-link neo-nav-elite {{ $user->isElite() ? 'elite-unlocked' : 'elite-locked' }}">
+                <i class="bx {{ $user->isElite() ? 'bxs-flask' : 'bx-lock-alt' }} neo-nav-icon"></i>
+                <span>Secret Lab</span>
+                @if($user->isElite())
+                    <span class="neo-elite-badge">ELITE</span>
+                @else
+                    <span class="neo-lock-badge"><i class='bx bx-lock-alt'></i></span>
+                @endif
+            </a>
         </nav>
 
         <!-- Minimal footer actions -->
         <div class="neo-aside-footer">
             <div class="neo-profile-module" data-spa-page="account" title="Buka Profil">
-                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}" alt="Profile" class="neo-profile-img">
+                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}" alt="Profile" class="neo-profile-img {{ $user->isPenguasaSektor() ? 'sovereign-aura-sm' : ($user->isElite() ? 'elite-aura-sm' : '') }}">
                 <div class="neo-profile-meta">
-                    <span class="neo-profile-name">{{ $user->name }}</span>
-                    <span class="neo-profile-role">{{ explode('@', $user->email)[0] }}</span>
+                    <span class="neo-profile-name {{ $user->isPenguasaSektor() ? 'sovereign-name' : ($user->isElite() ? 'elite-name' : '') }}">{{ $user->name }}</span>
+                    @if($user->isPenguasaSektor())
+                        <span class="sovereign-title">Sovereign</span>
+                    @else
+                        <span class="neo-profile-role">{{ explode('@', $user->email)[0] }}</span>
+                    @endif
                 </div>
                 <i class='bx bx-chevron-right' style="color: #aaa; margin-left: auto;"></i>
             </div>
@@ -252,5 +268,113 @@
 
     .neo-logout-btn i {
         font-size: 18px;
+    }
+
+    /* ═══ SECRET LAB SIDEBAR ═══ */
+    .neo-nav-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06), transparent);
+        margin: 8px 14px;
+    }
+
+    .neo-nav-elite {
+        position: relative;
+    }
+
+    .neo-nav-elite.elite-unlocked {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(236, 72, 153, 0.06));
+        border: 1px solid rgba(139, 92, 246, 0.08);
+    }
+
+    .neo-nav-elite.elite-unlocked:hover {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12));
+        border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .neo-nav-elite.elite-unlocked .neo-nav-icon {
+        color: #8b5cf6;
+    }
+
+    .neo-nav-elite.elite-unlocked span:first-of-type {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+    }
+
+    .neo-elite-badge {
+        font-size: 8px !important;
+        font-weight: 800 !important;
+        letter-spacing: 1.5px;
+        padding: 3px 8px;
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+        border-radius: 6px;
+        margin-left: auto;
+        animation: elitePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes elitePulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .neo-nav-elite.elite-locked {
+        opacity: 0.45;
+    }
+
+    .neo-nav-elite.elite-locked:hover {
+        opacity: 0.6;
+    }
+
+    .neo-lock-badge {
+        margin-left: auto;
+        font-size: 14px;
+        color: #94a3b8;
+    }
+
+    /* ═══ SIDEBAR ELITE AURA ═══ */
+    .neo-profile-img.elite-aura-sm {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fdfdfd, #fdfdfd), linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.25), 0 0 20px rgba(236, 72, 153, 0.12);
+    }
+
+    .neo-profile-name.elite-name {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800 !important;
+    }
+
+    /* ═══ SIDEBAR SOVEREIGN AURA ═══ */
+    .neo-profile-img.sovereign-aura-sm {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fdfdfd, #fdfdfd), linear-gradient(135deg, #d946ef, #fbbf24, #f59e0b, #d946ef);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 12px rgba(217, 70, 239, 0.3), 0 0 24px rgba(251, 191, 36, 0.15);
+    }
+
+    .neo-profile-name.sovereign-name {
+        background: linear-gradient(135deg, #fbbf24, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+        letter-spacing: -0.2px;
+    }
+
+    .sovereign-title {
+        font-size: 11px;
+        color: #f59e0b;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 </style>

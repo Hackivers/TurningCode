@@ -117,6 +117,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     // Questions
     Route::get('/admin/api/materi/{materi}/sub-materis', [AdminQuestionController::class, 'subMaterisByMateri'])->name('admin.api.sub-materis-by-materi');
     Route::post('/admin/question', [AdminQuestionController::class, 'store'])->name('admin.question.store');
+    Route::post('/admin/question/import', [AdminQuestionController::class, 'importExcel'])->name('admin.question.import');
+    Route::get('/admin/question/template', [AdminQuestionController::class, 'downloadTemplate'])->name('admin.question.template');
     Route::put('/admin/question/{question}', [AdminQuestionController::class, 'update'])->name('admin.question.update');
     Route::delete('/admin/question/{question}', [AdminQuestionController::class, 'destroy'])->name('admin.question.delete');
 

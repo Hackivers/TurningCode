@@ -74,6 +74,36 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'Pemula';
     }
 
+    /**
+     * Check if user is Elite tier (above Legend: Universe+).
+     */
+    public function isElite(): bool
+    {
+        return ($this->exp ?? 0) >= 80000;
+    }
+
+    /**
+     * Check if user is Penguasa Sektor (Sovereign Tier).
+     */
+    public function isPenguasaSektor(): bool
+    {
+        return ($this->exp ?? 0) >= 1000000;
+    }
+
+    /**
+     * Get the elite tier number (0 = not elite, 1-5 = Universe to Penguasa Sektor).
+     */
+    public function getEliteTierAttribute(): int
+    {
+        $exp = $this->exp ?? 0;
+        if ($exp >= 1000000) return 5; // Penguasa Sektor
+        if ($exp >= 500000) return 4;  // Venerable
+        if ($exp >= 250000) return 3;  // Immortal
+        if ($exp >= 100000) return 2;  // Domain
+        if ($exp >= 80000) return 1;   // Universe
+        return 0;
+    }
+
     public function getEmblemImageAttribute(): string
     {
         $exp = $this->exp ?? 0;

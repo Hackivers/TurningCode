@@ -429,6 +429,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+
+
         // .link-spa — link materi / submateri / detail
         const linkSpa = e.target.closest('.link-spa');
         if (linkSpa) {
@@ -453,15 +455,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const { page, params } = parseSpaLink(linkSpa.getAttribute('href'));
             if (page) loadPage(page, params);
-            return;
-        }
-
-        // .archive-btn — toggle favorite (star icon di materi/submateri)
-        const archiveBtn = e.target.closest('.archive-btn');
-        if (archiveBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleFavorite(archiveBtn);
             return;
         }
     });
@@ -496,7 +489,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // FAVORITE TOGGLE
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function toggleFavorite(btn) {
+window.toggleFavorite = async function(btn) {
     const id = btn.dataset.id;
     const type = btn.dataset.type; // 'materi' or 'sub'
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;

@@ -133,4 +133,94 @@ body { background-color: var(--neo-bg) !important; overflow-x: hidden; }
     .neo-dashboard { padding: 24px 16px; }
     .neo-card { padding: 24px; }
 }
+
+/* ═══ ELITE AURA (Account Page) ═══ */
+.acc-avatar-wrap.elite-aura-lg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6);
+    background-size: 200% 200%;
+    animation: auraGradientMove 3s linear infinite;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(236, 72, 153, 0.15);
+}
+.acc-avatar-wrap.elite-aura-lg::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: inherit;
+    filter: blur(8px);
+    opacity: 0.5;
+    z-index: -1;
+}
+.acc-avatar-wrap.elite-aura-lg img,
+.acc-avatar-wrap.elite-aura-lg > div {
+    border: 3px solid #e5e5e5 !important;
+    position: relative;
+    z-index: 1;
+}
+@keyframes auraGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+h4.elite-name-lg {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 800 !important;
+    background-size: 200% 200%;
+    animation: eliteNameShift 3s ease-in-out infinite;
+}
+@keyframes eliteNameShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* ═══ SOVEREIGN TIER STYLES ═══ */
+.acc-avatar-wrap.sovereign-aura-lg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #fbbf24, #d946ef, #fbbf24);
+    background-size: 200% 200%;
+    animation: auraGradientMove 3s linear infinite;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4), 0 0 40px rgba(217, 70, 239, 0.2);
+}
+.acc-avatar-wrap.sovereign-aura-lg::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: inherit;
+    filter: blur(10px);
+    opacity: 0.6;
+    z-index: -1;
+}
+.acc-avatar-wrap.sovereign-aura-lg img,
+.acc-avatar-wrap.sovereign-aura-lg > div {
+    border: 3px solid #e5e5e5 !important;
+    position: relative;
+    z-index: 1;
+}
+
+h4.sovereign-name-lg {
+    background: linear-gradient(135deg, #fbbf24, #d946ef) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 900 !important;
+    background-size: 200% 200%;
+    animation: eliteNameShift 3s ease-in-out infinite;
+    letter-spacing: -0.2px;
+}
 </style>

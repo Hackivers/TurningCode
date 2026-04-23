@@ -72,16 +72,26 @@
         <section id="q-form-wrap" class="rounded-2xl border border-zinc-200 bg-white p-6 @if (!$errors->any() && !old('sub_materi_id')) hidden @endif">
 
             {{-- Toolbar --}}
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                 <h2 class="text-sm font-black uppercase tracking-widest text-zinc-800 flex items-center gap-2">
                     <svg class="h-4 w-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     Builder Form Soal
                 </h2>
-                <button type="button" id="btn-add-question"
-                    class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-sky-300">
-                    <svg class="h-3.5 w-3.5 text-zinc-400 group-hover:text-sky-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span class="text-xs font-bold uppercase tracking-widest text-zinc-700 group-hover:text-sky-600 transition-colors">Tambah Blok Soal</span>
-                </button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="{{ route('admin.question.template') }}" class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-3 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-300" title="Download Template Excel">
+                        <svg class="h-3.5 w-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-700 group-hover:text-emerald-600 transition-colors hidden sm:inline">Template</span>
+                    </a>
+                    <button type="button" onclick="window.triggerExcelImport()" class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-emerald-50 px-3 sm:px-4 py-2 border border-emerald-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-400 hover:bg-emerald-100">
+                        <svg class="h-3.5 w-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 transition-colors">Import Excel</span>
+                    </button>
+                    <button type="button" id="btn-add-question"
+                        class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-3 sm:px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-sky-300">
+                        <svg class="h-3.5 w-3.5 text-zinc-400 group-hover:text-sky-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-700 group-hover:text-sky-600 transition-colors">Tambah Blok Soal</span>
+                    </button>
+                </div>
             </div>
 
             {{-- Question rows --}}
@@ -196,6 +206,13 @@
                 </button>
             </div>
         </section>
+    </form>
+
+    {{-- Hidden form for Excel import --}}
+    <form id="form-import-excel" method="post" action="{{ route('admin.question.import') }}" enctype="multipart/form-data" class="hidden">
+        @csrf
+        <input type="hidden" name="sub_materi_id" id="import_sub_materi_id">
+        <input type="file" name="excel_file" id="import_excel_file" accept=".xlsx" onchange="window.submitImportExcel()">
     </form>
 
     {{-- ── Grouped Questions by Hierarchy ── --}}

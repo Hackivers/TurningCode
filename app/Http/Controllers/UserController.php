@@ -28,6 +28,8 @@ class UserController extends Controller
         'submateri',
         'detail',
         'quiz',
+        'secret-lab',
+        'profile',
     ];
 
     public function spa(): View
@@ -389,92 +391,59 @@ class UserController extends Controller
         // ── Account ───────────────────────────────────────────────────
         if ($page === 'account') {
             $user = Auth::user();
-            $userId = $user->id;
-            $achievements = [];
-
-            // Compute global top values
-            $topScorer = QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
-                ->groupBy('user_id')->orderByDesc('max_score')->first();
-            $mostPassed = QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
-                ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
-            $mostAttempts = QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
-                ->groupBy('user_id')->orderByDesc('attempt_count')->first();
-            $hasPerfect = QuizAttempt::where('user_id', $userId)->where('score', 100)->exists();
-
-            $distinctHistoryViews = \App\Models\UserHistory::where('user_id', $userId)->distinct('sub_materi_id')->count('sub_materi_id');
-            $totalFavorites = \App\Models\UserFavorite::where('user_id', $userId)->count();
-            $totalSchedules = \App\Models\StudySchedule::where('user_id', $userId)->count();
-
-            if ($distinctHistoryViews >= 1) {
-                $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
-            }
-            if ($distinctHistoryViews >= 50) {
-                $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
-            }
-            if ($totalFavorites >= 10) {
-                $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
-            }
-            if ($totalSchedules >= 1) {
-                $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
-            }
-            if ($user->exp >= 10000) {
-                $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
-            }
-            if ($mostAttempts && $mostAttempts->user_id === $userId) {
-                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling aktif mencoba kuis'];
-            }
-            if ($hasPerfect) {
-                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
-            }
-            if ($topScorer && $topScorer->user_id === $userId) {
-                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Meraih skor tertinggi secara global'];
-            }
-            if ($mostPassed && $mostPassed->user_id === $userId) {
-                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
-            }
-
-            // ── Additional Stats for Admin-style Dashboard ──
-            $quizAttempts = QuizAttempt::where('user_id', $userId)->get();
-            $totalQuizAttempts = $quizAttempts->count();
-            $quizPassedCount = $quizAttempts->where('passed', true)->count();
-            $quizAvgScore = $totalQuizAttempts > 0 ? round($quizAttempts->avg('score'), 1) : 0;
-            $quizBestScore = $totalQuizAttempts > 0 ? $quizAttempts->max('score') : 0;
-
-            $totalHistoryViews = UserHistory::where('user_id', $userId)->count();
-            $totalFavorites = UserFavorite::where('user_id', $userId)->count();
-            $daysActive = (int) $user->created_at->diffInDays(now());
-
-            // Learning progress
-            $totalSubMateris = SubMateri::where('is_published', true)->count();
-            $completedSubMateris = UserHistory::where('user_id', $userId)->distinct('sub_materi_id')->count('sub_materi_id');
-            $learningProgress = $totalSubMateris > 0 ? round(($completedSubMateris / $totalSubMateris) * 100) : 0;
+            $data = $this->getProfileData($user);
 
             // Recent quiz history (latest 5)
-            $recentQuizzes = QuizAttempt::where('user_id', $userId)
+            $data['recentQuizzes'] = QuizAttempt::where('user_id', $user->id)
                 ->with('subMateri.materi.mainMateri')
                 ->orderByDesc('updated_at')
                 ->limit(5)
                 ->get();
 
-            $friends = $user->friends;
-            $friendRequests = $user->friendRequestsReceived()->with('sender')->get();
+            $data['friends'] = $user->friends;
+            $data['friendRequests'] = $user->friendRequestsReceived()->with('sender')->get();
 
-            return view('spa.fragments.user-account', [
+            return view('spa.fragments.user-account', $data);
+        }
+
+        // ── Profile (Public User Profile) ─────────────────────────────
+        if ($page === 'profile') {
+            $targetUserId = $request->query('id');
+            $targetUser = \App\Models\User::find($targetUserId);
+
+            if (!$targetUser || $targetUser->role !== 'user') {
+                abort(404);
+            }
+
+            $data = $this->getProfileData($targetUser);
+            
+            // Mask email
+            $emailParts = explode('@', $data['user']->email);
+            if (count($emailParts) === 2) {
+                $namePart = $emailParts[0];
+                if (strlen($namePart) > 3) {
+                    $maskedName = substr($namePart, 0, 3) . str_repeat('*', strlen($namePart) - 3);
+                } else {
+                    $maskedName = substr($namePart, 0, 1) . str_repeat('*', strlen($namePart) - 1);
+                }
+                $data['user']->masked_email = $maskedName . '@' . $emailParts[1];
+            } else {
+                $data['user']->masked_email = $data['user']->email;
+            }
+
+            $data['myFriendships'] = \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get();
+
+            return view('spa.fragments.user-public-profile', $data);
+        }
+
+        // ── Secret Lab ────────────────────────────────────────────────
+        if ($page === 'secret-lab') {
+            $user = Auth::user();
+            return view('spa.fragments.user-secret-lab', [
                 'user' => $user,
-                'achievements' => $achievements,
-                'totalQuizAttempts' => $totalQuizAttempts,
-                'quizPassedCount' => $quizPassedCount,
-                'quizAvgScore' => $quizAvgScore,
-                'quizBestScore' => $quizBestScore,
-                'totalHistoryViews' => $totalHistoryViews,
-                'totalFavorites' => $totalFavorites,
-                'daysActive' => $daysActive,
-                'totalSubMateris' => $totalSubMateris,
-                'completedSubMateris' => $completedSubMateris,
-                'learningProgress' => $learningProgress,
-                'recentQuizzes' => $recentQuizzes,
-                'friends' => $friends,
-                'friendRequests' => $friendRequests,
+                'isElite' => $user->isElite(),
+                'eliteTier' => $user->elite_tier,
+                'rankName' => $user->rank_name,
             ]);
         }
 
@@ -904,5 +873,79 @@ class UserController extends Controller
             return response()->json(['success' => true, 'message' => 'Teman berhasil dihapus.']);
         }
         return response()->json(['success' => false, 'message' => 'Teman tidak ditemukan.'], 404);
+    }
+
+    private function getProfileData(\App\Models\User $user): array
+    {
+        $userId = $user->id;
+        $achievements = [];
+
+        // Compute global top values
+        $topScorer = QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
+            ->groupBy('user_id')->orderByDesc('max_score')->first();
+        $mostPassed = QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
+            ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
+        $mostAttempts = QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
+            ->groupBy('user_id')->orderByDesc('attempt_count')->first();
+        $hasPerfect = QuizAttempt::where('user_id', $userId)->where('score', 100)->exists();
+
+        $distinctHistoryViews = \App\Models\UserHistory::where('user_id', $userId)->distinct('sub_materi_id')->count('sub_materi_id');
+        $totalFavorites = \App\Models\UserFavorite::where('user_id', $userId)->count();
+        $totalSchedules = \App\Models\StudySchedule::where('user_id', $userId)->count();
+
+        if ($distinctHistoryViews >= 1) {
+            $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
+        }
+        if ($distinctHistoryViews >= 50) {
+            $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
+        }
+        if ($totalFavorites >= 10) {
+            $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
+        }
+        if ($totalSchedules >= 1) {
+            $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
+        }
+        if ($user->exp >= 10000) {
+            $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
+        }
+        if ($mostAttempts && $mostAttempts->user_id === $userId) {
+            $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling aktif mencoba kuis'];
+        }
+        if ($hasPerfect) {
+            $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Mendapatkan nilai sempurna (100)'];
+        }
+        if ($topScorer && $topScorer->user_id === $userId) {
+            $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Meraih skor tertinggi secara global'];
+        }
+        if ($mostPassed && $mostPassed->user_id === $userId) {
+            $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Menyelesaikan kuis paling banyak'];
+        }
+
+        $quizAttempts = QuizAttempt::where('user_id', $userId)->get();
+        $totalQuizAttempts = $quizAttempts->count();
+        $quizPassedCount = $quizAttempts->where('passed', true)->count();
+        $quizAvgScore = $totalQuizAttempts > 0 ? round($quizAttempts->avg('score'), 1) : 0;
+        $quizBestScore = $totalQuizAttempts > 0 ? $quizAttempts->max('score') : 0;
+
+        $totalHistoryViews = UserHistory::where('user_id', $userId)->count();
+        $daysActive = (int) $user->created_at->diffInDays(now());
+
+        $totalSubMateris = SubMateri::where('is_published', true)->count();
+        $learningProgress = $totalSubMateris > 0 ? round(($distinctHistoryViews / $totalSubMateris) * 100) : 0;
+
+        return [
+            'user' => $user,
+            'achievements' => $achievements,
+            'totalQuizAttempts' => $totalQuizAttempts,
+            'quizPassedCount' => $quizPassedCount,
+            'quizAvgScore' => $quizAvgScore,
+            'quizBestScore' => $quizBestScore,
+            'totalHistoryViews' => $totalHistoryViews,
+            'totalFavorites' => $totalFavorites,
+            'daysActive' => $daysActive,
+            'totalSubMateris' => $totalSubMateris,
+            'completedSubMateris' => $distinctHistoryViews,
+            'learningProgress' => $learningProgress,
+        ];
     }
 }

@@ -60,7 +60,7 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
                                         <i class="bx {{ in_array($materi->id, $arsipMateri ?? []) ? 'bxs-star' : 'bx-star' }} archive-btn"
                                             data-id="{{ $materi->id }}" data-type="materi"
                                             style="font-size:20px;color:{{ in_array($materi->id, $arsipMateri ?? []) ? '#f59e0b' : '#aaa' }};cursor:pointer;z-index:5;"
-                                            onclick="event.preventDefault();event.stopPropagation();"></i>
+                                            onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
                                         <span class="neo-arrow">&#x2197;</span>
                                     </div>
                                 </div>

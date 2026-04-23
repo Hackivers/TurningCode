@@ -29,7 +29,7 @@
             <button class="rtd-btn-icon" id="btn-setting-popup">
                 <i class='bx bx-slider-alt'></i>
             </button>
-            <div class="rtd-nav-profile btnAside">
+            <div class="rtd-nav-profile {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura' : (Auth::user()->isElite() ? 'elite-aura' : '') }}" id="btn-profile-popup" data-elite-tier="{{ Auth::user()->elite_tier }}">
                 @if(Auth::user()->avatar)
                     <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
                 @else
@@ -43,75 +43,117 @@
 {{-- Setting Popup Backdrop --}}
 <div class="setting-backdrop" id="setting-backdrop"></div>
 
-    {{-- ═══════════════════════════════════════════════════════
-    SETTINGS POPUP OVERLAY (ADMIN STYLE)
-    ═══════════════════════════════════════════════════════ --}}
-    @if (Auth::User()->role == 'user')
-        <div class="setting-popup-dark" id="setting-popup">
-            <div class="spd-header">
-                <div class="spd-header-left">
-                    <div class="spd-icon-wrapper">
-                        <i class='bx bx-slider-alt'></i>
-                    </div>
-                    <div>
-                        <h3>Pengaturan</h3>
-                        <p>Kelola preferensi akun dan tampilan</p>
-                    </div>
+{{-- ═══════════════════════════════════════════════════════
+SETTINGS POPUP OVERLAY (ADMIN STYLE)
+═══════════════════════════════════════════════════════ --}}
+@if (Auth::User()->role == 'user')
+    <div class="setting-popup-dark" id="setting-popup">
+        <div class="spd-header">
+            <div class="spd-header-left">
+                <div class="spd-icon-wrapper">
+                    <i class='bx bx-slider-alt'></i>
                 </div>
-                <button class="spd-close" id="btn-setting-close"><i class='bx bx-x'></i></button>
+                <div>
+                    <h3>Pengaturan</h3>
+                    <p>Kelola preferensi akun dan tampilan</p>
+                </div>
             </div>
-            <div class="spd-body">
-                <div class="spd-grid">
-                    
-                    {{-- Notifikasi --}}
-                    <label class="spd-card" for="toggle-notification">
-                        <div class="spd-card-header">
-                            <div class="spd-card-icon"><i class='bx bx-bell'></i></div>
-                            <div class="spd-toggle">
-                                <input type="checkbox" id="toggle-notification">
-                                <span class="spd-slider"></span>
-                            </div>
-                        </div>
-                        <h4>Notifikasi</h4>
-                        <p>Aktifkan pengingat jadwal belajar.</p>
-                    </label>
+            <button class="spd-close" id="btn-setting-close"><i class='bx bx-x'></i></button>
+        </div>
+        <div class="spd-body">
+            <div class="spd-grid">
 
-                    {{-- Dark Mode --}}
-                    <label class="spd-card" for="toggle-darkmode">
-                        <div class="spd-card-header">
-                            <div class="spd-card-icon"><i class='bx bx-moon'></i></div>
-                            <div class="spd-toggle">
-                                <input type="checkbox" id="toggle-darkmode">
-                                <span class="spd-slider"></span>
-                            </div>
+                {{-- Notifikasi --}}
+                <label class="spd-card" for="toggle-notification">
+                    <div class="spd-card-header">
+                        <div class="spd-card-icon"><i class='bx bx-bell'></i></div>
+                        <div class="spd-toggle">
+                            <input type="checkbox" id="toggle-notification">
+                            <span class="spd-slider"></span>
                         </div>
-                        <h4>Mode Gelap</h4>
-                        <p>Tampilan yang nyaman untuk malam hari.</p>
-                    </label>
-
-                    {{-- Data & Storage --}}
-                    <div class="spd-card" style="cursor: default; opacity: 0.7;">
-                        <div class="spd-card-header">
-                            <div class="spd-card-icon"><i class='bx bx-data'></i></div>
-                            <span class="spd-badge">BETA</span>
-                        </div>
-                        <h4>Data & Penyimpanan</h4>
-                        <p>Kelola riwayat cache perangkat.</p>
                     </div>
+                    <h4>Notifikasi</h4>
+                    <p>Aktifkan pengingat jadwal belajar.</p>
+                </label>
 
-                    {{-- Bahasa --}}
-                    <div class="spd-card" style="cursor: default;">
-                        <div class="spd-card-header">
-                            <div class="spd-card-icon"><i class='bx bx-globe'></i></div>
-                            <span class="spd-badge-green">ID</span>
+                {{-- Dark Mode --}}
+                <label class="spd-card" for="toggle-darkmode">
+                    <div class="spd-card-header">
+                        <div class="spd-card-icon"><i class='bx bx-moon'></i></div>
+                        <div class="spd-toggle">
+                            <input type="checkbox" id="toggle-darkmode">
+                            <span class="spd-slider"></span>
                         </div>
-                        <h4>Bahasa Server</h4>
-                        <p>Bahasa standar sistem Indonesia.</p>
                     </div>
-                    
+                    <h4>Mode Gelap</h4>
+                    <p>Tampilan yang nyaman untuk malam hari.</p>
+                </label>
+
+                {{-- Data & Storage --}}
+                <div class="spd-card" style="cursor: default; opacity: 0.7;">
+                    <div class="spd-card-header">
+                        <div class="spd-card-icon"><i class='bx bx-data'></i></div>
+                        <span class="spd-badge">BETA</span>
+                    </div>
+                    <h4>Data & Penyimpanan</h4>
+                    <p>Kelola riwayat cache perangkat.</p>
                 </div>
+
+                {{-- Bahasa --}}
+                <div class="spd-card" style="cursor: default;">
+                    <div class="spd-card-header">
+                        <div class="spd-card-icon"><i class='bx bx-globe'></i></div>
+                        <span class="spd-badge-green">ID</span>
+                    </div>
+                    <h4>Bahasa Server</h4>
+                    <p>Bahasa standar sistem Indonesia.</p>
+                </div>
+
             </div>
         </div>
+    </div>
+    {{-- Profile Detail Popup --}}
+    <div class="profile-popup-dark" id="profile-popup">
+        <div class="ppd-header">
+            <div class="ppd-header-left">
+                <div class="ppd-avatar-wrap {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura-sm' : (Auth::user()->isElite() ? 'elite-aura-sm' : '') }}">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
+                    @else
+                        <img src="{{ asset('assets/ico/adminUser.jpg') }}" alt="">
+                    @endif
+                </div>
+                <div>
+                    <h3 class="{{ Auth::user()->isPenguasaSektor() ? 'sovereign-name-sm' : (Auth::user()->isElite() ? 'elite-name-sm' : '') }}">{{ Auth::user()->name }}</h3>
+                    <p>{{ explode('@', Auth::user()->email)[0] }}</p>
+                </div>
+            </div>
+            <button class="ppd-close" id="btn-profile-close"><i class='bx bx-x'></i></button>
+        </div>
+        <div class="ppd-body">
+            <div class="ppd-stats">
+                <div class="ppd-stat-item">
+                    <span class="ppd-stat-val">{{ number_format(Auth::user()->exp ?? 0) }}</span>
+                    <span class="ppd-stat-lbl">EXP</span>
+                </div>
+                <div class="ppd-stat-item">
+                    <span class="ppd-stat-val">{{ Auth::user()->rank_name }}</span>
+                    <span class="ppd-stat-lbl">Rank</span>
+                </div>
+            </div>
+            <div class="ppd-actions">
+                <a href="#" data-spa-page="account" class="ppd-btn-action" id="btn-profile-goto-account">
+                    <i class='bx bx-user'></i>
+                    <span>Buka Profil Lengkap</span>
+                </a>
+                <a href="{{ route('logout') }}" class="ppd-btn-action logout">
+                    <i class='bx bx-log-out'></i>
+                    <span>Keluar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     {{-- Notification Popup --}}
     <div class="notif-popup-dark" id="notif-popup">
         <div class="npd-header">
@@ -214,6 +256,51 @@
                 if (typeof window.__currentSearchHandler === 'function') {
                     window.__currentSearchHandler(query);
                 }
+            });
+        }
+    })();
+
+    // ── Profile Detail Popup ──────────────────────────────────────────
+    (function () {
+        const btnOpenProfile = document.getElementById('btn-profile-popup');
+        const btnCloseProfile = document.getElementById('btn-profile-close');
+        const profilePopup = document.getElementById('profile-popup');
+        const backdrop = document.getElementById('setting-backdrop'); // We can reuse the setting backdrop
+        const btnGotoAccount = document.getElementById('btn-profile-goto-account');
+
+        if (!btnOpenProfile || !profilePopup) return;
+
+        function openProfilePopup() {
+            profilePopup.classList.add('active');
+            if (backdrop) backdrop.classList.add('active');
+        }
+
+        function closeProfilePopup() {
+            profilePopup.classList.remove('active');
+            if (backdrop) {
+                // Only remove backdrop active if setting popup is also not active
+                const settingPopup = document.getElementById('setting-popup');
+                if (!settingPopup || !settingPopup.classList.contains('active')) {
+                    backdrop.classList.remove('active');
+                }
+            }
+        }
+
+        btnOpenProfile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (profilePopup.classList.contains('active')) {
+                closeProfilePopup();
+            } else {
+                openProfilePopup();
+            }
+        });
+
+        if (btnCloseProfile) btnCloseProfile.addEventListener('click', closeProfilePopup);
+        if (backdrop) backdrop.addEventListener('click', closeProfilePopup);
+
+        if (btnGotoAccount) {
+            btnGotoAccount.addEventListener('click', () => {
+                closeProfilePopup();
             });
         }
     })();
@@ -691,6 +778,25 @@
             }
         }
     })();
+
+    // ── Global No-Scroll on Popups ────────────────────────────────────
+    (function() {
+        const backdrop = document.getElementById('setting-backdrop');
+        if (backdrop) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        if (backdrop.classList.contains('active')) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = '';
+                        }
+                    }
+                });
+            });
+            observer.observe(backdrop, { attributes: true });
+        }
+    })();
 </script>
 
 <style>
@@ -705,11 +811,14 @@
         position: sticky;
         top: 0;
         z-index: 50;
+        backdrop-filter: blur(16px);
+        background: rgba(236, 236, 236, 0.85);
         font-family: 'Inter', sans-serif;
     }
 
     .rtd-top-nav.scrolled {
-        background: rgba(236, 236, 236, 0.85); /* syncs with var(--neo-bg) */
+        background: rgba(236, 236, 236, 0.85);
+        /* syncs with var(--neo-bg) */
         backdrop-filter: blur(16px);
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         padding: 12px 32px;
@@ -747,8 +856,8 @@
 
     .rtd-btn-icon {
         background: #fff;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         width: 44px;
         height: 44px;
         border-radius: 50%;
@@ -767,7 +876,7 @@
         background: #121212;
         color: #fff;
         transform: translateY(-3px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         border-color: #121212;
     }
 
@@ -794,14 +903,14 @@
 
     .rtd-search-pill {
         background: #fff;
-        border: 1px solid rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         border-radius: 30px;
         display: flex;
         align-items: center;
         padding: 10px 24px;
         gap: 12px;
         width: 400px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -839,13 +948,13 @@
         overflow: hidden;
         cursor: pointer;
         border: 2px solid #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
     }
 
     .rtd-nav-profile:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         border-color: #121212;
     }
 
@@ -855,6 +964,77 @@
         object-fit: cover;
     }
 
+    /* ═══ COSMIC AURA (Elite Users) ═══ */
+    .rtd-nav-profile.elite-aura {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        animation: auraRotate 3s linear infinite;
+        box-shadow: 0 0 14px rgba(139, 92, 246, 0.3), 0 0 28px rgba(236, 72, 153, 0.15);
+        position: relative;
+    }
+
+    .rtd-nav-profile.elite-aura::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: conic-gradient(from var(--aura-angle, 0deg), #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+        z-index: -1;
+        opacity: 0.4;
+        filter: blur(6px);
+        animation: auraGlow 3s linear infinite;
+    }
+
+    .rtd-nav-profile.elite-aura:hover {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(236, 72, 153, 0.25);
+        transform: translateY(-3px) scale(1.05);
+    }
+
+    @keyframes auraRotate {
+        0% { background-image: linear-gradient(#fff, #fff), linear-gradient(0deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+        25% { background-image: linear-gradient(#fff, #fff), linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+        50% { background-image: linear-gradient(#fff, #fff), linear-gradient(180deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+        75% { background-image: linear-gradient(#fff, #fff), linear-gradient(270deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+        100% { background-image: linear-gradient(#fff, #fff), linear-gradient(360deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+    }
+
+    /* ═══ SOVEREIGN AURA (Penguasa Sektor) ═══ */
+    .rtd-nav-profile.sovereign-aura {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #d946ef, #fbbf24, #f59e0b, #d946ef);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        animation: auraRotate 3s linear infinite;
+        box-shadow: 0 0 16px rgba(217, 70, 239, 0.4), 0 0 32px rgba(251, 191, 36, 0.2);
+        position: relative;
+    }
+
+    .rtd-nav-profile.sovereign-aura::before {
+        content: '';
+        position: absolute;
+        inset: -5px;
+        border-radius: 50%;
+        background: conic-gradient(from var(--aura-angle, 0deg), #d946ef, #fbbf24, #f59e0b, #a855f7, #d946ef);
+        z-index: -1;
+        opacity: 0.5;
+        filter: blur(8px);
+        animation: auraGlow 3s linear infinite;
+    }
+
+    .rtd-nav-profile.sovereign-aura:hover {
+        box-shadow: 0 0 24px rgba(217, 70, 239, 0.6), 0 0 48px rgba(251, 191, 36, 0.3);
+        transform: translateY(-3px) scale(1.05);
+    }
+
+
+    @keyframes auraGlow {
+        0% { opacity: 0.3; transform: rotate(0deg); }
+        50% { opacity: 0.5; }
+        100% { opacity: 0.3; transform: rotate(360deg); }
+    }
+
     @media (max-width: 820px) {
         .rtd-top-nav {
             padding: 12px 16px;
@@ -862,6 +1042,220 @@
 
         .rtd-search-pill {
             width: 180px;
+        }
+    }
+
+    /* ═══ PROFILE DETAIL POPUP ═══ */
+    .profile-popup-dark {
+        position: fixed;
+        top: 70px;
+        right: 16px;
+        width: 320px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(0.98);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-origin: top right;
+        overflow: hidden;
+    }
+
+    .profile-popup-dark.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .ppd-header {
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background: #fafafa;
+    }
+
+    .ppd-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .ppd-avatar-wrap {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        flex-shrink: 0;
+    }
+
+    .ppd-avatar-wrap.elite-aura-sm {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.25), 0 0 20px rgba(236, 72, 153, 0.12);
+    }
+
+    .ppd-avatar-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ppd-header-left h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        font-weight: 800;
+        color: #121212;
+        letter-spacing: -0.3px;
+    }
+
+    .ppd-header-left h3.elite-name-sm {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+    }
+
+    .ppd-avatar-wrap.sovereign-aura-sm {
+        border: 2px solid transparent;
+        background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #d946ef, #fbbf24, #f59e0b, #d946ef);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 12px rgba(217, 70, 239, 0.3), 0 0 24px rgba(251, 191, 36, 0.15);
+    }
+
+    .ppd-header-left h3.sovereign-name-sm {
+        background: linear-gradient(135deg, #fbbf24, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+        letter-spacing: -0.2px;
+    }
+
+    .ppd-header-left p {
+        margin: 0;
+        font-size: 13px;
+        color: #888;
+        font-weight: 500;
+    }
+
+    .ppd-close {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ppd-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #121212;
+    }
+
+    .ppd-body {
+        padding: 20px 24px 24px;
+    }
+
+    .ppd-stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .ppd-stat-item {
+        flex: 1;
+        background: #f5f5f5;
+        border-radius: 16px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .ppd-stat-val {
+        display: block;
+        font-size: 16px;
+        font-weight: 800;
+        color: #121212;
+        margin-bottom: 2px;
+    }
+
+    .ppd-stat-lbl {
+        display: block;
+        font-size: 11px;
+        color: #888;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .ppd-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ppd-btn-action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #f5f5f5;
+        border-radius: 14px;
+        color: #121212;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .ppd-btn-action:hover {
+        background: #e5e5e5;
+        transform: translateY(-2px);
+    }
+
+    .ppd-btn-action i {
+        font-size: 20px;
+        color: #888;
+    }
+
+    .ppd-btn-action:hover i {
+        color: #121212;
+    }
+
+    .ppd-btn-action.logout {
+        background: rgba(244, 63, 94, 0.1);
+        color: #f43f5e;
+    }
+
+    .ppd-btn-action.logout:hover {
+        background: rgba(244, 63, 94, 0.15);
+    }
+
+    .ppd-btn-action.logout i {
+        color: #f43f5e;
+    }
+
+    @media (max-width: 820px) {
+        .profile-popup-dark {
+            width: calc(100% - 32px);
+            right: 16px;
+            left: 16px;
+            top: 64px;
         }
     }
 
@@ -888,9 +1282,9 @@
         width: calc(100% - 64px);
         max-width: 440px;
         background: #111113;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 20px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
         z-index: 100;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         color: #fff;
@@ -966,6 +1360,7 @@
         justify-content: center;
         transition: all 0.2s;
     }
+
     .spd-close:hover {
         background: #27272a;
         color: #f4f4f5;
@@ -1018,6 +1413,7 @@
         font-size: 22px;
         transition: color 0.3s;
     }
+
     .spd-card:hover .spd-card-icon {
         color: #fff;
     }
@@ -1036,7 +1432,8 @@
         line-height: 1.5;
     }
 
-    .spd-badge, .spd-badge-green {
+    .spd-badge,
+    .spd-badge-green {
         font-size: 10px;
         font-weight: 800;
         text-transform: uppercase;
@@ -1044,8 +1441,16 @@
         padding: 4px 10px;
         border-radius: 8px;
     }
-    .spd-badge { color: #a1a1aa; background: #27272a; }
-    .spd-badge-green { color: #34d399; background: rgba(52, 211, 153, 0.1); }
+
+    .spd-badge {
+        color: #a1a1aa;
+        background: #27272a;
+    }
+
+    .spd-badge-green {
+        color: #34d399;
+        background: rgba(52, 211, 153, 0.1);
+    }
 
     .spd-toggle {
         position: relative;
@@ -1053,15 +1458,23 @@
         width: 44px;
         height: 24px;
     }
-    .spd-toggle input { display: none; }
+
+    .spd-toggle input {
+        display: none;
+    }
+
     .spd-slider {
         position: absolute;
         cursor: pointer;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-color: #3f3f46;
         transition: .4s;
         border-radius: 24px;
     }
+
     .spd-slider:before {
         position: absolute;
         content: "";
@@ -1072,12 +1485,14 @@
         background-color: white;
         transition: .4s;
         border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
-    .spd-toggle input:checked + .spd-slider {
+
+    .spd-toggle input:checked+.spd-slider {
         background-color: #10b981;
     }
-    .spd-toggle input:checked + .spd-slider:before {
+
+    .spd-toggle input:checked+.spd-slider:before {
         transform: translateX(20px);
     }
 
@@ -1085,7 +1500,8 @@
     .notif-popup-dark {
         position: fixed;
         top: 90px;
-        right: 84px; /* Shift slightly left of profile */
+        right: 84px;
+        /* Shift slightly left of profile */
         transform: translateY(-10px) scale(0.95);
         transform-origin: top right;
         opacity: 0;
@@ -1094,9 +1510,9 @@
         max-width: 420px;
         max-height: 520px;
         background: #111113;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 20px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
         z-index: 100;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         color: #fff;
@@ -1139,7 +1555,7 @@
     .npd-icon-wrapper {
         width: 38px;
         height: 38px;
-        background: rgba(99,102,241,0.1);
+        background: rgba(99, 102, 241, 0.1);
         color: #818cf8;
         border-radius: 12px;
         display: flex;
@@ -1219,8 +1635,9 @@
     }
 
     .notif-item.unread {
-        background: rgba(255,255,255,0.03);
+        background: rgba(255, 255, 255, 0.03);
     }
+
     .notif-item.unread:hover {
         background: #1a1a1e;
     }
@@ -1533,13 +1950,13 @@
     }
 
     .fs-btn-pending {
-        background: rgba(255,255,255,0.06);
+        background: rgba(255, 255, 255, 0.06);
         color: #71717a;
         cursor: not-allowed;
     }
 
     .fs-btn-friends {
-        background: rgba(16,185,129,0.1);
+        background: rgba(16, 185, 129, 0.1);
         color: #34d399;
         cursor: default;
     }

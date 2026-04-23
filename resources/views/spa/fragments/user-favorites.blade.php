@@ -34,7 +34,7 @@
                             <p style="margin:4px 0 0;font-size:13px;color:#888;font-weight:500;">{{ $materi->mainMateri->title ?? '-' }}</p>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-                            <i class="bx bxs-star archive-btn" data-id="{{ $materi->id }}" data-type="materi" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault();event.stopPropagation();"></i>
+                            <i class="bx bxs-star archive-btn" data-id="{{ $materi->id }}" data-type="materi" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
                             <span class="neo-arrow" style="font-size:20px;">&#x2197;</span>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                             <p style="margin:4px 0 0;font-size:13px;color:#888;font-weight:500;">{{ $sub->materi->mainMateri->title ?? '-' }} → {{ $sub->materi->title ?? '-' }}</p>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-                            <i class="bx bxs-star archive-btn" data-id="{{ $sub->id }}" data-type="sub" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault();event.stopPropagation();"></i>
+                            <i class="bx bxs-star archive-btn" data-id="{{ $sub->id }}" data-type="sub" style="color:#f59e0b;font-size:18px;cursor:pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
                             <span class="neo-arrow" style="font-size:20px;">&#x2197;</span>
                         </div>
                     </div>
