@@ -61,6 +61,11 @@
                 <i class='bx bx-chevron-right' style="color: #aaa; margin-left: auto;"></i>
             </div>
 
+            <button type="button" class="neo-report-btn" onclick="openIssueReportModal()">
+                <i class="bx bx-error-circle"></i>
+                <span>Lapor Masalah</span>
+            </button>
+
             <form method="POST" action="{{ route('logout') }}" style="margin: 0; width: 100%;">
                 @csrf
                 <button type="submit" class="neo-logout-btn">
@@ -267,6 +272,36 @@
     }
 
     .neo-logout-btn i {
+        font-size: 18px;
+    }
+
+    /* Minimalist Report */
+    .neo-report-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        background: transparent;
+        border: 1px dashed rgba(0,0,0,0.1);
+        color: #888;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .neo-report-btn:hover {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.05);
+        border-color: rgba(245, 158, 11, 0.3);
+        border-style: solid;
+    }
+
+    .neo-report-btn i {
         font-size: 18px;
     }
 

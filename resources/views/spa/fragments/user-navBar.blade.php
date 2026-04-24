@@ -1038,10 +1038,42 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
     @media (max-width: 820px) {
         .rtd-top-nav {
             padding: 12px 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .rtd-top-nav.scrolled {
+            padding: 12px 16px;
+        }
+
+        .rtd-nav-center {
+            order: 3;
+            width: 100%;
         }
 
         .rtd-search-pill {
-            width: 180px;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .rtd-nav-title p {
+            display: none;
+        }
+        
+        .rtd-nav-left, .rtd-nav-right {
+            gap: 8px;
+        }
+
+        .rtd-btn-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+        }
+
+        .rtd-nav-profile {
+            width: 36px;
+            height: 36px;
         }
     }
 

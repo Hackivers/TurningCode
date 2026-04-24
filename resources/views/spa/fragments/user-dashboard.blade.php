@@ -19,6 +19,11 @@
             </div>
         </div>
 
+        <!-- Learning Journey Timeline Section -->
+        <div class="neo-timeline-section" style="margin-top: 48px;">
+            @include('spa.fragments.user-journeyTimeline')
+        </div>
+
         <!-- Section separating bottom -->
         <div class="neo-materi-section" style="margin-top: 48px;">
             @include('spa.fragments.user-materiCard', ['data' => $data, 'mainMateri' => $mainMateri])

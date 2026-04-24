@@ -91,6 +91,9 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::post('/app/friend/accept/{friend_id}', [UserController::class, 'acceptFriend'])->name('user.friend.accept');
     Route::post('/app/friend/reject/{friend_id}', [UserController::class, 'rejectFriend'])->name('user.friend.reject');
     Route::delete('/app/friend/remove/{friend_id}', [UserController::class, 'removeFriend'])->name('user.friend.remove');
+
+    // Report
+    Route::post('/app/report', [UserController::class, 'storeReport'])->name('user.report.store');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {

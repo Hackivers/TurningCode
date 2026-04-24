@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MainMateri;
 use App\Models\Materi;
+use App\Models\IssueReport;
 use App\Models\Question;
 use App\Models\QuizAttempt;
 use App\Models\SubMateri;
@@ -169,11 +170,20 @@ class UserController extends Controller
                 $u->achievements = array_slice($achievements, 0, 5);
             }
 
+            // Fetch Schedules for Timeline
+            $userSchedules = \App\Models\StudySchedule::where('user_id', Auth::id())
+                ->orderBy('start_time')
+                ->get();
+            $todaySchedules = $userSchedules->filter(fn($s) => $s->isActiveToday())->values();
+            $upcomingSchedules = $userSchedules->filter(fn($s) => !$s->isActiveToday() && $s->is_active)->values();
+
             return view('spa.fragments.user-dashboard', [
                 'data' => ['mainMateri' => $mainMateri],
                 'mainMateri' => $mainMateri,
                 'topUsers' => $topUsers,
                 'myFriendships' => \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get(),
+                'todaySchedules' => $todaySchedules,
+                'upcomingSchedules' => $upcomingSchedules,
             ]);
         }
 
@@ -947,5 +957,30 @@ class UserController extends Controller
             'completedSubMateris' => $distinctHistoryViews,
             'learningProgress' => $learningProgress,
         ];
+    }
+
+    // ── ISSUE REPORT ──────────────────────────────────────────────────────────
+    public function storeReport(Request $request): JsonResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'nullable|image|max:2048'
+        ]);
+
+        $path = null;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('reports', 'public');
+        }
+
+        IssueReport::create([
+            'user_id' => Auth::id(),
+            'title' => $request->title,
+            'description' => $request->description,
+            'image_path' => $path,
+            'status' => 'pending'
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Laporan berhasil dikirim']);
     }
 }

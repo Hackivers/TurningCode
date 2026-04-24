@@ -7,8 +7,8 @@
     <div class="neo-card neo-card-light">
         <div style="display: flex; flex-direction: column; gap: 20px;">
             @foreach ($topUsers as $i => $u)
-                <div class="leaderboard-row"
-                    style="display: flex; align-items: center; gap: 20px; padding: 20px 24px; position: relative; background: rgba(255,255,255,0.5); border-radius: 24px; {{ $i === 0 ? 'border: 2px solid rgba(245, 158, 11, 0.6); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);' : 'border: 1px solid rgba(255,255,255,0.2);' }}">
+                <div class="leaderboard-row {{ $u->isPenguasaSektor() ? 'leaderboard-row-sovereign' : '' }}"
+                    style="display: flex; align-items: center; gap: 20px; padding: 20px 24px; position: relative; border-radius: 24px; {{ $u->isPenguasaSektor() ? '' : ($i === 0 ? 'background: rgba(255,255,255,0.5); border: 2px solid rgba(245, 158, 11, 0.6); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);' : 'background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2);') }}">
 
                     @if ($i === 0)
                         <div style="position: absolute; top: -14px; left: 12px; font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 2; transform: rotate(-15deg);">
@@ -41,7 +41,7 @@
                                 {{ $u->name }}
                             </h4>
                         </a>
-                        <div style="font-size: 13px; color: #555; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                        <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;" class="{{ $u->isPenguasaSektor() ? 'sovereign-text-muted' : '' }}">
                             <span style="color: #f59e0b; font-size: 14px;"><i class='bx bxs-star'></i></span>
                             {{ $u->rank_name ?? 'Beginner' }}
                         </div>
@@ -97,8 +97,8 @@
 
                     <!-- EXP -->
                     <div style="text-align: right;">
-                        <div style="font-size: 18px; font-weight: 800; color: #121212;">{{ number_format($u->exp) }}</div>
-                        <div style="font-size: 11px; color: #888; font-weight: 600; letter-spacing: 0.5px;">EXP</div>
+                        <div style="font-size: 18px; font-weight: 800;" class="{{ $u->isPenguasaSektor() ? 'sovereign-text-light' : '' }}">{{ number_format($u->exp) }}</div>
+                        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.5px;" class="{{ $u->isPenguasaSektor() ? 'sovereign-text-muted' : '' }}">EXP</div>
                     </div>
                 </div>
             @endforeach
@@ -160,6 +160,35 @@
         background-clip: text !important;
         font-weight: 900 !important;
         letter-spacing: -0.2px;
+    }
+
+    /* Sovereign Row Special Styling */
+    .leaderboard-row-sovereign {
+        background: linear-gradient(135deg, #1f1f1f, #121212) !important;
+        border: none !important;
+        box-shadow: 0 12px 32px rgba(251, 191, 36, 0.2) !important;
+    }
+    
+    .leaderboard-row-sovereign::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        padding: 2px;
+        background: linear-gradient(135deg, #fbbf24, #d946ef, #fbbf24);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        animation: sovereignBorderRotate 4s linear infinite;
+    }
+
+    .leaderboard-row-sovereign .sovereign-text-light { color: #fff !important; }
+    .leaderboard-row-sovereign .sovereign-text-muted { color: #a1a1aa !important; }
+
+    @keyframes sovereignBorderRotate {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
     }
 </style>
 

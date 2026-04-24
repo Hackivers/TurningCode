@@ -56,10 +56,13 @@
         </div>
     </header>
 
-    {{-- Thumbnail --}}
+    {{-- Premium Thumbnail --}}
     @if ($subMateri->thumbnail)
-        <div class="art-thumbnail">
-            <img src="{{ asset('storage/' . $subMateri->thumbnail) }}" alt="{{ $subMateri->title }}">
+        <div class="art-thumbnail-wrapper">
+            <div class="art-thumbnail-glow" style="background-image: url('{{ asset('storage/' . $subMateri->thumbnail) }}');"></div>
+            <div class="art-thumbnail">
+                <img src="{{ asset('storage/' . $subMateri->thumbnail) }}" alt="{{ $subMateri->title }}">
+            </div>
         </div>
     @endif
 
@@ -273,17 +276,43 @@ body { background-color: var(--neo-bg) !important; }
     opacity: 0.12;
 }
 
-/* ═══ THUMBNAIL ═══ */
+/* ═══ PREMIUM THUMBNAIL ═══ */
+.art-thumbnail-wrapper {
+    position: relative;
+    margin-bottom: 56px;
+    border-radius: 32px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.05), inset 0 2px 8px rgba(255,255,255,0.8);
+    backdrop-filter: blur(16px);
+}
+.art-thumbnail-glow {
+    position: absolute;
+    inset: 5%;
+    z-index: 0;
+    filter: blur(40px);
+    opacity: 0.5;
+    background-size: cover;
+    background-position: center;
+    border-radius: inherit;
+}
 .art-thumbnail {
-    margin-bottom: 48px;
-    border-radius: 24px;
+    position: relative;
+    z-index: 1;
+    border-radius: 20px;
     overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 .art-thumbnail img {
     width: 100%;
-    max-height: 480px;
+    max-height: 520px;
     object-fit: cover;
     display: block;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.art-thumbnail-wrapper:hover .art-thumbnail img {
+    transform: scale(1.03);
 }
 
 /* ═══ ARTICLE BODY ═══ */
@@ -455,6 +484,11 @@ ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
 }
 .art-nav-quiz {
     background: #121212;
+}
+.art-nav-quiz span{
+    color: #fff;
+}
+.art-nav-quiz i{
     color: #fff;
 }
 .art-nav-quiz:hover {

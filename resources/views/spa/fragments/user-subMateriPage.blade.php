@@ -14,28 +14,38 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
             {{ $firstMateri->mainMateri->title ?? 'Materi' }}
         </a>
 
-        {{-- Hero Header --}}
-        <div class="neo-card"
-            style="min-height:180px;background:#121212;color:#fff;padding:40px;display:flex;align-items:center;margin-bottom:32px;position:relative;overflow:hidden;">
-            <div style="position:absolute;right:0;top:0;width:40%;height:100%;pointer-events:none;z-index:1;">
-                <img src="{{ asset('assets/ico/img001thumb03.jpg') }}" alt=""
-                    style="width:100%;height:100%;object-fit:contain;opacity:0.15;filter:grayscale(100%);">
-            </div>
-            <div style="position:relative;z-index:2;width:100%;">
-                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-                    <span class="neo-pill"
-                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ $firstMateri->mainMateri->title ?? 'Main' }}</span>
-                    <span class="neo-pill"
-                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ $firstMateri->title ?? 'Bab' }}</span>
-                    <span class="neo-pill"
-                        style="color:#fff;border-color:rgba(255,255,255,0.3);">{{ count($subMateris) }} Sub
-                        Materi</span>
+        {{-- Premium Hero Header --}}
+        <div class="neo-card" style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
+            {{-- Background Gradient Orbs --}}
+            <div style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;"></div>
+            <div style="position:absolute;bottom:-50%;right:10%;width:450px;height:450px;background:radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1;"></div>
+            
+            {{-- Grid Pattern Overlay --}}
+            <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;"></div>
+            
+            <div style="position:relative;z-index:2;width:100%;max-width:700px;">
+                <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        <i class='bx bx-category' style="margin-right:4px;"></i> {{ $firstMateri->mainMateri->title ?? 'Main' }}
+                    </span>
+                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $firstMateri->title ?? 'Bab' }}
+                    </span>
+                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        <i class='bx bx-list-ul' style="margin-right:4px;"></i> {{ count($subMateris) }} Sub Materi
+                    </span>
                 </div>
-                <h3
-                    style="font-size:clamp(28px,3.5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin:0 0 8px;">
-                    {{ $firstMateri->title ?? 'Sub Materi' }}
+                <h3 style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                    {{ $firstMateri->title ?? 'Daftar Sub Materi' }}
                 </h3>
-                <p style="font-size:15px;color:#888;margin:0;">Gass pelajari semuanya! Kayaknya seru nih 🚀</p>
+                <p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0;line-height:1.6;font-weight:500;">
+                    Gass pelajari semuanya! Jelajahi setiap topik secara mendalam dan tingkatkan pemahamanmu. 🚀
+                </p>
+            </div>
+            
+            {{-- Abstract Decorative Icon --}}
+            <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%) rotate(10deg);z-index:2;pointer-events:none;opacity:0.5;">
+                <i class='bx bxs-bulb' style="font-size:180px;color:rgba(255,255,255,0.03);filter:drop-shadow(0 20px 40px rgba(0,0,0,0.5));"></i>
             </div>
         </div>
 
