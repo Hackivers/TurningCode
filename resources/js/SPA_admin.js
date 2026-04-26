@@ -68,6 +68,118 @@ window.submitImportExcel = function() {
     }
 };
 
+// ── Main Materi Excel Import ───────────────────────────────────
+window.triggerMainMateriExcelImport = function() {
+    const fileInput = document.getElementById('import_main_materi_excel_file');
+    if (fileInput) {
+        fileInput.click();
+    }
+};
+
+window.submitMainMateriImportExcel = function() {
+    const fileInput = document.getElementById('import_main_materi_excel_file');
+    if (fileInput && fileInput.files.length > 0) {
+        document.getElementById('form-import-main-materi-excel').submit();
+        
+        const btn = document.querySelector('button[onclick="window.triggerMainMateriExcelImport()"]');
+        if (btn) {
+            btn.innerHTML = `<svg class="h-3.5 w-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="uppercase tracking-widest">Mengunggah...</span>`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+        }
+    }
+};
+
+// ── Materi Excel Import ───────────────────────────────────
+window.triggerMateriExcelImport = function() {
+    const fileInput = document.getElementById('import_materi_excel_file');
+    if (fileInput) {
+        fileInput.click();
+    }
+};
+
+window.submitMateriImportExcel = function() {
+    const fileInput = document.getElementById('import_materi_excel_file');
+    if (fileInput && fileInput.files.length > 0) {
+        document.getElementById('form-import-materi-excel').submit();
+        
+        const btn = document.querySelector('button[onclick="window.triggerMateriExcelImport()"]');
+        if (btn) {
+            btn.innerHTML = `<svg class="h-3.5 w-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="uppercase tracking-widest">Mengunggah...</span>`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+        }
+    }
+};
+
+// ── Report Detail Modal ───────────────────────────────────────
+window.openReportDetailModal = function(report) {
+    const assetUrl = '/storage';
+    
+    const avatarUrl = report.user && report.user.avatar 
+        ? assetUrl + '/' + report.user.avatar 
+        : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(report.user ? report.user.name : 'Anonim') + '&background=1C1C1E&color=ffffff';
+    
+    document.getElementById('rd-avatar').src = avatarUrl;
+    document.getElementById('rd-user-name').innerText = report.user ? report.user.name : 'Anonim';
+    document.getElementById('rd-user-role').innerText = report.user ? report.user.role : 'GUEST';
+    document.getElementById('rd-user-email').innerText = report.user ? report.user.email : 'N/A';
+    
+    document.getElementById('rd-issue-title').innerText = report.name;
+    document.getElementById('rd-issue-desc').innerText = report.description;
+    
+    const imgContainer = document.getElementById('rd-image-container');
+    if (report.image_path) {
+        const imgUrl = assetUrl + '/' + report.image_path;
+        document.getElementById('rd-image').src = imgUrl;
+        document.getElementById('rd-image-link').href = imgUrl;
+        imgContainer.classList.remove('hidden');
+    } else {
+        imgContainer.classList.add('hidden');
+    }
+
+    const modal = document.getElementById('report-detail-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        // Trigger reflow for transition
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        const transformEl = modal.querySelector('.transform');
+        if (transformEl) transformEl.classList.remove('scale-95');
+    }
+};
+
+window.closeReportDetailModal = function() {
+    const modal = document.getElementById('report-detail-modal');
+    if (modal) {
+        modal.classList.add('opacity-0');
+        const transformEl = modal.querySelector('.transform');
+        if (transformEl) transformEl.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+};
+
+// ── Sub Materi Excel Import ───────────────────────────────────
+window.triggerSubMateriExcelImport = function() {
+    const fileInput = document.getElementById('import_sub_materi_excel_file');
+    if (fileInput) {
+        fileInput.click();
+    }
+};
+
+window.submitSubMateriImportExcel = function() {
+    const fileInput = document.getElementById('import_sub_materi_excel_file');
+    if (fileInput && fileInput.files.length > 0) {
+        document.getElementById('form-import-sub-materi-excel').submit();
+        
+        const btn = document.querySelector('button[onclick="window.triggerSubMateriExcelImport()"]');
+        if (btn) {
+            btn.innerHTML = `<svg class="h-3.5 w-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="uppercase tracking-widest">Mengunggah...</span>`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+        }
+    }
+};
+
 function setupMateriFormRows(container) {
     const wrap = container.querySelector('#materi-rows');
     const btn = container.querySelector('#btn-add-materi-row');

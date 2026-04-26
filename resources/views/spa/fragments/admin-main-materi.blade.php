@@ -13,8 +13,26 @@
                 <h1 class="text-3xl font-black tracking-tight text-white">Main Materi</h1>
                 <p class="text-sm font-medium text-zinc-400">Pondasi utama direktori pembelajaran (Kategori Induk).</p>
             </div>
+
+            {{-- Import Excel Buttons --}}
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.main-materi.template') }}" class="group inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white/80 backdrop-blur-md ring-1 ring-white/20 transition-all hover:bg-white/20 hover:text-white hover:-translate-y-0.5 hover:shadow-lg" title="Download Template Excel">
+                    <svg class="h-3.5 w-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span class="hidden sm:inline uppercase tracking-widest">Template</span>
+                </a>
+                <button type="button" onclick="window.triggerMainMateriExcelImport()" class="group inline-flex items-center gap-2 rounded-xl bg-emerald-500/20 px-3 py-2 text-xs font-bold text-emerald-300 backdrop-blur-md ring-1 ring-emerald-400/30 transition-all hover:bg-emerald-500/30 hover:text-emerald-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/20" title="Import dari Excel">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span class="uppercase tracking-widest">Import Excel</span>
+                </button>
+            </div>
         </div>
     </div>
+
+    {{-- Hidden form for Excel import --}}
+    <form id="form-import-main-materi-excel" method="post" action="{{ route('admin.main-materi.import') }}" enctype="multipart/form-data" class="hidden">
+        @csrf
+        <input type="file" name="excel_file" id="import_main_materi_excel_file" accept=".xlsx" onchange="window.submitMainMateriImportExcel()">
+    </form>
 
     <div class="space-y-8">
         {{-- Form Section --}}

@@ -312,7 +312,7 @@
                 @if($recentReports && $recentReports->isNotEmpty())
                     <ul class="space-y-4">
                         @foreach($recentReports as $report)
-                            <li class="relative border-l-2 {{ $report->status === 'pending' ? 'border-rose-400' : 'border-emerald-400' }} pl-4 py-1 hover:bg-zinc-50 transition-colors group cursor-default">
+                            <li onclick="openReportDetailModal({{ json_encode($report) }})" class="relative border-l-2 {{ $report->status === 'pending' ? 'border-rose-400' : 'border-emerald-400' }} pl-4 py-1 hover:bg-zinc-50 transition-colors group cursor-pointer">
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-2">
@@ -329,7 +329,7 @@
                                     </div>
                                     <div class="shrink-0 flex flex-col items-end gap-1">
                                         @if($report->status === 'pending')
-                                            <button onclick="resolveIssueReport({{ $report->id }}, this)" class="group/btn relative overflow-hidden text-[10px] font-bold text-rose-600 bg-rose-50 hover:bg-emerald-50 hover:text-emerald-600 px-2 py-0.5 rounded transition-all duration-300 min-w-[60px] text-center">
+                                            <button onclick="event.stopPropagation(); resolveIssueReport({{ $report->id }}, this)" class="group/btn relative overflow-hidden text-[10px] font-bold text-rose-600 bg-rose-50 hover:bg-emerald-50 hover:text-emerald-600 px-2 py-0.5 rounded transition-all duration-300 min-w-[60px] text-center">
                                                 <span class="inline-block transition-opacity duration-300 group-hover/btn:opacity-0">PENDING</span>
                                                 <span class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100 tracking-wider">ACCEPT</span>
                                             </button>
@@ -632,5 +632,46 @@
             </div>
         </div>
     </div>
+
+    <!-- Report Detail Modal -->
+    <div id="report-detail-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeReportDetailModal()"></div>
+        <div class="relative bg-white border border-zinc-200 shadow-2xl rounded-3xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 p-6 flex flex-col gap-4 m-4 max-h-[90vh] overflow-y-auto">
+            <!-- Close button -->
+            <button onclick="closeReportDetailModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-full p-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div class="flex items-center gap-3 border-b border-zinc-100 pb-4 pr-8">
+                <div class="w-12 h-12 rounded-full overflow-hidden bg-zinc-100 shrink-0">
+                    <img id="rd-avatar" src="" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 id="rd-user-name" class="font-bold text-zinc-800 leading-tight"></h3>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span id="rd-user-role" class="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-500"></span>
+                        <span id="rd-user-email" class="text-[10px] font-mono text-zinc-500"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Issue Title</p>
+                <h4 id="rd-issue-title" class="font-semibold text-zinc-800 text-lg"></h4>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Description</p>
+                <p id="rd-issue-desc" class="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap bg-zinc-50 p-4 rounded-xl border border-zinc-100"></p>
+            </div>
+
+            <div id="rd-image-container" class="hidden mt-2">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Attachment</p>
+                <a id="rd-image-link" href="#" target="_blank" class="block rounded-xl overflow-hidden border border-zinc-200 hover:border-indigo-300 transition-colors bg-zinc-50 flex items-center justify-center min-h-[100px]">
+                    <img id="rd-image" src="" alt="Report Attachment" class="w-full object-cover max-h-64">
+                </a>
+            </div>
+        </div>
+    </div></div>
 
 

@@ -47,6 +47,53 @@
         }
         return false;
     };
+
+    // Hitung jam mulai (min) dan jam selesai (max) secara dinamis
+    $minHour = 24;
+    $maxHour = 0;
+    $hasActiveSchedules = false;
+
+    foreach ($displaySchedules as $schedule) {
+        $isActive = false;
+        foreach ($daysOrder as $d) {
+            if ($isActiveOnDay($schedule, $d)) {
+                $isActive = true;
+                break;
+            }
+        }
+
+        if ($isActive) {
+            $hasActiveSchedules = true;
+            $start = \Carbon\Carbon::parse($schedule->start_time ?: '00:00:00');
+            $end = \Carbon\Carbon::parse($schedule->end_time ?: '01:00:00');
+            if (!$schedule->end_time || $end->lessThan($start)) {
+                $end = $start->copy()->addHour();
+            }
+
+            if ($start->hour < $minHour) {
+                $minHour = $start->hour;
+            }
+
+            $endH = $end->minute > 0 ? $end->hour + 1 : $end->hour;
+            if ($endH > $maxHour) {
+                $maxHour = $endH;
+            }
+        }
+    }
+
+    if (!$hasActiveSchedules) {
+        // Default bounds jika kosong
+        $minHour = 8;
+        $maxHour = 17;
+    } else {
+        // Gunakan jam yang persis dengan jadwal
+        $minHour = max(0, $minHour);
+        $maxHour = min(24, $maxHour);
+    }
+
+    $totalHours = $maxHour - $minHour;
+    if ($totalHours <= 0)
+        $totalHours = 1; // Fallback
 @endphp
 
 <div class="neo-card neo-card-light" style="padding: 48px; position: relative; border: 1px solid rgba(0,0,0,0.04);">
@@ -74,70 +121,89 @@
         </div>
     @else
         <div class="timeline-container">
-            {{-- Dates Header Row --}}
-            <div class="timeline-dates" style="grid-template-columns: repeat(7, 1fr);">
-                @foreach ($daysOrder as $d)
-                    <div class="tl-date-col {{ $todayDayOfWeek == $d ? 'active-day' : '' }}">
-                        <span class="day-name">{{ $dayNames[$d] }}</span>
-                        @if ($todayDayOfWeek == $d)
-                            <span class="today-badge">HARI INI</span>
-                        @endif
-                    </div>
-                @endforeach
+            {{-- Calendar Header Row --}}
+            <div class="calendar-header">
+                <div class="time-col-spacer"></div>
+                <div class="calendar-days">
+                    @foreach ($daysOrder as $d)
+                        <div class="cal-day-col {{ $todayDayOfWeek == $d ? 'active-day' : '' }}">
+                            <span class="day-name">{{ $dayNames[$d] }}</span>
+                            @if ($todayDayOfWeek == $d)
+                                <span class="today-badge">HARI INI</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
-            <div style="position: relative; margin-top: 20px;">
-                {{-- Background Grid Lines --}}
-                <div class="timeline-bg">
-                    @for ($i = 0; $i < 7; $i++)
-                        <div class="tl-col" style="{{ $i === 6 ? 'border-right: none;' : '' }}"></div>
-                    @endfor
-                </div>
+            {{-- Calendar Body Scrollable --}}
+            <div class="calendar-body-scroll">
+                <div class="calendar-body-inner" style="height: {{ $totalHours * 60 }}px;">
+                    {{-- Y-Axis: Time Labels --}}
+                    <div class="time-labels">
+                        @for ($h = $minHour; $h <= $maxHour; $h++)
+                            @if($h < 24)
+                                <div class="time-label" style="top: {{ ($h - $minHour) * 60 }}px;">
+                                    {{ str_pad($h, 2, '0', STR_PAD_LEFT) }}:00
+                                </div>
+                            @endif
+                        @endfor
+                    </div>
 
-                {{-- Gantt Bars --}}
-                <div class="timeline-bars">
-                    @foreach ($displaySchedules as $index => $schedule)
-                        @php
-                            $color = $schedule->color ?? '#1a1a1a';
+                    {{-- X-Axis: Days Columns and Grid --}}
+                    <div class="calendar-grid">
+                        {{-- Background Grid Lines (Horizontal and Vertical) --}}
+                        <div class="grid-bg">
+                            @for ($h = $minHour; $h <= $maxHour; $h++)
+                                <div class="grid-hour-line" style="top: {{ ($h - $minHour) * 60 }}px;"></div>
+                            @endfor
+                            <div class="grid-vertical-lines">
+                                @for ($d = 0; $d < 7; $d++)
+                                    <div class="grid-col-line"></div>
+                                @endfor
+                            </div>
+                        </div>
 
-                            // Hitung segmen hari berurutan
-                            $segments = [];
-                            $currentSegment = null;
-                            foreach ($daysOrder as $colIdx => $d) {
-                                if ($isActiveOnDay($schedule, $d)) {
-                                    if ($currentSegment === null) {
-                                        $currentSegment = ['start' => $colIdx, 'end' => $colIdx];
-                                    } else {
-                                        $currentSegment['end'] = $colIdx;
-                                    }
-                                } else {
-                                    if ($currentSegment !== null) {
-                                        $segments[] = $currentSegment;
-                                        $currentSegment = null;
-                                    }
-                                }
-                            }
-                            if ($currentSegment !== null) {
-                                $segments[] = $currentSegment;
-                            }
-                        @endphp
+                        {{-- Event Columns --}}
+                        @foreach ($daysOrder as $colIdx => $d)
+                            <div class="day-events-col" style="grid-column: {{ $colIdx + 1 }};">
+                                @foreach ($displaySchedules as $schedule)
+                                    @if ($isActiveOnDay($schedule, $d))
+                                        @php
+                                            $color = $schedule->color ?? '#1a1a1a';
+                                            $start = \Carbon\Carbon::parse($schedule->start_time ?: '00:00:00');
+                                            $end = \Carbon\Carbon::parse($schedule->end_time ?: '01:00:00');
 
-                        @if(count($segments) > 0)
-                            <div class="tl-row">
-                                @foreach ($segments as $seg)
-                                    <div
-                                        style="grid-column: {{ $seg['start'] + 1 }} / {{ $seg['end'] + 2 }}; padding: 0 4px; z-index: 2;">
-                                        <div class="tl-bar-segment" style="background: {{ $color }};"
-                                            title="{{ $schedule->title }} ({{ substr($schedule->start_time, 0, 5) }} - {{ substr($schedule->end_time, 0, 5) }})">
-                                            <span class="bar-title">{{ $schedule->title }}</span>
-                                            <span class="bar-time"><i class='bx bx-time'></i>
-                                                {{ substr($schedule->start_time, 0, 5) }}</span>
+                                            // Handle if end is missing or before start
+                                            if (!$schedule->end_time || $end->lessThan($start)) {
+                                                $end = $start->copy()->addHour();
+                                            }
+
+                                            $startMins = $start->hour * 60 + $start->minute;
+                                            $endMins = $end->hour * 60 + $end->minute;
+
+                                            // Calculate position offset dynamically by minHour
+                                            $topPx = $startMins - ($minHour * 60);
+                                            $heightPx = $endMins - $startMins;
+
+                                            // Handle edge case height (minimum 20px to show something)
+                                            if ($heightPx < 20)
+                                                $heightPx = 20; 
+                                        @endphp
+
+                                        <div class="calendar-event"
+                                            style="top: {{ $topPx }}px; height: {{ $heightPx }}px; background: {{ $color }};"
+                                            title="{{ $schedule->title }} ({{ $start->format('H:i') }} - {{ $end->format('H:i') }})">
+                                            <div class="event-title">{{ $schedule->title }}</div>
+                                            <div class="event-time">
+                                                <i class='bx bx-time'></i> {{ $start->format('H:i') }} - {{ $end->format('H:i') }}
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 @endforeach
                             </div>
-                        @endif
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
@@ -173,15 +239,29 @@
     .timeline-container {
         position: relative;
         width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
-    .timeline-dates {
-        display: grid;
+    .calendar-header {
+        display: flex;
         border-bottom: 2px solid rgba(0, 0, 0, 0.1);
         padding-bottom: 12px;
+        z-index: 10;
     }
 
-    .tl-date-col {
+    .time-col-spacer {
+        width: 60px;
+        flex-shrink: 0;
+    }
+
+    .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        flex: 1;
+    }
+
+    .cal-day-col {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -213,92 +293,150 @@
         letter-spacing: 0.5px;
     }
 
-    .timeline-bg {
+    .calendar-body-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-top: 10px;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .calendar-body-inner {
+        display: flex;
+        position: relative;
+    }
+
+    .time-labels {
+        width: 60px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .time-label {
         position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
-        height: 100%;
+        text-align: right;
+        padding-right: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.4);
+        transform: translateY(-50%);
+        /* Center on the line */
+    }
+
+    .calendar-grid {
+        flex: 1;
         display: grid;
-        grid-template-columns: repeat(7, 1fr);
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        position: relative;
+    }
+
+    .grid-bg {
+        position: absolute;
+        inset: 0;
         pointer-events: none;
         z-index: 0;
     }
 
-    .tl-col {
+    .grid-hour-line {
+        position: absolute;
+        width: 100%;
+        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    }
+
+    .grid-vertical-lines {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        height: 100%;
+    }
+
+    .grid-col-line {
         border-right: 1px dashed rgba(0, 0, 0, 0.1);
     }
 
-    .timeline-bars {
+    .grid-col-line:last-child {
+        border-right: none;
+    }
+
+    .day-events-col {
         position: relative;
-        z-index: 1;
-        padding: 20px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .tl-row {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        height: 48px;
-        width: 100%;
-    }
-
-    .tl-bar-segment {
         height: 100%;
-        border-radius: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 28px;
+        z-index: 1;
+    }
+
+    .calendar-event {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        border-radius: 8px;
+        padding: 6px 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s, z-index 0s;
         cursor: default;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        z-index: 2;
     }
 
-    .tl-bar-segment span {
-        color: #ffffff;
-    }
-
-    .tl-bar-segment i {
-        color: #ffffff;
-    }
-
-    .tl-bar-segment:hover {
+    .calendar-event:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 10 !important;
     }
 
-    .bar-title {
-        font-size: 13px;
+    .calendar-event .event-title {
+        color: #ffffff;
+        font-size: 12px;
         font-weight: 700;
+        line-height: 1.2;
+        width: 100%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .bar-time {
-        font-size: 11px;
+    .calendar-event .event-time {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 10px;
         font-weight: 600;
-        opacity: 0.8;
+        margin-top: 8px;
         display: flex;
         align-items: center;
         gap: 4px;
         white-space: nowrap;
-        margin-left: 12px;
+    }
+
+    .calendar-event .event-time i {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 10px;
+    }
+
+    /* Modifiers for tiny events (e.g., < 30mins) */
+    .calendar-event[style*="height: 20px"],
+    .calendar-event[style*="height: 25px"] {
+        flex-direction: row;
+        align-items: center;
+        padding: 2px 8px;
+        gap: 6px;
+    }
+
+    .calendar-event[style*="height: 20px"] .event-time,
+    .calendar-event[style*="height: 25px"] .event-time {
+        margin-top: 0;
     }
 
     @media(max-width: 1024px) {
         .timeline-container {
             overflow-x: auto;
-            padding-bottom: 20px;
         }
 
-        .timeline-dates,
-        .timeline-bg,
-        .timeline-bars {
+        .calendar-header,
+        .calendar-body-inner {
             min-width: 900px;
         }
     }

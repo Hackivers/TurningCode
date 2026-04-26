@@ -119,7 +119,7 @@ class AdminController extends Controller
                 'achievements'       => $achievements,
                 'totalReports'       => \App\Models\IssueReport::count(),
                 'pendingReports'     => \App\Models\IssueReport::where('status', 'pending')->count(),
-                'recentReports'      => \App\Models\IssueReport::with('user:id,name,avatar')->latest()->limit(5)->get(),
+                'recentReports'      => \App\Models\IssueReport::with('user:id,name,email,role,avatar')->latest()->limit(5)->get(),
             ]);
         }
 

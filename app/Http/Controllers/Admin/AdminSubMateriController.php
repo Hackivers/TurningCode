@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MainMateri;
 use App\Models\SubMateri;
+use App\Models\Materi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Shuchkin\SimpleXLSX;
+use Shuchkin\SimpleXLSXGen;
 
 class AdminSubMateriController extends Controller
 {
@@ -302,5 +305,101 @@ class AdminSubMateriController extends Controller
         $subMateri->delete();
 
         return response()->json(['success' => true, 'message' => "Sub materi \"{$title}\" berhasil dihapus."]);
+    }
+
+    // ── Sub Materi Excel Import / Template ─────────────────────────────
+
+    public function downloadSubMateriTemplate()
+    {
+        $data = [
+            ['Materi Induk (Judul)', 'Sub Materi (Judul)', 'Subtitle', 'Author', 'Published (Y/N)'],
+            ['HTML', 'Pengenalan HTML', 'Apa itu HTML?', 'Admin', 'Y'],
+            ['HTML', 'Tag & Elemen HTML', 'Struktur tag HTML', 'Admin', 'Y'],
+            ['CSS', 'Pengenalan CSS', 'Dasar-dasar CSS', 'Admin', 'N'],
+            ['Flutter', 'Setup Flutter', 'Instalasi dan konfigurasi', 'Admin', 'Y'],
+        ];
+
+        $xlsx = SimpleXLSXGen::fromArray($data)
+            ->setColWidth(1, 30)
+            ->setColWidth(2, 30)
+            ->setColWidth(3, 30)
+            ->setColWidth(4, 20)
+            ->setColWidth(5, 15);
+
+        $xlsx->downloadAs('Template_Import_Sub_Materi.xlsx');
+        exit;
+    }
+
+    public function importSubMateriExcel(Request $request): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'excel_file' => ['required', 'file', 'max:5120'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.spa')
+                ->withErrors($validator)
+                ->with('admin_open_page', 'addsubmateri');
+        }
+
+        $file = $request->file('excel_file');
+
+        if ($xlsx = SimpleXLSX::parse($file->getRealPath())) {
+            $rows = $xlsx->rows();
+            if (count($rows) <= 1) {
+                return redirect()->route('admin.spa')
+                    ->withErrors(['excel_file' => 'File Excel kosong atau tidak memiliki data.'])
+                    ->with('admin_open_page', 'addsubmateri');
+            }
+
+            $subCount = 0;
+            $missingMateriCount = 0;
+
+            for ($i = 1; $i < count($rows); $i++) {
+                $row = $rows[$i];
+
+                $materiTitle = trim((string) ($row[0] ?? ''));
+                $subTitle = trim((string) ($row[1] ?? ''));
+                if ($materiTitle === '' || $subTitle === '') continue;
+
+                $materi = Materi::where('title', $materiTitle)->first();
+                if (!$materi) {
+                    $missingMateriCount++;
+                    continue;
+                }
+
+                $subSubtitle = trim((string) ($row[2] ?? ''));
+                $subAuthor = trim((string) ($row[3] ?? ''));
+                $publishedRaw = strtoupper(trim((string) ($row[4] ?? 'N')));
+                $isPublished = in_array($publishedRaw, ['Y', 'YES', '1', 'TRUE']);
+
+                SubMateri::create([
+                    'materi_id'        => $materi->id,
+                    'title'            => $subTitle,
+                    'subtitle'         => $subSubtitle !== '' ? $subSubtitle : null,
+                    'author'           => $subAuthor !== '' ? $subAuthor : null,
+                    'is_published'     => $isPublished,
+                    'sections'         => [],
+                    'sections_json'    => '[]',
+                ]);
+                $subCount++;
+            }
+
+            $parts = [];
+            if ($subCount > 0) $parts[] = "$subCount sub materi berhasil diimport 🎉";
+            if ($missingMateriCount > 0) $parts[] = "$missingMateriCount dilewati (Materi induk tidak ditemukan)";
+
+            $summary = count($parts) > 0
+                ? implode(', ', $parts)
+                : 'Tidak ada data baru yang diimport.';
+
+            return redirect()->route('admin.spa')
+                ->with('success', $summary)
+                ->with('admin_open_page', 'addsubmateri');
+        } else {
+            return redirect()->route('admin.spa')
+                ->withErrors(['excel_file' => 'Gagal membaca file Excel. ' . SimpleXLSX::parseError()])
+                ->with('admin_open_page', 'addsubmateri');
+        }
     }
 }

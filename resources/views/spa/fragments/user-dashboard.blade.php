@@ -6,7 +6,7 @@
             <div class="neo-bento-col">
                 @include('spa.fragments.user-expCard')
             </div>
-            
+
             <!-- Right Column -->
             <div class="neo-bento-right">
                 <div class="neo-bento-top-row">
@@ -63,7 +63,9 @@
         overflow-x: hidden;
     }
 
-    .neo-dashboard *, .neo-dashboard *::before, .neo-dashboard *::after {
+    .neo-dashboard *,
+    .neo-dashboard *::before,
+    .neo-dashboard *::after {
         box-sizing: border-box;
     }
 
@@ -71,7 +73,8 @@
         background-color: var(--neo-bg);
         color: var(--neo-text-dark);
         font-family: 'Inter', sans-serif;
-        padding: 32px 0; /* Let rtd container handle left/right spacing so it perfectly lines up with the sidebar & header */
+        padding: 32px 0;
+        /* Let rtd container handle left/right spacing so it perfectly lines up with the sidebar & header */
         min-height: 100vh;
         width: 100%;
         overflow-x: hidden;
@@ -85,7 +88,8 @@
 
     .neo-bento-grid {
         display: grid;
-        grid-template-columns: 1fr 2fr; /* Mathematically perfect 1:2 layout ratio */
+        grid-template-columns: 1fr 2fr;
+        /* Mathematically perfect 1:2 layout ratio */
         gap: 24px;
         margin-bottom: 24px;
         width: 100%;
@@ -133,7 +137,8 @@
 
     .neo-bento-top-row {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Strictly force 2 square cells for perfect balance */
+        grid-template-columns: 1fr 1fr;
+        /* Strictly force 2 square cells for perfect balance */
         gap: 24px;
         width: 100%;
     }
@@ -174,18 +179,18 @@
     .neo-pill {
         background: transparent;
         color: var(--neo-text-dark);
-        border: 1px solid rgba(0,0,0,0.3);
+        border: 1px solid rgba(0, 0, 0, 0.3);
         padding: 6px 16px;
         border-radius: 100px;
         font-size: 13px;
         font-weight: 500;
         white-space: nowrap;
     }
-    
+
     .neo-card-black .neo-pill {
         background: transparent;
         color: var(--neo-text-light);
-        border-color: rgba(255,255,255,0.4);
+        border-color: rgba(255, 255, 255, 0.4);
     }
 
     .neo-desc {
@@ -194,15 +199,20 @@
         margin: 0;
         line-height: 1.5;
     }
-    
+
     .neo-card-black .neo-desc {
         color: #aaa;
     }
 
     @media (max-width: 768px) {
-        .neo-dashboard {
-            padding: 24px 16px;
+        body {
+            margin: 0 10px;
         }
+
+        .neo-dashboard {
+            padding: 24px 0px;
+        }
+
         .neo-card {
             padding: 24px;
         }

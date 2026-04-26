@@ -110,6 +110,18 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::put('/admin/materi/{materi}', [AdminMateriController::class, 'updateMateri'])->name('admin.materi.update');
     Route::delete('/admin/materi/{materi}', [AdminMateriController::class, 'deleteMateri'])->name('admin.materi.delete');
 
+    // Main Materi Excel Import/Template
+    Route::post('/admin/main-materi/import', [AdminMateriController::class, 'importMainMateriExcel'])->name('admin.main-materi.import');
+    Route::get('/admin/main-materi/template', [AdminMateriController::class, 'downloadMainMateriTemplate'])->name('admin.main-materi.template');
+
+    // Materi Excel Import/Template
+    Route::post('/admin/materi/import', [AdminMateriController::class, 'importMateriExcel'])->name('admin.materi.import');
+    Route::get('/admin/materi/template', [AdminMateriController::class, 'downloadMateriTemplate'])->name('admin.materi.template');
+
+    // Sub Materi Excel Import/Template
+    Route::post('/admin/sub-materi/import', [AdminSubMateriController::class, 'importSubMateriExcel'])->name('admin.sub-materi.import');
+    Route::get('/admin/sub-materi/template', [AdminSubMateriController::class, 'downloadSubMateriTemplate'])->name('admin.sub-materi.template');
+
     // Sub Materi
     Route::get('/admin/api/main/{mainMateri}/materis', [AdminSubMateriController::class, 'materisByMain'])->name('admin.api.materis-by-main');
     Route::post('/admin/sub-materi', [AdminSubMateriController::class, 'store'])->name('admin.sub-materi.store');

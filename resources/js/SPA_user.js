@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // FAVORITE TOGGLE
 // ─────────────────────────────────────────────────────────────────────────────
 
-window.toggleFavorite = async function(btn) {
+window.toggleFavorite = async function (btn) {
     const id = btn.dataset.id;
     const type = btn.dataset.type; // 'materi' or 'sub'
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;

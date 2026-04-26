@@ -29,7 +29,8 @@
             <button class="rtd-btn-icon" id="btn-setting-popup">
                 <i class='bx bx-slider-alt'></i>
             </button>
-            <div class="rtd-nav-profile {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura' : (Auth::user()->isElite() ? 'elite-aura' : '') }}" id="btn-profile-popup" data-elite-tier="{{ Auth::user()->elite_tier }}">
+            <div class="rtd-nav-profile {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura' : (Auth::user()->isElite() ? 'elite-aura' : '') }}"
+                id="btn-profile-popup" data-elite-tier="{{ Auth::user()->elite_tier }}">
                 @if(Auth::user()->avatar)
                     <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
                 @else
@@ -116,7 +117,8 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
     <div class="profile-popup-dark" id="profile-popup">
         <div class="ppd-header">
             <div class="ppd-header-left">
-                <div class="ppd-avatar-wrap {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura-sm' : (Auth::user()->isElite() ? 'elite-aura-sm' : '') }}">
+                <div
+                    class="ppd-avatar-wrap {{ Auth::user()->isPenguasaSektor() ? 'sovereign-aura-sm' : (Auth::user()->isElite() ? 'elite-aura-sm' : '') }}">
                     @if(Auth::user()->avatar)
                         <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="">
                     @else
@@ -124,7 +126,10 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
                     @endif
                 </div>
                 <div>
-                    <h3 class="{{ Auth::user()->isPenguasaSektor() ? 'sovereign-name-sm' : (Auth::user()->isElite() ? 'elite-name-sm' : '') }}">{{ Auth::user()->name }}</h3>
+                    <h3
+                        class="{{ Auth::user()->isPenguasaSektor() ? 'sovereign-name-sm' : (Auth::user()->isElite() ? 'elite-name-sm' : '') }}">
+                        {{ Auth::user()->name }}
+                    </h3>
                     <p>{{ explode('@', Auth::user()->email)[0] }}</p>
                 </div>
             </div>
@@ -780,7 +785,7 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
     })();
 
     // ── Global No-Scroll on Popups ────────────────────────────────────
-    (function() {
+    (function () {
         const backdrop = document.getElementById('setting-backdrop');
         if (backdrop) {
             const observer = new MutationObserver((mutations) => {
@@ -907,9 +912,8 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
         border-radius: 30px;
         display: flex;
         align-items: center;
-        padding: 10px 24px;
         gap: 12px;
-        width: 400px;
+        /* width: 400px; */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -923,16 +927,18 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
     .rtd-search-pill i {
         color: #888;
         font-size: 18px;
+        margin: 0 15px;
     }
 
     .rtd-search-pill input {
         background: transparent;
         border: none;
+        padding: 10px 24px;
         color: #121212;
         outline: none;
         font-size: 14px;
         font-weight: 500;
-        width: 100%;
+        /* width: 100%; */
         font-family: inherit;
     }
 
@@ -993,11 +999,25 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
     }
 
     @keyframes auraRotate {
-        0% { background-image: linear-gradient(#fff, #fff), linear-gradient(0deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
-        25% { background-image: linear-gradient(#fff, #fff), linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
-        50% { background-image: linear-gradient(#fff, #fff), linear-gradient(180deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
-        75% { background-image: linear-gradient(#fff, #fff), linear-gradient(270deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
-        100% { background-image: linear-gradient(#fff, #fff), linear-gradient(360deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6); }
+        0% {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(0deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        }
+
+        25% {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        }
+
+        50% {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(180deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        }
+
+        75% {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(270deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        }
+
+        100% {
+            background-image: linear-gradient(#fff, #fff), linear-gradient(360deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+        }
     }
 
     /* ═══ SOVEREIGN AURA (Penguasa Sektor) ═══ */
@@ -1030,9 +1050,19 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
 
 
     @keyframes auraGlow {
-        0% { opacity: 0.3; transform: rotate(0deg); }
-        50% { opacity: 0.5; }
-        100% { opacity: 0.3; transform: rotate(360deg); }
+        0% {
+            opacity: 0.3;
+            transform: rotate(0deg);
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 0.3;
+            transform: rotate(360deg);
+        }
     }
 
     @media (max-width: 820px) {
@@ -1060,8 +1090,9 @@ SETTINGS POPUP OVERLAY (ADMIN STYLE)
         .rtd-nav-title p {
             display: none;
         }
-        
-        .rtd-nav-left, .rtd-nav-right {
+
+        .rtd-nav-left,
+        .rtd-nav-right {
             gap: 8px;
         }
 
