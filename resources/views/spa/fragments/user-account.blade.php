@@ -245,7 +245,7 @@
     <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1)';">
         <i class='bx bx-x' style="font-size: 28px;"></i>
     </button>
-    <img id="image-viewer-img" src="" alt="Profile Image" style="max-width: 90%; max-height: 90vh; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <img id="image-viewer-img" src="" alt="Profile Image" style="max-width: 90%; max-height: 90vh; border-radius: 4px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); object-fit: contain;">
 </div>
 
 <script>
@@ -336,6 +336,33 @@
             <div id="ep-form-message" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;"></div>
             <button type="submit" id="ep-btn-save" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:16px;border:none;background:#121212;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s;margin-top:4px;font-family:inherit;"><i class='bx bx-check'></i> Simpan Perubahan</button>
         </form>
+    </div>
+</div>
+
+{{-- ═══ IMAGE CROP MODAL ═══ --}}
+<div class="crop-modal-backdrop" id="crop-modal-backdrop"></div>
+<div class="crop-modal" id="crop-modal">
+    <div class="crop-modal-header">
+        <h4><i class='bx bx-crop'></i> Sesuaikan Foto</h4>
+        <button type="button" id="crop-modal-close" class="crop-modal-close"><i class='bx bx-x'></i></button>
+    </div>
+    <div class="crop-modal-body">
+        <div class="crop-area" id="crop-area">
+            <canvas id="crop-canvas"></canvas>
+            <div class="crop-circle-mask"></div>
+        </div>
+        <div class="crop-controls">
+            <div class="crop-zoom-row">
+                <i class='bx bx-minus-circle' style="font-size:18px;color:#888;"></i>
+                <input type="range" id="crop-zoom-slider" min="100" max="300" value="100" class="crop-zoom-slider">
+                <i class='bx bx-plus-circle' style="font-size:18px;color:#888;"></i>
+            </div>
+            <p class="crop-hint"><i class='bx bx-move'></i> Geser gambar untuk mengatur posisi</p>
+        </div>
+    </div>
+    <div class="crop-modal-footer">
+        <button type="button" id="crop-btn-cancel" class="crop-btn crop-btn-cancel"><i class='bx bx-x'></i> Batal</button>
+        <button type="button" id="crop-btn-apply" class="crop-btn crop-btn-apply"><i class='bx bx-check'></i> Terapkan & Upload</button>
     </div>
 </div>
 
