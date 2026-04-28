@@ -10,6 +10,13 @@
     --neo-radius: 32px;
 }
 
+/* Cropper Modal */
+.cropper-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 100005; display: none; opacity: 0; transition: opacity 0.3s; }
+.cropper-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 100006; background: #fff; border-radius: 20px; padding: 24px; width: 90%; max-width: 460px; display: none; opacity: 0; transition: all 0.3s; flex-direction: column; gap: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.cropper-modal.active, .cropper-modal-backdrop.active { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.cropper-modal-backdrop.active { transform: none; display: block; }
+.cropper-container-wrapper { width: 100%; height: 320px; background: #f0f0f0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
+
 body { background-color: var(--neo-bg) !important; overflow-x: hidden; }
 
 .neo-dashboard *, .neo-dashboard *::before, .neo-dashboard *::after { box-sizing: border-box; }

@@ -4,7 +4,7 @@
 
 <div class="container container-aside asidebar @if ($user->role == 'admin') admin @endif" id="asidePage">
     <aside class="neo-aside">
-        
+
         <!-- Ultra Minimalist Header / Brand -->
         <div class="neo-aside-brand">
             <div class="neo-brand-dot"></div>
@@ -15,19 +15,19 @@
         <nav class="neo-nav-menu" id="spa-nav">
             <a href="#" data-spa-page="dashboard" class="neo-nav-link active">
                 <i class="bx bxs-home neo-nav-icon"></i>
-                <span>Tinjauan</span>
+                <span>Dashboard</span>
             </a>
-            
+
             <a href="#" data-spa-page="schedule" class="neo-nav-link">
                 <i class="bx bx-calendar neo-nav-icon"></i>
                 <span>Jadwal</span>
             </a>
-            
+
             <a href="#" data-spa-page="favorites" class="neo-nav-link">
                 <i class="bx bx-star neo-nav-icon"></i>
-                <span>Markah</span>
+                <span>Favorit</span>
             </a>
-            
+
             <a href="#" data-spa-page="history" class="neo-nav-link">
                 <i class="bx bx-history neo-nav-icon"></i>
                 <span>Riwayat</span>
@@ -35,7 +35,8 @@
 
             <div class="neo-nav-divider"></div>
 
-            <a href="#" data-spa-page="secret-lab" class="neo-nav-link neo-nav-elite {{ $user->isElite() ? 'elite-unlocked' : 'elite-locked' }}">
+            <a href="#" data-spa-page="secret-lab"
+                class="neo-nav-link neo-nav-elite {{ $user->isElite() ? 'elite-unlocked' : 'elite-locked' }}">
                 <i class="bx {{ $user->isElite() ? 'bxs-flask' : 'bx-lock-alt' }} neo-nav-icon"></i>
                 <span>Secret Lab</span>
                 @if($user->isElite())
@@ -49,9 +50,12 @@
         <!-- Minimal footer actions -->
         <div class="neo-aside-footer">
             <div class="neo-profile-module" data-spa-page="account" title="Buka Profil">
-                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}" alt="Profile" class="neo-profile-img {{ $user->isPenguasaSektor() ? 'sovereign-aura-sm' : ($user->isElite() ? 'elite-aura-sm' : '') }}">
+                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}"
+                    alt="Profile"
+                    class="neo-profile-img {{ $user->isPenguasaSektor() ? 'sovereign-aura-sm' : ($user->isElite() ? 'elite-aura-sm' : '') }}">
                 <div class="neo-profile-meta">
-                    <span class="neo-profile-name {{ $user->isPenguasaSektor() ? 'sovereign-name' : ($user->isElite() ? 'elite-name' : '') }}">{{ $user->name }}</span>
+                    <span
+                        class="neo-profile-name {{ $user->isPenguasaSektor() ? 'sovereign-name' : ($user->isElite() ? 'elite-name' : '') }}">{{ $user->name }}</span>
                     @if($user->isPenguasaSektor())
                         <span class="sovereign-title">Sovereign</span>
                     @else
@@ -94,11 +98,12 @@
         flex-direction: column;
         height: 100vh;
         width: 100%;
-        max-width: 280px; /* Constrain width so page behind is visible */
+        max-width: 280px;
+        /* Constrain width so page behind is visible */
         padding: 32px 20px;
         box-sizing: border-box;
-        border-right: 1px solid rgba(0,0,0,0.06);
-        box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        border-right: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
     }
 
     /* Brand */
@@ -158,9 +163,9 @@
 
     .neo-nav-link:hover {
         color: #121212;
-        background: rgba(0,0,0,0.02);
+        background: rgba(0, 0, 0, 0.02);
     }
-    
+
     .neo-nav-link:hover .neo-nav-icon {
         transform: scale(1.1);
     }
@@ -170,10 +175,10 @@
         color: #121212;
         font-weight: 600;
         background: #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
-        border: 1px solid rgba(0,0,0,0.04);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.04);
     }
-    
+
     .neo-nav-link.active::before {
         content: '';
         position: absolute;
@@ -208,8 +213,8 @@
 
     .neo-profile-module:hover {
         background: #fff;
-        border-color: rgba(0,0,0,0.04);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        border-color: rgba(0, 0, 0, 0.04);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
     }
 
     .neo-profile-img {
@@ -217,7 +222,7 @@
         height: 34px;
         border-radius: 50%;
         object-fit: cover;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     .neo-profile-meta {
@@ -255,7 +260,7 @@
         padding: 12px;
         border-radius: 12px;
         background: transparent;
-        border: 1px dashed rgba(0,0,0,0.1);
+        border: 1px dashed rgba(0, 0, 0, 0.1);
         color: #888;
         font-size: 13px;
         font-weight: 500;
@@ -285,7 +290,7 @@
         padding: 12px;
         border-radius: 12px;
         background: transparent;
-        border: 1px dashed rgba(0,0,0,0.1);
+        border: 1px dashed rgba(0, 0, 0, 0.1);
         color: #888;
         font-size: 13px;
         font-weight: 500;
@@ -308,7 +313,7 @@
     /* ═══ SECRET LAB SIDEBAR ═══ */
     .neo-nav-divider {
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06), transparent);
+        background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent);
         margin: 8px 14px;
     }
 
@@ -352,8 +357,15 @@
     }
 
     @keyframes elitePulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
     }
 
     .neo-nav-elite.elite-locked {

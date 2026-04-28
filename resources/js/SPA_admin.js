@@ -220,6 +220,7 @@ const SECTION_TYPES = {
     image:      { label: 'Gambar',      icon: '📷', color: '#f59e0b' },
     quote:      { label: 'Kutipan',     icon: '"',  color: '#ec4899' },
     list:       { label: 'Daftar/List', icon: '☰',  color: '#14b8a6' },
+    table:      { label: 'Tabel',       icon: '▦',  color: '#f97316' },
     divider:    { label: 'Pemisah',     icon: '—',  color: '#6b7280' },
 };
 
@@ -265,6 +266,11 @@ function sectionInputHtml(type, idx) {
                 <div class="flex gap-4 text-xs text-zinc-600">
                 <label><input type="radio" name="sections[${idx}][list_type]" value="unordered" checked> • Bullet</label>
                 <label><input type="radio" name="sections[${idx}][list_type]" value="ordered"> 1. Numbered</label></div>`;
+
+        case 'table':
+            return `<div><label class="text-xs text-zinc-600">Tabel (Baris dipisah Enter, Kolom dipisah |)</label>
+                <p class="text-[10px] text-zinc-400 mb-1">Contoh:<br>Kolom 1 | Kolom 2<br>Data 1 | Data 2</p>
+                <textarea name="sections[${idx}][content]" rows="5" class="${tw} font-mono" placeholder="Header 1 | Header 2\nData 1 | Data 2\nData 3 | Data 4"></textarea></div>`;
 
         case 'divider':
             return `<p class="text-center text-xs text-zinc-400 py-2">── Garis pemisah ──</p>
@@ -1405,6 +1411,7 @@ function setupCrud(container) {
                 payload = {
                     title: editBlock.querySelector('.edit-title').value,
                     description: editBlock.querySelector('.edit-description').value,
+                    status: editBlock.querySelector('.edit-status')?.value || 'draft',
                 };
             } else if (type === 'materi') {
                 payload = {

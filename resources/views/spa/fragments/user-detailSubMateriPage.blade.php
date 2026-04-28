@@ -120,6 +120,37 @@
                     @case('divider')
                         <hr class="art-sec-divider">
                         @break
+                    @case('table')
+                        @php
+                            $lines = array_filter(explode("\n", $sec['content'] ?? ''), fn($l) => trim($l) !== '');
+                        @endphp
+                        @if(count($lines) > 0)
+                        <div class="art-sec-table-wrap">
+                            <table class="art-sec-table">
+                                @foreach($lines as $index => $line)
+                                    @php $cells = explode("|", $line); @endphp
+                                    @if($index === 0)
+                                        <thead>
+                                            <tr>
+                                                @foreach($cells as $cell)
+                                                    <th>{{ trim($cell) }}</th>
+                                                @endforeach
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                    @else
+                                        <tr>
+                                            @foreach($cells as $cell)
+                                                <td>{{ trim($cell) }}</td>
+                                            @endforeach
+                                        </tr>
+                                    @endif
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @endif
+                        @break
                     @case('content')
                         <div class="art-sec-paragraph">{!! $sec['value'] ?? $sec['content'] ?? '' !!}</div>
                         @break
@@ -443,6 +474,39 @@ ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
     border: none;
     border-top: 2px solid rgba(0,0,0,0.06);
     margin: 40px 0;
+}
+
+/* Table */
+.art-sec-table-wrap {
+    overflow-x: auto;
+    margin: 32px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+.art-sec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    text-align: left;
+    background: #fff;
+}
+.art-sec-table th {
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.03);
+    color: #121212;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+}
+.art-sec-table td {
+    padding: 14px 16px;
+    color: #444;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.art-sec-table tr:last-child td {
+    border-bottom: none;
+}
+.art-sec-table tbody tr:hover {
+    background: rgba(0,0,0,0.01);
 }
 
 /* ═══ NAVIGATION ═══ */

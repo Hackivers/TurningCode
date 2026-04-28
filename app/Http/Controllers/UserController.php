@@ -71,7 +71,8 @@ class UserController extends Controller
                     ->get()
                 : collect();
 
-            $mainMateri = MainMateri::withCount('materis')
+            $mainMateri = MainMateri::where('status', '!=', 'draft')
+                ->withCount('materis')
                 ->with('materis:id,main_materi_id,title')
                 ->with('materis.subMateris:id,materi_id')
                 ->get()
@@ -92,7 +93,7 @@ class UserController extends Controller
 
                     $main->total_materi = $main->materis_count;
                     $main->total_submateri = $totalSub;
-                    $main->is_coming_soon = false;
+                    $main->is_coming_soon = $main->status === 'coming_soon';
                     $main->progress_percent = $totalSub > 0 ? round(($doneSub / $totalSub) * 100) : 0;
                     $main->is_completed = $totalSub > 0 && $doneSub >= $totalSub;
 
@@ -214,7 +215,7 @@ class UserController extends Controller
             $mainId = $request->query('main_id');
             $mainMateri = MainMateri::find($mainId);
 
-            if (!$mainMateri) {
+            if (!$mainMateri || $mainMateri->status === 'draft') {
                 abort(404);
             }
 

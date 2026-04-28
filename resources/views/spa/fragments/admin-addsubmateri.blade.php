@@ -213,6 +213,11 @@
                         <span
                             class="text-xs font-bold uppercase tracking-widest text-zinc-700 group-hover:text-teal-600">List</span>
                     </button>
+                    <button type="button" data-add-type="table"
+                        class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-orange-400">
+                        <span
+                            class="text-xs font-bold uppercase tracking-widest text-zinc-700 group-hover:text-orange-600">Table</span>
+                    </button>
                     <button type="button" data-add-type="divider"
                         class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-zinc-400">
                         <span

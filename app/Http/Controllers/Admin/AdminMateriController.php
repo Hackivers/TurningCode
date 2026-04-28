@@ -20,6 +20,7 @@ class AdminMateriController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:publish,coming_soon,draft'],
         ]);
 
         if ($validator->fails()) {
@@ -88,6 +89,7 @@ class AdminMateriController extends Controller
         $validated = $request->validate([
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'status'      => ['required', 'in:publish,coming_soon,draft'],
         ]);
 
         $mainMateri->update($validated);

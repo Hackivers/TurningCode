@@ -3,6 +3,7 @@
 @section('content')
     @include('spa.fragments.user-navBar')
     @include('spa.fragments.user-asideBar')
+    @include('spa.fragments.user-mascot')
 
     <div id="spa-content">
         <div class="loading-page">
@@ -181,32 +182,35 @@
 @section('styles')
     <style>
         /* ═══ ROTOOD — GLOBAL DARK BODY ═══ */
-        :root {
-            --bg-primary: #060606 !important;
-            --text-primary: #ffffff !important;
+        :root.dark-mode {
+            --bg-primary: #060606;
+            --text-primary: #ffffff;
+            
+            /* Neo Bento Overrides */
+            --neo-bg: #060606;
+            --neo-card-light: #111111;
+            --neo-card-black: #1a1a1a;
+            --neo-text-dark: #ffffff;
+            --neo-text-light: #cccccc;
         }
 
-        body {
-            background-color: #060606 !important;
-            color: #ffffff !important;
+        html.dark-mode body {
+            background-color: var(--neo-bg) !important;
+            color: var(--neo-text-dark) !important;
         }
 
         /* Loading Page */
-        .loading-page {
+        html.dark-mode .loading-page {
             color: #888 !important;
         }
 
-        .loading-page i {
+        html.dark-mode .loading-page i {
             color: #f3ebd7 !important;
         }
 
-        .loading-spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(243, 235, 215, 0.15);
-            border-top-color: #f3ebd7;
-            border-radius: 50%;
-            animation: spinRotate 0.7s linear infinite;
+        html.dark-mode .loading-spinner {
+            border-color: rgba(243, 235, 215, 0.15) !important;
+            border-top-color: #f3ebd7 !important;
         }
 
         @keyframes spinRotate {
@@ -214,55 +218,55 @@
         }
 
         /* Offline overlay */
-        .offline-overlay {
+        html.dark-mode .offline-overlay {
             background: #060606 !important;
         }
 
-        .offline-content {
+        html.dark-mode .offline-content {
             color: #eee !important;
         }
 
-        .offline-title {
+        html.dark-mode .offline-title {
             color: #eee !important;
         }
 
-        .offline-desc {
+        html.dark-mode .offline-desc {
             color: #888 !important;
         }
 
-        .offline-retry-btn {
+        html.dark-mode .offline-retry-btn {
             background: #f3ebd7 !important;
             color: #000 !important;
             border: none !important;
             border-radius: 20px !important;
         }
 
-        .offline-icon i {
+        html.dark-mode .offline-icon i {
             color: #f3ebd7 !important;
         }
 
-        .offline-status span {
+        html.dark-mode .offline-status span {
             color: #888 !important;
         }
 
-        .offline-tip {
+        html.dark-mode .offline-tip {
             color: #666 !important;
         }
 
-        .offline-tip i {
+        html.dark-mode .offline-tip i {
             color: #555 !important;
         }
 
-        .offline-tip-divider {
+        html.dark-mode .offline-tip-divider {
             background: #222 !important;
         }
 
-        .offline-pulse-ring {
+        html.dark-mode .offline-pulse-ring {
             border-color: rgba(243, 235, 215, 0.15) !important;
         }
 
         /* Toast */
-        #toast-container .toast {
+        html.dark-mode #toast-container .toast {
             background: #111 !important;
             border: 1px solid #222 !important;
             color: #eee !important;
@@ -270,36 +274,36 @@
         }
 
         /* Detail sub materi page */
-        .container-detail-submateri {
+        html.dark-mode .container-detail-submateri {
             background: transparent !important;
         }
 
-        .detail-submateri-card {
+        html.dark-mode .detail-submateri-card {
             background: #111 !important;
             border: 1px solid #1a1a1a !important;
             border-radius: 28px !important;
             color: #ddd !important;
         }
 
-        .detail-submateri-card h1,
-        .detail-submateri-card h2,
-        .detail-submateri-card h3,
-        .detail-submateri-card h4 {
+        html.dark-mode .detail-submateri-card h1,
+        html.dark-mode .detail-submateri-card h2,
+        html.dark-mode .detail-submateri-card h3,
+        html.dark-mode .detail-submateri-card h4 {
             color: #eee !important;
         }
 
-        .detail-submateri-card pre {
+        html.dark-mode .detail-submateri-card pre {
             background: #0a0a0a !important;
             border: 1px solid #1a1a1a !important;
             border-radius: 16px !important;
         }
 
-        .detail-submateri-card code {
+        html.dark-mode .detail-submateri-card code {
             background: #0a0a0a !important;
             color: #f3ebd7 !important;
         }
 
-        .btn-mark-done {
+        html.dark-mode .btn-mark-done {
             background: #f3ebd7 !important;
             color: #000 !important;
             border: none !important;
@@ -307,12 +311,45 @@
         }
 
         /* Quiz override */
-        .quiz-container,
-        .quiz-card {
+        html.dark-mode .quiz-container,
+        html.dark-mode .quiz-card {
             background: #111 !important;
             border: 1px solid #1a1a1a !important;
             border-radius: 28px !important;
             color: #eee !important;
+        }
+        
+        /* General Modals / Cards override for dark mode */
+        html.dark-mode .neo-card-light {
+            background: #111 !important;
+            color: #eee !important;
+            border-color: #222 !important;
+        }
+        
+        html.dark-mode .neo-card-light h2,
+        html.dark-mode .neo-card-light h3,
+        html.dark-mode .neo-card-light h4 {
+            color: #fff !important;
+        }
+        
+        html.dark-mode .neo-card-light p {
+            color: #aaa !important;
+        }
+        
+        html.dark-mode .neo-card-light label {
+            color: #ddd !important;
+        }
+        
+        html.dark-mode .neo-card-light input,
+        html.dark-mode .neo-card-light textarea {
+            background: #1a1a1a !important;
+            color: #eee !important;
+            border-color: #333 !important;
+        }
+        
+        html.dark-mode .neo-card-light input:focus,
+        html.dark-mode .neo-card-light textarea:focus {
+            border-color: #666 !important;
         }
     </style>
 @endsection

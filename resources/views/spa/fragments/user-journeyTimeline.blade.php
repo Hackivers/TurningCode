@@ -48,6 +48,50 @@
         return false;
     };
 
+    // Fungsi pembantu mengecek tanggal aktif (untuk kalender bulanan)
+    $isActiveOnDate = function ($schedule, $date) {
+        if (!$schedule->is_active)
+            return false;
+        if ($schedule->schedule_type === 'daily')
+            return true;
+        if ($schedule->schedule_type === 'weekly') {
+            return in_array($date->dayOfWeek, $schedule->days_of_week ?? []);
+        }
+        if ($schedule->schedule_type === 'monthly') {
+            return $date->day == $schedule->day_of_month;
+        }
+        if ($schedule->schedule_type === 'custom') {
+            if ($schedule->custom_date) {
+                return $date->isSameDay(\Carbon\Carbon::parse($schedule->custom_date));
+            }
+        }
+        return false;
+    };
+
+    // Bikin array tanggal untuk kalender bulan ini
+    $todayDate = now();
+    $startOfMonth = $todayDate->copy()->startOfMonth();
+    $endOfMonth = $todayDate->copy()->endOfMonth();
+    
+    // Mulai dari hari Senin terdekat (1 = Senin)
+    $startCell = $startOfMonth->copy();
+    if ($startCell->dayOfWeek !== 1) {
+        $startCell->startOfWeek(); 
+    }
+    
+    // Berakhir di hari Minggu terdekat (0 = Minggu)
+    $endCell = $endOfMonth->copy();
+    if ($endCell->dayOfWeek !== 0) {
+        $endCell->endOfWeek();
+    }
+
+    $calendarDays = [];
+    $currentCell = $startCell->copy();
+    while ($currentCell->lessThanOrEqualTo($endCell)) {
+        $calendarDays[] = $currentCell->copy();
+        $currentCell->addDay();
+    }
+
     // Hitung jam mulai (min) dan jam selesai (max) secara dinamis
     $minHour = 24;
     $maxHour = 0;
@@ -98,18 +142,21 @@
 
 <div class="neo-card neo-card-light" style="padding: 48px; position: relative; border: 1px solid rgba(0,0,0,0.04);">
     {{-- Header --}}
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
         <div>
-            <p style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.5);">This Week's Journey
+            <p style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.5);">Your Learning Journey
             </p>
-            <h2 style="margin: 0; font-size: 32px; font-weight: 800; color: #121212; letter-spacing: -0.5px;">Weekly
-                Timeline</h2>
+            <h2 style="margin: 0; font-size: 32px; font-weight: 800; color: #121212; letter-spacing: -0.5px;">Schedule & Timeline</h2>
         </div>
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <span style="font-size: 14px; font-weight: 700; color: #121212;">Agenda</span>
-            <div style="display: flex; gap: 12px; font-size: 24px; color: #121212;">
-                <i class='bx bx-calendar'></i>
-            </div>
+        
+        {{-- Switch Mode --}}
+        <div class="view-mode-switch">
+            <button class="mode-btn active" onclick="switchViewMode('timeline')" id="btn-mode-timeline">
+                <i class='bx bx-time'></i> Timeline
+            </button>
+            <button class="mode-btn" onclick="switchViewMode('calendar')" id="btn-mode-calendar">
+                <i class='bx bx-calendar'></i> Calendar
+            </button>
         </div>
     </div>
 
@@ -120,7 +167,8 @@
             </p>
         </div>
     @else
-        <div class="timeline-container">
+        {{-- View Timeline (Mingguan) --}}
+        <div id="view-timeline" class="timeline-container">
             {{-- Calendar Header Row --}}
             <div class="calendar-header">
                 <div class="time-col-spacer"></div>
@@ -232,8 +280,61 @@
                 </div>
             </div>
         </div>
+
+        {{-- View Calendar (Bulanan) --}}
+        <div id="view-calendar" style="display: none;">
+            <div class="month-calendar-container">
+                <div class="month-header">
+                    <h3>{{ $todayDate->translatedFormat('F Y') }}</h3>
+                </div>
+                <div class="month-grid">
+                    {{-- Day Names Header --}}
+                    @foreach ($daysOrder as $d)
+                        <div class="month-day-name">{{ $dayNames[$d] }}</div>
+                    @endforeach
+
+                    {{-- Day Cells --}}
+                    @foreach ($calendarDays as $date)
+                        @php
+                            $isToday = $date->isToday();
+                            $isCurrentMonth = $date->month === $todayDate->month;
+                        @endphp
+                        <div class="month-cell {{ $isToday ? 'is-today' : '' }} {{ !$isCurrentMonth ? 'not-current-month' : '' }}">
+                            <div class="month-cell-date">
+                                <span>{{ $date->day }}</span>
+                            </div>
+                            <div class="month-cell-events">
+                                @foreach ($allSchedules as $schedule)
+                                    @if ($isActiveOnDate($schedule, $date))
+                                        <div class="month-event-dot" style="background: {{ $schedule->color ?? '#1a1a1a' }};" title="{{ $schedule->title }} ({{ \Carbon\Carbon::parse($schedule->start_time ?: '00:00')->format('H:i') }})">
+                                            {{ $schedule->title }}
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     @endif
 </div>
+
+<script>
+    function switchViewMode(mode) {
+        if (mode === 'timeline') {
+            document.getElementById('view-timeline').style.display = 'flex';
+            document.getElementById('view-calendar').style.display = 'none';
+            document.getElementById('btn-mode-timeline').classList.add('active');
+            document.getElementById('btn-mode-calendar').classList.remove('active');
+        } else {
+            document.getElementById('view-timeline').style.display = 'none';
+            document.getElementById('view-calendar').style.display = 'block';
+            document.getElementById('btn-mode-calendar').classList.add('active');
+            document.getElementById('btn-mode-timeline').classList.remove('active');
+        }
+    }
+</script>
 
 <style>
     .timeline-container {
@@ -439,5 +540,164 @@
         .calendar-body-inner {
             min-width: 900px;
         }
+        
+        .month-grid {
+            min-width: 700px;
+        }
+        
+        .month-calendar-container {
+            overflow-x: auto;
+        }
+    }
+    
+    /* View Mode Switch Styles */
+    .view-mode-switch {
+        display: flex;
+        background: rgba(0,0,0,0.04);
+        padding: 4px;
+        border-radius: 12px;
+        gap: 4px;
+    }
+    
+    .mode-btn {
+        border: none;
+        background: transparent;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(0,0,0,0.5);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    
+    .mode-btn:hover {
+        color: #121212;
+    }
+    
+    .mode-btn.active {
+        background: #fff;
+        color: #121212;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    /* Calendar View Styles */
+    .month-calendar-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .month-header {
+        text-align: left;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .month-header h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #121212;
+        letter-spacing: -0.3px;
+        text-transform: uppercase;
+    }
+    
+    .month-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+    }
+    
+    .month-day-name {
+        text-align: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(0,0,0,0.5);
+        text-transform: uppercase;
+        padding-bottom: 8px;
+        letter-spacing: 1px;
+    }
+    
+    .month-cell {
+        background: #fff;
+        border-radius: 12px;
+        min-height: 120px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0,0,0,0.03);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        transition: transform 0.2s, box-shadow 0.2s;
+        overflow: hidden;
+    }
+    
+    .month-cell:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .month-cell.not-current-month {
+        opacity: 0.4;
+        background: rgba(0,0,0,0.02);
+    }
+    
+    .month-cell.is-today {
+        border: 2px solid #121212;
+        background: #fdfdfd;
+    }
+    
+    .month-cell.is-today .month-cell-date span {
+        background: #121212;
+        color: #fff;
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .month-cell-date {
+        font-size: 14px;
+        font-weight: 700;
+        color: #121212;
+        margin-bottom: 8px;
+        align-self: flex-end;
+        display: flex;
+    }
+    
+    .month-cell-events {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+        flex: 1;
+        max-height: 80px;
+    }
+    
+    .month-cell-events::-webkit-scrollbar {
+        width: 2px;
+    }
+    .month-cell-events::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 2px;
+    }
+    
+    .month-event-dot {
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+        padding: 4px 6px;
+        border-radius: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        cursor: default;
     }
 </style>

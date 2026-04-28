@@ -60,6 +60,15 @@
                             placeholder="Ringkasan atau detail kategori...">{{ old('description') }}</textarea>
                     </div>
 
+                    <div class="space-y-1.5 group">
+                        <label for="mm-status" class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 transition-colors group-focus-within:text-indigo-600">Status</label>
+                        <select id="mm-status" name="status" class="w-full rounded-xl border-0 bg-white px-4 py-3 text-sm text-zinc-900 shadow-[inset_0_2px_5px_rgba(0,0,0,0.02)] ring-1 ring-zinc-200/50 transition-all focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="draft" @selected(old('status') == 'draft')>Draft</option>
+                            <option value="publish" @selected(old('status') == 'publish')>Publish</option>
+                            <option value="coming_soon" @selected(old('status') == 'coming_soon')>Coming Soon</option>
+                        </select>
+                    </div>
+
                     @if ($errors->any())
                         <div class="rounded-xl bg-red-50 p-4 border border-red-100">
                             <ul class="list-inside list-disc text-xs font-medium text-red-600 space-y-1">
@@ -93,7 +102,16 @@
 
                                     <div class="flex-1 min-w-0 pt-0.5">
                                         <div class="flex items-center justify-between gap-4">
-                                            <h3 class="font-bold text-zinc-900 truncate">{{ $mm->title }}</h3>
+                                            <div class="flex items-center gap-2">
+                                                <h3 class="font-bold text-zinc-900 truncate">{{ $mm->title }}</h3>
+                                                @if($mm->status === 'publish')
+                                                    <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Publish</span>
+                                                @elseif($mm->status === 'coming_soon')
+                                                    <span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">Coming Soon</span>
+                                                @else
+                                                    <span class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">Draft</span>
+                                                @endif
+                                            </div>
                                             <div class="flex shrink-0 items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <button type="button" class="btn-crud-edit flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-50 text-zinc-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600" title="Edit Data">
                                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
@@ -128,6 +146,14 @@
                                         <div class="space-y-1.5">
                                             <label class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Edit Deskripsi</label>
                                             <textarea class="edit-description w-full rounded-lg border-0 bg-white px-3 py-2 text-sm shadow-sm ring-1 ring-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3">{{ $mm->description }}</textarea>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Status</label>
+                                            <select class="edit-status w-full rounded-lg border-0 bg-white px-3 py-2 text-sm shadow-sm ring-1 ring-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                                <option value="draft" @selected($mm->status == 'draft')>Draft</option>
+                                                <option value="publish" @selected($mm->status == 'publish')>Publish</option>
+                                                <option value="coming_soon" @selected($mm->status == 'coming_soon')>Coming Soon</option>
+                                            </select>
                                         </div>
                                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-indigo-100/50">
                                             <button type="button" class="btn-crud-cancel group flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600">

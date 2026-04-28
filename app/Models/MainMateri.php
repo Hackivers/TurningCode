@@ -10,6 +10,7 @@ class MainMateri extends Model
     protected $fillable = [
         'title',
         'description',
+        'status',
     ];
 
     public function materis(): HasMany
