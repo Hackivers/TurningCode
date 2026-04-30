@@ -795,22 +795,69 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
     }
 
     /* Responsive */
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
+        .neo-dashboard { 
+            padding: 16px 0; 
+            overflow-x: hidden; 
+        }
+        
+        .neo-bento-container,
+        .neo-bento-container * {
+            box-sizing: border-box;
+        }
+
+        .neo-bento-container {
+            padding: 0 16px;
+            max-width: 100vw;
+        }
+
         .sl-bento-stats {
             grid-template-columns: 1fr;
+            gap: 12px;
         }
 
         .sl-feature-grid {
             grid-template-columns: 1fr;
+            gap: 12px;
         }
 
         .sl-priv-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
         .sl-head {
             flex-direction: column;
             align-items: flex-start;
+        }
+
+        .sl-head h2 {
+            font-size: 20px;
+        }
+
+        .sl-bento-card {
+            padding: 20px;
+            min-height: auto;
+        }
+
+        .sl-bc-value {
+            font-size: 18px;
+        }
+
+        .sl-fc-top, .sl-fc-body, .sl-priv-card {
+            padding: 16px;
+        }
+
+        .sl-fc-body h4 {
+            font-size: 14px;
+        }
+
+        .sl-priv-card h3 {
+            font-size: 14px;
+        }
+
+        .sl-priv-item {
+            padding: 12px 8px;
         }
     }
 </style>

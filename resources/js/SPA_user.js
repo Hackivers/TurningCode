@@ -145,17 +145,65 @@ function updateNavBottom(activePage) {
     });
 }
 
-/** Re-execute <script> yang ada di dalam HTML yang baru di-inject */
+/** Re-execute <script> dan <link> yang ada di dalam HTML yang baru di-inject.
+ *  Mengembalikan Promise yang resolve ketika SEMUA external CSS & JS sudah selesai load.
+ */
 function rehydrateScripts(container) {
+    const loadPromises = [];
+
+    // ── Handle <link rel="stylesheet"> ──────────────────────────────────
+    container.querySelectorAll('link[rel="stylesheet"]').forEach(old => {
+        const href = old.getAttribute('href');
+        if (!href) return;
+
+        // Skip jika CSS sudah pernah di-load sebelumnya (SPA re-navigation)
+        if (document.querySelector(`link[href="${href}"]`) && old.parentNode === container) {
+            // Pindahkan ke <head> agar persist antar navigasi SPA
+            const fresh = document.createElement('link');
+            fresh.rel = 'stylesheet';
+            fresh.href = href;
+            const p = new Promise(resolve => {
+                fresh.onload = resolve;
+                fresh.onerror = resolve; // jangan block walau gagal
+            });
+            loadPromises.push(p);
+            document.head.appendChild(fresh);
+            old.remove();
+            return;
+        }
+
+        // CSS belum ada di head — load baru
+        if (!document.head.querySelector(`link[href="${href}"]`)) {
+            const fresh = document.createElement('link');
+            fresh.rel = 'stylesheet';
+            fresh.href = href;
+            const p = new Promise(resolve => {
+                fresh.onload = resolve;
+                fresh.onerror = resolve;
+            });
+            loadPromises.push(p);
+            document.head.appendChild(fresh);
+        }
+        old.remove();
+    });
+
+    // ── Handle <script> ────────────────────────────────────────────────
     container.querySelectorAll('script').forEach(old => {
         const fresh = document.createElement('script');
         if (old.src) {
             fresh.src = old.src;
+            const p = new Promise(resolve => {
+                fresh.onload = resolve;
+                fresh.onerror = resolve;
+            });
+            loadPromises.push(p);
         } else {
             fresh.textContent = old.textContent;
         }
         old.replaceWith(fresh);
     });
+
+    return Promise.all(loadPromises);
 }
 
 async function loadPage(page, params = {}, pushState = true) {
@@ -168,15 +216,9 @@ async function loadPage(page, params = {}, pushState = true) {
     el.style.opacity = '1';
     el.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 4rem 1rem;">
-            <svg class="animate-spin text-indigo-500" style="height:2rem; width:2rem; margin-bottom:1rem; animation: spin 1s linear infinite;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p style="font-size:0.875rem; color:#6b7280; font-weight:500;">Memuat data...</p>
-            <style>
-                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                .animate-spin { animation: spin 1s linear infinite; }
-            </style>
+            <div style="width:36px; height:36px; border:3px solid rgba(0,0,0,0.08); border-top-color:#121212; border-radius:50%; animation:__spa_spin 0.7s linear infinite; margin-bottom:1rem;"></div>
+            <p style="font-size:13px; color:#888; font-weight:500; font-family:'Inter',sans-serif;">Memuat data...</p>
+            <style>@keyframes __spa_spin { to { transform: rotate(360deg); } }</style>
         </div>
     `;
 
@@ -195,8 +237,16 @@ async function loadPage(page, params = {}, pushState = true) {
         if (searchInput) searchInput.value = '';
         window.__currentSearchHandler = null;
 
+        // Sembunyikan konten dulu agar CSS tidak terlihat belum load (FOUC)
+        el.style.opacity = '0';
+        el.style.transition = 'none';
         el.innerHTML = await res.text();
-        rehydrateScripts(el);
+        await rehydrateScripts(el);
+
+        // Tunggu 1 frame agar browser selesai apply CSS, baru tampilkan
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        el.style.transition = 'opacity 0.15s ease';
+        el.style.opacity = '1';
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
         updateNavBottom(page);
@@ -222,9 +272,9 @@ async function loadPage(page, params = {}, pushState = true) {
     } catch (err) {
         // Network error — store failed page for retry
         window.__lastFailedPage = { page, params };
-        el.innerHTML = '<p style="text-align:center;padding:2em;color:#ef4444;">Gagal memuat halaman.</p>';
-    } finally {
+        el.style.transition = 'none';
         el.style.opacity = '1';
+        el.innerHTML = '<p style="text-align:center;padding:2em;color:#ef4444;">Gagal memuat halaman.</p>';
     }
 }
 

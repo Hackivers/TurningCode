@@ -159,6 +159,53 @@
     background: #f4f4f5;
     transform: scale(0.98);
 }
+
+/* ═══ MOBILE RESPONSIVENESS ═══ */
+@media (max-width: 768px) {
+    /* Give grid wrapper margin left and right */
+    div[style*="grid-template-columns: repeat"] {
+        margin: 0 10px !important;
+        gap: 16px !important;
+    }
+    
+    .materi-premium-card {
+        height: 240px; /* Compressed height */
+        border-radius: 20px;
+    }
+    
+    .materi-overlay {
+        padding: 20px 16px 16px 16px;
+    }
+    
+    .materi-content {
+        gap: 8px;
+    }
+    
+    .materi-title {
+        font-size: 18px;
+    }
+    
+    .materi-badge-price {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+    
+    .materi-desc {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+    
+    .materi-pill {
+        padding: 4px 10px;
+        font-size: 10px;
+    }
+    
+    .materi-action-btn {
+        padding: 12px 0;
+        font-size: 13px;
+        border-radius: 16px;
+    }
+}
 </style>
 @else
     <div class="neo-card neo-card-light" style="text-align:center; padding: 80px 20px;">

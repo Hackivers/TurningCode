@@ -72,13 +72,13 @@
     $todayDate = now();
     $startOfMonth = $todayDate->copy()->startOfMonth();
     $endOfMonth = $todayDate->copy()->endOfMonth();
-    
+
     // Mulai dari hari Senin terdekat (1 = Senin)
     $startCell = $startOfMonth->copy();
     if ($startCell->dayOfWeek !== 1) {
-        $startCell->startOfWeek(); 
+        $startCell->startOfWeek();
     }
-    
+
     // Berakhir di hari Minggu terdekat (0 = Minggu)
     $endCell = $endOfMonth->copy();
     if ($endCell->dayOfWeek !== 0) {
@@ -138,17 +138,36 @@
     $totalHours = $maxHour - $minHour;
     if ($totalHours <= 0)
         $totalHours = 1; // Fallback
+
+    // Generate dates for mobile horizontal picker (7 days starting today)
+    $mobileDays = [];
+    $currentDateForMobile = $todayDate->copy();
+    $shortDayNamesIndo = [
+        1 => 'Sen', 2 => 'Sel', 3 => 'Rab', 4 => 'Kam', 5 => 'Jum', 6 => 'Sab', 0 => 'Min'
+    ];
+    for ($i = 0; $i < 7; $i++) {
+        $mobileDays[] = [
+            'date_obj' => $currentDateForMobile->copy(),
+            'day_of_week' => $currentDateForMobile->dayOfWeek,
+            'day_name' => $shortDayNamesIndo[$currentDateForMobile->dayOfWeek],
+            'day_num' => $currentDateForMobile->day,
+            'is_today' => $i === 0
+        ];
+        $currentDateForMobile->addDay();
+    }
 @endphp
 
 <div class="neo-card neo-card-light" style="padding: 48px; position: relative; border: 1px solid rgba(0,0,0,0.04);">
     {{-- Header --}}
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+    <div
+        style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
         <div>
             <p style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.5);">Your Learning Journey
             </p>
-            <h2 style="margin: 0; font-size: 32px; font-weight: 800; color: #121212; letter-spacing: -0.5px;">Schedule & Timeline</h2>
+            <h2 style="margin: 0; font-size: 32px; font-weight: 800; color: #121212; letter-spacing: -0.5px;">Schedule &
+                Timeline</h2>
         </div>
-        
+
         {{-- Switch Mode --}}
         <div class="view-mode-switch">
             <button class="mode-btn active" onclick="switchViewMode('timeline')" id="btn-mode-timeline">
@@ -255,8 +274,66 @@
                 </div>
             </div>
 
-            {{-- Detail Jadwal Bawah --}}
-            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px dashed rgba(0,0,0,0.1);">
+            {{-- Mobile Timeline Modern (Mobile Only) --}}
+            <div class="mobile-timeline-modern">
+                {{-- Horizontal Date Picker --}}
+                <div class="mobile-timeline-picker-container">
+                    <div class="mobile-timeline-picker-scroll">
+                        @foreach($mobileDays as $md)
+                            <div class="mobile-day-item {{ $md['is_today'] ? 'active' : '' }}" data-day="{{ $md['day_of_week'] }}" onclick="selectMobileDay(this, {{ $md['day_of_week'] }})">
+                                <span class="mobile-day-name">{{ $md['day_name'] }}</span>
+                                <span class="mobile-day-num">{{ $md['day_num'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Task List Container --}}
+                <div class="mobile-timeline-tasks">
+                    @php 
+                        $hasTodayTask = false;
+                    @endphp
+                    @foreach ($displaySchedules as $schedule)
+                        {{-- Determine which days this schedule is active --}}
+                        @php
+                            $activeDaysArr = [];
+                            foreach($mobileDays as $md) {
+                                if($isActiveOnDay($schedule, $md['day_of_week'])) {
+                                    $activeDaysArr[] = $md['day_of_week'];
+                                }
+                            }
+                            $activeDaysStr = implode(',', $activeDaysArr);
+                            $isTodayTask = $isActiveOnDay($schedule, $todayDayOfWeek);
+                            if ($isTodayTask) $hasTodayTask = true;
+                        @endphp
+                        
+                        @if($activeDaysStr != '')
+                            <div class="mobile-task-card {{ $isTodayTask ? 'show' : 'hide' }}" data-active-days="{{ $activeDaysStr }}">
+                                <div class="task-indicator" style="background-color: {{ $schedule->color ?? '#1a1a1a' }}"></div>
+                                <div class="task-content">
+                                    <div class="task-header">
+                                        <div class="task-title">{{ $schedule->title }}</div>
+                                    </div>
+                                    <div class="task-time-row">
+                                        <i class='bx bx-time'></i> {{ $schedule->start_time ? substr($schedule->start_time, 0, 5) : '-' }} - {{ $schedule->end_time ? substr($schedule->end_time, 0, 5) : '-' }}
+                                    </div>
+                                    @if($schedule->description)
+                                        <div class="task-desc">{{ $schedule->description }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                    
+                    <div id="mobile-empty-state" class="{{ !$hasTodayTask ? 'show' : 'hide' }}">
+                        <i class='bx bx-check-circle'></i>
+                        <span>Yeay! Tidak ada tugas di hari ini.</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Detail Jadwal Bawah (Desktop Only) --}}
+            <div class="desktop-detail-agenda" style="margin-top: 40px; padding-top: 24px; border-top: 1px dashed rgba(0,0,0,0.1);">
                 <h4 style="font-size: 16px; font-weight: 800; color: #121212; margin: 0 0 16px; letter-spacing: -0.3px;">
                     Detail Agenda</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
@@ -299,14 +376,16 @@
                             $isToday = $date->isToday();
                             $isCurrentMonth = $date->month === $todayDate->month;
                         @endphp
-                        <div class="month-cell {{ $isToday ? 'is-today' : '' }} {{ !$isCurrentMonth ? 'not-current-month' : '' }}">
+                        <div
+                            class="month-cell {{ $isToday ? 'is-today' : '' }} {{ !$isCurrentMonth ? 'not-current-month' : '' }}">
                             <div class="month-cell-date">
                                 <span>{{ $date->day }}</span>
                             </div>
                             <div class="month-cell-events">
                                 @foreach ($allSchedules as $schedule)
                                     @if ($isActiveOnDate($schedule, $date))
-                                        <div class="month-event-dot" style="background: {{ $schedule->color ?? '#1a1a1a' }};" title="{{ $schedule->title }} ({{ \Carbon\Carbon::parse($schedule->start_time ?: '00:00')->format('H:i') }})">
+                                        <div class="month-event-dot" style="background: {{ $schedule->color ?? '#1a1a1a' }};"
+                                            title="{{ $schedule->title }} ({{ \Carbon\Carbon::parse($schedule->start_time ?: '00:00')->format('H:i') }})">
                                             {{ $schedule->title }}
                                         </div>
                                     @endif
@@ -540,25 +619,25 @@
         .calendar-body-inner {
             min-width: 900px;
         }
-        
+
         .month-grid {
             min-width: 700px;
         }
-        
+
         .month-calendar-container {
             overflow-x: auto;
         }
     }
-    
+
     /* View Mode Switch Styles */
     .view-mode-switch {
         display: flex;
-        background: rgba(0,0,0,0.04);
+        background: rgba(0, 0, 0, 0.04);
         padding: 4px;
         border-radius: 12px;
         gap: 4px;
     }
-    
+
     .mode-btn {
         border: none;
         background: transparent;
@@ -566,38 +645,38 @@
         border-radius: 8px;
         font-size: 14px;
         font-weight: 700;
-        color: rgba(0,0,0,0.5);
+        color: rgba(0, 0, 0, 0.5);
         cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
         transition: all 0.2s;
     }
-    
+
     .mode-btn:hover {
         color: #121212;
     }
-    
+
     .mode-btn.active {
         background: #fff;
         color: #121212;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
-    
+
     /* Calendar View Styles */
     .month-calendar-container {
         width: 100%;
         display: flex;
         flex-direction: column;
     }
-    
+
     .month-header {
         text-align: left;
         margin-bottom: 20px;
         padding-bottom: 12px;
         border-bottom: 2px solid rgba(0, 0, 0, 0.1);
     }
-    
+
     .month-header h3 {
         margin: 0;
         font-size: 20px;
@@ -606,23 +685,23 @@
         letter-spacing: -0.3px;
         text-transform: uppercase;
     }
-    
+
     .month-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 8px;
     }
-    
+
     .month-day-name {
         text-align: center;
         font-size: 14px;
         font-weight: 700;
-        color: rgba(0,0,0,0.5);
+        color: rgba(0, 0, 0, 0.5);
         text-transform: uppercase;
         padding-bottom: 8px;
         letter-spacing: 1px;
     }
-    
+
     .month-cell {
         background: #fff;
         border-radius: 12px;
@@ -630,27 +709,27 @@
         padding: 8px;
         display: flex;
         flex-direction: column;
-        border: 1px solid rgba(0,0,0,0.03);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         transition: transform 0.2s, box-shadow 0.2s;
         overflow: hidden;
     }
-    
+
     .month-cell:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-    
+
     .month-cell.not-current-month {
         opacity: 0.4;
-        background: rgba(0,0,0,0.02);
+        background: rgba(0, 0, 0, 0.02);
     }
-    
+
     .month-cell.is-today {
         border: 2px solid #121212;
         background: #fdfdfd;
     }
-    
+
     .month-cell.is-today .month-cell-date span {
         background: #121212;
         color: #fff;
@@ -661,7 +740,7 @@
         justify-content: center;
         border-radius: 50%;
     }
-    
+
     .month-cell-date {
         font-size: 14px;
         font-weight: 700;
@@ -670,7 +749,7 @@
         align-self: flex-end;
         display: flex;
     }
-    
+
     .month-cell-events {
         display: flex;
         flex-direction: column;
@@ -679,15 +758,16 @@
         flex: 1;
         max-height: 80px;
     }
-    
+
     .month-cell-events::-webkit-scrollbar {
         width: 2px;
     }
+
     .month-cell-events::-webkit-scrollbar-thumb {
-        background: rgba(0,0,0,0.1);
+        background: rgba(0, 0, 0, 0.1);
         border-radius: 2px;
     }
-    
+
     .month-event-dot {
         font-size: 10px;
         font-weight: 700;
@@ -697,7 +777,203 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         cursor: default;
     }
+
+    /* ═══ MOBILE TIMELINE MODERN ═══ */
+    .mobile-timeline-modern {
+        display: none;
+    }
+
+    /* ═══ MOBILE RESPONSIVENESS ═══ */
+    @media (max-width: 768px) {
+        .mobile-timeline-modern {
+            display: block;
+        }
+        .view-mode-switch,
+        #view-timeline .calendar-header,
+        #view-timeline .calendar-body-scroll,
+        .desktop-detail-agenda,
+        #view-calendar {
+            display: none !important;
+        }
+
+        /* Adjust main container padding */
+        div[style*="padding: 48px"] {
+            padding: 24px 20px !important;
+        }
+        div[style*="margin-bottom: 40px"] {
+            margin-bottom: 16px !important;
+        }
+
+        /* Picker Styles */
+        .mobile-timeline-picker-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+        .mobile-timeline-picker-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .mobile-timeline-picker-scroll::-webkit-scrollbar {
+            display: none; /* Safari/Chrome */
+        }
+        .mobile-day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 14px;
+            border-radius: 16px;
+            min-width: 54px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mobile-day-item.active {
+            background: #f4f4f5;
+        }
+        .mobile-day-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a1a1aa;
+            margin-bottom: 6px;
+        }
+        .mobile-day-item.active .mobile-day-name {
+            color: #52525b;
+        }
+        .mobile-day-num {
+            font-size: 16px;
+            font-weight: 700;
+            color: #3f3f46;
+        }
+        .mobile-day-item.active .mobile-day-num {
+            color: #121212;
+            font-weight: 800;
+        }
+
+        /* Task List Styles */
+        .mobile-timeline-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .mobile-task-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            display: flex;
+            gap: 12px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .mobile-task-card.hide {
+            display: none !important;
+        }
+        .mobile-task-card.show {
+            display: flex !important;
+            animation: fadeInTask 0.3s forwards;
+        }
+        @keyframes fadeInTask {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .task-indicator {
+            width: 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .task-content {
+            flex: 1;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+        .task-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #121212;
+            line-height: 1.3;
+        }
+        .task-time-row {
+            font-size: 12px;
+            font-weight: 600;
+            color: #71717a;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .task-desc {
+            font-size: 13px;
+            color: #a1a1aa;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        #mobile-empty-state {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            text-align: center;
+            color: #a1a1aa;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        #mobile-empty-state.hide {
+            display: none !important;
+        }
+        #mobile-empty-state.show {
+            display: flex !important;
+        }
+        #mobile-empty-state i {
+            font-size: 32px;
+            color: #d4d4d8;
+        }
+    }
 </style>
+
+<script>
+    function selectMobileDay(el, dayOfWeek) {
+        // Update active class on day picker
+        document.querySelectorAll('.mobile-day-item').forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+
+        // Scroll picker smoothly to center the clicked item
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+        // Filter tasks
+        let hasVisible = false;
+        document.querySelectorAll('.mobile-task-card').forEach(card => {
+            let activeDays = card.getAttribute('data-active-days').split(',');
+            if (activeDays.includes(dayOfWeek.toString())) {
+                card.classList.remove('hide');
+                card.classList.add('show');
+                hasVisible = true;
+            } else {
+                card.classList.remove('show');
+                card.classList.add('hide');
+            }
+        });
+
+        // Toggle empty state
+        const emptyState = document.getElementById('mobile-empty-state');
+        if(hasVisible) {
+            emptyState.classList.remove('show');
+            emptyState.classList.add('hide');
+        } else {
+            emptyState.classList.remove('hide');
+            emptyState.classList.add('show');
+        }
+    }
+</script>

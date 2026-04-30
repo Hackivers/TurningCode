@@ -214,6 +214,7 @@ body { background-color: var(--neo-bg) !important; }
     max-width: var(--art-max);
     margin: 0 auto;
     padding: 32px 24px 80px;
+    box-sizing: border-box;
 }
 
 /* ═══ BREADCRUMB ═══ */
@@ -562,14 +563,66 @@ ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
-    .art-container { padding: 24px 16px 60px; }
+    .neo-dashboard { overflow-x: hidden; }
+    .art-container { padding: 16px 16px 48px; max-width: 100vw; }
+    .art-breadcrumb { 
+        font-size: 11px; 
+        margin-bottom: 24px; 
+        gap: 4px;
+    }
     .art-header {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 16px;
+        margin-bottom: 24px;
     }
-    .art-title { font-size: 32px; }
+    .art-title { font-size: 26px !important; margin-bottom: 8px; }
+    .art-subtitle { font-size: 14px; margin-bottom: 16px; }
+    .art-meta-row { margin-top: 16px; }
+    .art-author-avatar { width: 32px; height: 32px; font-size: 14px; }
+    .art-author-name { font-size: 13px; }
+    .art-author-role { font-size: 11px; }
+    .art-header-right { padding-top: 0; }
+    .art-header-excerpt p { font-size: 13px; }
     .art-header-index { display: none; }
-    .art-nav { flex-direction: column; }
-    .art-nav-btn { max-width: 100%; width: 100%; justify-content: center; }
+    
+    /* Thumbnail */
+    .art-thumbnail-wrapper { 
+        margin-bottom: 32px; 
+        border-radius: 20px; 
+        padding: 8px; 
+    }
+    .art-thumbnail { border-radius: 14px; }
+    .art-thumbnail img { max-height: 280px; }
+    
+    /* Body */
+    .art-sec-heading { font-size: 20px; margin: 32px 0 12px; padding-bottom: 8px; }
+    .art-sec-subheading { font-size: 16px; margin: 24px 0 8px; }
+    .art-sec-paragraph { font-size: 14px; line-height: 1.75; margin: 12px 0; }
+    .art-sec-code { margin: 16px 0; border-radius: 12px; }
+    .art-sec-code pre { padding: 16px; }
+    .art-sec-code code { font-size: 12px; }
+    .art-sec-quote { padding: 16px 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+    .art-sec-quote p { font-size: 14px; }
+    .art-sec-list li { font-size: 14px; }
+    .art-sec-image { margin: 20px 0; }
+    .art-sec-image img { border-radius: 12px; }
+    .art-sec-divider { margin: 28px 0; }
+    .art-sec-table { font-size: 13px; }
+    .art-sec-table th, .art-sec-table td { padding: 10px 12px; }
+    
+    /* Nav */
+    .art-nav { 
+        flex-direction: column; 
+        gap: 10px; 
+        padding-top: 24px;
+        margin: 0 16px;
+    }
+    .art-nav-btn { 
+        max-width: 100%; 
+        width: 100%; 
+        justify-content: center; 
+        padding: 10px 16px; 
+        font-size: 13px; 
+    }
 }
 </style>

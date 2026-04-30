@@ -1,0 +1,415 @@
+        /* ═══ ROTOOD — GLOBAL DARK BODY ═══ */
+        :root.dark-mode {
+            --bg-primary: #060606;
+            --text-primary: #ffffff;
+            
+            /* Neo Bento Overrides */
+            --neo-bg: #060606;
+            --neo-card-light: #111111;
+            --neo-card-black: #1a1a1a;
+            --neo-text-dark: #ffffff;
+            --neo-text-light: #cccccc;
+        }
+
+        html.dark-mode body {
+            background-color: var(--neo-bg) !important;
+            color: var(--neo-text-dark) !important;
+        }
+
+        /* Loading Page */
+        html.dark-mode .loading-page {
+            color: #888 !important;
+        }
+
+        html.dark-mode .loading-page i {
+            color: #f3ebd7 !important;
+        }
+
+        html.dark-mode .loading-spinner {
+            border-color: rgba(243, 235, 215, 0.15) !important;
+            border-top-color: #f3ebd7 !important;
+        }
+
+        @keyframes spinRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Offline overlay */
+        html.dark-mode .offline-overlay {
+            background: #060606 !important;
+        }
+
+        html.dark-mode .offline-content {
+            color: #eee !important;
+        }
+
+        html.dark-mode .offline-title {
+            color: #eee !important;
+        }
+
+        html.dark-mode .offline-desc {
+            color: #888 !important;
+        }
+
+        html.dark-mode .offline-retry-btn {
+            background: #f3ebd7 !important;
+            color: #000 !important;
+            border: none !important;
+            border-radius: 20px !important;
+        }
+
+        html.dark-mode .offline-icon i {
+            color: #f3ebd7 !important;
+        }
+
+        html.dark-mode .offline-status span {
+            color: #888 !important;
+        }
+
+        html.dark-mode .offline-tip {
+            color: #666 !important;
+        }
+
+        html.dark-mode .offline-tip i {
+            color: #555 !important;
+        }
+
+        html.dark-mode .offline-tip-divider {
+            background: #222 !important;
+        }
+
+        html.dark-mode .offline-pulse-ring {
+            border-color: rgba(243, 235, 215, 0.15) !important;
+        }
+
+        /* Toast */
+        html.dark-mode #toast-container .toast {
+            background: #111 !important;
+            border: 1px solid #222 !important;
+            color: #eee !important;
+            border-radius: 20px !important;
+        }
+
+        /* Detail sub materi page */
+        html.dark-mode .container-detail-submateri {
+            background: transparent !important;
+        }
+
+        html.dark-mode .detail-submateri-card {
+            background: #111 !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 28px !important;
+            color: #ddd !important;
+        }
+
+        html.dark-mode .detail-submateri-card h1,
+        html.dark-mode .detail-submateri-card h2,
+        html.dark-mode .detail-submateri-card h3,
+        html.dark-mode .detail-submateri-card h4 {
+            color: #eee !important;
+        }
+
+        html.dark-mode .detail-submateri-card pre {
+            background: #0a0a0a !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 16px !important;
+        }
+
+        html.dark-mode .detail-submateri-card code {
+            background: #0a0a0a !important;
+            color: #f3ebd7 !important;
+        }
+
+        html.dark-mode .btn-mark-done {
+            background: #f3ebd7 !important;
+            color: #000 !important;
+            border: none !important;
+            border-radius: 20px !important;
+        }
+
+        /* Quiz override */
+        html.dark-mode .quiz-container,
+        html.dark-mode .quiz-card {
+            background: #111 !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 28px !important;
+            color: #eee !important;
+        }
+        
+        /* General Modals / Cards override for dark mode */
+        html.dark-mode .neo-card-light {
+            background: #111 !important;
+            color: #eee !important;
+            border-color: #222 !important;
+        }
+        
+        html.dark-mode .neo-card-light h2,
+        html.dark-mode .neo-card-light h3,
+        html.dark-mode .neo-card-light h4 {
+            color: #fff !important;
+        }
+        
+        html.dark-mode .neo-card-light p {
+            color: #aaa !important;
+        }
+        
+        html.dark-mode .neo-card-light label {
+            color: #ddd !important;
+        }
+        
+        html.dark-mode .neo-card-light input,
+        html.dark-mode .neo-card-light textarea {
+            background: #1a1a1a !important;
+            color: #eee !important;
+            border-color: #333 !important;
+        }
+        
+        html.dark-mode .neo-card-light input:focus,
+        html.dark-mode .neo-card-light textarea:focus {
+            border-color: #666 !important;
+        }
+
+        /* ═══ NavBar Overrides ═══ */
+        html.dark-mode .rtd-top-nav, html.dark-mode .rtd-top-nav.scrolled {
+            background: rgba(13, 12, 20, 0.85) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        html.dark-mode .rtd-nav-title h4 { color: #fff !important; }
+        html.dark-mode .rtd-btn-icon {
+            background: #191825 !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            color: #e6e0e9 !important;
+        }
+        html.dark-mode .rtd-btn-icon:hover {
+            background: #2A2C3A !important;
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        html.dark-mode .rtd-search-pill {
+            background: #191825 !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        html.dark-mode .rtd-search-pill:focus-within {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        html.dark-mode .rtd-search-pill input { color: #fff !important; }
+        html.dark-mode .rtd-nav-profile:hover { border-color: rgba(255, 255, 255, 0.2) !important; }
+        
+        /* ═══ Profile Popup Overrides ═══ */
+        html.dark-mode .profile-popup-dark {
+            background: #13121C !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        html.dark-mode .ppd-header { background: #0D0C14 !important; border-bottom-color: rgba(255, 255, 255, 0.05) !important; }
+        html.dark-mode .ppd-header-left h3 { color: #fff !important; }
+        html.dark-mode .ppd-stat-item { background: #191825 !important; }
+        html.dark-mode .ppd-stat-val { color: #fff !important; }
+        html.dark-mode .ppd-btn-action { background: #191825 !important; color: #fff !important; }
+        html.dark-mode .ppd-btn-action:hover { background: #2A2C3A !important; }
+
+        /* ═══ AsideBar Overrides ═══ */
+        html.dark-mode .neo-aside {
+            background: #0D0C14 !important;
+            border-right-color: rgba(255, 255, 255, 0.04) !important;
+        }
+        html.dark-mode .neo-brand-logo { background: #fff !important; color: #0D0C14 !important; }
+        html.dark-mode .neo-brand-text { color: #fff !important; }
+        html.dark-mode .neo-nav-link { color: #6B6B80 !important; }
+        html.dark-mode .neo-nav-link:hover { color: #fff !important; }
+        html.dark-mode .neo-nav-link:hover .neo-nav-icon-wrap { background: rgba(255, 255, 255, 0.06) !important; }
+        html.dark-mode .neo-nav-link.active { color: #fff !important; }
+        html.dark-mode .neo-nav-link.active .neo-nav-icon-wrap { background: #191825 !important; box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important; }
+        html.dark-mode .neo-nav-indicator { background: #fff !important; }
+        html.dark-mode .neo-aside-footer { border-top-color: rgba(255, 255, 255, 0.04) !important; }
+        html.dark-mode .neo-profile-module:hover { background: rgba(255, 255, 255, 0.04) !important; border-color: rgba(255, 255, 255, 0.04) !important; }
+        html.dark-mode .neo-profile-name { color: #fff !important; }
+        html.dark-mode .neo-profile-role { color: #6B6B80 !important; }
+        html.dark-mode .neo-action-btn { border-color: rgba(255, 255, 255, 0.06) !important; color: #6B6B80 !important; }
+
+        /* ═══ Timeline Overrides ═══ */
+        html.dark-mode .calendar-header { border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .time-col-spacer, html.dark-mode .time-labels {
+            background: rgba(17, 17, 17, 0.85) !important;
+            border-right-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        html.dark-mode .day-name { color: #888 !important; }
+        html.dark-mode .active-day .day-name { color: #fff !important; }
+        html.dark-mode .today-badge { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .time-label { color: #888 !important; }
+        html.dark-mode .grid-hour-line, html.dark-mode .grid-col-line { border-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .calendar-body-scroll { border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .view-mode-switch { background: #1a1a1a !important; }
+        html.dark-mode .mode-btn { color: #888 !important; }
+        html.dark-mode .mode-btn:hover { color: #ccc !important; }
+        html.dark-mode .mode-btn.active { background: #333 !important; color: #fff !important; }
+        html.dark-mode .month-header h3 { color: #fff !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .month-day-name { color: #888 !important; }
+        html.dark-mode .month-cell { background: #1a1a1a !important; border-color: rgba(255, 255, 255, 0.05) !important; }
+        html.dark-mode .month-cell.not-current-month { background: rgba(255, 255, 255, 0.02) !important; }
+        html.dark-mode .month-cell.is-today { border-color: #fff !important; background: #222 !important; }
+        html.dark-mode .month-cell-date { color: #fff !important; }
+        html.dark-mode .month-cell.is-today .month-cell-date span { background: #fff !important; color: #121212 !important; }
+        
+        /* Detail Agenda Spans Override */
+        html.dark-mode .timeline-container span[style*="color: #121212"] { color: #fff !important; }
+        html.dark-mode .timeline-container span[style*="color: rgba(0,0,0,0.5)"] { color: #aaa !important; }
+        html.dark-mode .timeline-container > div:last-child > div > div { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.05) !important; }
+        html.dark-mode .timeline-container > div:last-child { border-top-color: rgba(255,255,255,0.1) !important; }
+
+        /* ═══ Tier List Overrides ═══ */
+        html.dark-mode .tier-list-scroll { background: transparent !important; border-color: rgba(255, 255, 255, 0.05) !important; }
+        html.dark-mode .tier-card:not(.tier-card-sovereign) { background: #111 !important; border-color: rgba(255, 255, 255, 0.05) !important; }
+        html.dark-mode .tier-card:not(.tier-card-sovereign):hover { background: #222 !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .tier-card.current-tier:not(.tier-card-sovereign) { background: rgba(255, 255, 255, 0.05) !important; border-color: rgba(255, 255, 255, 0.2) !important; }
+        html.dark-mode .tier-number { color: rgba(255, 255, 255, 0.1) !important; }
+        
+        /* ═══ Leaderboard Overrides ═══ */
+        html.dark-mode .leaderboard-row[style*="background: rgba(255,255,255,0.5)"] {
+            background: rgba(255,255,255,0.05) !important;
+            border-color: rgba(255,255,255,0.05) !important;
+        }
+        html.dark-mode .leaderboard-row[style*="border: 2px solid rgba(245, 158, 11, 0.6)"] {
+            border-color: rgba(245, 158, 11, 0.6) !important;
+        }
+        html.dark-mode .tier-name { color: #fff !important; }
+        html.dark-mode .tier-exp { color: #888 !important; }
+        
+        /* Leaderboard Buttons Dark Mode */
+        html.dark-mode .leaderboard-row:not(.leaderboard-row-sovereign) .ldb-btn-add {
+            background: #1A1A1A !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+        html.dark-mode .leaderboard-row:not(.leaderboard-row-sovereign) .ldb-btn-add:hover {
+            background: #2A2C3A !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+        html.dark-mode .leaderboard-row:not(.leaderboard-row-sovereign) .ldb-btn-pending {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            color: #888 !important;
+        }
+        html.dark-mode .leaderboard-row:not(.leaderboard-row-sovereign) .ldb-btn-friends {
+            background: rgba(16, 185, 129, 0.1) !important;
+            border-color: rgba(16, 185, 129, 0.2) !important;
+            color: #34d399 !important;
+        }
+
+        /* ═══ Season Timer Overrides ═══ */
+        html.dark-mode .cd-minimal-val { color: #fff !important; }
+        html.dark-mode .cd-minimal-lbl { color: #aaa !important; }
+
+        /* ═══ Mobile Timeline Modern Overrides ═══ */
+        html.dark-mode .mobile-timeline-picker-container { 
+            background: #111 !important; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        }
+        html.dark-mode .mobile-day-item.active { background: rgba(255, 255, 255, 0.1) !important; }
+        html.dark-mode .mobile-day-name { color: #888 !important; }
+        html.dark-mode .mobile-day-item.active .mobile-day-name { color: #ccc !important; }
+        html.dark-mode .mobile-day-num { color: #aaa !important; }
+        html.dark-mode .mobile-day-item.active .mobile-day-num { color: #fff !important; }
+        
+        html.dark-mode .mobile-task-card { 
+            background: #111 !important; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+        }
+        html.dark-mode .task-title { color: #fff !important; }
+        html.dark-mode .task-time-row { color: #aaa !important; }
+        html.dark-mode .task-desc { color: #888 !important; }
+        
+        html.dark-mode #mobile-empty-state { 
+            background: rgba(255, 255, 255, 0.02) !important; 
+            border: 1px dashed rgba(255, 255, 255, 0.1); 
+            color: #888 !important; 
+            box-shadow: none !important;
+        }
+        html.dark-mode #mobile-empty-state i { color: #444 !important; }
+
+        /* ═══ Detail Sub Materi (Article) Overrides ═══ */
+        html.dark-mode .art-container { color: #fff; }
+        html.dark-mode .art-breadcrumb { color: #888; }
+        html.dark-mode .art-breadcrumb a { color: #888 !important; }
+        html.dark-mode .art-breadcrumb a:hover { color: #fff !important; }
+        html.dark-mode .art-breadcrumb span { color: #555 !important; }
+        html.dark-mode .art-breadcrumb-current { color: #fff !important; }
+        html.dark-mode .art-title { color: #fff !important; }
+        html.dark-mode .art-subtitle { color: #aaa !important; }
+        html.dark-mode .art-author-avatar { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .art-author-name { color: #fff !important; }
+        html.dark-mode .art-author-role { color: #888 !important; }
+        html.dark-mode .art-header-excerpt p { color: #aaa !important; }
+        html.dark-mode .art-header-index { color: #fff !important; }
+        html.dark-mode .art-thumbnail-wrapper { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .art-sec-heading { color: #fff !important; border-bottom-color: rgba(255,255,255,0.1) !important; }
+        html.dark-mode .art-sec-subheading { color: #ddd !important; }
+        html.dark-mode .art-sec-paragraph { color: #ccc !important; }
+        html.dark-mode .art-sec-code { background: #0d0d1a !important; border-color: rgba(255,255,255,0.06) !important; }
+        html.dark-mode .art-sec-quote { background: rgba(255,255,255,0.03) !important; border-left-color: #fff !important; }
+        html.dark-mode .art-sec-quote p { color: #ccc !important; }
+        html.dark-mode .art-sec-quote cite { color: #888 !important; }
+        html.dark-mode .art-sec-list li { color: #ccc !important; }
+        html.dark-mode ul.art-sec-list li::marker { color: #fff !important; }
+        html.dark-mode ol.art-sec-list li::marker { color: #fff !important; }
+        html.dark-mode .art-sec-divider { border-top-color: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .art-sec-image figcaption { color: #888 !important; }
+        html.dark-mode .art-sec-table-wrap { border-color: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .art-sec-table { background: #111 !important; }
+        html.dark-mode .art-sec-table th { background: rgba(255,255,255,0.04) !important; color: #fff !important; border-bottom-color: rgba(255,255,255,0.1) !important; }
+        html.dark-mode .art-sec-table td { color: #ccc !important; border-bottom-color: rgba(255,255,255,0.04) !important; }
+        html.dark-mode .art-sec-table tbody tr:hover { background: rgba(255,255,255,0.02) !important; }
+        html.dark-mode .art-nav { border-top-color: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .art-nav-prev { background: #111 !important; color: #aaa !important; border-color: rgba(255,255,255,0.1) !important; }
+        html.dark-mode .art-nav-prev:hover { background: #fff !important; color: #121212 !important; border-color: #fff !important; }
+
+        /* ═══ Quiz Page Overrides ═══ */
+        html.dark-mode .qz-breadcrumb { color: #888; }
+        html.dark-mode .qz-breadcrumb a { color: #888 !important; }
+        html.dark-mode .qz-breadcrumb a:hover { color: #fff !important; }
+        html.dark-mode .qz-breadcrumb span { color: #555 !important; }
+        html.dark-mode .qz-bc-current { color: #fff !important; }
+        html.dark-mode .qz-progress-bar { background: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .qz-progress-fill { background: #fff !important; }
+        html.dark-mode .qz-progress-text { color: #fff !important; }
+        html.dark-mode .qz-timer { background: #1a1a1a !important; color: #fff !important; }
+        html.dark-mode .qz-card-num { color: #fff !important; }
+        html.dark-mode .qz-card-total { color: #888 !important; }
+        html.dark-mode .qz-question { color: #fff !important; }
+        html.dark-mode .qz-opt { background: #111 !important; }
+        html.dark-mode .qz-opt:hover { border-color: rgba(255,255,255,0.15) !important; }
+        html.dark-mode .qz-opt-letter { background: rgba(255,255,255,0.08) !important; color: #888 !important; }
+        html.dark-mode .qz-opt-text { color: #ccc !important; }
+        html.dark-mode .qz-opt:has(input:checked) { border-color: #fff !important; background: #1a1a1a !important; }
+        html.dark-mode .qz-opt:has(input:checked) .qz-opt-letter { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .qz-opt:has(input:checked) .qz-opt-text { color: #fff !important; }
+        html.dark-mode .qz-opt.qz-correct .qz-opt-text { color: #4ade80 !important; }
+        html.dark-mode .qz-opt.qz-wrong .qz-opt-text { color: #f87171 !important; }
+        html.dark-mode .qz-btn-prev { color: #aaa !important; border-color: rgba(255,255,255,0.1) !important; }
+        html.dark-mode .qz-btn-prev:hover { background: #fff !important; color: #121212 !important; border-color: #fff !important; }
+        html.dark-mode .qz-btn-next, html.dark-mode .qz-btn-submit { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .qz-passed-banner { background: rgba(16,185,129,0.08) !important; border-color: rgba(16,185,129,0.2) !important; }
+        html.dark-mode .qz-passed-banner strong { color: #fff !important; }
+        html.dark-mode .qz-passed-banner span { color: #aaa !important; }
+        html.dark-mode .qz-btn-retake { color: #fff !important; border-color: rgba(255,255,255,0.15) !important; }
+        html.dark-mode .qz-btn-retake:hover { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .qz-rc-bg { stroke: rgba(255,255,255,0.08) !important; }
+        html.dark-mode .qz-rc-pct { color: #fff !important; }
+        html.dark-mode .qz-result-title { color: #fff !important; }
+        html.dark-mode .qz-result-sub { color: #aaa !important; }
+        html.dark-mode .qz-result-exp { background: rgba(99,102,241,0.15) !important; color: #a5b4fc !important; }
+        html.dark-mode .qz-btn-retry { color: #fff !important; border-color: rgba(255,255,255,0.15) !important; }
+        html.dark-mode .qz-btn-retry:hover { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .qz-btn-next-materi { background: #fff !important; color: #121212 !important; }
+        html.dark-mode .qz-code { background: #0d0d1a !important; border-color: rgba(255,255,255,0.06) !important; }
+
+        /* ═══ Global Hardcoded Text Colors Overrides ═══ */
+        html.dark-mode .neo-dashboard [style*="color: #121212"],
+        html.dark-mode .neo-dashboard [style*="color:#121212"] {
+            color: #fff !important;
+        }
+        html.dark-mode .neo-dashboard [style*="color: #555"],
+        html.dark-mode .neo-dashboard [style*="color:#555"] {
+            color: #aaa !important;
+        }

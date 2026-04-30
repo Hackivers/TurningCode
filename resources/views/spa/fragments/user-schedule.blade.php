@@ -904,7 +904,75 @@ body { background-color: var(--neo-bg) !important; }
 }
 
 @media (max-width: 768px) {
-    .neo-dashboard { padding: 24px 16px; }
-    .schedule-list { grid-template-columns: 1fr !important; }
+    .neo-dashboard { 
+        padding: 16px 0; 
+        overflow-x: hidden; 
+    }
+    
+    .neo-bento-container,
+    .neo-bento-container * {
+        box-sizing: border-box;
+    }
+
+    .neo-bento-container {
+        padding: 0 16px;
+        max-width: 100vw;
+    }
+
+    .schedule-list { 
+        grid-template-columns: 1fr !important; 
+        gap: 12px !important;
+    }
+
+    .neo-title { font-size: 20px !important; }
+    
+    .neo-card {
+        padding: 20px !important;
+        border-radius: 20px !important;
+    }
+
+    /* Modal Compression */
+    .schedule-modal {
+        border-radius: 24px !important;
+        max-width: calc(100vw - 32px) !important;
+    }
+    .schedule-modal .modal-header {
+        padding: 20px 24px 16px;
+    }
+    .schedule-modal .mh-text h4 {
+        font-size: 18px;
+    }
+    .schedule-modal .modal-body {
+        padding: 0 24px 24px;
+    }
+    .schedule-modal .form-section {
+        padding: 16px 0;
+        gap: 16px;
+    }
+    .schedule-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+    .schedule-modal .type-tab {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+    .schedule-modal .day-chip span {
+        width: 38px;
+        height: 38px;
+        font-size: 11px;
+    }
+    .schedule-modal .color-chip .c-box {
+        width: 32px;
+        height: 32px;
+    }
+    .schedule-modal .btn-submit-schedule {
+        padding: 14px;
+        font-size: 14px;
+        border-radius: 16px !important;
+    }
+    .schedule-modal .modal-footer {
+        margin-top: 24px;
+        padding-top: 16px;
+    }
 }
 </style>

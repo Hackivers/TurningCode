@@ -204,4 +204,44 @@ $tiers = [
         0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
         100% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8)); }
     }
+
+    /* ═══ MOBILE RESPONSIVENESS ═══ */
+    @media (max-width: 768px) {
+        .tier-list-container {
+            margin: 0;
+            width: 100%;
+        }
+        .tier-list-scroll {
+            gap: 12px;
+            padding: 12px 10px;
+        }
+        .tier-card {
+            width: 120px;
+            padding: 16px 10px;
+            border-radius: 16px;
+        }
+        .tier-icon-wrap {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+        .tier-name {
+            font-size: 14px;
+        }
+        .tier-exp {
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .tier-number {
+            top: 10px;
+            left: 12px;
+            font-size: 13px;
+        }
+        .current-badge {
+            top: -10px;
+            font-size: 9px;
+            padding: 4px 8px;
+        }
+    }
 </style>

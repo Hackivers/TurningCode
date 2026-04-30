@@ -1,4 +1,4 @@
-<div class="neo-card"
+<div class="neo-card time-card-wrapper"
     style="flex: 1; min-height: 280px; position: relative; overflow: hidden; padding: 48px 40px; display: flex; align-items: center; background: #121212; border: 1px solid rgba(255,255,255,0.05); grid-column: 1 / -1;">
 
     <!-- Background Image fading layer -->
@@ -15,11 +15,11 @@
     </div>
 
     <!-- Content wrapper -->
-    <div
+    <div class="time-card-content"
         style="position: relative; z-index: 10; width: 85%; display: flex; flex-direction: column; justify-content: center; height: 100%;">
 
         <!-- Top Date/Time -->
-        <div
+        <div class="time-card-date"
             style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 24px; display: flex; align-items: center;">
             <span id="day-label">Terjadwal</span>
             <span style="margin: 0 10px; opacity: 0.5;">&bull;</span>
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Giant Phrase -->
-        <h3 id="time-text"
+        <h3 id="time-text" class="time-card-title"
             style="font-size: clamp(32px, 4vw, 46px); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: #fff; margin: 0 0 40px 0;">
             Waktunya ngoding ya? semangat!
         </h3>
@@ -41,3 +41,24 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* ═══ MOBILE RESPONSIVENESS ═══ */
+    @media (max-width: 768px) {
+        .time-card-wrapper {
+            min-height: 160px !important;
+            padding: 24px 20px !important;
+        }
+        .time-card-content {
+            width: 100% !important;
+        }
+        .time-card-date {
+            margin-bottom: 12px !important;
+            font-size: 13px !important;
+        }
+        .time-card-title {
+            font-size: 24px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+</style>

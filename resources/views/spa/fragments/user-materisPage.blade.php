@@ -14,34 +14,49 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
         </a>
 
         {{-- Premium Hero Header --}}
-        <div class="neo-card" style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
+        <div class="neo-card"
+            style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
             {{-- Background Gradient Orbs --}}
-            <div style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;"></div>
-            <div style="position:absolute;bottom:-50%;right:10%;width:450px;height:450px;background:radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1;"></div>
-            
+            <div
+                style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;">
+            </div>
+            <div
+                style="position:absolute;bottom:-50%;right:10%;width:450px;height:450px;background:radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1;">
+            </div>
+
             {{-- Grid Pattern Overlay --}}
-            <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;"></div>
-            
+            <div
+                style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;">
+            </div>
+
             <div style="position:relative;z-index:2;width:100%;max-width:700px;">
                 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
-                        <i class='bx bx-category' style="margin-right:4px;"></i> {{ $firstMateri->mainMateri->title ?? 'Materi Utama' }}
+                    <span class="neo-pill"
+                        style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        <i class='bx bx-category' style="margin-right:4px;"></i>
+                        {{ $firstMateri->mainMateri->title ?? 'Materi Utama' }}
                     </span>
-                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
-                        <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $materis->count() }} Bab Pembelajaran
+                    <span class="neo-pill"
+                        style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $materis->count() }} Bab
+                        Pembelajaran
                     </span>
                 </div>
-                <h3 style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                <h3
+                    style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
                     {{ $firstMateri->title ?? 'Eksplorasi Materi' }}
                 </h3>
                 <p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0;line-height:1.6;font-weight:500;">
-                    Perluas wawasanmu dan kuasai konsep fundamental dari topik ini. Siapkan dirimu untuk melangkah ke tingkat pemahaman berikutnya!
+                    Perluas wawasanmu dan kuasai konsep fundamental dari topik ini. Siapkan dirimu untuk melangkah ke
+                    tingkat pemahaman berikutnya!
                 </p>
             </div>
-            
+
             {{-- Abstract Decorative Icon --}}
-            <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%) rotate(-10deg);z-index:2;pointer-events:none;opacity:0.5;">
-                <i class='bx bxs-compass' style="font-size:180px;color:rgba(255,255,255,0.03);filter:drop-shadow(0 20px 40px rgba(0,0,0,0.5));"></i>
+            <div
+                style="position:absolute;right:8%;top:50%;transform:translateY(-50%) rotate(-10deg);z-index:2;pointer-events:none;opacity:0.5;">
+                <i class='bx bxs-compass'
+                    style="font-size:180px;color:rgba(255,255,255,0.03);filter:drop-shadow(0 20px 40px rgba(0,0,0,0.5));"></i>
             </div>
         </div>
 
@@ -147,6 +162,7 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
         max-width: 1400px;
         margin: 0 auto;
         width: 100%;
+        box-sizing: border-box;
     }
 
     .neo-card {
@@ -217,11 +233,88 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
     @media (max-width:768px) {
         .neo-dashboard {
-            padding: 24px 16px;
+            padding: 16px 0;
+            overflow-x: hidden;
+        }
+
+        .neo-bento-container {
+            padding: 0 16px;
+            box-sizing: border-box;
+            max-width: 100vw;
         }
 
         .neo-card {
-            padding: 24px;
+            padding: 20px !important;
+            border-radius: 20px !important;
+        }
+
+        /* Hero header compression */
+        .neo-card[style*="min-height:240px"] {
+            min-height: 160px !important;
+            padding: 24px 20px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .neo-card[style*="min-height:240px"] h3 {
+            font-size: 24px !important;
+        }
+
+        .neo-card[style*="min-height:240px"] p {
+            font-size: 13px !important;
+        }
+
+        .neo-card[style*="min-height:240px"] .neo-pill {
+            font-size: 9px !important;
+            padding: 6px 10px !important;
+        }
+
+        /* Decorative icon hide on mobile */
+        .neo-card[style*="min-height:240px"]>div[style*="right:8%"] {
+            display: none !important;
+        }
+
+        /* Section title */
+        .neo-title[style*="font-size:28px"] {
+            font-size: 20px !important;
+        }
+
+        /* Grid */
+        div[style*="grid-template-columns:repeat(auto-fill,minmax(320px"] {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+        }
+
+        .materi-card-item {
+            padding: 16px !important;
+            border-radius: 16px !important;
+        }
+
+        .materi-card-item .neo-header {
+            margin-bottom: 12px;
+        }
+
+        .materi-card-item .neo-title {
+            font-size: 16px !important;
+        }
+
+        .materi-card-item .neo-desc {
+            font-size: 13px !important;
+            margin-bottom: 12px !important;
+        }
+
+        .materi-card-item .neo-pill {
+            font-size: 11px !important;
+            padding: 4px 12px !important;
+        }
+
+        .materi-card-item .neo-arrow {
+            font-size: 24px !important;
+        }
+
+        /* Back link */
+        a[style*="margin-bottom:24px"][style*="font-size:14px"] {
+            font-size: 12px !important;
+            margin-bottom: 16px !important;
         }
     }
 </style>

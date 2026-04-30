@@ -179,7 +179,48 @@ body { background-color: var(--neo-bg) !important; }
 }
 
 @media (max-width: 768px) {
-    .neo-dashboard { padding: 24px 16px; }
+    .neo-dashboard { 
+        padding: 16px 0; 
+        overflow-x: hidden; 
+    }
+    
+    .neo-bento-container,
+    .neo-bento-container * {
+        box-sizing: border-box;
+    }
+
+    .neo-bento-container {
+        padding: 0 16px;
+        max-width: 100vw;
+    }
+
+    .neo-title { font-size: 20px !important; }
+    
+    .neo-card {
+        padding: 16px !important;
+        border-radius: 20px !important;
+    }
+
+    .history-item > div {
+        padding: 12px 8px !important;
+        gap: 12px !important;
+    }
+
+    .history-item h4 {
+        font-size: 14px !important;
+    }
+
+    .history-item p {
+        font-size: 12px !important;
+    }
+
+    .history-item > div > div:first-child {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 18px !important;
+        border-radius: 12px !important;
+    }
+
     .nhp-neo-arrow { display: none !important; }
 }
 </style>

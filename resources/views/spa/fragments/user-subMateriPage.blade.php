@@ -144,6 +144,7 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
         max-width: 1400px;
         margin: 0 auto;
         width: 100%;
+        box-sizing: border-box;
     }
 
     .neo-card {
@@ -218,16 +219,74 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
     @media (max-width:768px) {
         .neo-dashboard {
-            padding: 24px 16px;
+            padding: 16px 0;
+            overflow-x: hidden;
         }
 
+        .neo-bento-container {
+            padding: 0 16px;
+            box-sizing: border-box;
+            max-width: 100vw;
+        }
         .neo-card {
-            padding: 24px;
+            padding: 20px !important;
+            border-radius: 20px !important;
         }
-
+        /* Hero header compression */
+        .neo-card[style*="min-height:240px"] {
+            min-height: 160px !important;
+            padding: 24px 20px !important;
+            margin-bottom: 24px !important;
+        }
+        .neo-card[style*="min-height:240px"] h3 {
+            font-size: 24px !important;
+        }
+        .neo-card[style*="min-height:240px"] p {
+            font-size: 13px !important;
+        }
+        .neo-card[style*="min-height:240px"] .neo-pill {
+            font-size: 9px !important;
+            padding: 6px 10px !important;
+        }
+        .neo-card[style*="min-height:240px"] > div[style*="right:8%"] {
+            display: none !important;
+        }
+        /* Section title */
+        .neo-title[style*="font-size:28px"] {
+            font-size: 20px !important;
+        }
+        /* Sub-materi list */
+        div[style*="flex-direction:column;gap:16px"] {
+            gap: 10px !important;
+        }
         .sub-card-item {
             flex-direction: column !important;
             align-items: flex-start !important;
+            padding: 16px !important;
+            border-radius: 16px !important;
+            gap: 12px !important;
+        }
+        .sub-card-item h4 {
+            font-size: 14px !important;
+        }
+        .sub-card-item p {
+            font-size: 12px !important;
+        }
+        .sub-card-item div[style*="width:40px"] {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 10px !important;
+        }
+        .sub-card-item div[style*="width:40px"] span {
+            font-size: 14px !important;
+        }
+        .sub-card-item .neo-arrow {
+            font-size: 20px !important;
+        }
+        /* Back link */
+        a[style*="margin-bottom:24px"][style*="font-size:14px"] {
+            font-size: 12px !important;
+            margin-bottom: 16px !important;
         }
     }
 </style>

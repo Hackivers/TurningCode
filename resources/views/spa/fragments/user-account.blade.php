@@ -340,6 +340,7 @@
 </div>
 
 {{-- ═══ IMAGE CROP MODAL ═══ --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
 <div class="crop-modal-backdrop" id="crop-modal-backdrop"></div>
 <div class="crop-modal" id="crop-modal">
     <div class="crop-modal-header">
@@ -347,17 +348,21 @@
         <button type="button" id="crop-modal-close" class="crop-modal-close"><i class='bx bx-x'></i></button>
     </div>
     <div class="crop-modal-body">
-        <div class="crop-area" id="crop-area">
-            <canvas id="crop-canvas"></canvas>
-            <div class="crop-circle-mask"></div>
+        <div class="crop-shape-toggle" style="display:flex; gap:8px; margin-bottom:16px; justify-content:center;">
+            <button type="button" class="shape-btn active" data-shape="circle"><i class='bx bx-radio-circle' style="font-size:18px;"></i> Lingkaran</button>
+            <button type="button" class="shape-btn" data-shape="square"><i class='bx bx-square' style="font-size:18px;"></i> Kotak</button>
+        </div>
+        <div class="crop-area-wrapper" style="width: 100%; aspect-ratio: 1; max-height: 400px; background: #1a1a1a; border-radius: 16px; overflow: hidden; position: relative; margin: 0 auto;">
+            <img id="cropper-image" src="" style="max-width: 100%; display: block;">
         </div>
         <div class="crop-controls">
-            <div class="crop-zoom-row">
-                <i class='bx bx-minus-circle' style="font-size:18px;color:#888;"></i>
-                <input type="range" id="crop-zoom-slider" min="100" max="300" value="100" class="crop-zoom-slider">
-                <i class='bx bx-plus-circle' style="font-size:18px;color:#888;"></i>
+            <div class="crop-zoom-row" style="margin-top: 16px; display: flex; justify-content: center; gap: 16px;">
+                <button type="button" id="crop-btn-zoom-out" class="crop-icon-btn" title="Zoom Out"><i class='bx bx-zoom-out'></i></button>
+                <button type="button" id="crop-btn-zoom-in" class="crop-icon-btn" title="Zoom In"><i class='bx bx-zoom-in'></i></button>
+                <button type="button" id="crop-btn-rotate-left" class="crop-icon-btn" title="Rotate Left"><i class='bx bx-rotate-left'></i></button>
+                <button type="button" id="crop-btn-rotate-right" class="crop-icon-btn" title="Rotate Right"><i class='bx bx-rotate-right'></i></button>
+                <button type="button" id="crop-btn-reset" class="crop-icon-btn" title="Reset"><i class='bx bx-reset'></i></button>
             </div>
-            <p class="crop-hint"><i class='bx bx-move'></i> Geser gambar untuk mengatur posisi</p>
         </div>
     </div>
     <div class="crop-modal-footer">
@@ -369,5 +374,6 @@
 {{-- Toast Container --}}
 <div id="friend-toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
 
-@include('spa.fragments.partials.user-account-styles')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<link rel="stylesheet" href="{{ asset('assets/css/user-account.css') }}">
 @include('spa.fragments.partials.user-account-scripts')

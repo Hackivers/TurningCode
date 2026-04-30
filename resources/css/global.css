@@ -128,3 +128,91 @@ body {
     font-size: 12px;
     color: var(--text-muted);
 }
+
+/* ═══ OPTIMIZE MODE ═══ */
+/* Ketika aktif, matikan animasi, transisi, blur, dan efek berat */
+html.optimize-mode *,
+html.optimize-mode *::before,
+html.optimize-mode *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* Matikan backdrop blur (sangat berat di GPU) */
+html.optimize-mode * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Kurangi box-shadow menjadi minimal */
+html.optimize-mode * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+/* Matikan filter blur/effects */
+html.optimize-mode .rtd-mascot-glow,
+html.optimize-mode .offline-pulse-ring,
+html.optimize-mode .sovereign-aura-sm::before,
+html.optimize-mode .sovereign-aura-sm::after,
+html.optimize-mode .elite-aura-sm::before,
+html.optimize-mode .elite-aura-sm::after {
+    display: none !important;
+}
+
+/* Optimalkan rendering */
+html.optimize-mode * {
+    will-change: auto !important;
+}
+
+/* Navbar blur → solid background */
+html.optimize-mode .rtd-top-nav {
+    background: var(--bg-primary) !important;
+}
+
+html.optimize-mode .rtd-top-nav.scrolled {
+    background: var(--bg-primary) !important;
+}
+
+/* Popups & overlays → solid background */
+html.optimize-mode .setting-popup-dark,
+html.optimize-mode .profile-popup-dark,
+html.optimize-mode .notif-popup-dark {
+    backdrop-filter: none !important;
+    background: #121214 !important;
+}
+
+/* Setting backdrop → simple dark overlay */
+html.optimize-mode .setting-backdrop.active {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: none !important;
+}
+
+/* Sidebar glass → solid */
+html.optimize-mode .neo-aside {
+    background: var(--bg-secondary) !important;
+    backdrop-filter: none !important;
+}
+
+/* Cards → flat */
+html.optimize-mode .neo-card,
+html.optimize-mode .neo-card-light,
+html.optimize-mode .neo-card-black {
+    box-shadow: none !important;
+}
+
+/* Tetap izinkan spinner loading berputar */
+html.optimize-mode [style*="__spa_spin"],
+html.optimize-mode .loading-spinner {
+    animation-duration: 0.7s !important;
+    animation-iteration-count: infinite !important;
+}
+
+/* Tetap izinkan toggle slider transition */
+html.optimize-mode .spd-slider,
+html.optimize-mode .spd-slider::before {
+    transition-duration: 0.2s !important;
+}

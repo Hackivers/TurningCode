@@ -806,21 +806,51 @@
     }
 
     @media (max-width:768px) {
+        .qz-container,
+        .qz-container * {
+            box-sizing: border-box;
+        }
+
         .qz-container {
             padding: 24px 16px 60px;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        .neo-dashboard {
+            overflow-x: hidden;
         }
 
         .qz-question {
             font-size: 18px;
         }
 
+        .qz-opt {
+            max-width: 100%;
+        }
+
+        .qz-nav-row {
+            flex-direction: column-reverse;
+            max-width: 100%;
+        }
+
+        .qz-nav-row > div[style*="flex:1"] {
+            display: none !important;
+        }
+
         .qz-result-actions {
             flex-direction: column;
+            max-width: 100%;
         }
 
         .qz-btn {
             width: 100%;
             justify-content: center;
+        }
+
+        .qz-passed-banner {
+            max-width: 100%;
+            flex-wrap: wrap;
         }
     }
 </style>

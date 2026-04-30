@@ -11,6 +11,7 @@
     @else
         @vite(['resources/css/global.css', 'resources/css/style.css', $viteEntry])
     @endif
+    <link rel="stylesheet" href="{{ asset('assets/css/global-dark.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -23,8 +24,13 @@
             if (dark) {
                 document.documentElement.classList.add('dark-mode');
             }
+            const optimize = localStorage.getItem('tc_optimize_mode') === 'true';
+            if (optimize) {
+                document.documentElement.classList.add('optimize-mode');
+            }
         })();
     </script>
+    @yield('styles')
 </head>
 
 <body class="min-h-screen antialiased"
