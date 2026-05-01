@@ -2,7 +2,7 @@
     $sectionRows = old('sections', []);
 @endphp
 
-<div class="spa-fragment max-w-5xl mx-auto space-y-8" id="submateri-app" data-api-base="{{ url('/admin/api/main') }}"
+<div class="spa-fragment w-full max-w-full space-y-8" id="submateri-app" data-api-base="{{ url('/admin/api/main') }}"
     data-old-main="{{ old('main_materi_id') }}" data-old-materi="{{ old('materi_id') }}">
 
     {{-- Header Section --}}
@@ -167,6 +167,26 @@
             </section>
 
             {{-- Section toolbar --}}
+            {{-- Layer Panel (Fixed Kanan) --}}
+            <div class="hidden flex-col fixed right-6 top-24 w-72 max-h-[calc(100vh-8rem)] bg-white/90 backdrop-blur-xl border border-zinc-200/60 shadow-2xl rounded-2xl z-40 transition-all duration-300 hover:bg-white" id="subm-layer-panel">
+                <div class="p-4 flex items-center justify-between cursor-pointer border-b border-transparent transition-colors hover:bg-zinc-50 rounded-t-2xl" id="btn-toggle-layer">
+                    <h3 class="text-[10px] font-black text-zinc-800 uppercase tracking-widest flex items-center gap-2">
+                        <span>Struktur Layer</span>
+                        <span class="text-[9px] font-normal text-zinc-400 normal-case bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200/50">Auto-sync</span>
+                    </h3>
+                    <button type="button" class="text-zinc-400 hover:text-zinc-600 focus:outline-none transition-transform duration-300" id="icon-toggle-layer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div id="subm-layer-content" class="p-4 pt-2 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out">
+                    <ul id="subm-layer-list" class="space-y-1.5">
+                        {{-- Diisi oleh SPA_admin.js --}}
+                        <li class="text-center py-4 text-[10px] text-zinc-400 font-mono italic">Memuat struktur...</li>
+                    </ul>
+                </div>
+            </div>
+
+            {{-- Section toolbar --}}
             <section
                 class="rounded-3xl border border-zinc-200/60 bg-white/60 p-6 shadow-xl shadow-zinc-200/40 backdrop-blur-xl">
                 <h2 class="text-sm font-black uppercase tracking-widest text-zinc-800 mb-5 flex items-center gap-2">
@@ -177,7 +197,13 @@
                     </svg>
                     Block Builder Layout
                 </h2>
+
                 <div id="subm-section-toolbar" class="flex flex-wrap gap-2.5 mb-6">
+                    <button type="button" data-add-type="bab"
+                        class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-fuchsia-400">
+                        <span
+                            class="text-xs font-bold uppercase tracking-widest text-zinc-700 group-hover:text-fuchsia-600">Bab/Chapter</span>
+                    </button>
                     <button type="button" data-add-type="heading"
                         class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 border border-zinc-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300">
                         <span
@@ -285,7 +311,7 @@
                                         class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 transition-colors">Data
                                         Payload</label>
                                     <textarea name="sections[{{ $idx }}][content]"
-                                        rows="{{ in_array($type, ['heading', 'subheading']) ? 1 : 5 }}"
+                                        rows="{{ in_array($type, ['heading', 'subheading', 'bab']) ? 1 : 5 }}"
                                         class="w-full resize-none rounded-xl border-0 bg-white px-4 py-3 text-sm text-zinc-900 shadow-[inset_0_2px_5px_rgba(0,0,0,0.02)] ring-1 ring-zinc-200/50 transition-all placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                                         placeholder="Input source content di sini...">{{ $sec['content'] ?? '' }}</textarea>
                                 </div>
@@ -385,7 +411,7 @@
                 </svg>
                 Terbaru (JSON Tree)
             </h2>
-            <ul class="space-y-3">
+            <ul class="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 @foreach ($recentSubMateris as $sub)
                     <li class="group relative overflow-hidden rounded-2xl bg-white p-5 transition-all hover:shadow-md hover:shadow-zinc-200/50 hover:ring-1 hover:ring-sky-500/20"
                         data-crud-item="sub-materi" data-id="{{ $sub->id }}">

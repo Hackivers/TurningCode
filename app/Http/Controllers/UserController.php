@@ -2,21 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achievement;
+use App\Models\Discussion;
+use App\Models\DiscussionVote;
 use App\Models\MainMateri;
 use App\Models\Materi;
 use App\Models\IssueReport;
+use App\Models\Mission;
 use App\Models\Question;
 use App\Models\QuizAttempt;
 use App\Models\SubMateri;
 use App\Models\StudySchedule;
+use App\Models\UserAchievement;
 use App\Models\UserFavorite;
 use App\Models\UserHistory;
+use App\Models\UserMission;
+use App\Models\UserNote;
+use App\Services\AchievementService;
+use App\Services\CertificateService;
+use App\Services\MissionService;
+use App\Services\StreakService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
+use App\Models\Clan;
+use App\Models\ClanMember;
+use App\Models\ShopItem;
+use App\Models\UserPurchase;
 class UserController extends Controller
 {
     private const PAGES = [
@@ -31,6 +46,14 @@ class UserController extends Controller
         'quiz',
         'secret-lab',
         'profile',
+        'missions',
+        'achievements',
+        'notes',
+        'analytics',
+        'leaderboard',
+        'clans',
+        'clan-detail',
+        'shop',
     ];
 
     public function spa(): View
@@ -113,63 +136,7 @@ class UserController extends Controller
                 ->orderByDesc('exp')
                 ->limit(5)
                 ->get();
-
-            // Compute global achievements for leaderboard
-            $topScorer = \App\Models\QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
-                ->groupBy('user_id')->orderByDesc('max_score')->first();
-            $mostPassed = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
-                ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
-            $mostAttempts = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
-                ->groupBy('user_id')->orderByDesc('attempt_count')->first();
-            $perfectUserIds = \App\Models\QuizAttempt::where('score', 100)->distinct('user_id')->pluck('user_id')->toArray();
-
-            $historyCounts = \App\Models\UserHistory::whereIn('user_id', $topUsers->pluck('id'))
-                ->selectRaw('user_id, COUNT(DISTINCT sub_materi_id) as c')
-                ->groupBy('user_id')->pluck('c', 'user_id');
-            $favCounts = \App\Models\UserFavorite::whereIn('user_id', $topUsers->pluck('id'))
-                ->selectRaw('user_id, COUNT(*) as c')
-                ->groupBy('user_id')->pluck('c', 'user_id');
-            $scheduleCounts = \App\Models\StudySchedule::whereIn('user_id', $topUsers->pluck('id'))
-                ->selectRaw('user_id, COUNT(*) as c')
-                ->groupBy('user_id')->pluck('c', 'user_id');
-
-            foreach ($topUsers as $u) {
-                $achievements = [];
-                $histCount = $historyCounts[$u->id] ?? 0;
-                $fCount = $favCounts[$u->id] ?? 0;
-                $schedCount = $scheduleCounts[$u->id] ?? 0;
-
-                if ($histCount >= 1) {
-                    $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
-                }
-                if ($histCount >= 50) {
-                    $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
-                }
-                if ($fCount >= 10) {
-                    $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
-                }
-                if ($schedCount >= 1) {
-                    $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
-                }
-                if ($u->exp >= 10000) {
-                    $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
-                }
-                if ($mostAttempts && $mostAttempts->user_id === $u->id) {
-                    $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling Aktif'];
-                }
-                if (in_array($u->id, $perfectUserIds)) {
-                    $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Nilai Sempurna'];
-                }
-                if ($topScorer && $topScorer->user_id === $u->id) {
-                    $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Skor Tertinggi'];
-                }
-                if ($mostPassed && $mostPassed->user_id === $u->id) {
-                    $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Lulus Kuis Terbanyak'];
-                }
-
-                // Tampilkan maksimal 5 lencana agar UI rapi
-                $u->achievements = array_slice($achievements, 0, 5);
-            }
+            $topUsers = $this->processLeaderboardUsers($topUsers);
 
             // Fetch Schedules for Timeline
             $userSchedules = \App\Models\StudySchedule::where('user_id', Auth::id())
@@ -178,13 +145,76 @@ class UserController extends Controller
             $todaySchedules = $userSchedules->filter(fn($s) => $s->isActiveToday())->values();
             $upcomingSchedules = $userSchedules->filter(fn($s) => !$s->isActiveToday() && $s->is_active)->values();
 
+            // Daily Missions widget
+            $missionService = new MissionService();
+            $missionService->assignDailyMissions(Auth::user());
+            $missionService->assignWeeklyMissions(Auth::user());
+
+            $todayMissions = UserMission::where('user_id', Auth::id())
+                ->where('assigned_date', now()->toDateString())
+                ->whereHas('mission', fn($q) => $q->where('type', 'daily'))
+                ->with('mission')
+                ->get();
+
+            // Friend users for leaderboard tab
+            $myFriendships = \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get();
+            $friendIds = $myFriendships->where('status', 'accepted')->map(function ($f) {
+                return $f->user_id === Auth::id() ? $f->friend_id : $f->user_id;
+            })->unique()->values();
+            $friendUsers = $friendIds->isNotEmpty()
+                ? \App\Models\User::whereIn('id', $friendIds)->orderByDesc('exp')->get()
+                : collect();
+
+            // Smart Recommendations (based on history)
+            $recommendedMateris = collect();
+            $lastViewed = UserHistory::where('user_id', Auth::id())
+                ->with('submateri.materi')
+                ->orderByDesc('viewed_at')
+                ->first();
+            if ($lastViewed && $lastViewed->submateri && $lastViewed->submateri->materi) {
+                $currentMateriId = $lastViewed->submateri->materi_id;
+                $viewedSubIds = UserHistory::where('user_id', Auth::id())->pluck('sub_materi_id')->toArray();
+                $recommendedMateris = SubMateri::where('materi_id', $currentMateriId)
+                    ->where('is_published', true)
+                    ->whereNotIn('id', $viewedSubIds)
+                    ->with('materi')
+                    ->limit(4)
+                    ->get();
+                if ($recommendedMateris->isEmpty()) {
+                    $recommendedMateris = SubMateri::where('is_published', true)
+                        ->whereNotIn('id', $viewedSubIds)
+                        ->with('materi')
+                        ->inRandomOrder()
+                        ->limit(4)
+                        ->get();
+                }
+            }
+
+            // Streak logic
+            $streakData = (new StreakService())->getStreakData(Auth::user());
+
+            // Check achievements
+            (new AchievementService())->checkAndAward(Auth::user());
+
+            // Active Event
+            $activeEvent = \App\Models\ExpEvent::where('is_active', true)
+                ->where('start_time', '<=', now())
+                ->where('end_time', '>=', now())
+                ->orderByDesc('multiplier')
+                ->first();
+
             return view('spa.fragments.user-dashboard', [
                 'data' => ['mainMateri' => $mainMateri],
                 'mainMateri' => $mainMateri,
                 'topUsers' => $topUsers,
-                'myFriendships' => \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get(),
+                'myFriendships' => $myFriendships,
+                'friendUsers' => $friendUsers,
                 'todaySchedules' => $todaySchedules,
                 'upcomingSchedules' => $upcomingSchedules,
+                'todayMissions' => $todayMissions,
+                'recommendedMateris' => $recommendedMateris,
+                'streakData' => $streakData,
+                'activeEvent' => $activeEvent,
             ]);
         }
 
@@ -264,11 +294,22 @@ class UserController extends Controller
                 ->where('is_published', true)
                 ->get();
 
-            // Ambil sub_materi_id yang sudah pernah dilihat user di materi ini
-            $completedSubIds = $userId
+            // Ambil histories user di materi ini
+            $histories = $userId
                 ? UserHistory::where('user_id', $userId)
                     ->whereIn('sub_materi_id', $subMateris->pluck('id'))
-                    ->pluck('sub_materi_id')
+                    ->get()
+                    ->keyBy('sub_materi_id')
+                : collect();
+            $completedSubIds = $histories->pluck('sub_materi_id')->toArray();
+
+            // Batch load question counts for the sub materis
+            $subMateriIds = $subMateris->pluck('id')->toArray();
+            $questionCounts = $subMateriIds
+                ? Question::whereIn('sub_materi_id', $subMateriIds)
+                    ->selectRaw('sub_materi_id, COUNT(*) as cnt')
+                    ->groupBy('sub_materi_id')
+                    ->pluck('cnt', 'sub_materi_id')
                     ->toArray()
                 : [];
 
@@ -278,6 +319,8 @@ class UserController extends Controller
                 'subMateris' => $subMateris,
                 'arsipSub' => UserFavorite::getIds(Auth::id(), 'sub'),
                 'completed' => $completedSubIds,
+                'histories' => $histories,
+                'questionCounts' => $questionCounts,
             ]);
         }
 
@@ -291,15 +334,29 @@ class UserController extends Controller
             }
 
             // Simpan ke history (upsert: update viewed_at jika sudah ada)
-            UserHistory::updateOrCreate(
+            $history = UserHistory::firstOrCreate(
                 [
                     'user_id' => Auth::id(),
                     'sub_materi_id' => $subMateri->id,
                 ],
                 [
                     'viewed_at' => now(),
+                    'completed_babs' => []
                 ]
             );
+
+            if (!empty($history->viewed_at) && $history->viewed_at->diffInHours(now()) > 1) {
+                $history->update(['viewed_at' => now()]);
+            }
+
+            if ($request->has('complete_bab')) {
+                $completed = is_array($history->completed_babs) ? $history->completed_babs : [];
+                $babToComplete = $request->query('complete_bab');
+                if (!in_array($babToComplete, $completed)) {
+                    $completed[] = $babToComplete;
+                    $history->update(['completed_babs' => $completed]);
+                }
+            }
 
             $siblings = SubMateri::where('materi_id', $subMateri->materi_id)
                 ->where('is_published', true)
@@ -310,10 +367,32 @@ class UserController extends Controller
             $prev = $currentIndex > 0 ? $siblings[$currentIndex - 1] : null;
             $next = $currentIndex < $siblings->count() - 1 ? $siblings[$currentIndex + 1] : null;
 
+            // Discussions for this SubMateri
+            $discussions = Discussion::where('sub_materi_id', $subMateri->id)
+                ->whereNull('parent_id')
+                ->with(['user', 'replies.user'])
+                ->orderByDesc('upvotes')
+                ->orderByDesc('created_at')
+                ->limit(20)
+                ->get();
+
+            $myVotes = Auth::id()
+                ? DiscussionVote::where('user_id', Auth::id())
+                    ->whereIn('discussion_id', $discussions->pluck('id')->merge($discussions->flatMap->replies->pluck('id')))
+                    ->pluck('discussion_id')
+                    ->toArray()
+                : [];
+
+            // Track read_materi mission
+            (new MissionService())->trackProgress(Auth::user(), 'read_materi');
+            (new AchievementService())->checkAndAward(Auth::user());
+
             return view('spa.fragments.user-detailSubMateriPage', [
-                'subMateri' => $subMateri,
-                'prev' => $prev,
-                'next' => $next,
+                'subMateri'   => $subMateri,
+                'prev'        => $prev,
+                'next'        => $next,
+                'discussions'  => $discussions,
+                'myVotes'      => $myVotes,
             ]);
         }
 
@@ -324,6 +403,41 @@ class UserController extends Controller
 
             if (!$subMateri) {
                 abort(404);
+            }
+
+            $history = UserHistory::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'sub_materi_id' => $subMateri->id,
+                ],
+                [
+                    'viewed_at' => now(),
+                    'completed_babs' => []
+                ]
+            );
+
+            if ($request->has('complete_bab')) {
+                $completed = is_array($history->completed_babs) ? $history->completed_babs : [];
+                $babToComplete = $request->query('complete_bab');
+                if (!in_array($babToComplete, $completed)) {
+                    $completed[] = $babToComplete;
+                    $history->update(['completed_babs' => $completed]);
+                }
+            }
+
+            // Server-side lock enforcement for Quiz
+            $rawSections = is_array($subMateri->sections) ? $subMateri->sections : json_decode($subMateri->sections, true);
+            if (!is_array($rawSections)) $rawSections = [];
+            $babs = collect($rawSections)->where('type', 'bab')->values();
+            $totalBabs = count($babs);
+            
+            if ($totalBabs > 0) {
+                $lastBabId = $babs[$totalBabs - 1]['order'] ?? '';
+                $completed = is_array($history->completed_babs) ? $history->completed_babs : [];
+                if (!in_array($lastBabId, $completed)) {
+                    // Redirect back if quiz is locked
+                    return redirect('?page=detail&submateri_id=' . $subMateri->id);
+                }
             }
 
             $siblings = SubMateri::where('materi_id', $subMateri->materi_id)
@@ -413,6 +527,10 @@ class UserController extends Controller
 
             $data['friends'] = $user->friends;
             $data['friendRequests'] = $user->friendRequestsReceived()->with('sender')->get();
+            $data['certificates'] = \App\Models\Certificate::where('user_id', $user->id)
+                ->with('materi.mainMateri')
+                ->orderByDesc('issued_at')
+                ->get();
 
             return view('spa.fragments.user-account', $data);
         }
@@ -428,6 +546,11 @@ class UserController extends Controller
 
             $data = $this->getProfileData($targetUser);
             
+            $data['certificates'] = \App\Models\Certificate::where('user_id', $targetUser->id)
+                ->with('materi.mainMateri')
+                ->orderByDesc('issued_at')
+                ->get();
+
             // Mask email
             $emailParts = explode('@', $data['user']->email);
             if (count($emailParts) === 2) {
@@ -458,10 +581,275 @@ class UserController extends Controller
             ]);
         }
 
+        // ── Missions ──────────────────────────────────────────────────
+        if ($page === 'missions') {
+            $user = Auth::user();
+            $missionService = new MissionService();
+            $missionService->assignDailyMissions($user);
+            $missionService->assignWeeklyMissions($user);
+
+            $today = now()->toDateString();
+            $weekStart = now()->startOfWeek()->toDateString();
+
+            $dailyMissions = UserMission::where('user_id', $user->id)
+                ->where('assigned_date', $today)
+                ->whereHas('mission', fn($q) => $q->where('type', 'daily'))
+                ->with('mission')
+                ->get();
+
+            $weeklyMissions = UserMission::where('user_id', $user->id)
+                ->where('assigned_date', $weekStart)
+                ->whereHas('mission', fn($q) => $q->where('type', 'weekly'))
+                ->with('mission')
+                ->get();
+
+            return view('spa.fragments.user-missions', [
+                'dailyMissions'  => $dailyMissions,
+                'weeklyMissions' => $weeklyMissions,
+            ]);
+        }
+
+        // ── Achievements ─────────────────────────────────────────────
+        if ($page === 'achievements') {
+            $user = Auth::user();
+            (new AchievementService())->checkAndAward($user);
+
+            $allAchievements = Achievement::orderBy('order')->get();
+            $earnedIds = UserAchievement::where('user_id', $user->id)
+                ->pluck('achievement_id')
+                ->toArray();
+
+            return view('spa.fragments.user-achievements', [
+                'achievements' => $allAchievements,
+                'earnedIds'    => $earnedIds,
+            ]);
+        }
+
+        // ── Notes ─────────────────────────────────────────────
+        if ($page === 'notes') {
+            return $this->notesPage($request);
+        }
+
+        // ── Analytics ─────────────────────────────────────────────
+        if ($page === 'analytics') {
+            $user = Auth::user();
+            
+            // Stats
+            $totalQuizzes = QuizAttempt::where('user_id', $user->id)->count();
+            $passedQuizzes = QuizAttempt::where('user_id', $user->id)->where('passed', true)->count();
+            $avgScore = QuizAttempt::where('user_id', $user->id)->avg('score') ?? 0;
+            
+            $materisRead = UserHistory::where('user_id', $user->id)->distinct('sub_materi_id')->count();
+            
+            // Time spent learning (mock calculation based on history count * 5 mins)
+            $timeSpentMinutes = UserHistory::where('user_id', $user->id)->count() * 5;
+            $timeSpentHours = floor($timeSpentMinutes / 60);
+            $timeSpentMinutes = $timeSpentMinutes % 60;
+            
+            // Learning activity over the last 7 days
+            $weeklyActivity = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $date = now()->subDays($i)->toDateString();
+                $count = UserHistory::where('user_id', $user->id)
+                    ->whereDate('viewed_at', $date)
+                    ->count();
+                $weeklyActivity[] = [
+                    'day' => now()->subDays($i)->translatedFormat('D'),
+                    'count' => $count
+                ];
+            }
+
+            return view('spa.fragments.user-analytics', [
+                'totalQuizzes' => $totalQuizzes,
+                'passedQuizzes' => $passedQuizzes,
+                'avgScore' => round($avgScore),
+                'materisRead' => $materisRead,
+                'timeSpent' => ['hours' => $timeSpentHours, 'minutes' => $timeSpentMinutes],
+                'weeklyActivity' => $weeklyActivity,
+            ]);
+        }
+
+        // ── Leaderboard ───────────────────────────────────────────────
+        if ($page === 'leaderboard') {
+            $user = Auth::user();
+            
+            // Global Top 100
+            $globalTop = \App\Models\User::where('role', 'user')
+                ->orderByDesc('exp')
+                ->limit(100)
+                ->get();
+
+            $topUsers = $this->processLeaderboardUsers($globalTop);
+
+            // Friend users for leaderboard tab
+            $myFriendships = \App\Models\Friendship::where('user_id', Auth::id())->orWhere('friend_id', Auth::id())->get();
+            $friendIds = $myFriendships->where('status', 'accepted')->map(function ($f) {
+                return $f->user_id === Auth::id() ? $f->friend_id : $f->user_id;
+            })->unique()->values();
+            
+            // Include self
+            $friendIds->push($user->id);
+            
+            $friendUsers = $friendIds->isNotEmpty()
+                ? \App\Models\User::whereIn('id', $friendIds)->orderByDesc('exp')->get()
+                : collect();
+                
+            $friendUsers = $this->processLeaderboardUsers($friendUsers);
+
+            return view('spa.fragments.user-leaderboardPage', [
+                'topUsers' => $topUsers,
+                'friendUsers' => $friendUsers,
+                'myFriendships' => $myFriendships,
+                'currentUser' => $user,
+            ]);
+        }
+
+        // ── Clans ─────────────────────────────────────────────────────
+        if ($page === 'clans') {
+            $user = Auth::user();
+            $userClan = $user->clan;
+
+            $clans = Clan::withCount('members')->orderByDesc('exp')->get();
+
+            // Load user's own clan detail if they have one
+            $myClan = null;
+            $userMember = null;
+            if ($userClan) {
+                $myClan = Clan::with(['members.user', 'leader'])->find($userClan->id);
+                $userMember = $myClan ? $myClan->members->where('user_id', $user->id)->first() : null;
+            }
+
+            return view('spa.fragments.user-clans', [
+                'clans' => $clans,
+                'myClan' => $myClan,
+                'userMember' => $userMember,
+            ]);
+        }
+
+        // ── Clan Detail ───────────────────────────────────────────────
+        if ($page === 'clan-detail') {
+            $user = Auth::user();
+            $clanId = $request->query('id');
+            
+            $clan = null;
+            if ($clanId) {
+                $clan = Clan::with(['members.user', 'leader'])->find($clanId);
+            } else if ($user->clan) {
+                $clan = Clan::with(['members.user', 'leader'])->find($user->clan->id);
+            }
+
+            if (!$clan) {
+                return $this->page('clans', $request); // Fallback to list
+            }
+
+            return view('spa.fragments.user-clan-detail', [
+                'clan' => $clan,
+                'userMember' => $clan->members->where('user_id', $user->id)->first(),
+            ]);
+        }
+
+        // ── Shop / Reward Shop ────────────────────────────────────────
+        if ($page === 'shop') {
+            $user = Auth::user();
+            $items = ShopItem::all();
+            $purchasedIds = $user->purchases()->pluck('shop_item_id')->toArray();
+
+            return view('spa.fragments.user-shop', [
+                'items' => $items,
+                'purchasedIds' => $purchasedIds,
+                'userCoins' => $user->coins ?? 0,
+            ]);
+        }
+
         // ── Fallback ──────────────────────────────────────────────────
         return view('spa.fragments.user', [
             'page' => $page,
             'data' => [],
+        ]);
+    }
+
+    private function processLeaderboardUsers($users)
+    {
+        if ($users->isEmpty()) {
+            return $users;
+        }
+
+        // Compute global achievements for leaderboard
+        $topScorer = \App\Models\QuizAttempt::selectRaw('user_id, MAX(score) as max_score')
+            ->groupBy('user_id')->orderByDesc('max_score')->first();
+        $mostPassed = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as pass_count')
+            ->where('passed', true)->groupBy('user_id')->orderByDesc('pass_count')->first();
+        $mostAttempts = \App\Models\QuizAttempt::selectRaw('user_id, COUNT(*) as attempt_count')
+            ->groupBy('user_id')->orderByDesc('attempt_count')->first();
+        $perfectUserIds = \App\Models\QuizAttempt::where('score', 100)->distinct('user_id')->pluck('user_id')->toArray();
+
+        $userIds = $users->pluck('id');
+
+        $historyCounts = \App\Models\UserHistory::whereIn('user_id', $userIds)
+            ->selectRaw('user_id, COUNT(DISTINCT sub_materi_id) as c')
+            ->groupBy('user_id')->pluck('c', 'user_id');
+        $favCounts = \App\Models\UserFavorite::whereIn('user_id', $userIds)
+            ->selectRaw('user_id, COUNT(*) as c')
+            ->groupBy('user_id')->pluck('c', 'user_id');
+        $scheduleCounts = \App\Models\StudySchedule::whereIn('user_id', $userIds)
+            ->selectRaw('user_id, COUNT(*) as c')
+            ->groupBy('user_id')->pluck('c', 'user_id');
+
+        foreach ($users as $u) {
+            $achievements = [];
+            $histCount = $historyCounts[$u->id] ?? 0;
+            $fCount = $favCounts[$u->id] ?? 0;
+            $schedCount = $scheduleCounts[$u->id] ?? 0;
+
+            if ($histCount >= 1) {
+                $achievements[] = ['label' => 'First Step', 'icon' => 'achivement001Trans.png', 'desc' => 'Mulai Membaca Materi'];
+            }
+            if ($histCount >= 50) {
+                $achievements[] = ['label' => 'Kutu Buku', 'icon' => 'achivement002Trans.png', 'desc' => 'Membaca 50 Materi'];
+            }
+            if ($fCount >= 10) {
+                $achievements[] = ['label' => 'Kolektor', 'icon' => 'achivement003Trans.png', 'desc' => 'Menyimpan 10 Favorit'];
+            }
+            if ($schedCount >= 1) {
+                $achievements[] = ['label' => 'Terjadwal', 'icon' => 'achivement004Trans.png', 'desc' => 'Membuat Jadwal Belajar'];
+            }
+            if ($u->exp >= 10000) {
+                $achievements[] = ['label' => 'Ahli Rank', 'icon' => 'achivement005Trans.png', 'desc' => 'Mencapai Rank Master'];
+            }
+            if ($mostAttempts && $mostAttempts->user_id === $u->id) {
+                $achievements[] = ['label' => 'Most Active', 'icon' => 'achivement006Trans.png', 'desc' => 'Paling Aktif'];
+            }
+            if (in_array($u->id, $perfectUserIds)) {
+                $achievements[] = ['label' => 'Perfect Score', 'icon' => 'achivement007Trans.png', 'desc' => 'Nilai Sempurna'];
+            }
+            if ($topScorer && $topScorer->user_id === $u->id) {
+                $achievements[] = ['label' => 'Top Scorer', 'icon' => 'achivement008Trans.png', 'desc' => 'Skor Tertinggi'];
+            }
+            if ($mostPassed && $mostPassed->user_id === $u->id) {
+                $achievements[] = ['label' => 'Quiz Master', 'icon' => 'achivement009Trans.png', 'desc' => 'Lulus Kuis Terbanyak'];
+            }
+
+            // Tampilkan maksimal 5 lencana agar UI rapi
+            $u->achievements = array_slice($achievements, 0, 5);
+        }
+
+        return $users;
+    }
+
+    private function notesPage(Request $request): View
+    {
+        $notes = UserNote::where('user_id', Auth::id())
+            ->whereNotNull('content')
+            ->where('content', '!=', '')
+            ->with(['subMateri.materi'])
+            ->orderByDesc('updated_at')
+            ->get()
+            ->groupBy(function($note) {
+                return $note->subMateri->materi->title ?? 'Lainnya';
+            });
+
+        return view('spa.fragments.user-notes', [
+            'groupedNotes' => $notes,
         ]);
     }
 
@@ -647,6 +1035,11 @@ class UserController extends Controller
             $request->input('id')
         );
 
+        // Track favorite_add mission if favorited
+        if ($result['is_favorited']) {
+            (new MissionService())->trackProgress(Auth::user(), 'favorite_add');
+        }
+
         return response()->json([
             'success' => true,
             'is_favorited' => $result['is_favorited'],
@@ -681,6 +1074,12 @@ class UserController extends Controller
 
         // Lock for 55 seconds (to allow minor latency on 60s intervals)
         \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addSeconds(55));
+
+        // Track mission progress
+        (new MissionService())->trackProgress($user, 'exp_gain', 10);
+        
+        // Check-in for streak
+        (new StreakService())->checkIn($user);
 
         return response()->json([
             'success' => true,
@@ -762,12 +1161,10 @@ class UserController extends Controller
             // Beri EXP jika lulus dan belum pernah diberi sebelumnya
             if ($passed && !$existing->exp_awarded) {
                 $user = Auth::user();
-                $user->exp += 50;
-                $user->save();
+                $expGained = (new \App\Services\ExpService())->addExp($user, 50);
 
                 $existing->update(['exp_awarded' => true]);
                 $expAwarded = true;
-                $expGained = 50;
             }
         } else {
             $attempt = QuizAttempt::create([
@@ -781,10 +1178,25 @@ class UserController extends Controller
 
             if ($passed) {
                 $user = Auth::user();
-                $user->exp += 50;
-                $user->save();
+                $expGained = (new \App\Services\ExpService())->addExp($user, 50);
                 $expAwarded = true;
-                $expGained = 50;
+            }
+        }
+
+        // Track quiz_pass mission if passed
+        $certAwarded = false;
+        if ($passed) {
+            (new MissionService())->trackProgress(Auth::user(), 'quiz_pass');
+            (new AchievementService())->checkAndAward(Auth::user());
+            (new StreakService())->checkIn(Auth::user());
+            
+            // Check for certificate
+            $subMateri = SubMateri::find($subMateriId);
+            if ($subMateri) {
+                $cert = (new CertificateService())->checkAndIssue(Auth::user(), $subMateri->materi_id);
+                if ($cert && $cert->wasRecentlyCreated) {
+                    $certAwarded = true;
+                }
             }
         }
 
@@ -797,6 +1209,7 @@ class UserController extends Controller
             'results' => $results,
             'exp_awarded' => $expAwarded,
             'exp_gained' => $expGained,
+            'cert_awarded' => $certAwarded,
             'message' => $passed
                 ? "Selamat! Kamu lulus dengan skor {$score}% 🎉"
                 : "Skor kamu {$score}%. Minimal 80% untuk lulus. Coba lagi! 💪",
@@ -983,5 +1396,274 @@ class UserController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Laporan berhasil dikirim']);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  MISSION SYSTEM
+    // ═══════════════════════════════════════════════════════════════
+
+    public function claimMission(UserMission $userMission): JsonResponse
+    {
+        $user = Auth::user();
+        $result = (new MissionService())->claimReward($user, $userMission);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  DISCUSSION SYSTEM
+    // ═══════════════════════════════════════════════════════════════
+
+    public function storeDiscussion(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'sub_materi_id' => ['required', 'integer', 'exists:sub_materis,id'],
+            'parent_id'     => ['nullable', 'integer', 'exists:discussions,id'],
+            'body'          => ['required', 'string', 'max:2000'],
+        ]);
+
+        $discussion = Discussion::create([
+            'user_id'        => Auth::id(),
+            'sub_materi_id'  => $validated['sub_materi_id'],
+            'parent_id'      => $validated['parent_id'] ?? null,
+            'body'           => $validated['body'],
+        ]);
+
+        // Track discussion_post mission
+        (new MissionService())->trackProgress(Auth::user(), 'discussion_post');
+        (new AchievementService())->checkAndAward(Auth::user());
+
+        $discussion->load('user');
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Komentar berhasil dikirim! 💬',
+            'discussion' => [
+                'id'         => $discussion->id,
+                'body'       => $discussion->body,
+                'upvotes'    => 0,
+                'created_at' => $discussion->created_at->diffForHumans(),
+                'user'       => [
+                    'id'        => $discussion->user->id,
+                    'name'      => $discussion->user->name,
+                    'rank_name' => $discussion->user->rank_name,
+                    'avatar'    => $discussion->user->avatar
+                        ? asset('storage/' . $discussion->user->avatar)
+                        : asset('assets/ico/' . ($discussion->user->emblem_image ?? 'default-user.jpg')),
+                ],
+            ],
+        ]);
+    }
+
+    public function voteDiscussion(Discussion $discussion): JsonResponse
+    {
+        $userId = Auth::id();
+
+        $existing = DiscussionVote::where('user_id', $userId)
+            ->where('discussion_id', $discussion->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $discussion->decrement('upvotes');
+            return response()->json([
+                'success'  => true,
+                'voted'    => false,
+                'upvotes'  => $discussion->fresh()->upvotes,
+                'message'  => 'Vote dibatalkan.',
+            ]);
+        }
+
+        DiscussionVote::create([
+            'user_id'       => $userId,
+            'discussion_id' => $discussion->id,
+        ]);
+        $discussion->increment('upvotes');
+
+        return response()->json([
+            'success'  => true,
+            'voted'    => true,
+            'upvotes'  => $discussion->fresh()->upvotes,
+            'message'  => 'Upvoted! 👍',
+        ]);
+    }
+
+    public function deleteDiscussion(Discussion $discussion): JsonResponse
+    {
+        if ($discussion->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $discussion->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Komentar berhasil dihapus.',
+        ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  NOTES
+    // ═══════════════════════════════════════════════════════════════
+
+    public function getNote($subMateriId): JsonResponse
+    {
+        $note = UserNote::where('user_id', Auth::id())
+            ->where('sub_materi_id', $subMateriId)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'content' => $note ? $note->content : '',
+        ]);
+    }
+
+    public function saveNote(Request $request): JsonResponse
+    {
+        $request->validate([
+            'sub_materi_id' => 'required|integer',
+            'content' => 'nullable|string',
+        ]);
+
+        UserNote::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'sub_materi_id' => $request->sub_materi_id,
+            ],
+            [
+                'content' => $request->content,
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  CERTIFICATE (PUBLIC)
+    // ═══════════════════════════════════════════════════════════════
+
+    public function verifyCertificate($code)
+    {
+        $certificate = \App\Models\Certificate::where('certificate_code', $code)
+            ->with(['user', 'materi'])
+            ->firstOrFail();
+
+        return view('certificate.verify', [
+            'certificate' => $certificate
+        ]);
+    }
+
+    /**
+     * Create a new Clan
+     */
+    public function createClan(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->clan) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah berada di dalam Guild/Clan!']);
+        }
+
+        // Need at least 5000 exp (Senior Rank) to create a Clan
+        if ($user->exp < 5000) {
+            return response()->json(['success' => false, 'message' => 'Anda butuh Rank Senior (5000+ EXP) untuk membuat Guild!']);
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:50', 'unique:clans,name'],
+            'description' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $clan = Clan::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'leader_id' => $user->id,
+            'emblem' => 'emblem004Trans.png', // default emblem
+        ]);
+
+        ClanMember::create([
+            'clan_id' => $clan->id,
+            'user_id' => $user->id,
+            'role' => 'leader',
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Guild berhasil dibuat!', 'clan_id' => $clan->id]);
+    }
+
+    /**
+     * Join a Clan
+     */
+    public function joinClan(Request $request, $clan_id)
+    {
+        $user = Auth::user();
+
+        if ($user->clan) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah berada di dalam Guild!']);
+        }
+
+        $clan = Clan::findOrFail($clan_id);
+
+        if ($clan->members()->count() >= 50) { // Max 50 members
+            return response()->json(['success' => false, 'message' => 'Guild ini sudah penuh!']);
+        }
+
+        ClanMember::create([
+            'clan_id' => $clan->id,
+            'user_id' => $user->id,
+            'role' => 'member',
+        ]);
+
+        // Add some exp to clan when someone joins
+        $clan->increment('exp', 50);
+
+        return response()->json(['success' => true, 'message' => 'Berhasil bergabung ke Guild!']);
+    }
+
+    /**
+     * Leave Clan
+     */
+    public function leaveClan(Request $request)
+    {
+        $user = Auth::user();
+        $member = $user->clanMember;
+
+        if (!$member) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak berada di Guild manapun!']);
+        }
+
+        if ($member->role === 'leader') {
+            return response()->json(['success' => false, 'message' => 'Ketua Guild tidak bisa keluar. Serahkan posisi ketua terlebih dahulu atau bubarkan Guild.']);
+        }
+
+        $member->delete();
+
+        return response()->json(['success' => true, 'message' => 'Berhasil keluar dari Guild.']);
+    }
+
+    /**
+     * Purchase a shop item
+     */
+    public function purchaseItem(Request $request, $item_id)
+    {
+        $user = Auth::user();
+        $item = ShopItem::findOrFail($item_id);
+
+        if ($user->hasPurchased($item->id)) {
+            return response()->json(['success' => false, 'message' => 'Item sudah dibeli!']);
+        }
+
+        if (($user->coins ?? 0) < $item->price) {
+            return response()->json(['success' => false, 'message' => 'Koin tidak cukup! Butuh ' . $item->price . ' Koin.']);
+        }
+
+        // Deduct coins and record purchase
+        $user->decrement('coins', $item->price);
+        UserPurchase::create([
+            'user_id' => $user->id,
+            'shop_item_id' => $item->id,
+            'equipped' => false,
+        ]);
+
+        return response()->json(['success' => true, 'message' => '"' . $item->name . '" berhasil dibeli!', 'coins_left' => $user->fresh()->coins]);
     }
 }

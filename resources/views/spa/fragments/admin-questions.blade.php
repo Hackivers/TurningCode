@@ -1,4 +1,4 @@
-<div class="spa-fragment max-w-5xl mx-auto space-y-8" id="question-app"
+<div class="spa-fragment w-full max-w-full space-y-8" id="question-app"
     data-api-materis="{{ url('/admin/api/main') }}"
     data-api-sub-materis="{{ url('/admin/api/materi') }}"
     data-old-main="{{ old('main_materi_id') }}"
@@ -289,6 +289,10 @@
                                                                 <button type="button" onclick="event.stopPropagation(); loadQuestionGroup({{ $mainMateri->id }}, {{ $materi->id }}, {{ $subMateri->id }}, '{{ addslashes(html_entity_decode(json_encode($subMateri->questions), ENT_QUOTES, 'UTF-8')) }}')" class="opacity-0 group-hover:opacity-100 px-2 py-1 text-[9px] font-bold bg-white text-zinc-600 ring-1 ring-zinc-200 rounded-md hover:bg-indigo-50 hover:text-indigo-600 hover:ring-indigo-200 transition-all flex items-center gap-1 shadow-sm">
                                                                     <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                                     Edit Group
+                                                                </button>
+                                                                <button type="button" onclick="event.stopPropagation(); deleteQuestionGroup({{ $subMateri->id }}, '{{ addslashes($subMateri->title) }}')" class="opacity-0 group-hover:opacity-100 px-2 py-1 text-[9px] font-bold bg-white text-zinc-600 ring-1 ring-zinc-200 rounded-md hover:bg-red-50 hover:text-red-600 hover:ring-red-200 transition-all flex items-center gap-1 shadow-sm">
+                                                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                                    Hapus Group
                                                                 </button>
                                                                 <div class="flex items-center gap-1.5">
                                                                     <span class="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded ring-1 ring-emerald-200/60">{{ $subMateri->questions->count() }}</span>

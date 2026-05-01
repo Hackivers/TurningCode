@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'last_page', 'avatar', 'exp'])]
+#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'last_page', 'avatar', 'exp', 'coins'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -39,9 +39,44 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->notify(new QueuedVerifyEmail);
     }
 
+    public function userMissions()
+    {
+        return $this->hasMany(UserMission::class);
+    }
+
+    public function userAchievements()
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    public function discussions()
+    {
+        return $this->hasMany(Discussion::class);
+    }
+
     public function friendRequestsSent()
     {
         return $this->hasMany(Friendship::class, 'user_id')->where('status', 'pending');
+    }
+
+    public function clanMember()
+    {
+        return $this->hasOne(ClanMember::class);
+    }
+
+    public function getClanAttribute()
+    {
+        return $this->clanMember ? $this->clanMember->clan : null;
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(UserPurchase::class);
+    }
+
+    public function hasPurchased($shopItemId): bool
+    {
+        return $this->purchases()->where('shop_item_id', $shopItemId)->exists();
     }
 
     public function friendRequestsReceived()

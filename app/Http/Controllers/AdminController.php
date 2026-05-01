@@ -23,6 +23,7 @@ class AdminController extends Controller
         'questions',
         'database',
         'profile',
+        'events',
     ];
 
     public function spa(): View
@@ -148,7 +149,6 @@ class AdminController extends Controller
                 'recentSubMateris' => SubMateri::query()
                     ->with('materi.mainMateri')
                     ->latest()
-                    ->limit(8)
                     ->get(),
             ]);
         }
@@ -213,6 +213,13 @@ class AdminController extends Controller
             return view('spa.fragments.admin-profile', [
                 'page' => $page,
                 'user' => auth()->user(),
+            ]);
+        }
+
+        if ($page === 'events') {
+            return view('spa.fragments.admin-events', [
+                'page' => $page,
+                'events' => \App\Models\ExpEvent::orderByDesc('start_time')->get(),
             ]);
         }
 
@@ -483,5 +490,73 @@ class AdminController extends Controller
         \Illuminate\Support\Facades\DB::table($table)->where('id', $id)->delete();
 
         return response()->json(['message' => 'Data berhasil dihapus.']);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  EVENT MANAGEMENT (EXP MULTIPLIER)
+    // ═══════════════════════════════════════════════════════════════
+
+    public function storeEvent(\Illuminate\Http\Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'multiplier' => 'required|numeric|min:1',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'is_active' => 'boolean',
+        ]);
+
+        $data['is_active'] = $request->boolean('is_active');
+
+        \App\Models\ExpEvent::create($data);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Event berhasil dibuat!']);
+        }
+
+        return redirect()->route('admin.spa')->with([
+            'admin_open_page' => 'events',
+            'success' => 'Event berhasil dibuat!'
+        ]);
+    }
+
+    public function updateEvent(\Illuminate\Http\Request $request, \App\Models\ExpEvent $event)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'multiplier' => 'required|numeric|min:1',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'is_active' => 'boolean',
+        ]);
+
+        $data['is_active'] = $request->boolean('is_active');
+
+        $event->update($data);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Event berhasil diperbarui!']);
+        }
+
+        return redirect()->route('admin.spa')->with([
+            'admin_open_page' => 'events',
+            'success' => 'Event berhasil diperbarui!'
+        ]);
+    }
+
+    public function destroyEvent(\App\Models\ExpEvent $event)
+    {
+        $event->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Event berhasil dihapus!']);
+        }
+
+        return redirect()->route('admin.spa')->with([
+            'admin_open_page' => 'events',
+            'success' => 'Event berhasil dihapus!'
+        ]);
     }
 }

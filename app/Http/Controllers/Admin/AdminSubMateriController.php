@@ -50,7 +50,7 @@ class AdminSubMateriController extends Controller
 
             // Sections (dynamic array)
             'sections'              => ['required', 'array', 'min:1'],
-            'sections.*.type'       => ['required', 'string', 'in:heading,subheading,paragraph,code,image,quote,list,divider'],
+            'sections.*.type'       => ['required', 'string', 'in:heading,subheading,paragraph,code,image,quote,list,divider,table,bab'],
             'sections.*.content'    => ['nullable', 'string'],
             'sections.*.order'      => ['nullable', 'integer'],
             'sections.*.language'   => ['nullable', 'string', 'max:50'],
@@ -169,7 +169,7 @@ class AdminSubMateriController extends Controller
 
             // Sections (dynamic array)
             'sections'              => ['required', 'array', 'min:1'],
-            'sections.*.type'       => ['required', 'string', 'in:heading,subheading,paragraph,code,image,quote,list,divider'],
+            'sections.*.type'       => ['required', 'string', 'in:heading,subheading,paragraph,code,image,quote,list,divider,table,bab'],
             'sections.*.content'    => ['nullable', 'string'],
             'sections.*.order'      => ['nullable', 'integer'],
             'sections.*.language'   => ['nullable', 'string', 'max:50'],

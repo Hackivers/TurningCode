@@ -7,7 +7,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('app:reset-season')]
-#[Description('Reset EXP semua user ke 0 untuk awal season baru')]
+#[Description('Mengurangi EXP semua user sebesar 80% untuk awal season baru')]
 class ResetSeasonExp extends Command
 {
     /**
@@ -17,9 +17,11 @@ class ResetSeasonExp extends Command
     {
         $this->info('Memulai reset season EXP...');
 
-        $updated = \App\Models\User::query()->update(['exp' => 0]);
+        $updated = \App\Models\User::query()->update([
+            'exp' => \Illuminate\Support\Facades\DB::raw('FLOOR(exp * 0.2)')
+        ]);
 
-        $this->info("Season berhasil direset! Total $updated user EXP dikembalikan ke 0.");
-        \Illuminate\Support\Facades\Log::info("Season Reset Command ran successfully. $updated users exp reset to 0.");
+        $this->info("Season berhasil direset! Total $updated user EXP dikurangi 80%.");
+        \Illuminate\Support\Facades\Log::info("Season Reset Command ran successfully. $updated users exp reduced by 80%.");
     }
 }

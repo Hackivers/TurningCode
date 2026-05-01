@@ -49,13 +49,16 @@
             min-height: 160px !important;
             padding: 24px 20px !important;
         }
+
         .time-card-content {
             width: 100% !important;
         }
+
         .time-card-date {
             margin-bottom: 12px !important;
             font-size: 13px !important;
         }
+
         .time-card-title {
             font-size: 24px !important;
             margin-bottom: 20px !important;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Materi;
 use App\Models\Question;
+use App\Models\SubMateri;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -150,6 +151,16 @@ class AdminQuestionController extends Controller
         $question->delete();
 
         return response()->json(['success' => true, 'message' => 'Soal berhasil dihapus.']);
+    }
+
+    /**
+     * Delete all questions for a specific SubMateri via JSON API.
+     */
+    public function destroyBySubMateri(SubMateri $subMateri): JsonResponse
+    {
+        $subMateri->questions()->delete();
+
+        return response()->json(['success' => true, 'message' => 'Seluruh soal untuk sub-materi tersebut berhasil dihapus.']);
     }
 
     /**

@@ -163,6 +163,37 @@
 </div>
 @endif
 
+{{-- ── SERTIFIKAT SAYA ───────────────────────────────────────────── --}}
+@if(isset($certificates) && $certificates->count() > 0)
+<div style="margin-top:48px;">
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Sertifikat Saya</h3>
+    <p style="font-size:16px;color:#555;margin:0 0 24px;">Bukti pencapaian belajarmu.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+        @foreach($certificates as $cert)
+        <div class="neo-card neo-card-light" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                    <div style="width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">
+                        <i class='bx bx-award'></i>
+                    </div>
+                    <div>
+                        <div style="font-size:16px;font-weight:700;color:#121212;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
+                        <div style="font-size:12px;color:#888;margin-top:4px;">{{ $cert->issued_at->translatedFormat('d M Y') }}</div>
+                    </div>
+                </div>
+                <div style="background:rgba(0,0,0,0.03);padding:10px 14px;border-radius:8px;font-family:monospace;font-size:13px;color:#555;margin-bottom:20px;text-align:center;letter-spacing:1px;">
+                    {{ $cert->certificate_code }}
+                </div>
+            </div>
+            <a href="/certificate/{{ $cert->certificate_code }}" target="_blank" style="display:block;width:100%;text-align:center;padding:12px;background:#121212;color:#fff;text-decoration:none;font-weight:600;font-size:14px;border-radius:12px;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                Lihat Sertifikat
+            </a>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 {{-- ── FRIENDS SECTION (AJAX) ────────────────────────────────────── --}}
 <div style="margin-top:48px;">
     <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Pertemanan</h3>

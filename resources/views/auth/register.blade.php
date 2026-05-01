@@ -14,85 +14,87 @@
 </head>
 
 <body>
-    <main class="thumbnail">
-        <div class="wrapper-thumb">
-            <div class="title-thumb">
-                <h2>yok, buruan login!!</h2>
-                <h5>materi udah nugguin nih, buat dipelajari...</h5>
+    <div class="auth-container">
+        <main class="thumbnail">
+            <div class="wrapper-thumb">
+                <div class="title-thumb">
+                    <h2>yok, buruan daftar!!</h2>
+                    <h5>buat akun dulu sebelum mulai belajar...</h5>
+                </div>
+                <div class="thumb-img">
+                    <img src="{{ asset('assets/ico/img001thumb02Trans.png') }}" alt="">
+                </div>
             </div>
-            <div class="thumb-img">
-                <img src="{{ asset('assets/ico/img001thumb02Trans.png') }}" alt="">
+        </main>
+        <main class="form-input">
+            <div class="wrapper-input">
+                <div class="title-input">
+                    <h2>daftar</h2>
+                </div>
+                <form method="post" action="{{ route('register') }}" class="main-input">
+                    @csrf
+                    <div class="input">
+                        <label for="name">
+                            <h5>nama</h5>
+                        </label>
+                        <div>
+                            <i class='bx bx-user'></i>
+                            <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="nama" required autofocus>
+                        </div>
+                    </div>
+                    <div class="input">
+                        <label for="email">
+                            <h5>email</h5>
+                        </label>
+                        <div>
+                            <i class='bx bxl-gmail'></i>
+                            <input type="email" name="email" id="email" value="{{ old('email') }}" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="input pass">
+                        <label for="password">
+                            <h5>password</h5>
+                        </label>
+                        <div>
+                            <i class='bx bxs-lock'></i>
+                            <input type="password" name="password" id="password" placeholder="Password" required>
+                            <i class='bx bx-show toggle-password' id="togglePassword"></i>
+                        </div>
+                    </div>
+                    <div class="input pass">
+                        <label for="password_confirmation">
+                            <h5>ulangi password</h5>
+                        </label>
+                        <div>
+                            <i class='bx bxs-lock'></i>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                placeholder="Ulangi Password" required>
+                            <i class='bx bx-show toggle-password' id="togglePassword"></i>
+                        </div>
+                    </div>
+                    <div class="list">
+                        @if ($errors->any())
+                            <ul class="list-info">
+                                @foreach ($errors->all() as $err)
+                                    <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                    <div class="btn">
+                        <button type="button" onclick="window.location='{{ route('home') }}'">
+                            kembali
+                        </button>
+                        <button type="submit">Daftar</button>
+                    </div>
+                    <h5 class="register">
+                        Udah punya akun?
+                        <a href="{{ route('login') }}" class="font-medium text-zinc-900 underline">Masuk</a>
+                    </h5>
+                </form>
             </div>
-        </div>
-    </main>
-    <main class="form-input">
-        <div class="wrapper-input">
-            <div class="title-input">
-                <h2>login</h2>
-            </div>
-            <form method="post" action="{{ route('register') }}" class="main-input">
-                @csrf
-                <div class="input">
-                    <label for="name">
-                        <h5>nama</h5>
-                    </label>
-                    <div>
-                        <i class='bx bx-user'></i>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="nama" required autofocus>
-                    </div>
-                </div>
-                <div class="input">
-                    <label for="email">
-                        <h5>email</h5>
-                    </label>
-                    <div>
-                        <i class='bx bxl-gmail'></i>
-                        <input type="email" name="email" id="email" value="{{ old('email') }}" placeholder="Email" required>
-                    </div>
-                </div>
-                <div class="input pass">
-                    <label for="password">
-                        <h5>password</h5>
-                    </label>
-                    <div>
-                        <i class='bx bxs-lock'></i>
-                        <input type="password" name="password" id="password" placeholder="Password" required>
-                        <i class='bx bx-show toggle-password' id="togglePassword"></i>
-                    </div>
-                </div>
-                <div class="input pass">
-                    <label for="password_confirmation">
-                        <h5>ulangi password</h5>
-                    </label>
-                    <div>
-                        <i class='bx bxs-lock'></i>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                            placeholder="Ulangi Password" required>
-                        <i class='bx bx-show toggle-password' id="togglePassword"></i>
-                    </div>
-                </div>
-                <div class="list">
-                    @if ($errors->any())
-                        <ul class="list-info">
-                            @foreach ($errors->all() as $err)
-                                <li>{{ $err }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
-                <div class="btn">
-                    <button type="button" onclick="window.location='{{ route('home') }}'">
-                        kembali
-                    </button>
-                    <button type="submit">Daftar</button>
-                </div>
-                <h5 class="register">
-                    Udah punya akun?
-                    <a href="{{ route('login') }}" class="font-medium text-zinc-900 underline">Masuk</a>
-                </h5>
-            </form>
-        </div>
-    </main>
+        </main>
+    </div>
     <script>
         document.querySelectorAll('.input input').forEach(input => {
             input.addEventListener('focus', function() {

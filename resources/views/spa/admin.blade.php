@@ -59,6 +59,17 @@
                 {{-- Divider --}}
                 <div class="my-2 border-t border-zinc-100 sidebar-text"></div>
 
+                {{-- Kelola Event --}}
+                <a href="#" data-spa-page="events"
+                    class="nav-item flex items-center gap-4 rounded-2xl p-3.5 text-zinc-400 transition-all duration-200 [&.active]:bg-[#1C1C1E] [&.active]:text-white [&.active]:shadow-lg [&.active]:shadow-zinc-900/10 hover:[&:not(.active)]:bg-zinc-50 hover:[&:not(.active)]:text-zinc-900 group/link">
+                    <span class="flex h-5 w-5 shrink-0 items-center justify-center translate-x-1 sidebar-icon">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="sidebar-text truncate">Manajemen Event</span>
+                </a>
+
                 {{-- Kelola Sub Materi --}}
                 <a href="#" data-spa-page="addsubmateri"
                     class="nav-item flex items-center gap-4 rounded-2xl p-3.5 text-zinc-400 transition-all duration-200 [&.active]:bg-[#1C1C1E] [&.active]:text-white [&.active]:shadow-lg [&.active]:shadow-zinc-900/10 hover:[&:not(.active)]:bg-zinc-50 hover:[&:not(.active)]:text-zinc-900 group/link">

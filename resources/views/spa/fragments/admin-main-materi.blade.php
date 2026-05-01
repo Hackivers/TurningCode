@@ -1,4 +1,4 @@
-<div class="spa-fragment max-w-5xl mx-auto space-y-8" data-csrf="{{ csrf_token() }}">
+<div class="spa-fragment w-full max-w-full space-y-8" data-csrf="{{ csrf_token() }}">
     {{-- Header Section --}}
     <div class="relative overflow-hidden rounded-3xl bg-zinc-900 p-8 text-white shadow-2xl">
         <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl"></div>

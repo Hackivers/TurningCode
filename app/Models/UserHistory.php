@@ -11,12 +11,14 @@ class UserHistory extends Model
         'user_id',
         'sub_materi_id',
         'viewed_at',
+        'completed_babs',
     ];
 
     protected function casts(): array
     {
         return [
             'viewed_at' => 'datetime',
+            'completed_babs' => 'array',
         ];
     }
 

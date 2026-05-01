@@ -58,26 +58,29 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
         <div class="neo-bento-container">
 
             {{-- ── BACK TO DASHBOARD ────────────────────────────────────────── --}}
-            <a href="?page=dashboard" class="link-spa" data-page="dashboard" style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='var(--neo-text-dark, #121212)'" onmouseout="this.style.color='#888'">
+            <a href="?page=dashboard" class="link-spa" data-page="dashboard"
+                style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--neo-text-dark, #888);text-decoration:none;margin-bottom:32px;transition:color 0.2s; background: rgba(0,0,0,0.03); padding: 8px 16px; border-radius: 20px;"
+                onmouseover="this.style.background='rgba(0,0,0,0.05)';" 
+                onmouseout="this.style.background='rgba(0,0,0,0.03)';">
                 <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
             </a>
 
             {{-- Header --}}
-            <div class="sl-head">
-                <div class="sl-head-left">
-                    <div class="sl-head-ico"><i class='bx bxs-flask'></i></div>
-                    <div>
-                        <h2>Secret Lab</h2>
-                        <p>Selamat datang, <span class="sl-gradient-txt">{{ $user->name }}</span> — {{ $rankName }}</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--neo-text-dark, #121212);">Secret Lab</h2>
+                        @if($user->isPenguasaSektor())
+                            <span class="sl-badge" style="background: rgba(251,191,36,0.15); color: #f59e0b; border: 1px solid rgba(251,191,36,0.3);"><i class='bx bxs-crown'></i> SOVEREIGN</span>
+                        @else
+                            <span class="sl-badge"><i class='bx bxs-crown'></i> ELITE</span>
+                        @endif
                     </div>
+                    <p style="font-size: 15px; color: #888; margin: 0;">Selamat datang, <span class="sl-gradient-txt">{{ $user->name }}</span> — {{ $rankName }}</p>
                 </div>
-                @if($user->isPenguasaSektor())
-                    <span class="sl-badge"
-                        style="background: rgba(251,191,36,0.15); color: #f59e0b; border: 1px solid rgba(251,191,36,0.3);"><i
-                            class='bx bxs-crown'></i> SOVEREIGN</span>
-                @else
-                    <span class="sl-badge"><i class='bx bxs-crown'></i> ELITE</span>
-                @endif
+                <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                    <i class='bx bxs-flask' style="font-size: 28px; color: #8b5cf6;"></i>
+                </div>
             </div>
 
             {{-- Bento Stats --}}
@@ -457,49 +460,7 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
         box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
     }
 
-    /* ── UNLOCKED ── */
-    .sl-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 28px;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
 
-    .sl-head-left {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .sl-head-ico {
-        width: 50px;
-        height: 50px;
-        background: var(--neo-text-dark, #121212);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: var(--neo-text-light, #ffffff);
-    }
-
-    .sl-head h2 {
-        font-family: 'Inter', sans-serif;
-        font-size: 24px;
-        font-weight: 800;
-        color: var(--neo-text-dark, #121212);
-        margin: 0;
-        letter-spacing: -.3px;
-    }
-
-    .sl-head p {
-        font-size: 13px;
-        color: #888;
-        margin: 2px 0 0;
-        font-weight: 500;
-    }
 
     .sl-gradient-txt {
         background: linear-gradient(135deg, #8b5cf6, #ec4899);
@@ -826,14 +787,7 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
             gap: 8px;
         }
 
-        .sl-head {
-            flex-direction: column;
-            align-items: flex-start;
-        }
 
-        .sl-head h2 {
-            font-size: 20px;
-        }
 
         .sl-bento-card {
             padding: 20px;

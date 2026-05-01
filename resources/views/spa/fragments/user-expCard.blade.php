@@ -48,9 +48,18 @@
 </style>
 
 <div class="neo-card neo-card-light" style="height: 100%; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s; {{ $tierStyle }}" onmouseover="this.style.transform='translateY(-4px)'; {{ $rank == 'Penguasa Sektor' ? 'this.style.boxShadow=\'0 16px 48px rgba(217, 70, 239, 0.4)\';' : '' }}" onmouseout="this.style.transform=''; {{ $rank == 'Penguasa Sektor' ? 'this.style.boxShadow=\'0 12px 40px rgba(217, 70, 239, 0.3)\';' : '' }}">
-    <div class="neo-header">
-        <h3 class="neo-title" style="{{ $rank == 'Penguasa Sektor' ? 'background: -webkit-linear-gradient(45deg, #d946ef, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;' : '' }}">Level &<br>Pengalaman</h3>
-        <span class="neo-arrow" style="{{ $rank == 'Penguasa Sektor' ? 'color: #d946ef;' : '' }}">&#x2197;</span>
+    <div class="neo-header" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+        <div>
+            <h3 class="neo-title" style="{{ $rank == 'Penguasa Sektor' ? 'background: -webkit-linear-gradient(45deg, #d946ef, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;' : '' }}">Level &<br>Pengalaman</h3>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            @if(isset($streakData))
+            <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; {{ $streakData['is_active_today'] ? 'border: 1px solid rgba(239, 68, 68, 0.3);' : 'filter: grayscale(1);' }}">
+                <i class='bx bxs-hot' style="font-size: 14px;"></i> {{ $streakData['current_streak'] }}
+            </div>
+            @endif
+            <span class="neo-arrow" style="{{ $rank == 'Penguasa Sektor' ? 'color: #d946ef;' : '' }}">&#x2197;</span>
+        </div>
     </div>
 
     <div style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 0;">

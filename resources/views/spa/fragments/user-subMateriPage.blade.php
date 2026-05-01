@@ -56,14 +56,25 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
             <div style="display:flex;flex-direction:column;gap:16px;">
                 @foreach ($subMateris as $i => $subMateri)
-                    @php $isDone = in_array($subMateri->id, $completed ?? []); @endphp
-                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa"
-                        style="text-decoration:none;display:block;">
-                        <div class="neo-card neo-card-light sub-card-item"
-                            style="padding:24px 32px;flex-direction:row;align-items:center;gap:20px;{{ $isDone ? 'border:2px solid rgba(16,185,129,0.4);' : '' }}">
+                    @php 
+                        $isDone = in_array($subMateri->id, $completed ?? []); 
+                        $qCount = $questionCounts[$subMateri->id] ?? 0;
+                        
+                        // Parse JSON sections to get "bab" blocks
+                        $sections = is_string($subMateri->sections_json) 
+                                        ? json_decode($subMateri->sections_json, true) 
+                                        : (is_array($subMateri->sections) ? $subMateri->sections : []);
+                        if (!is_array($sections)) $sections = [];
+                        
+                        $babs = collect($sections)->where('type', 'bab')->values();
+                        $totalBabs = count($babs);
+                        $hasAccordion = $totalBabs > 0 || $qCount > 0;
+                    @endphp
+                    
+                    <div class="neo-card neo-card-light sub-card-item" style="padding:24px 32px;{{ $isDone ? 'border:2px solid rgba(16,185,129,0.4);' : '' }}">
+                        <div style="display:flex;flex-direction:row;align-items:flex-start;gap:20px;">
                             {{-- Number --}}
-                            <div
-                                style="width:40px;height:40px;border-radius:12px;background:{{ $isDone ? '#ecfdf5' : 'rgba(0,0,0,0.06)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <div style="width:40px;height:40px;border-radius:12px;background:{{ $isDone ? '#ecfdf5' : 'rgba(0,0,0,0.06)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 @if($isDone)
                                     <i class='bx bx-check' style="font-size:20px;color:#10b981;"></i>
                                 @else
@@ -73,13 +84,24 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
                             {{-- Content --}}
                             <div style="flex:1;min-width:0;">
-                                <h4
-                                    style="margin:0 0 4px;font-size:16px;font-weight:700;color:#121212;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
-                                    {{ $subMateri->title }}</h4>
-                                <p
-                                    style="margin:0;font-size:13px;color:#888;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                    {{ Str::limit(strip_tags($subMateri->content), 100) }}
-                                </p>
+                                <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa" style="text-decoration:none;">
+                                    <h4 style="margin:0 0 4px;font-size:18px;font-weight:700;color:#121212;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">{{ $subMateri->title }}</h4>
+                                    <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $subMateri->subtitle ?? Str::limit(strip_tags($subMateri->content), 100) }}</p>
+                                </a>
+                                
+                                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                    @if($hasAccordion)
+                                        <button class="btn-primary" onclick="toggleBabList('sub-{{ $subMateri->id }}')" style="display:inline-flex;align-items:center;gap:6px;background:#121212;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
+                                            Urutan Belajar <i class='bx bx-chevron-down' id="icon-sub-{{ $subMateri->id }}" style="transition:transform 0.3s;"></i>
+                                        </button>
+                                    @endif
+                                    
+                                    @if($qCount > 0)
+                                        <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#f59e0b;background:rgba(245,158,11,0.1);padding:8px 12px;border-radius:8px;">
+                                            <i class='bx bx-trophy'></i> Ada Quiz
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
 
                             {{-- Actions --}}
@@ -88,10 +110,93 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
                                     data-id="{{ $subMateri->id }}" data-type="sub"
                                     style="font-size:20px;color:{{ in_array($subMateri->id, $arsipSub ?? []) ? '#f59e0b' : '#ccc' }};cursor:pointer;z-index:5;"
                                     onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
-                                <span class="neo-arrow" style="font-size:24px;">&#x2197;</span>
                             </div>
                         </div>
-                    </a>
+                        
+                        {{-- Timeline Accordion for Babs --}}
+                        @if($hasAccordion)
+                            <div id="bab-list-sub-{{ $subMateri->id }}" class="bab-timeline-container" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);">
+                                <div style="position:relative;padding-left:16px;">
+                                    <div style="position:absolute;left:23px;top:20px;bottom:20px;width:2px;background:rgba(0,0,0,0.1);z-index:1;"></div>
+                                    
+                                    <div style="display:flex;flex-direction:column;gap:0;">
+                                        {{-- Render Babs --}}
+                                        @php
+                                            $history = $histories->get($subMateri->id);
+                                            $completedBabs = $history && is_array($history->completed_babs) ? $history->completed_babs : [];
+                                        @endphp
+                                        
+                                        @foreach($babs as $bIndex => $bab)
+                                            @php
+                                                $isBabUnlocked = $bIndex === 0;
+                                                if ($bIndex > 0) {
+                                                    $prevBabId = $babs[$bIndex - 1]['order'] ?? '';
+                                                    $isBabUnlocked = in_array($prevBabId, $completedBabs);
+                                                }
+                                                if (in_array($bab['order'] ?? '', $completedBabs)) {
+                                                    $isBabUnlocked = true;
+                                                }
+                                            @endphp
+                                            
+                                            @if($isBabUnlocked)
+                                                <a href="?page=detail&submateri_id={{ $subMateri->id }}&bab_id={{ $bab['order'] ?? '' }}" class="link-spa" style="text-decoration:none;display:block;position:relative;z-index:2;padding:12px 0;transition:transform 0.2s;" onmouseover="this.style.transform='translateX(6px)'" onmouseout="this.style.transform='translateX(0)'">
+                                                    <div style="display:flex;align-items:center;gap:16px;">
+                                                        <div style="width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #8b5cf6;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);"></div>
+                                                        <div style="flex:1;">
+                                                            <h4 style="margin:0;font-size:14px;font-weight:600;color:#444;">{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }}</h4>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            @else
+                                                <div style="display:block;position:relative;z-index:2;padding:12px 0;opacity:0.6;cursor:not-allowed;">
+                                                    <div style="display:flex;align-items:center;gap:16px;">
+                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);">
+                                                            <i class='bx bx-lock-alt' style="font-size:10px;color:#9ca3af;"></i>
+                                                        </div>
+                                                        <div style="flex:1;">
+                                                            <h4 style="margin:0;font-size:14px;font-weight:600;color:#9ca3af;">{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }} <span style="font-size:11px;font-weight:500;">(Terkunci)</span></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                        
+                                        {{-- Render Quiz if any --}}
+                                        @if($qCount > 0)
+                                            @php
+                                                $isQuizUnlocked = true;
+                                                if ($totalBabs > 0) {
+                                                    $lastBabId = $babs[$totalBabs - 1]['order'] ?? '';
+                                                    $isQuizUnlocked = in_array($lastBabId, $completedBabs);
+                                                }
+                                            @endphp
+                                            @if($isQuizUnlocked)
+                                                <a href="?page=detail&submateri_id={{ $subMateri->id }}&auto_quiz=1" class="link-spa" style="text-decoration:none;display:block;position:relative;z-index:2;padding:12px 0;transition:transform 0.2s;" onmouseover="this.style.transform='translateX(6px)'" onmouseout="this.style.transform='translateX(0)'">
+                                                    <div style="display:flex;align-items:center;gap:16px;">
+                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f59e0b;border:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);"></div>
+                                                        <div style="flex:1;">
+                                                            <h4 style="margin:0;font-size:14px;font-weight:700;color:#d97706;">Quiz ({{ $qCount }} Soal)</h4>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            @else
+                                                <div style="display:block;position:relative;z-index:2;padding:12px 0;opacity:0.6;cursor:not-allowed;">
+                                                    <div style="display:flex;align-items:center;gap:16px;">
+                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);">
+                                                            <i class='bx bx-lock-alt' style="font-size:10px;color:#9ca3af;"></i>
+                                                        </div>
+                                                        <div style="flex:1;">
+                                                            <h4 style="margin:0;font-size:14px;font-weight:700;color:#9ca3af;">Quiz ({{ $qCount }} Soal) <span style="font-size:11px;font-weight:500;">(Terkunci)</span></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 @endforeach
             </div>
         </div>
@@ -100,20 +205,38 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
 </div>
 
 <script>
+    function toggleBabList(babId) {
+        const list = document.getElementById('bab-list-' + babId);
+        const icon = document.getElementById('icon-' + babId);
+        
+        if (list.style.display === 'none' || !list.style.display) {
+            list.style.display = 'block';
+            list.animate([
+                { opacity: 0, transform: 'translateY(-10px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 300, easing: 'ease-out' });
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            const animation = list.animate([
+                { opacity: 1, transform: 'translateY(0)' },
+                { opacity: 0, transform: 'translateY(-10px)' }
+            ], { duration: 200, easing: 'ease-in' });
+            
+            animation.onfinish = () => {
+                list.style.display = 'none';
+            };
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
     window.__currentSearchHandler = function (query) {
         document.querySelectorAll('.sub-card-item').forEach(card => {
-            const a = card.closest('a');
+            const a = card; // it is an <a> tag now
             const title = card.querySelector('h4')?.textContent.toLowerCase() || '';
             const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
-            if (title.includes(query) || desc.includes(query)) { if (a) a.style.display = ''; }
-            else { if (a) a.style.display = 'none'; }
+            if (title.includes(query) || desc.includes(query)) { a.style.display = 'block'; }
+            else { a.style.display = 'none'; }
         });
-        if (query !== '') {
-            const first = Array.from(document.querySelectorAll('.sub-card-item')).find(c => {
-                const a = c.closest('a'); return a ? a.style.display !== 'none' : true;
-            });
-            if (first) setTimeout(() => first.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
-        }
     };
 </script>
 

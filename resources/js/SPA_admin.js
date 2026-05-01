@@ -180,6 +180,142 @@ window.submitSubMateriImportExcel = function() {
     }
 };
 
+// ── Event Management ───────────────────────────────────────────
+function showEventAlert(msg, type) {
+    const el = document.getElementById('event-alert');
+    if (!el) return;
+    el.style.display = 'block';
+    el.className = type === 'success'
+        ? 'rounded-2xl px-5 py-3 text-sm font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100'
+        : 'rounded-2xl px-5 py-3 text-sm font-semibold bg-red-50 text-red-500 border border-red-100';
+    el.textContent = msg;
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function reloadAdminEvents() {
+    const navLink = document.querySelector('[data-spa-page="events"]');
+    if (navLink) navLink.click();
+}
+
+window.openAddEventModal = function() {
+    const modal = document.getElementById('add-event-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeAddEventModal = function() {
+    const modal = document.getElementById('add-event-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+window.submitAddEvent = async function(e) {
+    e.preventDefault();
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const form = document.getElementById('add-event-form');
+    const btn = document.getElementById('btn-add-submit');
+    const orig = btn.textContent;
+    btn.textContent = 'Menyimpan...'; btn.disabled = true;
+
+    const fd = new FormData(form);
+    const body = {};
+    fd.forEach((v, k) => { body[k] = v; });
+    if (!fd.has('is_active')) body['is_active'] = false;
+
+    try {
+        const res = await fetch('/admin/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            window.closeAddEventModal(); form.reset();
+            showEventAlert(data.message, 'success');
+            reloadAdminEvents();
+        } else {
+            const errors = data.errors ? Object.values(data.errors).flat().join('\n') : (data.message || 'Gagal menyimpan.');
+            showEventAlert(errors, 'error');
+        }
+    } catch (err) { showEventAlert('Terjadi kesalahan jaringan.', 'error'); }
+    btn.textContent = orig; btn.disabled = false;
+};
+
+window.openEditEventModal = function(id, title, desc, mult, start, end, active) {
+    document.getElementById('edit-event-id').value = id;
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-description').value = desc;
+    document.getElementById('edit-multiplier').value = mult;
+    document.getElementById('edit-start').value = start;
+    document.getElementById('edit-end').value = end;
+    document.getElementById('edit-active').checked = active;
+    const modal = document.getElementById('edit-event-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeEditEventModal = function() {
+    const modal = document.getElementById('edit-event-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+window.submitEditEvent = async function(e) {
+    e.preventDefault();
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const id = document.getElementById('edit-event-id').value;
+    const form = document.getElementById('edit-event-form');
+    const btn = document.getElementById('btn-edit-submit');
+    const orig = btn.textContent;
+    btn.textContent = 'Memperbarui...'; btn.disabled = true;
+
+    const fd = new FormData(form);
+    const body = {};
+    fd.forEach((v, k) => { if (k !== '_token' && k !== '_method') body[k] = v; });
+    if (!fd.has('is_active')) body['is_active'] = false;
+
+    try {
+        const res = await fetch(`/admin/events/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            window.closeEditEventModal();
+            showEventAlert(data.message, 'success');
+            reloadAdminEvents();
+        } else {
+            const errors = data.errors ? Object.values(data.errors).flat().join('\n') : (data.message || 'Gagal memperbarui.');
+            showEventAlert(errors, 'error');
+        }
+    } catch (err) { showEventAlert('Terjadi kesalahan jaringan.', 'error'); }
+    btn.textContent = orig; btn.disabled = false;
+};
+
+window.deleteEvent = async function(id) {
+    if (!confirm('Yakin ingin menghapus event ini?')) return;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    try {
+        const res = await fetch(`/admin/events/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            const card = document.getElementById(`event-card-${id}`);
+            if (card) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95) translateY(8px)';
+                setTimeout(() => card.remove(), 300);
+            }
+            showEventAlert(data.message, 'success');
+        } else {
+            showEventAlert(data.message || 'Gagal menghapus.', 'error');
+        }
+    } catch (err) { showEventAlert('Terjadi kesalahan jaringan.', 'error'); }
+};
+
 function setupMateriFormRows(container) {
     const wrap = container.querySelector('#materi-rows');
     const btn = container.querySelector('#btn-add-materi-row');
@@ -325,6 +461,157 @@ function renumberSubmSections(rowsWrap) {
             }
         });
     });
+    
+    // Auto-sync the Layer Panel
+    updateLayerPanel(rowsWrap);
+}
+
+function updateLayerPanel(rowsWrap) {
+    const rootContainer = rowsWrap.closest('.spa-fragment') || document;
+    const list = rootContainer.querySelector('#subm-layer-list');
+    if (!list) return;
+    
+    const rows = rowsWrap.querySelectorAll('[data-section-row]');
+    if (rows.length === 0) {
+        list.innerHTML = '<li class="text-center py-4 text-[10px] text-zinc-400 font-mono italic">Kosong</li>';
+        return;
+    }
+    
+    list.innerHTML = '';
+    let currentBabIndex = 0;
+    
+    rows.forEach((row, idx) => {
+        const type = row.dataset.sectionType;
+        const meta = SECTION_TYPES[type] || { label: type, icon: '?', color: '#999' };
+        
+        let labelText = meta.label;
+        if (type === 'bab') {
+             currentBabIndex++;
+             labelText = `Bab ${currentBabIndex}`;
+        }
+        
+        const txtInput = row.querySelector('textarea[name$="[content]"], input[type="text"][name$="[content]"]');
+        let snippet = txtInput ? txtInput.value.substring(0, 20).trim() : '';
+        if (snippet.length >= 20) snippet += '...';
+        
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between p-2 rounded-lg bg-zinc-50 border border-zinc-100 hover:border-sky-200 hover:bg-sky-50 transition-colors cursor-pointer group shadow-sm';
+        
+        li.innerHTML = `
+           <div class="flex items-center gap-2 overflow-hidden flex-1">
+               <span class="inline-flex shrink-0 w-6 h-6 items-center justify-center rounded text-[10px] font-bold text-white shadow-sm" style="background:${meta.color}">${meta.icon}</span>
+               <div class="flex flex-col min-w-0 flex-1">
+                   <div class="flex items-center gap-1.5">
+                       <span class="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">${labelText}</span>
+                       <span class="text-[8px] font-mono bg-zinc-200 text-zinc-500 px-1 rounded">#${idx + 1}</span>
+                   </div>
+                   <span class="text-[9px] text-zinc-500 truncate" title="${snippet || '—'}">${snippet || '—'}</span>
+               </div>
+           </div>
+           <div class="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+               <button type="button" class="btn-layer-up p-1 rounded hover:bg-white hover:text-sky-600 hover:shadow-sm transition-all flex items-center justify-center text-zinc-400" title="Geser ke Atas">
+                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+               </button>
+               <button type="button" class="btn-layer-down p-1 rounded hover:bg-white hover:text-sky-600 hover:shadow-sm transition-all flex items-center justify-center text-zinc-400" title="Geser ke Bawah">
+                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+               </button>
+           </div>
+        `;
+        
+        li.draggable = true;
+        
+        li.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', idx);
+            li.classList.add('opacity-40', 'scale-95');
+        });
+        
+        li.addEventListener('dragend', () => {
+            li.classList.remove('opacity-40', 'scale-95');
+            list.querySelectorAll('li').forEach(item => {
+                item.classList.remove('border-sky-400', 'border-t-2', 'border-b-2');
+            });
+        });
+
+        li.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Necessary to allow dropping
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        li.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            li.classList.add('border-sky-400', 'border-b-2');
+        });
+
+        li.addEventListener('dragleave', (e) => {
+            // Prevent flickering when hovering over children
+            if (e.relatedTarget === null || !li.contains(e.relatedTarget)) {
+                li.classList.remove('border-sky-400', 'border-b-2');
+            }
+        });
+
+        li.addEventListener('drop', (e) => {
+            e.stopPropagation();
+            li.classList.remove('border-sky-400', 'border-b-2');
+            
+            const dragIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            const dropIndex = idx;
+            
+            if (dragIndex === dropIndex || isNaN(dragIndex)) return;
+            
+            const allRows = Array.from(rowsWrap.querySelectorAll('[data-section-row]'));
+            const draggedRow = allRows[dragIndex];
+            const targetRow = allRows[dropIndex];
+            
+            if (!draggedRow || !targetRow) return;
+            
+            if (dragIndex < dropIndex) {
+                targetRow.parentNode.insertBefore(draggedRow, targetRow.nextSibling);
+            } else {
+                targetRow.parentNode.insertBefore(draggedRow, targetRow);
+            }
+            
+            renumberSubmSections(rowsWrap);
+        });
+
+        // Auto-scroll action when clicking the card body (not the buttons)
+        li.addEventListener('click', (e) => {
+             const btn = e.target.closest('button');
+             if (!btn) {
+                 row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 row.classList.add('ring-2', 'ring-sky-500', 'bg-sky-50/50');
+                 setTimeout(() => {
+                     row.classList.remove('ring-2', 'ring-sky-500', 'bg-sky-50/50');
+                 }, 1500);
+             }
+        });
+        
+        // Move up/down actions from the layer panel
+        li.querySelector('.btn-layer-up').addEventListener('click', (e) => {
+             e.stopPropagation();
+             const upBtn = row.querySelector('.btn-move-section-up');
+             if (upBtn) {
+                 upBtn.click();
+             }
+        });
+        li.querySelector('.btn-layer-down').addEventListener('click', (e) => {
+             e.stopPropagation();
+             const downBtn = row.querySelector('.btn-move-section-down');
+             if (downBtn) {
+                 downBtn.click();
+             }
+        });
+        
+        list.appendChild(li);
+        
+        // Bind input event to update snippet live
+        if (txtInput && !txtInput.dataset.boundLayer) {
+             txtInput.dataset.boundLayer = "1";
+             txtInput.addEventListener('input', () => updateLayerPanel(rowsWrap));
+        }
+    });
+
+    // (Minimize/Maximize binding moved to setupSubMateriForm)
 }
 
 function setupSubMateriForm(container) {
@@ -423,9 +710,24 @@ function setupSubMateriForm(container) {
                     attachSectionActions(block, rowsWrap);
                 }
                 renumberSubmSections(rowsWrap);
-                // Focus first input
-                const firstInput = block?.querySelector('input[type="text"], textarea');
-                if (firstInput) firstInput.focus();
+                
+                // Auto-scroll to the newly added block, then focus
+                if (block) {
+                    // Focus first without native scrolling to prevent jumping
+                    const firstInput = block.querySelector('input[type="text"], textarea');
+                    if (firstInput) {
+                        firstInput.focus({ preventScroll: true });
+                    }
+                    
+                    // Then trigger smooth center scroll
+                    setTimeout(() => {
+                        block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        block.classList.add('ring-2', 'ring-sky-500', 'bg-sky-50/50', 'transition-all');
+                        setTimeout(() => {
+                            block.classList.remove('ring-2', 'ring-sky-500', 'bg-sky-50/50');
+                        }, 1500);
+                    }, 50);
+                }
             });
         });
     }
@@ -450,6 +752,106 @@ function setupSubMateriForm(container) {
     if (rowsWrap) {
         rowsWrap.querySelectorAll('[data-section-row]').forEach((block) => {
             attachSectionActions(block, rowsWrap);
+        });
+        // Initial render for layer panel on page load
+        updateLayerPanel(rowsWrap);
+    }
+    
+    // Minimize/Maximize Layer Panel Toggle
+    const btnToggleLayer = container.querySelector('#btn-toggle-layer');
+    const panelContent = container.querySelector('#subm-layer-content');
+    const toggleIcon = container.querySelector('#icon-toggle-layer');
+    const panel = container.querySelector('#subm-layer-panel');
+    const panelTitle = btnToggleLayer ? btnToggleLayer.querySelector('h3') : null;
+    // root = #submateri-app which IS the .spa-fragment element
+
+    if (btnToggleLayer && panelContent && toggleIcon && panel) {
+        // Start completely minimized by default
+        let isMinimized = true;
+        
+        // Prepare initial content styles for fade effect
+        panelContent.style.opacity = '0';
+        panelContent.style.transition = 'opacity 0.3s ease';
+        if (panelTitle) {
+            panelTitle.style.opacity = '0';
+            panelTitle.style.transition = 'opacity 0.3s ease';
+        }
+
+        function setPanelExpanded() {
+            panel.classList.remove('hidden');
+            panel.classList.add('flex');
+            
+            // Expand panel dimensions
+            panel.style.width = '288px';
+            panel.style.borderRadius = '1rem';
+            panel.style.overflow = '';
+            
+            // Show content layout, then fade in fast
+            panelContent.style.display = '';
+            if (panelTitle) panelTitle.style.display = '';
+            setTimeout(() => {
+                panelContent.style.opacity = '1';
+                if (panelTitle) panelTitle.style.opacity = '1';
+            }, 20);
+
+            // Adjust form padding
+            if (window.innerWidth >= 1024) {
+                root.style.paddingRight = '300px';
+            }
+            btnToggleLayer.style.padding = '16px';
+            btnToggleLayer.style.justifyContent = 'space-between';
+            toggleIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>';
+        }
+        
+        function setPanelMinimized() {
+            panel.classList.remove('hidden');
+            panel.classList.add('flex');
+            
+            // Fade out content fast
+            panelContent.style.opacity = '0';
+            if (panelTitle) panelTitle.style.opacity = '0';
+            
+            // Shrink panel
+            panel.style.width = '56px';
+            panel.style.borderRadius = '9999px';
+            panel.style.overflow = 'hidden';
+            
+            // Hide content from layout after faster fade
+            setTimeout(() => {
+                if (isMinimized) {
+                    panelContent.style.display = 'none';
+                    if (panelTitle) panelTitle.style.display = 'none';
+                }
+            }, 150);
+
+            // Remove form padding
+            root.style.removeProperty('padding-right');
+            btnToggleLayer.style.padding = '12px';
+            btnToggleLayer.style.justifyContent = 'center';
+            toggleIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+        }
+        
+        // Setup modern easing transitions but much faster
+        const modernEasing = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+        root.style.transition = `padding-right 0.2s ${modernEasing}`;
+        panel.style.transition = `width 0.2s ${modernEasing}, border-radius 0.2s ${modernEasing}`;
+        btnToggleLayer.style.transition = `padding 0.2s ${modernEasing}`;
+        panelContent.style.transition = 'opacity 0.15s ease';
+        if (panelTitle) panelTitle.style.transition = 'opacity 0.15s ease';
+        
+        // Initial: form loads at 100%, then panel icon appears after delay on ALL screen sizes
+        setTimeout(() => setPanelMinimized(), 400);
+        
+        // Click handler for toggle
+        btnToggleLayer.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            isMinimized = !isMinimized;
+            if (isMinimized) {
+                setPanelMinimized();
+            } else {
+                setPanelExpanded();
+            }
         });
     }
 
@@ -825,6 +1227,37 @@ function setupQuestionForm(container) {
 
         // Scroll up to form smoothly
         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // ── Expose deleteQuestionGroup to global for the Blade template ──
+    window.deleteQuestionGroup = function(subMateriId, subMateriTitle) {
+        if (!confirm(`Apakah Anda yakin ingin menghapus seluruh soal untuk sub-materi "${subMateriTitle}"?`)) return;
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+            || document.querySelector('[data-csrf]')?.dataset.csrf 
+            || document.querySelector('input[name="_token"]')?.value;
+
+        fetch(`/admin/question/sub-materi/${subMateriId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message || 'Berhasil menghapus soal.');
+                window.location.reload();
+            } else {
+                alert(data.message || 'Gagal menghapus soal.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat menghapus.');
+        });
     };
 }
 

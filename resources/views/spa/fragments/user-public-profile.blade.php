@@ -171,6 +171,34 @@
 </div>
 @endif
 
+{{-- ── SERTIFIKAT ──────────────────────────────────────────────── --}}
+@if(isset($certificates) && $certificates->count() > 0)
+<div style="margin-top:48px;">
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:var(--neo-text-dark, #121212);">Sertifikasi</h3>
+    <p style="font-size:16px;color:#555;margin:0 0 24px;">Sertifikat yang telah diraih oleh {{ explode(' ', $user->name)[0] }}.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+        @foreach($certificates as $cert)
+        <div class="neo-card neo-card-light" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#06b6d4,#3b82f6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">
+                        <i class='bx bx-check-shield'></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;color:#121212;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px;">{{ $cert->issued_at->translatedFormat('d M Y') }}</div>
+                    </div>
+                </div>
+            </div>
+            <a href="/certificate/{{ $cert->certificate_code }}" target="_blank" style="display:block;width:100%;text-align:center;padding:10px;background:rgba(0,0,0,0.05);color:#121212;text-decoration:none;font-weight:600;font-size:13px;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='#121212';this.style.color='#fff';" onmouseout="this.style.background='rgba(0,0,0,0.05)';this.style.color='#121212';">
+                Lihat Kredensial
+            </a>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 </div>
 </div>
 
@@ -307,4 +335,4 @@
 })();
 </script>
 
-@include('spa.fragments.partials.user-account-styles')
+<link rel="stylesheet" href="{{ asset('assets/css/user-account.css') }}">

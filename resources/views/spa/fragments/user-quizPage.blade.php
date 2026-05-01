@@ -806,6 +806,7 @@
     }
 
     @media (max-width:768px) {
+
         .qz-container,
         .qz-container * {
             box-sizing: border-box;
@@ -834,7 +835,7 @@
             max-width: 100%;
         }
 
-        .qz-nav-row > div[style*="flex:1"] {
+        .qz-nav-row>div[style*="flex:1"] {
             display: none !important;
         }
 

@@ -23,6 +23,9 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
+// Public Certificate Verification
+Route::get('/certificate/{code}', [UserController::class, 'verifyCertificate'])->name('certificate.verify');
+
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
@@ -94,6 +97,26 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 
     // Report
     Route::post('/app/report', [UserController::class, 'storeReport'])->name('user.report.store');
+
+    // Missions
+    Route::post('/app/api/mission/claim/{userMission}', [UserController::class, 'claimMission'])->name('user.mission.claim');
+
+    // Discussions
+    Route::post('/app/api/discussion', [UserController::class, 'storeDiscussion'])->name('user.discussion.store');
+    Route::post('/app/api/discussion/{discussion}/vote', [UserController::class, 'voteDiscussion'])->name('user.discussion.vote');
+    Route::delete('/app/api/discussion/{discussion}', [UserController::class, 'deleteDiscussion'])->name('user.discussion.delete');
+
+    // Notes
+    Route::get('/app/api/notes/{sub_materi_id}', [UserController::class, 'getNote'])->name('user.note.get');
+    Route::post('/app/api/notes', [UserController::class, 'saveNote'])->name('user.note.save');
+
+    // Clans
+    Route::post('/app/api/clan/create', [UserController::class, 'createClan'])->name('user.clan.create');
+    Route::post('/app/api/clan/join/{clan_id}', [UserController::class, 'joinClan'])->name('user.clan.join');
+    Route::post('/app/api/clan/leave', [UserController::class, 'leaveClan'])->name('user.clan.leave');
+
+    // Shop
+    Route::post('/app/api/shop/purchase/{item_id}', [UserController::class, 'purchaseItem'])->name('user.shop.purchase');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -136,6 +159,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/question/template', [AdminQuestionController::class, 'downloadTemplate'])->name('admin.question.template');
     Route::put('/admin/question/{question}', [AdminQuestionController::class, 'update'])->name('admin.question.update');
     Route::delete('/admin/question/{question}', [AdminQuestionController::class, 'destroy'])->name('admin.question.delete');
+    Route::delete('/admin/question/sub-materi/{subMateri}', [AdminQuestionController::class, 'destroyBySubMateri'])->name('admin.question.delete-by-submateri');
 
     // Admin global chat
     Route::get('/admin/api/chat', [AdminChatController::class, 'index'])->name('admin.chat.index');
@@ -161,4 +185,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin/api/table/{table}/rows', [AdminController::class, 'tableRows'])->name('admin.table.rows');
     Route::put('/admin/api/table/{table}/row/{id}', [AdminController::class, 'updateRow'])->name('admin.table.update');
     Route::delete('/admin/api/table/{table}/row/{id}', [AdminController::class, 'deleteRow'])->name('admin.table.delete');
+
+    // Events
+    Route::post('/admin/events', [AdminController::class, 'storeEvent'])->name('admin.events.store');
+    Route::put('/admin/events/{event}', [AdminController::class, 'updateEvent'])->name('admin.events.update');
+    Route::delete('/admin/events/{event}', [AdminController::class, 'destroyEvent'])->name('admin.events.delete');
 });

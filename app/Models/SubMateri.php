@@ -10,6 +10,7 @@ class SubMateri extends Model
 {
     protected $fillable = [
         'materi_id',
+        'bab',
         'title',
         'subtitle',
         'author',

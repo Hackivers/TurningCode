@@ -45,6 +45,62 @@
                 <span class="neo-nav-label">Riwayat</span>
             </a>
 
+            <a href="#" data-spa-page="notes" class="neo-nav-link" title="Catatan">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-notepad neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Catatan</span>
+            </a>
+
+            <a href="#" data-spa-page="missions" class="neo-nav-link" title="Misi">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-target-lock neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Misi</span>
+            </a>
+
+            <a href="#" data-spa-page="achievements" class="neo-nav-link" title="Pencapaian">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-trophy neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Pencapaian</span>
+            </a>
+
+            <a href="#" data-spa-page="leaderboard" class="neo-nav-link" title="Leaderboard">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-bar-chart neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Leaderboard</span>
+            </a>
+
+            <a href="#" data-spa-page="clans" class="neo-nav-link" title="Guilds & Clans">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-shield-quarter neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Guilds</span>
+            </a>
+
+            <a href="#" data-spa-page="shop" class="neo-nav-link" title="Reward Shop">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-store neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Toko</span>
+            </a>
+
+            <a href="#" data-spa-page="analytics" class="neo-nav-link" title="Analitik Belajar">
+                <div class="neo-nav-indicator"></div>
+                <div class="neo-nav-icon-wrap">
+                    <i class="bx bx-bar-chart-alt-2 neo-nav-icon"></i>
+                </div>
+                <span class="neo-nav-label">Analitik</span>
+            </a>
+
             <div class="neo-nav-divider"></div>
 
             <a href="#" data-spa-page="secret-lab"

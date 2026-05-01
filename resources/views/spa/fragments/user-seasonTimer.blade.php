@@ -9,7 +9,7 @@
             style="margin: 0 0 4px 0; font-size: 20px; font-weight: 700; color: #121212; display: flex; align-items: center; gap: 8px;">
             <i class='bx bx-timer' style="font-size: 24px; color: #888;"></i> Season Akan Berakhir
         </h4>
-        <p style="margin: 0; font-size: 14px; color: #666;">Persiapkan dirimu. Peringkat dan EXP akan direset untuk
+        <p style="margin: 0; font-size: 14px; color: #666;">Persiapkan dirimu. Peringkat akan direset dan EXP akan dikurangi 80% untuk
             musim baru.</p>
     </div>
 

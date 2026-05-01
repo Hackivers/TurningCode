@@ -1,14 +1,23 @@
 <div class="neo-dashboard rtd-dashboard">
 <div class="neo-bento-container">
 
-<a href="?page=dashboard" class="link-spa" data-page="dashboard" style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='#121212'" onmouseout="this.style.color='#888'">
-    <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
-</a>
+        <a href="?page=dashboard" class="link-spa" data-page="dashboard"
+            style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#888;text-decoration:none;margin-bottom:32px;transition:color 0.2s; background: rgba(0,0,0,0.03); padding: 8px 16px; border-radius: 20px;"
+            onmouseover="this.style.color='#121212'; this.style.background='rgba(0,0,0,0.05)';" 
+            onmouseout="this.style.color='#888'; this.style.background='rgba(0,0,0,0.03)';">
+            <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
+        </a>
 
-<div style="margin-bottom:32px;">
-    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Jadwal Belajar</h3>
-    <p style="font-size:16px;color:#555;margin:0;">Kelola jadwal belajar harian, mingguan, dan kustom.</p>
-</div>
+        {{-- Header --}}
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
+            <div>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Jadwal Belajar</h2>
+                <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Kelola jadwal belajar harian, mingguan, dan kustom.</p>
+            </div>
+            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <i class='bx bx-calendar-star' style="font-size: 28px; color: #f59e0b;"></i>
+            </div>
+        </div>
 
 {{-- Hari Ini --}}
 <div style="margin-bottom:32px;">
@@ -59,7 +68,7 @@
 </div>
 
 {{-- FAB --}}
-<button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal" style="position:fixed;bottom:90px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:#121212;color:#fff;border:none;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s;">
+<button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal" style="position:fixed;bottom:90px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg, #121212, #2a2a2a);color:#fff;border:none;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s; border: 1px solid rgba(255,255,255,0.1);">
     <i class='bx bx-plus'></i>
 </button>
 
@@ -457,25 +466,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-:root {
-    --neo-bg: #ececec;
-    --neo-card-light: #e5e5e5;
-    --neo-radius: 32px;
-    --neo-text-dark: #121212;
-}
-
-body { background-color: var(--neo-bg) !important; }
-
-.neo-dashboard {
-    background-color: var(--neo-bg);
-    color: var(--neo-text-dark);
-    font-family: 'Inter', sans-serif;
-    padding: 32px 0;
-    min-height: 100vh;
-    width: 100%;
-}
-.neo-bento-container { max-width: 1400px; margin: 0 auto; width: 100%; }
-.neo-title { font-size: 24px; font-weight: 600; margin: 0; line-height: 1.25; letter-spacing: -0.03em; }
+/* Removed hardcoded neo variables and body background to support Dark Mode */
 .neo-pill {
     background: transparent;
     color: var(--neo-text-dark);
@@ -596,16 +587,16 @@ body { background-color: var(--neo-bg) !important; }
     height: 32px;
     border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.08);
-    background: rgba(255,255,255,0.5);
+    background: var(--neo-bg, rgba(255,255,255,0.5));
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 15px;
 }
 .fsc-btn:hover {
-    background: #121212;
-    color: #fff;
-    border-color: #121212;
+    background: var(--neo-text-dark, #121212);
+    color: var(--neo-bg, #fff);
+    border-color: var(--neo-text-dark, #121212);
 }
 .fsc-btn.btn-delete:hover {
     background: rgba(239,68,68,0.1);
@@ -625,10 +616,10 @@ body { background-color: var(--neo-bg) !important; }
     z-index: 9999;
 }
 .schedule-modal {
-    background: #ffffff !important;
+    background: var(--neo-card-light, #ffffff) !important;
     border-radius: 32px !important;
-    border: 1px solid rgba(255, 255, 255, 0.8) !important;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.06), inset 0 2px 4px rgba(255,255,255,0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.06) !important;
     width: 100%;
     max-width: 480px !important;
     max-height: 90vh;
@@ -642,7 +633,6 @@ body { background-color: var(--neo-bg) !important; }
     100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 .schedule-modal .modal-header {
-    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
     padding: 28px 32px 24px;
     border-bottom: 1px solid rgba(0,0,0,0.04) !important;
     display: flex;
@@ -668,7 +658,7 @@ body { background-color: var(--neo-bg) !important; }
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 .schedule-modal .mh-text h4 {
-    color: #121212 !important;
+    color: var(--neo-text-dark, #121212) !important;
     font-weight: 800 !important;
     font-size: 22px;
     margin: 0 0 4px 0;
@@ -681,9 +671,9 @@ body { background-color: var(--neo-bg) !important; }
     font-weight: 500;
 }
 .schedule-modal .btn-close-modal {
-    background: #f1f5f9 !important;
-    color: #64748b !important;
-    border: none !important;
+    background: var(--neo-bg, #f1f5f9) !important;
+    color: var(--neo-text-dark, #64748b) !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
     border-radius: 50% !important;
     width: 36px;
     height: 36px;
@@ -724,7 +714,7 @@ body { background-color: var(--neo-bg) !important; }
     gap: 8px;
 }
 .schedule-modal label {
-    color: #334155 !important;
+    color: var(--neo-text-dark, #334155) !important;
     font-weight: 700 !important;
     font-size: 13px !important;
     display: flex;
@@ -747,9 +737,9 @@ body { background-color: var(--neo-bg) !important; }
 .schedule-modal input[type="date"],
 .schedule-modal input[type="time"],
 .schedule-modal textarea {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #0f172a !important;
+    background: var(--neo-bg, #f8fafc) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    color: var(--neo-text-dark, #0f172a) !important;
     border-radius: 16px !important;
     padding: 14px 16px !important;
     font-family: 'Inter', sans-serif;
@@ -777,13 +767,13 @@ body { background-color: var(--neo-bg) !important; }
 .schedule-modal .type-tabs {
     display: flex;
     gap: 8px;
-    background: #f1f5f9;
+    background: var(--neo-bg, #f1f5f9);
     padding: 6px;
     border-radius: 16px;
 }
 .schedule-modal .type-tab {
     background: transparent !important;
-    color: #64748b !important;
+    color: var(--neo-text-dark, #64748b) !important;
     border: none !important;
     font-weight: 700 !important;
     border-radius: 12px !important;
@@ -798,8 +788,8 @@ body { background-color: var(--neo-bg) !important; }
     color: #121212 !important;
 }
 .schedule-modal .type-tab.active {
-    background: #fff !important;
-    color: #121212 !important;
+    background: var(--neo-card-light, #fff) !important;
+    color: var(--neo-text-dark, #121212) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05) !important;
 }
 .schedule-modal .day-picker {
@@ -811,9 +801,9 @@ body { background-color: var(--neo-bg) !important; }
     display: none;
 }
 .schedule-modal .day-chip span {
-    background: #f8fafc !important;
-    color: #64748b !important;
-    border: 1px solid #e2e8f0 !important;
+    background: var(--neo-bg, #f8fafc) !important;
+    color: var(--neo-text-dark, #64748b) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
     font-weight: 700 !important;
     border-radius: 14px !important;
     width: 44px;
@@ -878,12 +868,12 @@ body { background-color: var(--neo-bg) !important; }
     border-top: 1px solid rgba(0,0,0,0.06);
 }
 .schedule-modal .btn-submit-schedule {
-    background: #121212 !important;
+    background: linear-gradient(135deg, #121212, #2a2a2a) !important;
     color: #fff !important;
     border-radius: 20px !important;
     font-weight: 800 !important;
     box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
-    border: none !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
     width: 100%;
     padding: 18px;
     font-size: 16px;
@@ -900,7 +890,7 @@ body { background-color: var(--neo-bg) !important; }
 .schedule-modal .btn-submit-schedule:hover {
     transform: translateY(-4px) !important;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
-    background: #2a2a2a !important;
+    background: linear-gradient(135deg, #2a2a2a, #3a3a3a) !important;
 }
 
 @media (max-width: 768px) {

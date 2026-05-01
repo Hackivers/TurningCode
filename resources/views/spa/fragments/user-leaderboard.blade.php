@@ -1,7 +1,81 @@
 <div style="margin-top: 48px; margin-bottom: 32px;">
     <h3 class="neo-title" style="font-size: 28px; margin: 0 0 8px 0; color: #121212;">Peringkat Teratas</h3>
-    <p style="font-size: 16px; color: #555; margin: 0;">Lihat siapa saja yang paling rajin belajar minggu ini.</p>
+    <p style="font-size: 16px; color: #555; margin: 0 0 16px 0;">Lihat siapa saja yang paling rajin belajar minggu ini.</p>
+
+    <!-- Tab Filter -->
+    <div style="display: flex; gap: 8px;">
+        <button class="ldb-tab active" data-tab="global" onclick="switchLeaderboardTab('global')"
+            style="padding: 8px 20px; border-radius: 10px; border: 1px solid #e2e8f0; background: #121212; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <i class='bx bx-globe' style="margin-right: 4px;"></i> Global
+        </button>
+        <button class="ldb-tab" data-tab="friends" onclick="switchLeaderboardTab('friends')"
+            style="padding: 8px 20px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #666; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <i class='bx bx-group' style="margin-right: 4px;"></i> Teman
+        </button>
+    </div>
 </div>
+
+{{-- Friend Leaderboard Data (hidden, for JS) --}}
+@if(isset($friendUsers) && $friendUsers->count() > 0)
+@php
+    $friendDataJson = json_encode($friendUsers->map(function($u) {
+        return [
+            'id' => $u->id,
+            'name' => $u->name,
+            'rank_name' => $u->rank_name,
+            'exp' => $u->exp,
+            'avatar' => $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')),
+        ];
+    })->values());
+@endphp
+<div id="ldb-friends-data" style="display: none;" data-friends='{!! $friendDataJson !!}'></div>
+@endif
+
+{{-- Friend Leaderboard Container (hidden by default) --}}
+<div id="ldb-friends-container" style="display: none;">
+    @if(isset($friendUsers) && $friendUsers->count() > 0)
+        <div class="neo-card neo-card-light">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                @foreach($friendUsers as $i => $u)
+                    <div class="leaderboard-row" style="display: flex; align-items: center; gap: 20px; padding: 20px 24px; position: relative; border-radius: 24px; {{ $i === 0 ? 'background: rgba(255,255,255,0.5); border: 2px solid rgba(6, 182, 212, 0.6); box-shadow: 0 8px 24px rgba(6, 182, 212, 0.12);' : 'background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2);' }}">
+                        @if($i === 0)
+                            <div style="position: absolute; top: -14px; left: 12px; font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 2; transform: rotate(-15deg);">🏆</div>
+                        @endif
+                        <div style="width: 30px; text-align: center; font-size: 18px; font-weight: 800; color: {{ $i === 0 ? '#06b6d4' : ($i === 1 ? '#64748b' : '#888') }};">#{{ $loop->iteration }}</div>
+                        <div class="ldb-col-avatar">
+                            <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}">
+                                <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}" alt="{{ $u->name }}"
+                                    style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); {{ $i === 0 ? 'border: 2px solid #06b6d4;' : '' }}; transition: transform 0.2s;"
+                                    onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            </a>
+                        </div>
+                        <div class="ldb-col-info" style="flex: 1; min-width: 0;">
+                            <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}" style="text-decoration:none; color:inherit;">
+                                <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ $u->name }}</h4>
+                            </a>
+                            <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                <span style="color: #06b6d4; font-size: 14px;"><i class='bx bxs-star'></i></span>
+                                {{ $u->rank_name ?? 'Beginner' }}
+                            </div>
+                        </div>
+                        <div class="ldb-col-exp" style="text-align: right;">
+                            <div style="font-size: 18px; font-weight: 800;">{{ number_format($u->exp) }}</div>
+                            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #888;">EXP</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @else
+        <div class="neo-card neo-card-light" style="text-align:center; padding: 40px 20px;">
+            <i class='bx bx-group' style="font-size: 48px; color: #aaa; margin-bottom: 12px;"></i>
+            <h5 style="color: #666; font-size: 15px; font-weight: 500; margin: 0;">Belum ada teman. Tambah teman untuk melihat peringkat mereka!</h5>
+        </div>
+    @endif
+</div>
+
+{{-- Global Leaderboard Container --}}
+<div id="ldb-global-container">
 
 @if (isset($topUsers) && $topUsers->count())
     <div class="neo-card neo-card-light">
@@ -115,11 +189,40 @@
         <h5 style="color: #666; font-size: 15px; font-weight: 500; margin: 0;">Belum ada data peringkat.</h5>
     </div>
 @endif
+</div> {{-- close #ldb-global-container --}}
 
 <!-- Global Toast Container (shared by leaderboard & account page) -->
 <div id="friend-toast-container"
     style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;">
 </div>
+
+<script>
+window.switchLeaderboardTab = function(tab) {
+    const globalContainer = document.getElementById('ldb-global-container');
+    const friendsContainer = document.getElementById('ldb-friends-container');
+    const tabs = document.querySelectorAll('.ldb-tab');
+
+    tabs.forEach(t => {
+        if (t.dataset.tab === tab) {
+            t.style.background = '#121212';
+            t.style.color = '#fff';
+            t.classList.add('active');
+        } else {
+            t.style.background = '#fff';
+            t.style.color = '#666';
+            t.classList.remove('active');
+        }
+    });
+
+    if (tab === 'global') {
+        if (globalContainer) globalContainer.style.display = '';
+        if (friendsContainer) friendsContainer.style.display = 'none';
+    } else {
+        if (globalContainer) globalContainer.style.display = 'none';
+        if (friendsContainer) friendsContainer.style.display = '';
+    }
+};
+</script>
 
 <style>
     .leaderboard-row {
