@@ -1773,6 +1773,7 @@ async function loadPage(page, push = true) {
     setupQuestionForm(el);
     setupCrud(el);
     setupDatabase(el);
+    setupFeaturesForm(el);
 }
 
 // ─── Unified CRUD operations for SPA list ─────────────────────────────
@@ -1893,6 +1894,97 @@ function setupCrud(container) {
                 alert('Terjadi kesalahan jaringan.');
                 btn.innerHTML = '💾 Simpan';
                 btn.disabled = false;
+            }
+        });
+    });
+}
+
+// ─── Setup Admin Features Toggle ──────────────────────────────────────
+function setupFeaturesForm(container) {
+    const toggleInputs = container.querySelectorAll('.feature-toggle-input');
+    if (!toggleInputs.length) return;
+    
+    toggleInputs.forEach(input => {
+        // Remove existing listener to prevent duplicate binding
+        const newInp = input.cloneNode(true);
+        input.parentNode.replaceChild(newInp, input);
+        
+        newInp.addEventListener('change', async function() {
+            const featureKey = this.dataset.feature;
+            const isEnabled = this.checked;
+            
+            // Update local UI optimism
+            const indicator = container.querySelector(`.status-indicator-${featureKey}`);
+            const ping = container.querySelector(`.status-ping-${featureKey}`);
+            const text = container.querySelector(`.status-text-${featureKey}`);
+            
+            if (isEnabled) {
+                if (indicator) {
+                    indicator.classList.remove('bg-zinc-300', 'dark:bg-zinc-600');
+                    indicator.classList.add('bg-emerald-500');
+                }
+                if (ping) {
+                    ping.className = `absolute inline-flex h-full w-full rounded-full bg-emerald-400 animate-ping opacity-75 status-ping-${featureKey}`;
+                }
+                if (text) {
+                    text.classList.remove('text-zinc-400', 'dark:text-zinc-500');
+                    text.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                    text.textContent = 'SISTEM AKTIF';
+                }
+            } else {
+                if (indicator) {
+                    indicator.classList.remove('bg-emerald-500');
+                    indicator.classList.add('bg-zinc-300', 'dark:bg-zinc-600');
+                }
+                if (ping) {
+                    ping.className = `absolute inline-flex h-full w-full rounded-full bg-transparent status-ping-${featureKey}`;
+                }
+                if (text) {
+                    text.classList.remove('text-emerald-600', 'dark:text-emerald-400');
+                    text.classList.add('text-zinc-400', 'dark:text-zinc-500');
+                    text.textContent = 'NONAKTIF';
+                }
+            }
+
+            try {
+                const res = await fetch('/admin/api/features/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        feature_name: featureKey,
+                        is_enabled: isEnabled
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Gagal mengubah status fitur');
+                }
+                
+                // Show small toast if function exists
+                if (window.showAdminToast) {
+                    window.showAdminToast('Berhasil', data.message, 'success');
+                } else if (typeof showEventAlert === 'function') {
+                    showEventAlert(data.message, 'success');
+                }
+                
+            } catch (error) {
+                // Revert UI on error
+                this.checked = !isEnabled;
+                this.dispatchEvent(new Event('change'));
+                
+                if (window.showAdminToast) {
+                    window.showAdminToast('Error', error.message, 'error');
+                } else if (typeof showEventAlert === 'function') {
+                    showEventAlert(error.message, 'error');
+                } else {
+                    alert(error.message);
+                }
             }
         });
     });

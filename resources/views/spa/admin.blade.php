@@ -111,6 +111,19 @@
                     </span>
                     <span class="sidebar-text truncate">Struktur Database</span>
                 </a>
+
+                {{-- Manajemen Fitur User --}}
+                <a href="#" data-spa-page="features"
+                    class="nav-item flex items-center gap-4 rounded-2xl p-3.5 text-zinc-400 transition-all duration-200 [&.active]:bg-[#1C1C1E] [&.active]:text-white [&.active]:shadow-lg [&.active]:shadow-zinc-900/10 hover:[&:not(.active)]:bg-zinc-50 hover:[&:not(.active)]:text-zinc-900 group/link">
+                    <span class="flex h-5 w-5 shrink-0 items-center justify-center translate-x-1 sidebar-icon">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
+                            </path>
+                        </svg>
+                    </span>
+                    <span class="sidebar-text truncate">Manajemen Fitur</span>
+                </a>
             </nav>
 
             <div class="mt-auto shrink-0 flex flex-col gap-4">

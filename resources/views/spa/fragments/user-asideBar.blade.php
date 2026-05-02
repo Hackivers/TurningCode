@@ -21,6 +21,7 @@
                 <span class="neo-nav-label">Dashboard</span>
             </a>
 
+            @if(\App\Models\FeatureToggle::isActive('menu_schedule') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="schedule" class="neo-nav-link" title="Jadwal">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -28,7 +29,9 @@
                 </div>
                 <span class="neo-nav-label">Jadwal</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_favorites') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="favorites" class="neo-nav-link" title="Favorit">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -36,7 +39,9 @@
                 </div>
                 <span class="neo-nav-label">Favorit</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_history') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="history" class="neo-nav-link" title="Riwayat">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -44,7 +49,9 @@
                 </div>
                 <span class="neo-nav-label">Riwayat</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_notes') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="notes" class="neo-nav-link" title="Catatan">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -52,7 +59,9 @@
                 </div>
                 <span class="neo-nav-label">Catatan</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_missions') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="missions" class="neo-nav-link" title="Misi">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -60,7 +69,9 @@
                 </div>
                 <span class="neo-nav-label">Misi</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_achievements') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="achievements" class="neo-nav-link" title="Pencapaian">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -68,7 +79,9 @@
                 </div>
                 <span class="neo-nav-label">Pencapaian</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_leaderboard') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="leaderboard" class="neo-nav-link" title="Leaderboard">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -76,7 +89,9 @@
                 </div>
                 <span class="neo-nav-label">Leaderboard</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_clans') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="clans" class="neo-nav-link" title="Guilds & Clans">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -84,7 +99,9 @@
                 </div>
                 <span class="neo-nav-label">Guilds</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_shop') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="shop" class="neo-nav-link" title="Reward Shop">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -92,7 +109,9 @@
                 </div>
                 <span class="neo-nav-label">Toko</span>
             </a>
+            @endif
 
+            @if(\App\Models\FeatureToggle::isActive('menu_analytics') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="analytics" class="neo-nav-link" title="Analitik Belajar">
                 <div class="neo-nav-indicator"></div>
                 <div class="neo-nav-icon-wrap">
@@ -100,9 +119,11 @@
                 </div>
                 <span class="neo-nav-label">Analitik</span>
             </a>
+            @endif
 
             <div class="neo-nav-divider"></div>
 
+            @if(\App\Models\FeatureToggle::isActive('menu_secret_lab') || $user->canAccessAllFeatures())
             <a href="#" data-spa-page="secret-lab"
                 class="neo-nav-link neo-nav-elite {{ $user->isElite() ? 'elite-unlocked' : 'elite-locked' }}"
                 title="Secret Lab">
@@ -117,6 +138,7 @@
                     <span class="neo-lock-badge"><i class='bx bx-lock-alt'></i></span>
                 @endif
             </a>
+            @endif
         </nav>
 
         <!-- Footer -->

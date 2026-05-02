@@ -72,6 +72,31 @@ class UserController extends Controller
             abort(404);
         }
 
+        $user = Auth::user();
+
+        // Check feature toggles for specific pages
+        $toggledPages = [
+            'schedule' => 'menu_schedule',
+            'favorites' => 'menu_favorites',
+            'history' => 'menu_history',
+            'notes' => 'menu_notes',
+            'missions' => 'menu_missions',
+            'achievements' => 'menu_achievements',
+            'leaderboard' => 'menu_leaderboard',
+            'clans' => 'menu_clans',
+            'clan-detail' => 'menu_clans',
+            'shop' => 'menu_shop',
+            'analytics' => 'menu_analytics',
+            'secret-lab' => 'menu_secret_lab',
+        ];
+
+        if (array_key_exists($page, $toggledPages)) {
+            $featureKey = $toggledPages[$page];
+            if (!\App\Models\FeatureToggle::isActive($featureKey) && !$user->canAccessAllFeatures()) {
+                return view('spa.fragments.feature-disabled');
+            }
+        }
+
         // ── Dashboard ────────────────────────────────────────────────
         if ($page === 'dashboard') {
             $userId = Auth::id();
@@ -707,22 +732,18 @@ class UserController extends Controller
         // ── Clans ─────────────────────────────────────────────────────
         if ($page === 'clans') {
             $user = Auth::user();
-            $userClan = $user->clan;
+            $userClans = $user->clans;
 
             $clans = Clan::withCount('members')->orderByDesc('exp')->get();
 
-            // Load user's own clan detail if they have one
-            $myClan = null;
-            $userMember = null;
-            if ($userClan) {
-                $myClan = Clan::with(['members.user', 'leader'])->find($userClan->id);
-                $userMember = $myClan ? $myClan->members->where('user_id', $user->id)->first() : null;
+            $myClans = collect();
+            if ($userClans && $userClans->count() > 0) {
+                $myClans = Clan::with(['members.user', 'leader'])->whereIn('id', $userClans->pluck('id'))->get();
             }
 
             return view('spa.fragments.user-clans', [
                 'clans' => $clans,
-                'myClan' => $myClan,
-                'userMember' => $userMember,
+                'myClans' => $myClans,
             ]);
         }
 
@@ -1560,8 +1581,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->clan) {
-            return response()->json(['success' => false, 'message' => 'Anda sudah berada di dalam Guild/Clan!']);
+        if ($user->clans->count() >= 2) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah mencapai batas maksimal 2 Guild!']);
         }
 
         // Need at least 5000 exp (Senior Rank) to create a Clan
@@ -1597,8 +1618,12 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->clan) {
-            return response()->json(['success' => false, 'message' => 'Anda sudah berada di dalam Guild!']);
+        if ($user->clans->count() >= 2) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah mencapai batas maksimal 2 Guild!']);
+        }
+
+        if ($user->clans->contains('id', $clan_id)) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah berada di dalam Guild ini!']);
         }
 
         $clan = Clan::findOrFail($clan_id);
@@ -1625,14 +1650,37 @@ class UserController extends Controller
     public function leaveClan(Request $request)
     {
         $user = Auth::user();
-        $member = $user->clanMember;
+        $clanId = $request->input('clan_id');
+        $query = $user->clanMembers();
+        if ($clanId) {
+            $query->where('clan_id', $clanId);
+        }
+        $member = $query->first();
 
         if (!$member) {
-            return response()->json(['success' => false, 'message' => 'Anda tidak berada di Guild manapun!']);
+            return response()->json(['success' => false, 'message' => 'Anda tidak berada di Guild tersebut!']);
         }
 
+        $clan = Clan::withCount('members')->find($member->clan_id);
+
         if ($member->role === 'leader') {
-            return response()->json(['success' => false, 'message' => 'Ketua Guild tidak bisa keluar. Serahkan posisi ketua terlebih dahulu atau bubarkan Guild.']);
+            if ($clan->members_count <= 1) {
+                // Solo leader — disband the guild entirely
+                ClanMember::where('clan_id', $clan->id)->delete();
+                $clan->delete();
+                return response()->json(['success' => true, 'message' => 'Guild telah dibubarkan karena tidak ada anggota lain.']);
+            }
+
+            // Transfer leadership to the oldest remaining member
+            $nextLeader = ClanMember::where('clan_id', $clan->id)
+                ->where('user_id', '!=', $user->id)
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($nextLeader) {
+                $nextLeader->update(['role' => 'leader']);
+                $clan->update(['leader_id' => $nextLeader->user_id]);
+            }
         }
 
         $member->delete();

@@ -24,6 +24,7 @@ class AdminController extends Controller
         'database',
         'profile',
         'events',
+        'features',
     ];
 
     public function spa(): View
@@ -223,7 +224,34 @@ class AdminController extends Controller
             ]);
         }
 
+        if ($page === 'features') {
+            return view('spa.fragments.admin-features', [
+                'page' => $page,
+            ]);
+        }
+
         return view('spa.fragments.admin', ['page' => $page]);
+    }
+
+    /**
+     * API: Toggle User Features
+     */
+    public function toggleFeature(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'feature_name' => 'required|string|max:100',
+            'is_enabled' => 'required|boolean',
+        ]);
+
+        \App\Models\FeatureToggle::updateOrCreate(
+            ['feature_name' => $request->feature_name],
+            ['is_enabled' => $request->is_enabled]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status fitur berhasil diperbarui.'
+        ]);
     }
 
     /**

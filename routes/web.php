@@ -51,12 +51,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
     $user = \App\Models\User::findOrFail($id);
 
     // Verifikasi hash email
-    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+    if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
         abort(403, 'Tautan verifikasi tidak valid atau sudah kedaluwarsa.');
     }
 
     // Jika belum diverifikasi, tandai sebagai diverifikasi
-    if (! $user->hasVerifiedEmail()) {
+    if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
         event(new \Illuminate\Auth\Events\Verified($user));
     }
@@ -190,4 +190,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::post('/admin/events', [AdminController::class, 'storeEvent'])->name('admin.events.store');
     Route::put('/admin/events/{event}', [AdminController::class, 'updateEvent'])->name('admin.events.update');
     Route::delete('/admin/events/{event}', [AdminController::class, 'destroyEvent'])->name('admin.events.delete');
+
+    // Feature Toggles
+    Route::post('/admin/api/features/toggle', [AdminController::class, 'toggleFeature'])->name('admin.features.toggle');
 });

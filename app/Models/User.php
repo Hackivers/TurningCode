@@ -59,14 +59,23 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Friendship::class, 'user_id')->where('status', 'pending');
     }
 
-    public function clanMember()
+    public function clanMembers()
     {
-        return $this->hasOne(ClanMember::class);
+        return $this->hasMany(ClanMember::class);
     }
 
+    public function getClansAttribute()
+    {
+        return \App\Models\Clan::whereHas('members', function($q) {
+            $q->where('user_id', $this->id);
+        })->get();
+    }
+
+    // Retained for backward compatibility
     public function getClanAttribute()
     {
-        return $this->clanMember ? $this->clanMember->clan : null;
+        $member = $this->clanMembers()->first();
+        return $member ? $member->clan : null;
     }
 
     public function purchases()
@@ -123,6 +132,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isPenguasaSektor(): bool
     {
         return ($this->exp ?? 0) >= 1000000;
+    }
+
+    /**
+     * Check if user is a beta tester.
+     */
+    public function isBetaTester(): bool
+    {
+        return $this->role === 'beta_tester';
+    }
+
+    /**
+     * Check if user has access to all features regardless of toggle status.
+     */
+    public function canAccessAllFeatures(): bool
+    {
+        return in_array($this->role, ['admin', 'beta_tester']);
     }
 
     /**

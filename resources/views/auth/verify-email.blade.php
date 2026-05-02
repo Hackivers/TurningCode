@@ -16,7 +16,8 @@
 </head>
 
 <body>
-    <main class="thumbnail">
+    <div class="auth-container">
+        <main class="thumbnail">
         <div class="wrapper-thumb">
             <div class="title-thumb">
                 <h2>cek email kamu!!</h2>
@@ -74,6 +75,7 @@
             </div>
         </div>
     </main>
+    </div>
 </body>
 
 </html>

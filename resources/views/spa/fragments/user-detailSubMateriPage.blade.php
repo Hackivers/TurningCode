@@ -623,6 +623,9 @@ body { background-color: var(--neo-bg) !important; }
 .code-editor-wrap {
     position: relative;
 }
+.code-editor-wrap code{
+    color: #a6e3a1;
+}
 .code-editor-wrap pre, .code-editor-wrap textarea {
     width: 100%;
     margin: 0;

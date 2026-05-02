@@ -16,7 +16,8 @@
 </head>
 
 <body>
-    <main class="thumbnail">
+    <div class="auth-container">
+        <main class="thumbnail">
         <div class="wrapper-thumb">
             <div class="title-thumb">
                 <h2>yok, buruan login!!</h2>
@@ -78,6 +79,7 @@
             </form>
         </div>
     </main>
+    </div>
     <script>
         document.querySelectorAll('.input input').forEach(input => {
             input.addEventListener('focus', function () {

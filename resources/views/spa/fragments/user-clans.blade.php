@@ -385,13 +385,13 @@
             <div class="gb-hero">
                 <img src="{{ asset('assets/img/guild-hero.png') }}" class="gb-hero-img" alt="Guild Hero">
                 <div class="gb-hero-overlay">
-                    @if(!Auth::user()->clan)
+                    @if(Auth::user()->clans->count() < 2)
                         <div class="hero-text">buat guild <span>& mulai perjalananmu</span></div>
                         <button class="gb-hero-btn" onclick="openCreateClanModal()"><i class='bx bx-plus'></i></button>
-                    @else
+                    @elseif(Auth::user()->clans->count() > 0)
                         <div class="hero-text">guild saya <span>& lihat statistik tim</span></div>
                         <button class="gb-hero-btn"
-                            onclick="window.location.hash='clan-detail&id={{ Auth::user()->clan->id }}'"><i
+                            onclick="window.location.href='?page=clan-detail&id={{ Auth::user()->clans->first()->id }}'"><i
                                 class='bx bx-right-arrow-alt'></i></button>
                     @endif
                 </div>
@@ -426,58 +426,63 @@
             <span class="gb-tag"><i class='bx bx-bar-chart-alt-2'></i> data analytics</span>
         </div>
 
-        <!-- ═══ My Guild (if user has one) ═══ -->
-        @if(isset($myClan) && $myClan)
+        <!-- ═══ My Guilds ═══ -->
+        @if(isset($myClans) && $myClans->count() > 0)
             <div style="margin-bottom: 40px;">
                 <h3 class="neo-title" style="font-size: 20px; margin: 0 0 20px;">Guild Saya</h3>
-                <div class="neo-card neo-card-light" onclick="window.location.hash='clan-detail&id={{ $myClan->id }}'"
-                    style="padding: 28px; border-radius: 24px; border: 1px solid rgba(0,0,0,.06); background: #fff; cursor: pointer; transition: all .3s;"
-                    onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.06)';"
-                    onmouseout="this.style.transform=''; this.style.boxShadow='';">
-                    <div
-                        style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-                        <div style="display: flex; align-items: center; gap: 18px;">
-                            <div
-                                style="width: 64px; height: 64px; border-radius: 20px; background: #f4f4f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <img src="{{ asset('assets/ico/' . $myClan->emblem) }}"
-                                    style="width: 44px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.08));">
-                            </div>
-                            <div>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                @foreach($myClans as $myClan)
+                    @php $userMember = $myClan->members->where('user_id', Auth::id())->first(); @endphp
+                    <div class="neo-card neo-card-light" onclick="window.location.href='?page=clan-detail&id={{ $myClan->id }}'"
+                        style="padding: 28px; border-radius: 24px; border: 1px solid rgba(0,0,0,.06); background: #fff; cursor: pointer; transition: all .3s;"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.06)';"
+                        onmouseout="this.style.transform=''; this.style.boxShadow='';">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 18px;">
                                 <div
-                                    style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
-                                    <h3 class="neo-title" style="margin: 0; font-size: 22px;">{{ $myClan->name }}</h3>
-                                    <span class="neo-pill"
-                                        style="padding: 3px 10px; background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); color: #f59e0b; font-size: 11px; font-weight: 800;"><i
-                                            class='bx bxs-star'></i> Lvl {{ $myClan->level }}</span>
+                                    style="width: 64px; height: 64px; border-radius: 20px; background: #f4f4f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <img src="{{ asset('assets/ico/' . $myClan->emblem) }}"
+                                        style="width: 44px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.08));">
                                 </div>
-                                <p style="margin: 0; font-size: 13px; color: #71717a;">
-                                    {{ $myClan->description ?? 'Tidak ada deskripsi.' }}</p>
+                                <div>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+                                        <h3 class="neo-title" style="margin: 0; font-size: 22px;">{{ $myClan->name }}</h3>
+                                        <span class="neo-pill"
+                                            style="padding: 3px 10px; background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); color: #f59e0b; font-size: 11px; font-weight: 800;"><i
+                                                class='bx bxs-star'></i> Lvl {{ $myClan->level }}</span>
+                                    </div>
+                                    <p style="margin: 0; font-size: 13px; color: #71717a;">
+                                        {{ $myClan->description ?? 'Tidak ada deskripsi.' }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <div style="display: flex; gap: 8px; margin-right: 8px;">
-                                <span class="neo-pill"
-                                    style="padding: 6px 12px; background: #f4f4f5; border: none; color: #52525b; font-size: 12px;"><i
-                                        class='bx bxs-group'></i> {{ $myClan->members->count() }}/50</span>
-                                <span class="neo-pill"
-                                    style="padding: 6px 12px; background: rgba(16,185,129,.08); border: none; color: #10b981; font-size: 12px;"><i
-                                        class='bx bxs-bolt'></i> {{ number_format($myClan->exp) }} EXP</span>
-                            </div>
-                            <button onclick="event.stopPropagation(); copyInviteLink({{ $myClan->id }})"
-                                style="padding: 9px 18px; border-radius: 100px; background: #18181b; color: #fff; border: none; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .2s;"
-                                onmouseover="this.style.background='#27272a'" onmouseout="this.style.background='#18181b'">
-                                <i class='bx bx-user-plus' style="font-size: 16px;"></i> Invite
-                            </button>
-                            @if($userMember && strtolower($userMember->role) !== 'leader')
-                                <button onclick="event.stopPropagation(); leaveClan()"
-                                    style="padding: 9px 18px; border-radius: 100px; background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,.25); font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s;"
-                                    onmouseover="this.style.background='#ef4444'; this.style.color='#fff'"
-                                    onmouseout="this.style.background='transparent'; this.style.color='#ef4444'">
-                                    <i class='bx bx-log-out' style="font-size: 16px;"></i> Keluar
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 8px; margin-right: 8px;">
+                                    <span class="neo-pill"
+                                        style="padding: 6px 12px; background: #f4f4f5; border: none; color: #52525b; font-size: 12px;"><i
+                                            class='bx bxs-group'></i> {{ $myClan->members->count() }}/50</span>
+                                    <span class="neo-pill"
+                                        style="padding: 6px 12px; background: rgba(16,185,129,.08); border: none; color: #10b981; font-size: 12px;"><i
+                                            class='bx bxs-bolt'></i> {{ number_format($myClan->exp) }} EXP</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); copyInviteLink({{ $myClan->id }})"
+                                    style="padding: 9px 18px; border-radius: 100px; background: #18181b; color: #fff; border: none; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .2s;"
+                                    onmouseover="this.style.background='#27272a'" onmouseout="this.style.background='#18181b'">
+                                    <i class='bx bx-user-plus' style="font-size: 16px;"></i> Invite
                                 </button>
-                            @endif
+                                @if($userMember && strtolower($userMember->role) !== 'leader')
+                                    <button onclick="event.stopPropagation(); leaveClan({{ $myClan->id }})"
+                                        style="padding: 9px 18px; border-radius: 100px; background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,.25); font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s;"
+                                        onmouseover="this.style.background='#ef4444'; this.style.color='#fff'"
+                                        onmouseout="this.style.background='transparent'; this.style.color='#ef4444'">
+                                        <i class='bx bx-log-out' style="font-size: 16px;"></i> Keluar
+                                    </button>
+                                @endif
+                            </div>
                         </div>
                     </div>
+                @endforeach
                 </div>
             </div>
         @endif
@@ -493,7 +498,7 @@
         @if($clans->count() > 0)
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
                 @foreach($clans as $clan)
-                    <div class="neo-card neo-card-light" onclick="window.location.hash='clan-detail&id={{ $clan->id }}'"
+                    <div class="neo-card neo-card-light" onclick="window.location.href='?page=clan-detail&id={{ $clan->id }}'"
                         style="padding: 22px; border-radius: 22px; transition: all .3s cubic-bezier(.16,1,.3,1); cursor: pointer; border: 1px solid rgba(0,0,0,.05); background: #fff;"
                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.06)'; this.style.borderColor='rgba(0,0,0,.1)'"
                         onmouseout="this.style.transform=''; this.style.boxShadow=''; this.style.borderColor='rgba(0,0,0,.05)'">
@@ -523,7 +528,7 @@
                                     style="padding: 4px 10px; background: #fafafa; border-color: rgba(0,0,0,.05); color: #f59e0b; font-size: 11px;"><i
                                         class='bx bxs-star'></i> Lvl {{ $clan->level }}</span>
                             </div>
-                            @if(!Auth::user()->clan || Auth::user()->clan->id !== $clan->id)
+                            @if(!Auth::user()->clans->contains('id', $clan->id))
                                 <button onclick="event.stopPropagation(); joinClan({{ $clan->id }}, this)"
                                     style="padding: 7px 16px; border-radius: 100px; background: transparent; color: #18181b; border: 1px solid rgba(0,0,0,.12); font-weight: 700; font-size: 12px; cursor: pointer; transition: all .2s;"
                                     onmouseover="this.style.background='#18181b'; this.style.color='#fff'; this.style.borderColor='#18181b'"
@@ -556,71 +561,68 @@
 
 <!-- ═══ Create Clan Modal ═══ -->
 <div id="create-clan-modal"
-    style="position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); opacity: 0; transition: opacity .3s ease;">
-    <div class="neo-card neo-card-light"
-        style="width: 100%; max-width: 440px; padding: 36px; box-sizing: border-box; position: relative; transform: translateY(20px) scale(.96); transition: transform .4s cubic-bezier(.16,1,.3,1); border-radius: 28px; box-shadow: 0 32px 64px rgba(0,0,0,.18);">
+    style="position: fixed; inset: 0; background: rgba(9, 9, 11, 0.65); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; transition: opacity .4s ease;">
+    <div class="neo-card"
+        style="width: 100%; max-width: 400px; padding: 40px; box-sizing: border-box; position: relative; transform: translateY(30px) scale(.95); transition: transform .5s cubic-bezier(.16,1,.3,1); border-radius: 28px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 24px 48px rgba(0,0,0,.15), inset 0 0 0 1px rgba(255,255,255,1);">
+        
         <button type="button" onclick="closeCreateClanModal()"
-            style="position: absolute; top: 18px; right: 18px; background: rgba(0,0,0,.04); border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #71717a; transition: all .3s;"
-            onmouseover="this.style.background='rgba(0,0,0,.08)'; this.style.color='#18181b'; this.style.transform='rotate(90deg)'"
-            onmouseout="this.style.background='rgba(0,0,0,.04)'; this.style.color='#71717a'; this.style.transform=''">
-            <i class='bx bx-x' style="font-size: 22px;"></i>
+            style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #a1a1aa; transition: all .3s; z-index: 10;"
+            onmouseover="this.style.color='#18181b'; this.style.transform='rotate(90deg) scale(1.1)'"
+            onmouseout="this.style.color='#a1a1aa'; this.style.transform=''">
+            <i class='bx bx-x' style="font-size: 26px;"></i>
         </button>
-        <div style="margin-bottom: 28px;">
-            <div
-                style="width: 52px; height: 52px; background: #18181b; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                <i class='bx bxs-castle' style="font-size: 26px; color: #fff;"></i>
+        
+        <div style="margin-bottom: 32px; text-align: center;">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #18181b 0%, #3f3f46 100%); border-radius: 22px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 12px 24px rgba(0,0,0,.2); transform: rotate(-6deg); transition: transform 0.3s ease;" onmouseover="this.style.transform='rotate(0deg)'" onmouseout="this.style.transform='rotate(-6deg)'">
+                <i class='bx bxs-polygon' style="font-size: 32px; color: #fff; transform: rotate(6deg);" onmouseover="this.style.transform='rotate(0deg)'" onmouseout="this.style.transform='rotate(6deg)'"></i>
             </div>
-            <h3 class="neo-title" style="font-size: 24px; margin: 0 0 6px;">Buat Guild Baru</h3>
-            <p style="margin: 0; color: #71717a; font-size: 14px;">Persiapkan tim impianmu menuju puncak!</p>
+            <h3 style="font-size: 24px; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.5px; color: #18181b;">Initialize Guild</h3>
+            <p style="margin: 0; color: #71717a; font-size: 14px; font-weight: 500;">Bentuk tim impianmu dan mulai penjelajahan.</p>
         </div>
+        
         <form id="create-clan-form" onsubmit="submitCreateClan(event)">
-            <div style="margin-bottom: 20px;">
-                <label
-                    style="display: block; font-size: 12px; font-weight: 700; color: #52525b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px;">Nama
-                    Guild</label>
-                <input type="text" name="name" required maxlength="50" placeholder="Maksimal 50 karakter"
-                    style="width: 100%; padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(0,0,0,.08); background: #fafafa; font-size: 15px; font-family: inherit; box-sizing: border-box; outline: none; transition: all .3s;"
-                    onfocus="this.style.borderColor='#18181b'; this.style.background='#fff'; this.style.boxShadow='0 0 0 3px rgba(24,24,27,.06)'"
-                    onblur="this.style.borderColor='rgba(0,0,0,.08)'; this.style.background='#fafafa'; this.style.boxShadow='none'">
+            <div style="margin-bottom: 20px; position: relative;">
+                <input type="text" name="name" required maxlength="50" placeholder="Nama Guild"
+                    style="width: 100%; padding: 18px 22px; border-radius: 18px; border: 1px solid rgba(0,0,0,.05); background: rgba(244,244,245,.6); font-size: 15px; font-family: inherit; font-weight: 600; color: #18181b; box-sizing: border-box; outline: none; transition: all .3s; backdrop-filter: blur(10px);"
+                    onfocus="this.style.borderColor='rgba(0,0,0,.15)'; this.style.background='#fff'; this.style.boxShadow='0 8px 24px rgba(0,0,0,.06)'"
+                    onblur="this.style.borderColor='rgba(0,0,0,.05)'; this.style.background='rgba(244,244,245,.6)'; this.style.boxShadow='none'">
             </div>
-            <div style="margin-bottom: 28px;">
-                <label
-                    style="display: block; font-size: 12px; font-weight: 700; color: #52525b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px;">Deskripsi
-                    Singkat</label>
-                <textarea name="description" rows="3" placeholder="Tentang guild ini..."
-                    style="width: 100%; padding: 13px 16px; border-radius: 14px; border: 1px solid rgba(0,0,0,.08); background: #fafafa; font-size: 15px; font-family: inherit; box-sizing: border-box; outline: none; resize: none; transition: all .3s;"
-                    onfocus="this.style.borderColor='#18181b'; this.style.background='#fff'; this.style.boxShadow='0 0 0 3px rgba(24,24,27,.06)'"
-                    onblur="this.style.borderColor='rgba(0,0,0,.08)'; this.style.background='#fafafa'; this.style.boxShadow='none'"></textarea>
+            <div style="margin-bottom: 32px; position: relative;">
+                <textarea name="description" rows="3" placeholder="Deskripsi singkat tentang guild ini..."
+                    style="width: 100%; padding: 18px 22px; border-radius: 18px; border: 1px solid rgba(0,0,0,.05); background: rgba(244,244,245,.6); font-size: 14px; font-family: inherit; color: #3f3f46; box-sizing: border-box; outline: none; resize: none; transition: all .3s; backdrop-filter: blur(10px);"
+                    onfocus="this.style.borderColor='rgba(0,0,0,.15)'; this.style.background='#fff'; this.style.boxShadow='0 8px 24px rgba(0,0,0,.06)'"
+                    onblur="this.style.borderColor='rgba(0,0,0,.05)'; this.style.background='rgba(244,244,245,.6)'; this.style.boxShadow='none'"></textarea>
             </div>
             <button type="submit" id="btn-submit-clan"
-                style="width: 100%; padding: 15px; border-radius: 14px; border: none; background: #18181b; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s;"
-                onmouseover="this.style.background='#27272a'" onmouseout="this.style.background='#18181b'">
-                Bangun Guild Sekarang
+                style="width: 100%; padding: 18px; border-radius: 18px; border: none; background: #18181b; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .3s; box-shadow: 0 10px 20px rgba(0,0,0,.1);"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 14px 28px rgba(0,0,0,.2)'; this.style.background='#27272a'" 
+                onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 20px rgba(0,0,0,.1)'; this.style.background='#18181b'">
+                CREATE MODULE <i class='bx bx-right-arrow-alt' style="vertical-align: middle; margin-left: 4px; font-size: 18px;"></i>
             </button>
         </form>
     </div>
 </div>
 
 <script>
-    function openCreateClanModal() {
+    window.openCreateClanModal = function() {
         const modal = document.getElementById('create-clan-modal');
         modal.style.display = 'flex';
         setTimeout(() => {
             modal.style.opacity = '1';
             modal.querySelector('.neo-card').style.transform = 'translateY(0) scale(1)';
         }, 10);
-    }
+    };
 
-    function closeCreateClanModal() {
+    window.closeCreateClanModal = function() {
         const modal = document.getElementById('create-clan-modal');
         modal.style.opacity = '0';
         modal.querySelector('.neo-card').style.transform = 'translateY(20px) scale(.96)';
         setTimeout(() => {
             modal.style.display = 'none';
         }, 300);
-    }
+    };
 
-    async function submitCreateClan(e) {
+    window.submitCreateClan = async function(e) {
         e.preventDefault();
         const form = e.target;
         const btn = document.getElementById('btn-submit-clan');
@@ -645,22 +647,21 @@
                 closeCreateClanModal();
                 if (window.showFriendToast) window.showFriendToast(data.message, 'success');
                 setTimeout(() => {
-                    window.location.hash = 'clan-detail&id=' + data.clan_id;
-                    window.location.reload();
+                    window.location.href = '?page=clan-detail&id=' + data.clan_id;
                 }, 1000);
             } else {
                 if (window.showFriendToast) window.showFriendToast(data.message, 'error');
                 btn.disabled = false;
-                btn.innerHTML = 'Bangun Guild Sekarang';
+                btn.innerHTML = `CREATE MODULE <i class='bx bx-right-arrow-alt' style="vertical-align: middle; margin-left: 4px; font-size: 18px;"></i>`;
             }
         } catch (err) {
             if (window.showFriendToast) window.showFriendToast('Terjadi kesalahan koneksi.', 'error');
             btn.disabled = false;
-            btn.innerHTML = 'Bangun Guild Sekarang';
+            btn.innerHTML = `CREATE MODULE <i class='bx bx-right-arrow-alt' style="vertical-align: middle; margin-left: 4px; font-size: 18px;"></i>`;
         }
-    }
+    };
 
-    async function joinClan(clanId, btn) {
+    window.joinClan = async function(clanId, btn) {
         btn.disabled = true;
         const originalText = btn.innerHTML;
         btn.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i>`;
@@ -678,8 +679,7 @@
             if (data.success) {
                 if (window.showFriendToast) window.showFriendToast(data.message, 'success');
                 setTimeout(() => {
-                    window.location.hash = 'clan-detail&id=' + clanId;
-                    window.location.reload();
+                    window.location.href = '?page=clan-detail&id=' + clanId;
                 }, 1000);
             } else {
                 if (window.showFriendToast) window.showFriendToast(data.message, 'error');
@@ -691,9 +691,9 @@
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
-    }
+    };
 
-    async function leaveClan() {
+    window.leaveClan = async function(clanId = null) {
         const result = await Swal.fire({
             title: 'Keluar dari Guild?',
             text: 'Anda akan kehilangan akses ke fitur guild ini.',
@@ -706,13 +706,17 @@
         });
         if (!result.isConfirmed) return;
 
+        const bodyData = clanId ? { clan_id: clanId } : {};
+
         try {
             const res = await fetch('{{ route('user.clan.leave') }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                }
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bodyData)
             });
             const data = await res.json();
             if (data.success) {
@@ -724,16 +728,14 @@
         } catch (err) {
             Swal.fire('Error', 'Terjadi kesalahan koneksi.', 'error');
         }
-    }
+    };
 
-    function copyInviteLink(clanId) {
-        // Construct the full URL to the clan detail page
+    window.copyInviteLink = function(clanId) {
         const url = new URL(window.location.href);
         url.searchParams.set('page', 'clan-detail');
         url.searchParams.set('id', clanId);
         url.hash = '';
 
-        // Copy to clipboard
         navigator.clipboard.writeText(url.toString()).then(() => {
             Swal.fire({
                 title: 'Tersalin!',
@@ -742,8 +744,22 @@
                 timer: 2000,
                 showConfirmButton: false
             });
-        }).catch(err => {
-            Swal.fire('Error', 'Gagal menyalin link.', 'error');
+        }).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = url.toString();
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            Swal.fire({
+                title: 'Tersalin!',
+                text: 'Link undangan guild berhasil disalin ke clipboard.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
         });
-    }
+    };
 </script>
