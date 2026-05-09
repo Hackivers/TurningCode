@@ -12,7 +12,7 @@
         {{-- Header --}}
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
             <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Riwayat Belajar</h2>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Riwayat Belajar</h2>
                 <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Lanjutkan progres materi yang terakhir kamu pelajari.</p>
             </div>
             <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
@@ -58,7 +58,7 @@
                                     
                                     {{-- Body --}}
                                     <div style="flex:1;min-width:0;">
-                                        <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color:#121212;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $history->submateri->title }}</h4>
+                                        <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color: var(--text-primary)fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $history->submateri->title }}</h4>
                                         <p style="margin:0;font-size:13px;font-weight:600;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                             <span style="color: {{ $mainThemeColor }}; opacity: 0.8;">{{ $mainTitle }}</span>
                                             <span style="margin:0 4px;color:#ccc;">/</span> 
@@ -86,7 +86,7 @@
                     <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
                         <i class='bx bx-ghost' style="font-size:40px;color:#ccc;"></i>
                     </div>
-                    <h4 style="font-size:18px;font-weight:800;color:#121212;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada riwayat</h4>
+                    <h4 style="font-size:18px;font-weight:800;color: var(--text-primary)fff;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada riwayat</h4>
                     <p style="font-size:14px;color:#888;margin:0;">Mulai eksplorasi materi untuk mencatat riwayat belajarmu.</p>
                 </div>
             @endif
@@ -145,13 +145,13 @@ window.__currentSearchHandler = function(query) {
 }
 .nhp-neo-filter:hover {
     background: rgba(0,0,0,0.03);
-    color: #121212;
+    color: var(--text-primary)fff;
     border-color: rgba(0,0,0,0.2);
 }
 .nhp-neo-filter.active {
     background: linear-gradient(135deg, #121212, #2a2a2a);
-    color: #fff;
-    border-color: #121212;
+    color: var(--text-primary);
+    border-color: var(--text-primary)fff;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -162,7 +162,7 @@ window.__currentSearchHandler = function(query) {
     border-color: rgba(0,0,0,0.05) !important;
 }
 .history-item:hover .nhp-neo-arrow {
-    color: #121212;
+    color: var(--text-primary)fff;
     transform: translateX(4px) scale(1.1);
 }
 

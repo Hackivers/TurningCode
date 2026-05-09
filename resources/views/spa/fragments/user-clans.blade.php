@@ -16,7 +16,7 @@
                 grid-column: 1;
                 grid-row: 1;
                 background: #f4f4f5;
-                border-radius: 28px;
+                border-radius: var(--neo-radius);
                 padding: 20px;
                 display: flex;
                 flex-direction: column;
@@ -25,7 +25,7 @@
 
             .gb-stat-pill {
                 background: #18181b;
-                color: #fff;
+                color: var(--text-primary);
                 border-radius: 18px;
                 padding: 14px 18px;
                 display: flex;
@@ -77,10 +77,10 @@
             .gb-demo {
                 grid-column: 2;
                 grid-row: 1;
-                background: #fff;
-                border-radius: 28px;
+                background: var(--text-primary);
+                border-radius: var(--neo-radius);
                 padding: 22px;
-                border: 1px solid rgba(0, 0, 0, 0.06);
+                border: var(--nothing-border);
                 display: flex;
                 flex-direction: column;
                 gap: 14px;
@@ -128,7 +128,7 @@
             .gb-hero {
                 grid-column: 3;
                 grid-row: 1 / span 2;
-                border-radius: 28px;
+                border-radius: var(--neo-radius);
                 position: relative;
                 overflow: hidden;
                 min-height: 380px;
@@ -163,7 +163,7 @@
             .gb-hero-overlay .hero-text {
                 font-size: 17px;
                 font-weight: 700;
-                color: #fff;
+                color: var(--text-primary);
                 line-height: 1.25;
                 text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
             }
@@ -181,7 +181,7 @@
                 height: 44px;
                 border-radius: 50%;
                 background: #18181b;
-                color: #fff;
+                color: var(--text-primary);
                 border: none;
                 cursor: pointer;
                 display: flex;
@@ -227,7 +227,7 @@
                 padding: 10px 22px;
                 border-radius: 100px;
                 background: #18181b;
-                color: #fff;
+                color: var(--text-primary);
                 border: none;
                 font-weight: 700;
                 font-size: 13px;
@@ -257,7 +257,7 @@
                 width: 30px;
                 height: 30px;
                 border-radius: 50%;
-                border: 2px solid #fff;
+                border: 2px solid var(--text-primary);
                 object-fit: cover;
                 margin-left: -8px;
             }
@@ -289,7 +289,7 @@
                 padding: 9px 18px;
                 border-radius: 100px;
                 border: 1px solid #e4e4e7;
-                background: #fff;
+                background: var(--text-primary);
                 font-size: 12px;
                 font-weight: 600;
                 color: #3f3f46;
@@ -434,9 +434,9 @@
                 @foreach($myClans as $myClan)
                     @php $userMember = $myClan->members->where('user_id', Auth::id())->first(); @endphp
                     <div class="neo-card neo-card-light" onclick="window.location.href='?page=clan-detail&id={{ $myClan->id }}'"
-                        style="padding: 28px; border-radius: 24px; border: 1px solid rgba(0,0,0,.06); background: #fff; cursor: pointer; transition: all .3s;"
-                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.06)';"
-                        onmouseout="this.style.transform=''; this.style.boxShadow='';">
+                        style="padding: 28px; border-radius: var(--neo-radius); background: var(--text-primary); cursor: pointer; transition: all .3s;"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='8px 8px 0px rgba(0,0,0,.1)';"
+                        onmouseout="this.style.transform=''; this.style.boxShadow='4px 4px 0px rgba(0,0,0,.05)';">
                         <div
                             style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
                             <div style="display: flex; align-items: center; gap: 18px;">
@@ -467,7 +467,7 @@
                                             class='bx bxs-bolt'></i> {{ number_format($myClan->exp) }} EXP</span>
                                 </div>
                                 <button onclick="event.stopPropagation(); copyInviteLink({{ $myClan->id }})"
-                                    style="padding: 9px 18px; border-radius: 100px; background: #18181b; color: #fff; border: none; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .2s;"
+                                    style="padding: 9px 18px; border-radius: 100px; background: #18181b; color: var(--text-primary); border: none; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .2s;"
                                     onmouseover="this.style.background='#27272a'" onmouseout="this.style.background='#18181b'">
                                     <i class='bx bx-user-plus' style="font-size: 16px;"></i> Invite
                                 </button>
@@ -499,9 +499,9 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
                 @foreach($clans as $clan)
                     <div class="neo-card neo-card-light" onclick="window.location.href='?page=clan-detail&id={{ $clan->id }}'"
-                        style="padding: 22px; border-radius: 22px; transition: all .3s cubic-bezier(.16,1,.3,1); cursor: pointer; border: 1px solid rgba(0,0,0,.05); background: #fff;"
-                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.06)'; this.style.borderColor='rgba(0,0,0,.1)'"
-                        onmouseout="this.style.transform=''; this.style.boxShadow=''; this.style.borderColor='rgba(0,0,0,.05)'">
+                        style="padding: 22px; border-radius: var(--neo-radius); transition: all .3s cubic-bezier(.16,1,.3,1); cursor: pointer; background: var(--text-primary);"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='8px 8px 0px rgba(0,0,0,.1)';"
+                        onmouseout="this.style.transform=''; this.style.boxShadow='4px 4px 0px rgba(0,0,0,.05)';">
                         <div class="neo-header" style="margin-bottom: 16px;">
                             <div style="display: flex; align-items: center; gap: 14px;">
                                 <img src="{{ asset('assets/ico/' . $clan->emblem) }}" alt="Emblem"
@@ -530,9 +530,9 @@
                             </div>
                             @if(!Auth::user()->clans->contains('id', $clan->id))
                                 <button onclick="event.stopPropagation(); joinClan({{ $clan->id }}, this)"
-                                    style="padding: 7px 16px; border-radius: 100px; background: transparent; color: #18181b; border: 1px solid rgba(0,0,0,.12); font-weight: 700; font-size: 12px; cursor: pointer; transition: all .2s;"
-                                    onmouseover="this.style.background='#18181b'; this.style.color='#fff'; this.style.borderColor='#18181b'"
-                                    onmouseout="this.style.background='transparent'; this.style.color='#18181b'; this.style.borderColor='rgba(0,0,0,.12)'">
+                                    style="padding: 7px 16px; border-radius: var(--neo-btn-radius); background: transparent; color: #18181b; border: var(--nothing-border); font-weight: 800; font-family: var(--nothing-dot-font); text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; cursor: pointer; transition: all .2s;"
+                                    onmouseover="this.style.background='#18181b'; this.style.color='#fff';"
+                                    onmouseout="this.style.background='transparent'; this.style.color='#18181b';">
                                     Gabung
                                 </button>
                             @else
@@ -546,7 +546,7 @@
             </div>
         @else
             <div class="neo-card neo-card-light"
-                style="text-align: center; padding: 60px 40px; border: 1px dashed rgba(0,0,0,.1); border-radius: 24px;">
+                style="text-align: center; padding: 60px 40px; border: var(--nothing-border); border-style: dashed; border-radius: var(--neo-radius);">
                 <div
                     style="width: 72px; height: 72px; background: #f4f4f5; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                     <i class='bx bx-shield-x' style="font-size: 36px; color: #a1a1aa;"></i>
@@ -574,7 +574,7 @@
         
         <div style="margin-bottom: 32px; text-align: center;">
             <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #18181b 0%, #3f3f46 100%); border-radius: 22px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 12px 24px rgba(0,0,0,.2); transform: rotate(-6deg); transition: transform 0.3s ease;" onmouseover="this.style.transform='rotate(0deg)'" onmouseout="this.style.transform='rotate(-6deg)'">
-                <i class='bx bxs-polygon' style="font-size: 32px; color: #fff; transform: rotate(6deg);" onmouseover="this.style.transform='rotate(0deg)'" onmouseout="this.style.transform='rotate(6deg)'"></i>
+                <i class='bx bxs-polygon' style="font-size: 32px; color: var(--text-primary); transform: rotate(6deg);" onmouseover="this.style.transform='rotate(0deg)'" onmouseout="this.style.transform='rotate(6deg)'"></i>
             </div>
             <h3 style="font-size: 24px; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.5px; color: #18181b;">Initialize Guild</h3>
             <p style="margin: 0; color: #71717a; font-size: 14px; font-weight: 500;">Bentuk tim impianmu dan mulai penjelajahan.</p>
@@ -594,7 +594,7 @@
                     onblur="this.style.borderColor='rgba(0,0,0,.05)'; this.style.background='rgba(244,244,245,.6)'; this.style.boxShadow='none'"></textarea>
             </div>
             <button type="submit" id="btn-submit-clan"
-                style="width: 100%; padding: 18px; border-radius: 18px; border: none; background: #18181b; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .3s; box-shadow: 0 10px 20px rgba(0,0,0,.1);"
+                style="width: 100%; padding: 18px; border-radius: 18px; border: none; background: #18181b; color: var(--text-primary); font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .3s; box-shadow: 0 10px 20px rgba(0,0,0,.1);"
                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 14px 28px rgba(0,0,0,.2)'; this.style.background='#27272a'" 
                 onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 20px rgba(0,0,0,.1)'; this.style.background='#18181b'">
                 CREATE MODULE <i class='bx bx-right-arrow-alt' style="vertical-align: middle; margin-left: 4px; font-size: 18px;"></i>

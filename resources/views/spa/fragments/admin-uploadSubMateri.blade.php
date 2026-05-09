@@ -359,7 +359,7 @@
         width: 28px;
         height: 28px;
         border-radius: 6px;
-        color: #fff;
+        color: var(--text-primary);
         font-weight: 700;
         font-size: 11px;
         flex-shrink: 0;
@@ -385,7 +385,7 @@
         height: 28px;
         border: 1px solid #e5e7eb;
         border-radius: 6px;
-        background: #fff;
+        background: var(--text-primary);
         cursor: pointer;
         font-size: 12px;
         display: inline-flex;
@@ -417,7 +417,7 @@
         border-radius: 8px;
         font-size: 14px;
         transition: border-color 0.2s, box-shadow 0.2s;
-        background: #fff;
+        background: var(--text-primary);
         box-sizing: border-box;
     }
     .section-input:focus,
@@ -485,7 +485,7 @@
         padding: 8px 16px;
         border: 1px solid #d1d5db;
         border-radius: 8px;
-        background: #fff;
+        background: var(--text-primary);
         font-size: 13px;
         font-weight: 500;
         color: #374151;
@@ -494,7 +494,7 @@
     }
     .toolbar button:hover {
         background: #6366f1;
-        color: #fff;
+        color: var(--text-primary);
         border-color: #6366f1;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(99,102,241,0.25);
@@ -526,7 +526,7 @@
         gap: 8px;
         padding: 12px 28px;
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        color: #fff;
+        color: var(--text-primary);
         border: none;
         border-radius: 10px;
         font-size: 15px;

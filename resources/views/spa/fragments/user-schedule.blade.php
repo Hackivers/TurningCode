@@ -11,7 +11,7 @@
         {{-- Header --}}
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
             <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Jadwal Belajar</h2>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Jadwal Belajar</h2>
                 <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Kelola jadwal belajar harian, mingguan, dan kustom.</p>
             </div>
             <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
@@ -19,11 +19,39 @@
             </div>
         </div>
 
+{{-- Rekomendasi Jadwal --}}
+@if (isset($recommendations) && $recommendations->count() > 0)
+<div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.2));display:flex;align-items:center;justify-content:center;">
+                <i class='bx bx-brain' style="font-size:20px;color:#10b981;"></i>
+            </div>
+            <div>
+                <h4 style="margin:0;font-size:16px;font-weight:700;color: var(--text-primary)fff;text-transform:uppercase;letter-spacing:1px;">Rekomendasi AI</h4>
+                <p style="margin:2px 0 0;font-size:12px;color:#888;">Materi yang belum Anda pelajari</p>
+            </div>
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+        @foreach ($recommendations as $rec)
+            <div class="neo-card neo-card-light" style="padding:20px;border-radius:20px;display:flex;flex-direction:column;gap:12px;border:1px solid rgba(16, 185, 129, 0.1);position:relative;overflow:hidden;">
+                <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);pointer-events:none;"></div>
+                <div style="font-size:10px;font-weight:800;color:#10b981;text-transform:uppercase;letter-spacing:1px;background:rgba(16,185,129,0.1);padding:4px 10px;border-radius:8px;align-self:flex-start;">Saran Top</div>
+                <h4 style="margin:0;font-size:15px;font-weight:800;color: var(--text-primary)fff;line-height:1.4;">{{ $rec->title }}</h4>
+                <div style="font-size:12px;color:#666;display:flex;align-items:center;gap:4px;"><i class='bx bx-folder'></i> {{ $rec->materi->title ?? '-' }}</div>
+                <button class="btn-schedule-rec" data-title="{{ $rec->title }}" style="margin-top:auto;width:100%;padding:10px;border-radius:12px;border:none;background:#121212;color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;"><i class='bx bx-calendar-plus'></i> Jadwalkan Ini</button>
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 {{-- Hari Ini --}}
 <div style="margin-bottom:32px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-sun' style="font-size:20px;color:#121212;"></i></div>
-        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Hari Ini</h4>
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-sun' style="font-size:20px;color: var(--text-primary)fff;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color: var(--text-primary)fff;text-transform:uppercase;letter-spacing:1px;">Hari Ini</h4>
         <span class="neo-pill" style="padding:2px 12px;font-size:12px;" id="today-count">{{ $today->count() }}</span>
     </div>
     <div class="schedule-list" id="today-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
@@ -39,8 +67,8 @@
 @if ($upcoming->count())
 <div style="margin-bottom:32px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-calendar-event' style="font-size:20px;color:#121212;"></i></div>
-        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Mendatang</h4>
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-calendar-event' style="font-size:20px;color: var(--text-primary)fff;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color: var(--text-primary)fff;text-transform:uppercase;letter-spacing:1px;">Mendatang</h4>
         <span class="neo-pill" style="padding:2px 12px;font-size:12px;">{{ $upcoming->count() }}</span>
     </div>
     <div class="schedule-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
@@ -54,8 +82,8 @@
 {{-- Semua --}}
 <div style="margin-bottom:32px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-list-ul' style="font-size:20px;color:#121212;"></i></div>
-        <h4 style="margin:0;font-size:16px;font-weight:700;color:#121212;text-transform:uppercase;letter-spacing:1px;">Semua Jadwal</h4>
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;"><i class='bx bx-list-ul' style="font-size:20px;color: var(--text-primary)fff;"></i></div>
+        <h4 style="margin:0;font-size:16px;font-weight:700;color: var(--text-primary)fff;text-transform:uppercase;letter-spacing:1px;">Semua Jadwal</h4>
         <span class="neo-pill" style="padding:2px 12px;font-size:12px;">{{ $schedules->count() }}</span>
     </div>
     <div class="schedule-list" id="all-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
@@ -68,7 +96,7 @@
 </div>
 
 {{-- FAB --}}
-<button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal" style="position:fixed;bottom:90px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg, #121212, #2a2a2a);color:#fff;border:none;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s; border: 1px solid rgba(255,255,255,0.1);">
+<button class="btn-add-schedule" id="btn-open-form" title="Tambah Jadwal" style="position:fixed;bottom:90px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg, #121212, #2a2a2a);color:#fff;border:none;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s; border: 1px solid var(--border-color);">
     <i class='bx bx-plus'></i>
 </button>
 
@@ -94,6 +122,26 @@
             <input type="hidden" id="edit-id" value="">
 
             <div class="form-section">
+                <div class="form-group" style="margin-bottom:16px; border: 1px dashed rgba(0,0,0,0.1); padding: 16px; border-radius: 16px; background: rgba(0,0,0,0.01);">
+                    <label style="margin-bottom:8px;"><i class='bx bx-folder-open'></i> Pilih Materi (Opsional)</label>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <select id="f-cat-main" style="display:none;width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#fff;color: var(--text-primary)fff;font-size:13px;font-weight:600;outline:none;">
+                            @if(isset($mainMateris))
+                                @foreach($mainMateris as $mm)
+                                    <option value="{{ $mm->id }}">{{ $mm->title }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <select id="f-cat-materi" disabled style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#f8fafc;color: var(--text-primary)fff;font-size:13px;font-weight:600;outline:none;">
+                            <option value="">-- Pilih Materi --</option>
+                        </select>
+                        <select id="f-cat-sub" disabled style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#f8fafc;color: var(--text-primary)fff;font-size:13px;font-weight:600;outline:none;">
+                            <option value="">-- Pilih Sub Materi --</option>
+                        </select>
+                    </div>
+                    <p style="font-size:11px;color:#888;margin:8px 0 0 0;"><i class='bx bx-info-circle'></i> Memilih submateri akan otomatis mengisi judul jadwal Anda.</p>
+                </div>
+
                 <div class="form-group">
                     <label><i class='bx bx-bookmark'></i> Judul Jadwal</label>
                     <input type="text" id="f-title" name="title" placeholder="contoh: Belajar JavaScript" required>
@@ -194,6 +242,7 @@
         const btnSubmit = document.getElementById('btn-submit');
 
         const BASE = '{{ url('/app/schedule') }}';
+        const userSelectedMainMateri = '{{ Auth::user()->selected_main_materi_id ?? '' }}';
 
         // ── Type tabs ─────────────────────────────────────────
         let currentType = 'daily';
@@ -232,6 +281,26 @@
             document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
             document.querySelector('.color-chip:first-child').classList.add('active');
             document.querySelector('.color-chip:first-child input').checked = true;
+            
+            // Auto fill based on user path
+            let selectedMain = userSelectedMainMateri;
+            if (!selectedMain) {
+                const firstOpt = document.querySelector('#f-cat-main option');
+                if (firstOpt) selectedMain = firstOpt.value;
+            }
+
+            document.getElementById('f-cat-main').value = selectedMain;
+            document.getElementById('f-cat-materi').innerHTML = '<option value="">-- Pilih Materi --</option>';
+            document.getElementById('f-cat-materi').disabled = true;
+            document.getElementById('f-cat-sub').innerHTML = '<option value="">-- Pilih Sub Materi --</option>';
+            document.getElementById('f-cat-sub').disabled = true;
+            
+            // Trigger cascading logic if main is selected
+            if (selectedMain) {
+                const event = new Event('change');
+                document.getElementById('f-cat-main').dispatchEvent(event);
+            }
+            
             msgBox.style.display = 'none';
             modal.style.display = 'flex';
         });
@@ -437,6 +506,109 @@
         });
     })();
 
+    // ── Cascading Dropdown Logic ──────────────────────────────────
+    (function () {
+        const rawData = {!! isset($mainMateris) ? $mainMateris->toJson() : '[]' !!};
+        
+        const selMain = document.getElementById('f-cat-main');
+        const selMateri = document.getElementById('f-cat-materi');
+        const selSub = document.getElementById('f-cat-sub');
+        const inTitle = document.getElementById('f-title');
+
+        if(selMain && selMateri && selSub) {
+            selMain.addEventListener('change', function() {
+                const mainId = parseInt(this.value);
+                selMateri.innerHTML = '<option value="">-- Pilih Materi --</option>';
+                selSub.innerHTML = '<option value="">-- Pilih Sub Materi --</option>';
+                selSub.disabled = true;
+
+                if (!mainId) {
+                    selMateri.disabled = true;
+                    return;
+                }
+
+                const mainObj = rawData.find(m => m.id === mainId);
+                if (mainObj && mainObj.materis) {
+                    mainObj.materis.forEach(mat => {
+                        const opt = document.createElement('option');
+                        opt.value = mat.id;
+                        opt.textContent = mat.title;
+                        selMateri.appendChild(opt);
+                    });
+                    selMateri.disabled = false;
+                    selMateri.style.background = '#fff';
+                }
+            });
+
+            selMateri.addEventListener('change', function() {
+                const materiId = parseInt(this.value);
+                const mainId = parseInt(selMain.value);
+                selSub.innerHTML = '<option value="">-- Pilih Sub Materi --</option>';
+
+                if (!materiId) {
+                    selSub.disabled = true;
+                    return;
+                }
+
+                const mainObj = rawData.find(m => m.id === mainId);
+                if (mainObj && mainObj.materis) {
+                    const materiObj = mainObj.materis.find(mat => mat.id === materiId);
+                    if (materiObj && materiObj.sub_materis) {
+                        materiObj.sub_materis.forEach(sub => {
+                            const opt = document.createElement('option');
+                            opt.value = sub.id;
+                            opt.textContent = sub.title;
+                            selSub.appendChild(opt);
+                        });
+                        selSub.disabled = false;
+                        selSub.style.background = '#fff';
+                    }
+                }
+            });
+
+            selSub.addEventListener('change', function() {
+                if (this.value && this.options[this.selectedIndex]) {
+                    const subId = parseInt(this.value);
+                    const title = this.options[this.selectedIndex].text;
+                    // Auto fill title if empty or user wants to overwrite
+                    inTitle.value = "Belajar: " + title;
+
+                    // Try to generate description
+                    const descInput = document.getElementById('f-desc');
+                    const mainId = parseInt(selMain.value);
+                    const materiId = parseInt(selMateri.value);
+                    
+                    if (mainId && materiId && descInput) {
+                        const mainObj = rawData.find(m => m.id === mainId);
+                        if (mainObj && mainObj.materis) {
+                            const materiObj = mainObj.materis.find(mat => mat.id === materiId);
+                            if (materiObj && materiObj.sub_materis) {
+                                const subObj = materiObj.sub_materis.find(sub => sub.id === subId);
+                                if (subObj) {
+                                    // Use subtitle, meta_description, or a default text
+                                    const genDesc = subObj.subtitle || subObj.meta_description || ("Mempelajari materi " + title + " secara mendalam.");
+                                    descInput.value = "Target: " + genDesc;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Handle Recommendation Buttons
+        document.querySelectorAll('.btn-schedule-rec').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const title = this.getAttribute('data-title');
+                document.getElementById('btn-open-form').click();
+                setTimeout(() => {
+                    document.getElementById('f-title').value = "Belajar: " + title;
+                    document.getElementById('f-desc').value = "Target: Mempelajari materi " + title + " secara mendalam.";
+                }, 100);
+            });
+        });
+    })();
+
     // ── Search Handler ────────────────────────────────────────────
     window.__currentSearchHandler = function(query) {
         document.querySelectorAll('.fav-sched-card').forEach(card => {
@@ -497,7 +669,7 @@
     flex-direction: column;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
 }
 .fav-sched-card:hover {
     transform: translateY(-4px);
@@ -542,7 +714,7 @@
 .fsc-title {
     font-size: 17px;
     font-weight: 800;
-    color: #121212;
+    color: var(--text-primary)fff;
     margin: 0;
     line-height: 1.3;
     letter-spacing: -0.3px;
@@ -587,7 +759,7 @@
     height: 32px;
     border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.08);
-    background: var(--neo-bg, rgba(255,255,255,0.5));
+    background: var(--neo-bg, var(--text-muted));
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
@@ -618,7 +790,7 @@
 .schedule-modal {
     background: var(--neo-card-light, #ffffff) !important;
     border-radius: 32px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
     box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.06) !important;
     width: 100%;
     max-width: 480px !important;
@@ -653,7 +825,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 24px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
@@ -686,7 +858,7 @@
 }
 .schedule-modal .btn-close-modal:hover {
     background: #ef4444 !important;
-    color: #fff !important;
+    color: var(--text-primary) !important;
     transform: rotate(90deg) scale(1.1);
 }
 .schedule-modal .modal-body {
@@ -742,7 +914,7 @@
     color: var(--neo-text-dark, #0f172a) !important;
     border-radius: 16px !important;
     padding: 14px 16px !important;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
@@ -751,8 +923,8 @@
 }
 .schedule-modal input:focus,
 .schedule-modal textarea:focus {
-    background: #fff !important;
-    border-color: #121212 !important;
+    background: var(--text-primary) !important;
+    border-color: var(--text-primary)fff !important;
     box-shadow: 0 0 0 4px rgba(18, 18, 18, 0.05) !important;
     outline: none;
 }
@@ -785,7 +957,7 @@
     text-align: center;
 }
 .schedule-modal .type-tab:hover {
-    color: #121212 !important;
+    color: var(--text-primary)fff !important;
 }
 .schedule-modal .type-tab.active {
     background: var(--neo-card-light, #fff) !important;
@@ -821,8 +993,8 @@
 }
 .schedule-modal .day-chip input:checked + span {
     background: #121212 !important;
-    color: #fff !important;
-    border-color: #121212 !important;
+    color: var(--text-primary) !important;
+    border-color: var(--text-primary)fff !important;
     box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
     transform: translateY(-2px);
 }
@@ -845,8 +1017,8 @@
     align-items: center;
     justify-content: center;
     background: var(--c);
-    color: #fff;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.1);
+    color: var(--text-primary);
+    box-shadow: inset 0 2px 4px var(--border-color), inset 0 -2px 4px rgba(0,0,0,0.1);
 }
 .schedule-modal .color-chip .c-box i {
     opacity: 0;
@@ -856,7 +1028,7 @@
 }
 .schedule-modal .color-chip.active .c-box {
     transform: scale(1.15) translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15), inset 0 2px 4px var(--text-muted);
 }
 .schedule-modal .color-chip.active .c-box i {
     opacity: 1;
@@ -869,11 +1041,11 @@
 }
 .schedule-modal .btn-submit-schedule {
     background: linear-gradient(135deg, #121212, #2a2a2a) !important;
-    color: #fff !important;
+    color: var(--text-primary) !important;
     border-radius: 20px !important;
     font-weight: 800 !important;
     box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
+    border: 1px solid var(--border-color) !important;
     width: 100%;
     padding: 18px;
     font-size: 16px;

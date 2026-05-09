@@ -15,30 +15,30 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
         </a>
 
         {{-- Premium Hero Header --}}
-        <div class="neo-card" style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
+        <div class="neo-card" style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid var(--bg-tertiary);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
             {{-- Background Gradient Orbs --}}
             <div style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;"></div>
             <div style="position:absolute;bottom:-50%;right:10%;width:450px;height:450px;background:radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1;"></div>
             
             {{-- Grid Pattern Overlay --}}
-            <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background-image:radial-gradient(var(--border-color) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;"></div>
             
             <div style="position:relative;z-index:2;width:100%;max-width:700px;">
                 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
                         <i class='bx bx-category' style="margin-right:4px;"></i> {{ $firstMateri->mainMateri->title ?? 'Main' }}
                     </span>
-                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
                         <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $firstMateri->title ?? 'Bab' }}
                     </span>
-                    <span class="neo-pill" style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
                         <i class='bx bx-list-ul' style="margin-right:4px;"></i> {{ count($subMateris) }} Sub Materi
                     </span>
                 </div>
                 <h3 style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
                     {{ $firstMateri->title ?? 'Daftar Sub Materi' }}
                 </h3>
-                <p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0;line-height:1.6;font-weight:500;">
+                <p style="font-size:16px;color:var(--text-secondary);margin:0;line-height:1.6;font-weight:500;">
                     Gass pelajari semuanya! Jelajahi setiap topik secara mendalam dan tingkatkan pemahamanmu. 🚀
                 </p>
             </div>
@@ -51,7 +51,7 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
         {{-- Sub Materi List --}}
         <div style="margin-bottom:32px;">
-            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Daftar Sub Materi</h3>
+            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Daftar Sub Materi</h3>
             <p style="font-size:16px;color:#555;margin:0 0 24px;">Pelajari setiap topik secara mendalam.</p>
 
             <div style="display:flex;flex-direction:column;gap:16px;">
@@ -85,7 +85,7 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
                             {{-- Content --}}
                             <div style="flex:1;min-width:0;">
                                 <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa" style="text-decoration:none;">
-                                    <h4 style="margin:0 0 4px;font-size:18px;font-weight:700;color:#121212;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">{{ $subMateri->title }}</h4>
+                                    <h4 style="margin:0 0 4px;font-size:18px;font-weight:700;color: var(--text-primary)fff;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">{{ $subMateri->title }}</h4>
                                     <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $subMateri->subtitle ?? Str::limit(strip_tags($subMateri->content), 100) }}</p>
                                 </a>
                                 
@@ -244,20 +244,18 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
-        --neo-bg: #ececec;
-        --neo-card-light: #e5e5e5;
-        --neo-radius: 32px;
-        --neo-text-dark: #121212;
+        --neo-bg: transparent;
+        --neo-card-light: rgba(255, 255, 255, 0.03);
+        --neo-radius: 16px;
+        --neo-text-dark: #ffffff;
     }
 
-    body {
-        background-color: var(--neo-bg) !important;
-    }
+    body { background-color: #000000 !important; }
 
     .neo-dashboard {
         background-color: var(--neo-bg);
         color: var(--neo-text-dark);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Mono', monospace;
         padding: 32px 0;
         min-height: 100vh;
         width: 100%;

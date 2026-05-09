@@ -3,176 +3,133 @@
 @endphp
 
 <div class="container container-aside asidebar @if ($user->role == 'admin') admin @endif" id="asidePage">
-    <aside class="neo-aside">
-
-        <!-- Brand Logo -->
-        <div class="neo-aside-brand">
-            <div class="neo-brand-logo">TC</div>
-            <span class="neo-brand-text">TurnCode</span>
-        </div>
-
+    <aside class="fs-sidebar">
         <!-- Navigation -->
-        <nav class="neo-nav-menu" id="spa-nav">
-            <a href="#" data-spa-page="dashboard" class="neo-nav-link active" title="Dashboard">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bxs-home neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Dashboard</span>
+        <nav class="fs-nav-main" id="spa-nav">
+            <a href="#" data-spa-page="dashboard" class="fs-link active" title="Dashboard">
+                <i class="bx bx-grid-alt fs-icon"></i>
+                <span class="fs-label">Dashboard</span>
             </a>
 
             @if(\App\Models\FeatureToggle::isActive('menu_schedule') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="schedule" class="neo-nav-link" title="Jadwal">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-calendar neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Jadwal</span>
-            </a>
+                <a href="#" data-spa-page="schedule" class="fs-link" title="Jadwal">
+                    <i class="bx bx-calendar fs-icon"></i>
+                    <span class="fs-label">Jadwal</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_favorites') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="favorites" class="neo-nav-link" title="Favorit">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-star neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Favorit</span>
-            </a>
+                <a href="#" data-spa-page="favorites" class="fs-link" title="Favorit">
+                    <i class="bx bx-star fs-icon"></i>
+                    <span class="fs-label">Favorit</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_history') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="history" class="neo-nav-link" title="Riwayat">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-history neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Riwayat</span>
-            </a>
+                <a href="#" data-spa-page="history" class="fs-link" title="Riwayat">
+                    <i class="bx bx-history fs-icon"></i>
+                    <span class="fs-label">Riwayat</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_notes') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="notes" class="neo-nav-link" title="Catatan">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-notepad neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Catatan</span>
-            </a>
+                <a href="#" data-spa-page="notes" class="fs-link" title="Catatan">
+                    <i class="bx bx-notepad fs-icon"></i>
+                    <span class="fs-label">Catatan</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_missions') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="missions" class="neo-nav-link" title="Misi">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-target-lock neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Misi</span>
-            </a>
+                <a href="#" data-spa-page="missions" class="fs-link" title="Misi">
+                    <i class="bx bx-target-lock fs-icon"></i>
+                    <span class="fs-label">Misi</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_achievements') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="achievements" class="neo-nav-link" title="Pencapaian">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-trophy neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Pencapaian</span>
-            </a>
+                <a href="#" data-spa-page="achievements" class="fs-link" title="Pencapaian">
+                    <i class="bx bx-trophy fs-icon"></i>
+                    <span class="fs-label">Pencapaian</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_leaderboard') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="leaderboard" class="neo-nav-link" title="Leaderboard">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-bar-chart neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Leaderboard</span>
-            </a>
+                <a href="#" data-spa-page="leaderboard" class="fs-link" title="Leaderboard">
+                    <i class="bx bx-bar-chart fs-icon"></i>
+                    <span class="fs-label">Leaderboard</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_clans') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="clans" class="neo-nav-link" title="Guilds & Clans">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-shield-quarter neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Guilds</span>
-            </a>
+                <a href="#" data-spa-page="clans" class="fs-link" title="Guilds & Clans">
+                    <i class="bx bx-shield-quarter fs-icon"></i>
+                    <span class="fs-label">Guilds</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_shop') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="shop" class="neo-nav-link" title="Reward Shop">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-store neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Toko</span>
-            </a>
+                <a href="#" data-spa-page="shop" class="fs-link" title="Reward Shop">
+                    <i class="bx bx-store fs-icon"></i>
+                    <span class="fs-label">Toko</span>
+                </a>
             @endif
 
             @if(\App\Models\FeatureToggle::isActive('menu_analytics') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="analytics" class="neo-nav-link" title="Analitik Belajar">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx bx-bar-chart-alt-2 neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Analitik</span>
-            </a>
-            @endif
-
-            <div class="neo-nav-divider"></div>
-
-            @if(\App\Models\FeatureToggle::isActive('menu_secret_lab') || $user->canAccessAllFeatures())
-            <a href="#" data-spa-page="secret-lab"
-                class="neo-nav-link neo-nav-elite {{ $user->isElite() ? 'elite-unlocked' : 'elite-locked' }}"
-                title="Secret Lab">
-                <div class="neo-nav-indicator"></div>
-                <div class="neo-nav-icon-wrap">
-                    <i class="bx {{ $user->isElite() ? 'bxs-flask' : 'bx-lock-alt' }} neo-nav-icon"></i>
-                </div>
-                <span class="neo-nav-label">Secret Lab</span>
-                @if($user->isElite())
-                    <span class="neo-elite-badge">ELITE</span>
-                @else
-                    <span class="neo-lock-badge"><i class='bx bx-lock-alt'></i></span>
-                @endif
-            </a>
+                <a href="#" data-spa-page="analytics" class="fs-link" title="Analitik Belajar">
+                    <i class="bx bx-bar-chart-alt-2 fs-icon"></i>
+                    <span class="fs-label">Analitik</span>
+                </a>
             @endif
         </nav>
 
-        <!-- Footer -->
-        <div class="neo-aside-footer">
-            <!-- Profile Card -->
-            <div class="neo-profile-module" data-spa-page="account" title="Buka Profil">
-                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}"
-                    alt="Profile"
-                    class="neo-profile-img {{ $user->isPenguasaSektor() ? 'sovereign-aura-sm' : ($user->isElite() ? 'elite-aura-sm' : '') }}">
-                <div class="neo-profile-meta">
-                    <span
-                        class="neo-profile-name {{ $user->isPenguasaSektor() ? 'sovereign-name' : ($user->isElite() ? 'elite-name' : '') }}">{{ $user->name }}</span>
-                    @if($user->isPenguasaSektor())
-                        <span class="sovereign-title">Sovereign</span>
-                    @else
-                        <span class="neo-profile-role">{{ explode('@', $user->email)[0] }}</span>
-                    @endif
+        <!-- Promo Card -->
+        @if(\App\Models\FeatureToggle::isActive('menu_secret_lab') || $user->canAccessAllFeatures())
+            <div class="fs-promo">
+                <div class="fs-promo-header">
+                    <div class="fs-promo-icon"><i class='bx bx-sparkles'></i></div>
+                    <div class="fs-promo-text">
+                        <span class="fs-promo-subtitle">Current plan:</span>
+                        <strong class="fs-promo-title">{{ $user->isElite() ? 'Elite Member' : 'Basic Member' }}</strong>
+                    </div>
                 </div>
+                <p class="fs-promo-desc">
+                    {{ $user->isElite() ? 'Explore the Secret Lab for exclusive features.' : 'Upgrade to Elite to get the latest and exclusive features' }}
+                </p>
+                <a href="#" data-spa-page="secret-lab" class="fs-promo-btn">
+                    <i class='bx bxs-zap'></i> {{ $user->isElite() ? 'Enter Secret Lab' : 'Upgrade to Elite' }}
+                </a>
             </div>
+        @endif
 
-            <!-- Action Buttons Row -->
-            <div class="neo-footer-actions">
-                <button type="button" class="neo-action-btn neo-action-report" onclick="openIssueReportModal()" title="Lapor Masalah">
-                    <i class="bx bx-error-circle"></i>
-                    <span>Lapor</span>
-                </button>
-                <form method="POST" action="{{ route('logout') }}" style="margin: 0; flex: 1;">
-                    @csrf
-                    <button type="submit" class="neo-action-btn neo-action-logout" title="Keluar Sesi">
-                        <i class="bx bx-log-out-circle"></i>
-                        <span>Keluar</span>
-                    </button>
-                </form>
+        <div class="fs-divider"></div>
+
+        <!-- Bottom Actions -->
+        <div class="fs-bottom-links">
+
+            <div href="#" class="fs-link" onclick="openIssueReportModal()">
+                <i class='bx bx-help-circle fs-icon'></i>
+                <span class="fs-label">Help</span>
             </div>
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="fs-link fs-logout-btn"
+                    style="width: 100%; border: none; background: transparent; text-align: left;">
+                    <i class="bx bx-log-out fs-icon"></i>
+                    <span class="fs-label">Keluar</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer Profile -->
+        <div class="fs-footer">
+            <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/ico/default-user.jpg') }}"
+                alt="Profile" class="fs-avatar">
+            <div class="fs-meta">
+                <span class="fs-name">{{ $user->name }}</span>
+                <span
+                    class="fs-role">{{ $user->isPenguasaSektor() ? 'Sovereign' : ($user->isElite() ? 'Elite' : 'Basic Plan') }}</span>
+            </div>
+            <i class='bx bx-chevron-up fs-chevron'></i>
         </div>
 
     </aside>

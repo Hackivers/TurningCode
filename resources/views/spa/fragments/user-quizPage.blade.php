@@ -17,7 +17,7 @@
                 <span class="qz-bc-current">Kuis</span>
             </div>
             <div class="qz-timer" id="qz-timer-display"
-                style="display:none; font-family: 'Inter', monospace; font-weight: 700; font-size: 16px; align-items: center; gap: 6px; color: #121212; background: #e5e5e5; padding: 6px 14px; border-radius: 12px;">
+                style="display:none; font-family: 'Inter', monospace; font-weight: 700; font-size: 16px; align-items: center; gap: 6px; color: var(--text-primary)fff; background: #e5e5e5; padding: 6px 14px; border-radius: 12px;">
                 <i class='bx bx-stopwatch' style="font-size: 20px;"></i> <span id="qz-time-val">00:00</span>
             </div>
         </div>
@@ -102,7 +102,7 @@
                 <p class="qz-result-time" id="qz-result-time"
                     style="display:none; color: #555; font-size: 14px; margin-top: 8px; font-weight: 500;"><i
                         class='bx bx-stopwatch'></i> Waktu: <strong id="qz-final-time"
-                        style="color:#121212; font-family:monospace; font-size:16px;">00:00</strong></p>
+                        style="color: var(--text-primary)fff; font-family:monospace; font-size:16px;">00:00</strong></p>
                 <div class="qz-result-exp" id="qz-result-exp" style="display:none;"><i class='bx bx-bolt-circle'></i> <span
                         id="qz-exp-val"></span></div>
                 <div class="qz-result-actions">
@@ -301,7 +301,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
     :root {
-        --neo-bg: #ececec;
+        --neo-bg: transparent;
         --neo-card: #e5e5e5;
         --neo-r: 32px;
         --neo-t: #121212;
@@ -313,7 +313,7 @@
 
     .neo-dashboard {
         background: var(--neo-bg);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Mono', monospace;
         min-height: 100vh;
         width: 100%;
     }
@@ -343,7 +343,7 @@
     }
 
     .qz-breadcrumb a:hover {
-        color: #121212;
+        color: var(--text-primary)fff;
     }
 
     .qz-breadcrumb span {
@@ -351,7 +351,7 @@
     }
 
     .qz-bc-current {
-        color: #121212;
+        color: var(--text-primary)fff;
         font-weight: 600;
     }
 
@@ -382,7 +382,7 @@
     .qz-progress-text {
         font-size: 13px;
         font-weight: 700;
-        color: #121212;
+        color: var(--text-primary)fff;
         white-space: nowrap;
     }
 
@@ -404,7 +404,7 @@
     }
 
     .qz-passed-banner strong {
-        color: #121212;
+        color: var(--text-primary)fff;
         font-size: 15px;
     }
 
@@ -419,7 +419,7 @@
         border-radius: 100px;
         border: 1px solid rgba(0, 0, 0, 0.1);
         background: transparent;
-        color: #121212;
+        color: var(--text-primary)fff;
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
@@ -428,7 +428,7 @@
 
     .qz-btn-retake:hover {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     /* Card */
@@ -450,7 +450,7 @@
     .qz-card-num {
         font-size: 13px;
         font-weight: 800;
-        color: #121212;
+        color: var(--text-primary)fff;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -464,7 +464,7 @@
     .qz-question {
         font-size: 20px;
         font-weight: 800;
-        color: #121212;
+        color: var(--text-primary)fff;
         line-height: 1.4;
         margin: 0 0 24px;
         letter-spacing: -0.02em;
@@ -565,17 +565,17 @@
     }
 
     .qz-opt:has(input:checked) {
-        border-color: #121212;
-        background: #fff;
+        border-color: var(--text-primary)fff;
+        background: var(--text-primary);
     }
 
     .qz-opt:has(input:checked) .qz-opt-letter {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .qz-opt:has(input:checked) .qz-opt-text {
-        color: #121212;
+        color: var(--text-primary)fff;
         font-weight: 600;
     }
 
@@ -591,7 +591,7 @@
 
     .qz-opt.qz-correct .qz-opt-letter {
         background: #10b981 !important;
-        color: #fff !important;
+        color: var(--text-primary) !important;
     }
 
     .qz-opt.qz-correct .qz-opt-text {
@@ -610,7 +610,7 @@
 
     .qz-opt.qz-wrong .qz-opt-letter {
         background: #ef4444 !important;
-        color: #fff !important;
+        color: var(--text-primary) !important;
     }
 
     .qz-opt.qz-wrong .qz-opt-text {
@@ -656,13 +656,13 @@
 
     .qz-btn-prev:hover {
         background: #121212;
-        color: #fff;
-        border-color: #121212;
+        color: var(--text-primary);
+        border-color: var(--text-primary)fff;
     }
 
     .qz-btn-next {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .qz-btn-next:hover {
@@ -671,7 +671,7 @@
 
     .qz-btn-submit {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .qz-btn-submit:hover {
@@ -725,14 +725,14 @@
         justify-content: center;
         font-size: 36px;
         font-weight: 900;
-        color: #121212;
+        color: var(--text-primary)fff;
         letter-spacing: -0.02em;
     }
 
     .qz-result-title {
         font-size: 24px;
         font-weight: 800;
-        color: #121212;
+        color: var(--text-primary)fff;
         margin: 0 0 8px;
     }
 
@@ -770,19 +770,19 @@
     .qz-btn-retry {
         margin-top: 25px;
         background: transparent;
-        color: #121212;
+        color: var(--text-primary)fff;
         border: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .qz-btn-retry:hover {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .qz-btn-next-materi {
         margin-top: 25px;
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .qz-btn-next-materi:hover {

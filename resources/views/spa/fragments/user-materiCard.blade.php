@@ -1,5 +1,5 @@
 <div style="margin-bottom: 32px;">
-    <h3 class="neo-title" style="font-size: 28px; margin: 0 0 8px 0; color: #121212;">Ruang Belajar</h3>
+    <h3 class="neo-title" style="font-size: 28px; margin: 0 0 8px 0; color: var(--text-primary)fff;">Ruang Belajar</h3>
     <p style="font-size: 16px; color: #555; margin: 0;">Pilih jalur keahlian yang ingin kamu kuasai.</p>
 </div>
 
@@ -95,10 +95,10 @@
 
 .materi-title {
     margin: 0;
-    color: #ffffff;
+    color: var(--text-primary)fff;
     font-size: 24px;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
     line-height: 1.25;
     flex: 1;
 }
@@ -106,9 +106,9 @@
 .materi-badge-price {
     font-size: 14px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-primary)fff;
     /* subtle translucent background */
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
     padding: 6px 12px;
     border-radius: 20px;
     backdrop-filter: blur(8px);
@@ -120,7 +120,7 @@
     color: #a1a1aa; 
     font-size: 14px;
     line-height: 1.5;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
 }
 
 .materi-pills-row {
@@ -143,8 +143,8 @@
 
 .materi-action-btn {
     width: 100%;
-    background: #ffffff;
-    color: #121212;
+    background: var(--text-primary)fff;
+    color: var(--text-primary)fff;
     font-size: 15px;
     font-weight: 600;
     text-align: center;
@@ -152,7 +152,7 @@
     border-radius: 22px; /* Very rounded button */
     margin-top: 4px;
     transition: background 0.3s, transform 0.2s;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
 }
 
 .link-spa:hover .materi-action-btn {

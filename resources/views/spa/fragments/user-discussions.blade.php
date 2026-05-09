@@ -2,7 +2,7 @@
 <div id="discussion-section" style="margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(0,0,0,0.06);">
     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
         <i class='bx bx-chat' style="font-size: 22px; color: #555;"></i>
-        <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #121212;">Diskusi & Tanya Jawab</h3>
+        <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--text-primary)fff;">Diskusi & Tanya Jawab</h3>
         <span style="font-size: 12px; font-weight: 600; color: #888; background: rgba(0,0,0,0.05); padding: 2px 10px; border-radius: 8px;">{{ isset($discussions) ? $discussions->count() : 0 }}</span>
     </div>
 
@@ -13,11 +13,11 @@
                 alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 4px;">
             <div style="flex: 1;">
                 <textarea id="discussion-input" placeholder="Tulis pertanyaan atau komentar..." rows="2"
-                    style="width: 100%; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical; outline: none; transition: border-color 0.2s; background: rgba(0,0,0,0.02); box-sizing: border-box;"
+                    style="width: 100%; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-family: 'Space Mono', monospace; resize: vertical; outline: none; transition: border-color 0.2s; background: rgba(0,0,0,0.02); box-sizing: border-box;"
                     onfocus="this.style.borderColor='#555'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'"></textarea>
                 <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
                     <button id="discussion-submit-btn" data-sub-materi-id="{{ $subMateri->id }}"
-                        style="padding: 8px 18px; border: none; background: #121212; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"
+                        style="padding: 8px 18px; border: none; background: #121212; color: var(--text-primary); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"
                         onmouseover="this.style.background='#333'" onmouseout="this.style.background='#121212'">
                         <i class='bx bx-send'></i> Kirim
                     </button>
@@ -47,7 +47,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
                                     <a href="?page=profile&id={{ $disc->user->id }}" class="link-spa" data-page="profile&id={{ $disc->user->id }}"
-                                        style="font-size: 14px; font-weight: 700; color: #121212; text-decoration: none;">{{ $disc->user->name }}</a>
+                                        style="font-size: 14px; font-weight: 700; color: var(--text-primary)fff; text-decoration: none;">{{ $disc->user->name }}</a>
                                     <span style="font-size: 11px; font-weight: 600; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 1px 6px; border-radius: 4px;">{{ $disc->user->rank_name }}</span>
                                     <span style="font-size: 11px; color: #aaa;">&bull; {{ $disc->created_at->diffForHumans() }}</span>
                                     @if($disc->upvotes >= 3)
@@ -93,10 +93,10 @@
                                 <div class="disc-reply-form" data-parent="{{ $disc->id }}" style="display: none; margin-top: 10px; padding-left: 16px; border-left: 2px solid rgba(0,0,0,0.06);">
                                     <div style="display: flex; gap: 8px; align-items: flex-start;">
                                         <textarea class="disc-reply-input" placeholder="Tulis balasan..." rows="1"
-                                            style="flex: 1; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Inter', sans-serif; resize: none; outline: none; background: rgba(0,0,0,0.02); box-sizing: border-box;"
+                                            style="flex: 1; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Space Mono', monospace; resize: none; outline: none; background: rgba(0,0,0,0.02); box-sizing: border-box;"
                                             onfocus="this.style.borderColor='#555'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'"></textarea>
                                         <button class="disc-reply-submit" data-parent-id="{{ $disc->id }}" data-sub-materi-id="{{ $subMateri->id }}"
-                                            style="padding: 8px 14px; border: none; background: #121212; color: #fff; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all 0.2s;">
+                                            style="padding: 8px 14px; border: none; background: #121212; color: var(--text-primary); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all 0.2s;">
                                             <i class='bx bx-send'></i>
                                         </button>
                                     </div>
@@ -158,7 +158,7 @@
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
                                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                            <span style="font-size: 14px; font-weight: 700; color: #121212;">${d.user.name}</span>
+                                            <span style="font-size: 14px; font-weight: 700; color: var(--text-primary)fff;">${d.user.name}</span>
                                             <span style="font-size: 11px; font-weight: 600; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 1px 6px; border-radius: 4px;">${d.user.rank_name}</span>
                                             <span style="font-size: 11px; color: #aaa;">&bull; ${d.created_at}</span>
                                         </div>

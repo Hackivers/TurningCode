@@ -2,137 +2,137 @@
     $nextSeason = now()->addMonthNoOverflow()->startOfMonth();
 @endphp
 
-<div class="neo-card neo-card-light"
-    style="margin-top: 32px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; padding: 24px 32px;">
-    <div>
-        <h4
-            style="margin: 0 0 4px 0; font-size: 20px; font-weight: 700; color: #121212; display: flex; align-items: center; gap: 8px;">
-            <i class='bx bx-timer' style="font-size: 24px; color: #888;"></i> Season Akan Berakhir
+<div class="nothing-season-timer" style="margin-top: 48px; margin-bottom: 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 28px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; position: relative; overflow: hidden; z-index: 1;">
+
+    <!-- Dot grid background -->
+    <div style="position: absolute; inset: 0; background-image: radial-gradient(var(--bg-tertiary) 1px, transparent 1px); background-size: 16px 16px; pointer-events: none;"></div>
+
+    <!-- Left: Info -->
+    <div style="position: relative; z-index: 1;">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted); margin-bottom: 8px;">SYSTEM ALERT</div>
+        <h4 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px;">
+            <div style="width: 8px; height: 8px; background: #d71921; border-radius: 50%; animation: nothingSeasonPulse 1.5s infinite;"></div>
+            Season Reset
         </h4>
-        <p style="margin: 0; font-size: 14px; color: #666;">Persiapkan dirimu. Peringkat akan direset dan EXP akan dikurangi 80% untuk
-            musim baru.</p>
+        <p style="margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 320px;">Peringkat direset & EXP dikurangi 80%.</p>
     </div>
 
-    <div id="season-countdown" style="display: flex; gap: 16px; text-align: center;"
-        data-target="{{ $nextSeason->toIso8601String() }}">
-        <div class="cd-minimal-box">
-            <span id="cd-days" class="cd-minimal-val">00</span>
-            <span class="cd-minimal-lbl">Hari</span>
+    <!-- Right: Countdown Grid -->
+    <div id="season-countdown" style="display: flex; gap: 8px; text-align: center; position: relative; z-index: 1;" data-target="{{ $nextSeason->toIso8601String() }}">
+        <div class="nothing-cd-box">
+            <span id="cd-days" class="nothing-cd-val">00</span>
+            <span class="nothing-cd-lbl">HARI</span>
         </div>
-        <div class="cd-minimal-separator">:</div>
-        <div class="cd-minimal-box">
-            <span id="cd-hours" class="cd-minimal-val">00</span>
-            <span class="cd-minimal-lbl">Jam</span>
+        <div class="nothing-cd-sep">:</div>
+        <div class="nothing-cd-box">
+            <span id="cd-hours" class="nothing-cd-val">00</span>
+            <span class="nothing-cd-lbl">JAM</span>
         </div>
-        <div class="cd-minimal-separator">:</div>
-        <div class="cd-minimal-box">
-            <span id="cd-mins" class="cd-minimal-val">00</span>
-            <span class="cd-minimal-lbl">Menit</span>
+        <div class="nothing-cd-sep">:</div>
+        <div class="nothing-cd-box">
+            <span id="cd-mins" class="nothing-cd-val">00</span>
+            <span class="nothing-cd-lbl">MENIT</span>
         </div>
-        <div class="cd-minimal-separator">:</div>
-        <div class="cd-minimal-box">
-            <span id="cd-secs" class="cd-minimal-val">00</span>
-            <span class="cd-minimal-lbl">Detik</span>
+        <div class="nothing-cd-sep">:</div>
+        <div class="nothing-cd-box">
+            <span id="cd-secs" class="nothing-cd-val">00</span>
+            <span class="nothing-cd-lbl">DETIK</span>
         </div>
     </div>
 </div>
 
 <style>
-    .cd-minimal-box {
+    @keyframes nothingSeasonPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+    }
+
+    .nothing-cd-box {
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-width: 48px;
+        min-width: 52px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px 8px 8px;
     }
 
-    .cd-minimal-val {
+    .nothing-cd-val {
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
         font-size: 28px;
-        font-weight: 800;
-        color: #121212;
+        font-weight: 400;
+        color: var(--text-primary);
         line-height: 1;
+        letter-spacing: 2px;
         font-variant-numeric: tabular-nums;
-        letter-spacing: -1px;
     }
 
-    .cd-minimal-lbl {
-        font-size: 12px;
-        font-weight: 600;
-        color: #888;
-        margin-top: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .cd-minimal-separator {
-        font-size: 24px;
+    .nothing-cd-lbl {
+        font-size: 8px;
         font-weight: 700;
-        color: #aaa;
-        line-height: 1.1;
-        margin-top: -2px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
+    .nothing-cd-sep {
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        font-size: 24px;
+        color: var(--border-color);
+        line-height: 1.1;
+        align-self: flex-start;
+        padding-top: 10px;
+    }
+
+    /* ═══ MOBILE ═══ */
     @media (max-width: 768px) {
-        .neo-season-timer-section .neo-card {
+        .nothing-season-timer {
             flex-direction: row !important;
-            /* Keep horizontal */
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 19px 14px !important;
+            padding: 16px 14px !important;
             gap: 8px !important;
-            border-radius: 12px !important;
+            border-radius: 24px !important;
             margin-top: 24px !important;
             margin-bottom: 16px !important;
         }
 
-        .neo-season-timer-section .neo-card>div:first-child {
+        .nothing-season-timer > div:first-child {
             flex: 1;
             min-width: 0;
         }
 
-        .neo-season-timer-section .neo-card h4 {
+        .nothing-season-timer h4 {
             font-size: 13px !important;
-            margin-bottom: 0 !important;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .neo-season-timer-section .neo-card h4 i {
-            font-size: 16px !important;
-        }
-
-        .neo-season-timer-section .neo-card p {
+        .nothing-season-timer p {
             display: none !important;
-            /* Hide description for minimal look */
+        }
+
+        .nothing-season-timer .nothing-cd-box {
+            min-width: 28px !important;
+            padding: 6px 4px 4px !important;
+        }
+
+        .nothing-cd-val {
+            font-size: 14px !important;
+        }
+
+        .nothing-cd-lbl {
+            font-size: 6px !important;
+            letter-spacing: 1px !important;
+            margin-top: 3px !important;
+        }
+
+        .nothing-cd-sep {
+            font-size: 14px !important;
+            padding-top: 6px !important;
         }
 
         #season-countdown {
             gap: 4px !important;
-            width: auto !important;
-            justify-content: flex-end !important;
-            align-items: flex-start !important; /* Align to top with the numbers */
             flex-shrink: 0;
-            margin-top: 2px !important;
-        }
-
-        .cd-minimal-box {
-            min-width: 24px !important;
-        }
-
-        .cd-minimal-val {
-            font-size: 14px !important;
-            line-height: 14px !important;
-        }
-
-        .cd-minimal-lbl {
-            font-size: 8px !important;
-            margin-top: 2px !important;
-        }
-
-        .cd-minimal-separator {
-            font-size: 14px !important;
-            line-height: 14px !important;
-            margin-top: -1px !important; /* Micro-adjustment for colon vertical centering */
         }
     }
 </style>
@@ -150,9 +150,7 @@
         const secsEl = document.getElementById('cd-secs');
 
         function updateTimer() {
-            if (!document.body.contains(cdContainer)) {
-                return; // Let the observer clear the interval
-            }
+            if (!document.body.contains(cdContainer)) return;
 
             const now = new Date().getTime();
             const distance = targetDate - now;
@@ -179,7 +177,7 @@
         updateTimer();
         const timerInterval = setInterval(updateTimer, 1000);
 
-        const observer = new MutationObserver((mutations) => {
+        const observer = new MutationObserver(() => {
             if (!document.body.contains(cdContainer)) {
                 clearInterval(timerInterval);
                 observer.disconnect();

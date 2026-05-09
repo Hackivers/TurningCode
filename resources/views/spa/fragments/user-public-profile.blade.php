@@ -124,13 +124,13 @@
                             @elseif ($fStatus === 'pending')
                                 <button disabled
                                     class="neo-pill"
-                                    style="padding: 10px 20px; font-size: 14px; background: rgba(255,255,255,0.2); border: none; color: var(--neo-text-light, #ffffff); border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: not-allowed; font-weight: 700;">
+                                    style="padding: 10px 20px; font-size: 14px; background: var(--border-color); border: none; color: var(--neo-text-light, #ffffff); border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: not-allowed; font-weight: 700;">
                                     <i class='bx bx-time'></i> Menunggu Konfirmasi
                                 </button>
                             @elseif ($fStatus === 'accepted')
                                 <button disabled
                                     class="neo-pill"
-                                    style="padding: 10px 20px; font-size: 14px; background: #10b981; border: none; color: #ffffff; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: default; font-weight: 700;">
+                                    style="padding: 10px 20px; font-size: 14px; background: #10b981; border: none; color: var(--text-primary)fff; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: default; font-weight: 700;">
                                     <i class='bx bx-check'></i> Teman
                                 </button>
                             @endif
@@ -185,12 +185,12 @@
                         <i class='bx bx-check-shield'></i>
                     </div>
                     <div>
-                        <div style="font-size:14px;font-weight:700;color:#121212;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
+                        <div style="font-size:14px;font-weight:700;color: var(--text-primary)fff;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
                         <div style="font-size:11px;color:#888;margin-top:4px;">{{ $cert->issued_at->translatedFormat('d M Y') }}</div>
                     </div>
                 </div>
             </div>
-            <a href="/certificate/{{ $cert->certificate_code }}" target="_blank" style="display:block;width:100%;text-align:center;padding:10px;background:rgba(0,0,0,0.05);color:#121212;text-decoration:none;font-weight:600;font-size:13px;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='#121212';this.style.color='#fff';" onmouseout="this.style.background='rgba(0,0,0,0.05)';this.style.color='#121212';">
+            <a href="/certificate/{{ $cert->certificate_code }}" target="_blank" style="display:block;width:100%;text-align:center;padding:10px;background:rgba(0,0,0,0.05);color: var(--text-primary)fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='#121212';this.style.color='#fff';" onmouseout="this.style.background='rgba(0,0,0,0.05)';this.style.color='#121212';">
                 Lihat Kredensial
             </a>
         </div>
@@ -204,7 +204,7 @@
 
 {{-- ── IMAGE VIEWER MODAL ────────────────────────────────────────── --}}
 <div id="image-viewer-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease;">
-    <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1)';">
+    <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: var(--border-color); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='var(--border-color)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='var(--border-color)'; this.style.transform='scale(1)';">
         <i class='bx bx-x' style="font-size: 28px;"></i>
     </button>
     <img id="image-viewer-img" src="" alt="Profile Image" style="max-width: 90%; max-height: 90vh; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
@@ -262,7 +262,7 @@
 
                 if (res.ok && data.success) {
                     this.innerHTML             = `<i class='bx bx-time'></i> Menunggu Konfirmasi`;
-                    this.style.background      = 'rgba(255,255,255,0.2)';
+                    this.style.background      = 'var(--border-color)';
                     this.style.color           = '#ffffff';
                     this.style.cursor          = 'not-allowed';
                     this.disabled              = true;

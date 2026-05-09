@@ -1,6 +1,10 @@
 <div style="margin-top: 48px; margin-bottom: 24px;">
-    <h3 class="neo-title" style="font-size: 28px; margin: 0 0 8px 0; color: #121212;">Daftar Tier</h3>
-    <p style="font-size: 16px; color: #555; margin: 0;">Jelajahi seluruh tier dari terendah hingga tertinggi.</p>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+        <div style="width: 6px; height: 6px; background: #d71921; border-radius: 50%;"></div>
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);">SYSTEM TIERS</div>
+    </div>
+    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 4px 0; color: var(--text-primary); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: -0.5px;">Daftar Tier</h3>
+    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Terendah hingga tertinggi.</p>
 </div>
 
 @php
@@ -19,229 +23,310 @@ $tiers = [
 ];
 @endphp
 
-<div class="tier-list-container">
-    <div class="tier-list-scroll">
-        @foreach($tiers as $index => $tier)
+<div class="nothing-tier-container">
+    <div class="nothing-tier-scroll">
+        @php
+            $myIndex = 0;
+            if(auth()->user()) {
+                $myRank = auth()->user()->rank_name;
+                foreach($tiers as $idx => $t) {
+                    if($t['name'] === $myRank) {
+                        $myIndex = $idx;
+                        break;
+                    }
+                }
+            }
+            
+            $displayTiers = [];
+            // Paling kiri tier saya
+            $myTierData = $tiers[$myIndex];
+            $myTierData['original_index'] = $myIndex;
+            $myTierData['is_me'] = true;
+            $displayTiers[] = $myTierData;
+
+            // 6 tier sebelum saya (yang lebih rendah)
+            // Urut dari yang paling dekat dengan saya hingga yang terendah
+            for($i = $myIndex - 1; $i >= max(0, $myIndex - 6); $i--) {
+                $t = $tiers[$i];
+                $t['original_index'] = $i;
+                $t['is_me'] = false;
+                $displayTiers[] = $t;
+            }
+        @endphp
+
+        @foreach($displayTiers as $tier)
             @php
-                // Check if user is currently at this tier
-                $isCurrentTier = auth()->user() && auth()->user()->rank_name === $tier['name'];
+                $isCurrentTier = $tier['is_me'];
                 $isSovereign = $tier['name'] === 'Penguasa Sektor';
+                $index = $tier['original_index'];
             @endphp
-            <div class="tier-card {{ $isCurrentTier ? 'current-tier' : '' }} {{ $isSovereign ? 'tier-card-sovereign' : '' }}">
-                <div class="tier-number">#{{ $index + 1 }}</div>
+            <div class="nothing-tier-card {{ $isCurrentTier ? 'nothing-tier-active' : '' }} {{ $isSovereign ? 'nothing-tier-sovereign' : '' }}">
+                <!-- Index -->
+                <div class="nothing-tier-index">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
+
                 @if($isCurrentTier)
-                    <div class="current-badge">Kamu di sini</div>
+                    <div class="nothing-tier-badge">
+                        <div style="width: 6px; height: 6px; background: #d71921; border-radius: 50%; margin-right: 4px;"></div>
+                        YOU
+                    </div>
                 @endif
-                <div class="tier-icon-wrap">
-                    <img src="{{ asset('assets/ico/' . $tier['icon']) }}" alt="{{ $tier['name'] }}" class="tier-icon">
-                </div>
-                <h4 class="tier-name">{{ $tier['name'] }}</h4>
-                <div class="tier-exp">{{ number_format($tier['exp']) }} EXP</div>
+
+                @if($isCurrentTier)
+                    <!-- WIDE LAYOUT FOR MY TIER -->
+                    <div style="display: flex; align-items: center; width: 100%; height: 100%; gap: 24px; padding: 0 16px;">
+                        <!-- Icon -->
+                        <div class="nothing-tier-icon-wrap" style="margin: 0; width: 80px; height: 80px; flex-shrink: 0;">
+                            <img src="{{ asset('assets/ico/' . $tier['icon']) }}" alt="{{ $tier['name'] }}" class="nothing-tier-icon">
+                        </div>
+                        
+                        <!-- Info -->
+                        <div style="flex: 1; text-align: left; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;">CURRENT RANK</div>
+                            <h4 class="nothing-tier-name" style="font-size: 24px; margin: 0 0 8px 0; letter-spacing: -0.5px;">{{ $tier['name'] }}</h4>
+                            <div class="nothing-tier-exp" style="font-size: 16px; color: var(--text-secondary); margin: 0;">
+                                {{ number_format(auth()->user()->exp) }} <span style="font-size: 10px; color: var(--text-muted);">/ {{ number_format($tier['exp']) }} EXP</span>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            @php
+                                $nextExp = $tier['exp']; // Target for next tier, actually my tier exp is the requirement for this tier.
+                                // Let's find next tier requirement
+                                $nextTierExp = isset($tiers[$index+1]) ? $tiers[$index+1]['exp'] : $tier['exp'];
+                                $progress = 100;
+                                if($nextTierExp > $tier['exp']) {
+                                    $progress = ((auth()->user()->exp - $tier['exp']) / ($nextTierExp - $tier['exp'])) * 100;
+                                    $progress = min(100, max(0, $progress));
+                                }
+                            @endphp
+                            <div style="width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; margin-top: 12px; overflow: hidden;">
+                                <div style="width: {{ $progress }}%; height: 100%; background: var(--bg-secondary); border-radius: 2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <!-- NORMAL LAYOUT -->
+                    <!-- Icon -->
+                    <div class="nothing-tier-icon-wrap">
+                        <img src="{{ asset('assets/ico/' . $tier['icon']) }}" alt="{{ $tier['name'] }}" class="nothing-tier-icon">
+                    </div>
+
+                    <!-- Name -->
+                    <h4 class="nothing-tier-name">{{ $tier['name'] }}</h4>
+
+                    <!-- EXP -->
+                    <div class="nothing-tier-exp">{{ number_format($tier['exp']) }}</div>
+                @endif
             </div>
         @endforeach
     </div>
 </div>
 
 <style>
-    .tier-list-container {
+    .nothing-tier-container {
         width: 100%;
         overflow: hidden;
-        position: relative;
     }
-    .tier-list-scroll {
+
+    .nothing-tier-scroll {
         display: flex;
-        gap: 16px;
+        gap: 10px;
+        justify-content: space-between;
+        width: 100%;
         overflow-x: auto;
-        padding-bottom: 16px; /* Space for scrollbar */
-        padding-top: 16px; /* Space for hover effects */
+        padding-bottom: 12px;
+        padding-top: 16px;
         scrollbar-width: thin;
-        scrollbar-color: rgba(0,0,0,0.2) transparent;
+        scrollbar-color: rgba(0,0,0,0.15) transparent;
         -webkit-overflow-scrolling: touch;
     }
-    .tier-list-scroll::-webkit-scrollbar {
-        height: 8px;
+
+    .nothing-tier-scroll::-webkit-scrollbar {
+        height: 4px;
     }
-    .tier-list-scroll::-webkit-scrollbar-track {
+
+    .nothing-tier-scroll::-webkit-scrollbar-track {
         background: transparent;
     }
-    .tier-list-scroll::-webkit-scrollbar-thumb {
-        background-color: rgba(0,0,0,0.2);
-        border-radius: 20px;
+
+    .nothing-tier-scroll::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.15);
+        border-radius: 0;
     }
-    .tier-card {
+
+    .nothing-tier-card {
         flex: 0 0 auto;
-        width: 160px;
-        background: var(--neo-card-light, #e5e5e5);
-        border-radius: 24px;
-        padding: 24px 16px;
+        width: 140px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 24px 14px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         position: relative;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s, background-color 0.3s;
-        border: 2px solid transparent;
+        transition: border-color 0.15s, background-color 0.15s, transform 0.2s;
+        cursor: default;
+        box-shadow: none;
     }
-    .tier-card:hover {
-        transform: translateY(-8px);
-        background: #fff;
-        box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+
+    .nothing-tier-card:hover {
+        border-color: var(--text-primary); font-family: 'Space Mono', monospace; text-transform: uppercase;
     }
-    .tier-card.current-tier {
-        background: #fff;
-        border-color: #121212;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+
+    /* Active tier — inverted */
+    .nothing-tier-active {
+        width: 440px !important;
+        background: var(--bg-tertiary) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-primary);
+        transform: translateY(-4px);
+        box-shadow: none;
+        padding: 24px;
     }
-    .tier-number {
+
+    .nothing-tier-active .nothing-tier-name {
+        color: var(--text-primary) !important;
+    }
+
+    .nothing-tier-active .nothing-tier-exp {
+        color: var(--text-muted) !important;
+    }
+
+    .nothing-tier-active .nothing-tier-index {
+        color: var(--text-muted) !important;
+    }
+
+    .nothing-tier-active .nothing-tier-icon {
+        filter: brightness(1.3) !important;
+    }
+
+    /* Sovereign — inverted + red accent */
+    .nothing-tier-sovereign {
+        background: var(--bg-tertiary) !important;
+        border: 2px solid #d71921 !important;
+    }
+
+    .nothing-tier-sovereign .nothing-tier-name {
+        color: #d71921 !important;
+        font-weight: 900 !important;
+    }
+
+    .nothing-tier-sovereign .nothing-tier-exp {
+        color: var(--text-muted) !important;
+    }
+
+    .nothing-tier-sovereign .nothing-tier-index {
+        color: #d71921 !important;
+    }
+
+    .nothing-tier-sovereign .nothing-tier-icon {
+        filter: drop-shadow(0 0 8px rgba(215,25,33,0.4)) brightness(1.2) !important;
+    }
+
+    .nothing-tier-index {
         position: absolute;
-        top: 12px;
+        top: 16px;
         left: 16px;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
         font-size: 14px;
-        font-weight: 800;
-        color: #888;
+        color: var(--text-muted);
     }
-    .current-badge {
+
+    .nothing-tier-badge {
         position: absolute;
         top: -12px;
-        background: #121212;
-        color: #fff;
-        font-size: 11px;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 12px;
-        letter-spacing: 0.5px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ea1515;
+        color: var(--text-primary);
+        font-size: 9px;
+        font-weight: 800;
+        padding: 6px 14px;
+        border-radius: var(--neo-btn-radius);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
         z-index: 2;
+        display: flex;
+        align-items: center;
+        border: var(--nothing-border);
     }
-    .tier-icon-wrap {
-        width: 80px;
-        height: 80px;
+
+    .nothing-tier-icon-wrap {
+        width: 72px;
+        height: 72px;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         margin-top: 16px;
     }
-    .tier-icon {
+
+    .nothing-tier-icon {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-        transition: transform 0.3s;
-    }
-    .tier-card:hover .tier-icon {
-        transform: scale(1.1);
-    }
-    .tier-name {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: #121212;
-    }
-    .tier-exp {
-        font-size: 13px;
-        color: #555;
-        font-weight: 600;
-        margin-top: 4px;
-    }
-    
-    /* Sovereign Card Special Styling */
-    .tier-card-sovereign {
-        background: linear-gradient(135deg, #1f1f1f, #121212);
-        position: relative;
-    }
-    
-    .tier-card-sovereign::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 22px;
-        padding: 2px;
-        background: linear-gradient(135deg, #fbbf24, #d946ef, #fbbf24);
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-        animation: sovereignBorderRotate 4s linear infinite;
-    }
-    
-    .tier-card-sovereign .tier-name {
-        background: linear-gradient(135deg, #fbbf24, #d946ef);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-weight: 900;
-    }
-    
-    .tier-card-sovereign .tier-exp {
-        color: #a1a1aa;
-    }
-    
-    .tier-card-sovereign .tier-number {
-        color: #fbbf24;
-    }
-    
-    .tier-card-sovereign .tier-icon {
-        filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6));
-        animation: sovereignIconPulse 2s ease-in-out infinite alternate;
-    }
-    
-    .tier-card-sovereign:hover {
-        background: linear-gradient(135deg, #262626, #1a1a1a);
-        box-shadow: 0 16px 32px rgba(251, 191, 36, 0.2);
-    }
-    
-    .tier-card-sovereign.current-tier {
-        background: linear-gradient(135deg, #262626, #1a1a1a);
-        box-shadow: 0 8px 16px rgba(251, 191, 36, 0.15);
-    }
-    
-    @keyframes sovereignBorderRotate {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-    
-    @keyframes sovereignIconPulse {
-        0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
-        100% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8)); }
+        filter: contrast(1.1);
+        transition: transform 0.2s;
     }
 
-    /* ═══ MOBILE RESPONSIVENESS ═══ */
+    .nothing-tier-card:hover .nothing-tier-icon {
+        transform: scale(1.05);
+    }
+
+    .nothing-tier-name {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text-primary); font-family: 'Space Mono', monospace; text-transform: uppercase;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .nothing-tier-exp {
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    /* ═══ MOBILE ═══ */
     @media (max-width: 768px) {
-        .tier-list-container {
-            margin: 0;
-            width: 100%;
+        .nothing-tier-scroll {
+            gap: 8px;
+            padding: 12px 4px;
         }
-        .tier-list-scroll {
-            gap: 12px;
-            padding: 12px 10px;
+
+        .nothing-tier-card {
+            width: 110px;
+            padding: 14px 10px;
         }
-        .tier-card {
-            width: 120px;
-            padding: 16px 10px;
-            border-radius: 16px;
-        }
-        .tier-icon-wrap {
-            width: 60px;
-            height: 60px;
+
+        .nothing-tier-icon-wrap {
+            width: 52px;
+            height: 52px;
             margin-bottom: 8px;
             margin-top: 12px;
         }
-        .tier-name {
-            font-size: 14px;
-        }
-        .tier-exp {
+
+        .nothing-tier-name {
             font-size: 11px;
-            margin-top: 2px;
         }
-        .tier-number {
-            top: 10px;
+
+        .nothing-tier-exp {
+            font-size: 10px;
+        }
+
+        .nothing-tier-index {
+            font-size: 11px;
+            top: 12px;
             left: 12px;
-            font-size: 13px;
         }
-        .current-badge {
+
+        .nothing-tier-badge {
+            font-size: 7px;
+            padding: 4px 10px;
             top: -10px;
-            font-size: 9px;
-            padding: 4px 8px;
         }
     }
 </style>

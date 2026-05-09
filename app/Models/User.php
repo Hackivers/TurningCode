@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'last_page', 'avatar', 'exp', 'coins'])]
+#[Fillable(['name', 'email', 'password', 'role', 'last_seen', 'last_page', 'avatar', 'exp', 'coins', 'selected_main_materi_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {

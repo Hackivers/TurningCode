@@ -1,7 +1,7 @@
 <style>
     /* Editorial Layout Styles */
     .tc-editorial-container {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Mono', monospace;
         color: #18181b;
         margin-bottom: 40px;
     }
@@ -39,7 +39,7 @@
 
     .tc-btn-dark {
         background: #18181b;
-        color: #fff;
+        color: var(--text-primary);
         border: none;
         padding: 14px 28px;
         border-radius: 12px;
@@ -84,7 +84,7 @@
         bottom: 24px;
         left: 24px;
         right: 24px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--border-color);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -101,13 +101,13 @@
         display: flex;
         align-items: center;
         gap: 16px;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .tc-overlay-emblem {
         width: 56px;
         height: 56px;
-        background: rgba(255,255,255,0.1);
+        background: var(--border-color);
         border-radius: 16px;
         padding: 10px;
         display: flex;
@@ -117,7 +117,7 @@
 
     .tc-badge-pill {
         display: inline-block;
-        background: #fff;
+        background: var(--text-primary);
         color: #18181b;
         font-size: 10px;
         font-weight: 800;
@@ -142,7 +142,7 @@
     .tc-circle-btn {
         width: 48px;
         height: 48px;
-        background: #fff;
+        background: var(--text-primary);
         color: #18181b;
         border-radius: 50%;
         display: flex;
@@ -200,7 +200,7 @@
 
     .tc-stat-card.dark {
         background: #18181b;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .tc-stat-num {
@@ -231,7 +231,7 @@
         width: 32px;
         height: 32px;
         background: #18181b;
-        color: #fff;
+        color: var(--text-primary);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -272,12 +272,12 @@
 
     .tc-btn-danger:hover {
         background: #ef4444;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .tc-btn-primary {
         background: #3b82f6;
-        color: #fff;
+        color: var(--text-primary);
         border: none;
         padding: 14px 28px;
         border-radius: 12px;
@@ -316,7 +316,7 @@
     }
     
     .tc-member-card {
-        background: #fff;
+        background: var(--text-primary);
         border: 1px solid rgba(0,0,0,0.05);
         border-radius: 20px;
         padding: 20px;
@@ -401,7 +401,7 @@
                         <div style="position: relative; flex-shrink: 0;">
                             <img src="{{ $member->user->avatar ? asset('storage/' . $member->user->avatar) : asset('assets/ico/' . ($member->user->emblem_image ?? 'default-user.jpg')) }}" alt="Avatar" style="width: 56px; height: 56px; border-radius: 16px; object-fit: cover;">
                             @if($member->user->id === Auth::id())
-                                <div style="position: absolute; bottom: -4px; right: -4px; background: #18181b; color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff;">
+                                <div style="position: absolute; bottom: -4px; right: -4px; background: #18181b; color: var(--text-primary); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--text-primary);">
                                     <i class='bx bx-user' style="font-size: 10px;"></i>
                                 </div>
                             @endif
@@ -414,7 +414,7 @@
                                 </h4>
                                 <div>
                                     @if(strtolower($member->role) === 'leader')
-                                        <span style="background: #18181b; color: #fff; padding: 3px 8px; border-radius: 100px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">KETUA</span>
+                                        <span style="background: #18181b; color: var(--text-primary); padding: 3px 8px; border-radius: 100px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">KETUA</span>
                                     @elseif(strtolower($member->role) === 'co_leader')
                                         <span style="background: rgba(0,0,0,0.06); color: #18181b; padding: 3px 8px; border-radius: 100px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">WAKIL</span>
                                     @else

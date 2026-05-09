@@ -54,15 +54,19 @@ class UserController extends Controller
         'clans',
         'clan-detail',
         'shop',
+        'select-main-materi',
     ];
 
     public function spa(): View
     {
+        $user = Auth::user();
+        $initialPage = $user->selected_main_materi_id ? 'dashboard' : 'select-main-materi';
+
         return view('spa.user', [
             'title' => 'Dashboard — User',
             'viteEntry' => 'resources/js/SPA_user.js',
             'pageBaseUrl' => url('/app/page'),
-            'initialPage' => 'dashboard',
+            'initialPage' => $initialPage,
         ]);
     }
 
@@ -97,65 +101,79 @@ class UserController extends Controller
             }
         }
 
+        // ── Select Main Materi (Onboarding) ─────────────────────────
+        if ($page === 'select-main-materi') {
+            $mainMateris = MainMateri::where('status', '!=', 'draft')
+                ->withCount('materis')
+                ->with('materis.subMateris:id,materi_id')
+                ->get()
+                ->map(function ($main) {
+                    $totalSub = 0;
+                    foreach ($main->materis as $m) {
+                        $totalSub += $m->subMateris->count();
+                    }
+                    $main->total_sub = $totalSub;
+                    return $main;
+                });
+
+            return view('spa.fragments.user-selectMainMateri', [
+                'mainMateris' => $mainMateris,
+            ]);
+        }
+
         // ── Dashboard ────────────────────────────────────────────────
         if ($page === 'dashboard') {
+            // If user hasn't selected main materi yet, redirect to selection
+            if (!$user->selected_main_materi_id) {
+                return view('spa.fragments.user-selectMainMateri', [
+                    'mainMateris' => MainMateri::where('status', '!=', 'draft')
+                        ->withCount('materis')
+                        ->with('materis.subMateris:id,materi_id')
+                        ->get()
+                        ->map(function ($main) {
+                            $totalSub = 0;
+                            foreach ($main->materis as $m) {
+                                $totalSub += $m->subMateris->count();
+                            }
+                            $main->total_sub = $totalSub;
+                            return $main;
+                        }),
+                ]);
+            }
+
             $userId = Auth::id();
+            $selectedMainId = $user->selected_main_materi_id;
 
             // Ambil semua sub_materi_id yang sudah di-view user (single query, indexed lookup)
             $viewedSubIds = $userId
                 ? UserHistory::where('user_id', $userId)
                     ->pluck('sub_materi_id')
-                    ->flip() // flip untuk O(1) lookup via isset() instead of in_array O(n)
+                    ->flip()
                     ->all()
                 : [];
 
-            // Ambil HANYA history terakhir per MainMateri (limit, bukan semua)
-            $lastHistories = $userId
-                ? UserHistory::where('user_id', $userId)
-                    ->select(['sub_materi_id', 'viewed_at'])
-                    ->with('submateri:id,title,materi_id')
-                    ->orderByDesc('viewed_at')
-                    ->limit(50)
-                    ->get()
-                : collect();
+            // Get selected MainMateri info for display
+            $selectedMainMateri = MainMateri::find($selectedMainId);
 
-            $mainMateri = MainMateri::where('status', '!=', 'draft')
-                ->withCount('materis')
-                ->with('materis:id,main_materi_id,title')
-                ->with('materis.subMateris:id,materi_id')
+            // Get Materi (chapters) under selected MainMateri with progress
+            $materis = Materi::where('main_materi_id', $selectedMainId)
+                ->withCount('subMateris')
+                ->with('subMateris:id,materi_id')
                 ->get()
-                ->map(function ($main) use ($viewedSubIds, $lastHistories) {
-                    $totalSub = 0;
-                    $doneSub = 0;
-                    $allSubIds = [];
-
-                    foreach ($main->materis as $m) {
-                        foreach ($m->subMateris as $sub) {
-                            $totalSub++;
-                            $allSubIds[] = $sub->id;
-                            if (isset($viewedSubIds[$sub->id])) {
-                                $doneSub++;
-                            }
-                        }
-                    }
-
-                    $main->total_materi = $main->materis_count;
-                    $main->total_submateri = $totalSub;
-                    $main->is_coming_soon = $main->status === 'coming_soon';
-                    $main->progress_percent = $totalSub > 0 ? round(($doneSub / $totalSub) * 100) : 0;
-                    $main->is_completed = $totalSub > 0 && $doneSub >= $totalSub;
-
-                    // Cari history terakhir yang sub_materi-nya milik MainMateri ini
-                    $allSubFlipped = array_flip($allSubIds);
-                    $lastHistory = $lastHistories->first(function ($h) use ($allSubFlipped) {
-                        return isset($allSubFlipped[$h->sub_materi_id]);
-                    });
-
-                    $main->last_studied_title = $lastHistory?->submateri?->title;
-                    $main->last_studied_at = $lastHistory?->viewed_at;
-
-                    return $main;
+                ->map(function ($materi) use ($viewedSubIds) {
+                    $total = $materi->sub_materis_count;
+                    $done = $materi->subMateris->filter(fn($sub) => isset($viewedSubIds[$sub->id]))->count();
+                    $materi->progress_done = $done;
+                    $materi->progress_total = $total;
+                    $materi->progress_percent = $total > 0 ? round(($done / $total) * 100) : 0;
+                    $materi->is_completed = $total > 0 && $done >= $total;
+                    return $materi;
                 });
+
+            // Overall progress for selected MainMateri
+            $totalSub = $materis->sum('progress_total');
+            $doneSub = $materis->sum('progress_done');
+            $overallProgress = $totalSub > 0 ? round(($doneSub / $totalSub) * 100) : 0;
 
             $topUsers = \App\Models\User::where('role', 'user')
                 ->orderByDesc('exp')
@@ -198,16 +216,16 @@ class UserController extends Controller
                 ->first();
             if ($lastViewed && $lastViewed->submateri && $lastViewed->submateri->materi) {
                 $currentMateriId = $lastViewed->submateri->materi_id;
-                $viewedSubIds = UserHistory::where('user_id', Auth::id())->pluck('sub_materi_id')->toArray();
+                $viewedSubIdsArr = UserHistory::where('user_id', Auth::id())->pluck('sub_materi_id')->toArray();
                 $recommendedMateris = SubMateri::where('materi_id', $currentMateriId)
                     ->where('is_published', true)
-                    ->whereNotIn('id', $viewedSubIds)
+                    ->whereNotIn('id', $viewedSubIdsArr)
                     ->with('materi')
                     ->limit(4)
                     ->get();
                 if ($recommendedMateris->isEmpty()) {
                     $recommendedMateris = SubMateri::where('is_published', true)
-                        ->whereNotIn('id', $viewedSubIds)
+                        ->whereNotIn('id', $viewedSubIdsArr)
                         ->with('materi')
                         ->inRandomOrder()
                         ->limit(4)
@@ -229,8 +247,9 @@ class UserController extends Controller
                 ->first();
 
             return view('spa.fragments.user-dashboard', [
-                'data' => ['mainMateri' => $mainMateri],
-                'mainMateri' => $mainMateri,
+                'selectedMainMateri' => $selectedMainMateri,
+                'materis' => $materis,
+                'overallProgress' => $overallProgress,
                 'topUsers' => $topUsers,
                 'myFriendships' => $myFriendships,
                 'friendUsers' => $friendUsers,
@@ -508,10 +527,30 @@ class UserController extends Controller
             $today = $schedules->filter(fn($s) => $s->isActiveToday());
             $upcoming = $schedules->filter(fn($s) => !$s->isActiveToday() && $s->is_active);
 
+            // Cascading materi data for category picker
+            $mainMateris = MainMateri::with(['materis.subMateris' => function ($q) {
+                $q->where('is_published', true)->orderBy('bab');
+            }])->where('status', 'publish')->get();
+
+            // Recommendations: SubMateri not yet read by user (max 5)
+            $readSubMateriIds = UserHistory::where('user_id', $userId)
+                ->pluck('sub_materi_id')
+                ->unique()
+                ->toArray();
+
+            $recommendations = SubMateri::with(['materi.mainMateri'])
+                ->where('is_published', true)
+                ->whereNotIn('id', $readSubMateriIds)
+                ->orderBy('bab')
+                ->take(5)
+                ->get();
+
             return view('spa.fragments.user-schedule', [
                 'schedules' => $schedules,
                 'today' => $today,
                 'upcoming' => $upcoming,
+                'mainMateris' => $mainMateris,
+                'recommendations' => $recommendations,
             ]);
         }
 
@@ -1410,7 +1449,7 @@ class UserController extends Controller
 
         IssueReport::create([
             'user_id' => Auth::id(),
-            'title' => $request->title,
+            'name' => $request->title,
             'description' => $request->description,
             'image_path' => $path,
             'status' => 'pending'
@@ -1713,5 +1752,23 @@ class UserController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => '"' . $item->name . '" berhasil dibeli!', 'coins_left' => $user->fresh()->coins]);
+    }
+
+    /**
+     * Save user's selected MainMateri (onboarding / change path)
+     */
+    public function selectMainMateri(Request $request): JsonResponse
+    {
+        $request->validate([
+            'main_materi_id' => 'required|exists:main_materis,id',
+        ]);
+
+        $user = Auth::user();
+        $user->update(['selected_main_materi_id' => $request->main_materi_id]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jalur belajar berhasil dipilih!',
+        ]);
     }
 }

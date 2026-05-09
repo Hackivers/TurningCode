@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
     <title>{{ config('app.name') }} — Platform Belajar Interaktif</title>
 </head>
@@ -24,14 +24,22 @@
             <div class="wlc-header-inner">
                 <a href="{{ route('home') }}" class="wlc-header-brand">
                     <i class='bx bx-code-alt'></i>
-                    <span>TurningCode</span>
+                    <span style="color: #fff;">TurningCode</span>
                 </a>
 
                 <nav class="wlc-header-nav">
-                    <a href="#" class="wlc-header-link" onclick="event.preventDefault(); showInfoPopup(event, 'Materi Terstruktur', 'Jelajahi berbagai modul pembelajaran yang disusun rapi dari tingkat dasar hingga mahir. Kami mencakup HTML, CSS, JavaScript modern, hingga arsitektur Backend.', 'bx-book-open')">Materi <i class='bx bx-chevron-down'></i></a>
-                    <a href="#" class="wlc-header-link" onclick="event.preventDefault(); showInfoPopup(event, 'Fitur Unggulan', 'Platform kami dilengkapi dengan Live Code Editor, sistem Gamifikasi (EXP & Rank), pemantauan progres visual, serta asisten AI TurnBot yang siap membantumu.', 'bx-star')">Fitur <i class='bx bx-chevron-down'></i></a>
-                    <a href="#" class="wlc-header-link" onclick="event.preventDefault(); showInfoPopup(event, 'Integrasi Sistem', 'TurningCode terintegrasi penuh dengan lingkungan eksekusi waktu nyata. Tulis kodemu dan jalankan secara langsung di browser dengan Live DOM dan JS Runtime Console.', 'bx-plug')">Integrasi <i class='bx bx-chevron-down'></i></a>
-                    <a href="#" class="wlc-header-link" onclick="event.preventDefault(); showInfoPopup(event, 'Komunitas & Ekstra', 'Temukan berbagai kejutan menarik di dalam platform! Mulai dari leaderboard peringkat siswa, easter eggs tersembunyi, hingga mini-games interaktif bersama TurnBot.', 'bx-category')">Lainnya <i class='bx bx-chevron-down'></i></a>
+                    <a href="#" class="wlc-header-link"
+                        onclick="event.preventDefault(); showInfoPopup(event, 'Materi Terstruktur', 'Jelajahi berbagai modul pembelajaran yang disusun rapi dari tingkat dasar hingga mahir. Kami mencakup HTML, CSS, JavaScript modern, hingga arsitektur Backend.', 'bx-book-open')">Materi
+                        <i class='bx bx-chevron-down'></i></a>
+                    <a href="#" class="wlc-header-link"
+                        onclick="event.preventDefault(); showInfoPopup(event, 'Fitur Unggulan', 'Platform kami dilengkapi dengan Live Code Editor, sistem Gamifikasi (EXP & Rank), pemantauan progres visual, serta asisten AI TurnBot yang siap membantumu.', 'bx-star')">Fitur
+                        <i class='bx bx-chevron-down'></i></a>
+                    <a href="#" class="wlc-header-link"
+                        onclick="event.preventDefault(); showInfoPopup(event, 'Integrasi Sistem', 'TurningCode terintegrasi penuh dengan lingkungan eksekusi waktu nyata. Tulis kodemu dan jalankan secara langsung di browser dengan Live DOM dan JS Runtime Console.', 'bx-plug')">Integrasi
+                        <i class='bx bx-chevron-down'></i></a>
+                    <a href="#" class="wlc-header-link"
+                        onclick="event.preventDefault(); showInfoPopup(event, 'Komunitas & Ekstra', 'Temukan berbagai kejutan menarik di dalam platform! Mulai dari leaderboard peringkat siswa, easter eggs tersembunyi, hingga mini-games interaktif bersama TurnBot.', 'bx-category')">Lainnya
+                        <i class='bx bx-chevron-down'></i></a>
                 </nav>
 
                 <div class="wlc-header-actions">
@@ -48,10 +56,14 @@
 
             {{-- Mobile dropdown --}}
             <div class="wlc-header-mobile">
-                <a href="#" class="wlc-mobile-link" onclick="event.preventDefault(); showInfoPopup(event, 'Materi Terstruktur', 'Jelajahi berbagai modul pembelajaran yang disusun rapi dari tingkat dasar hingga mahir. Kami mencakup HTML, CSS, JavaScript modern, hingga arsitektur Backend.', 'bx-book-open')">Materi</a>
-                <a href="#" class="wlc-mobile-link" onclick="event.preventDefault(); showInfoPopup(event, 'Fitur Unggulan', 'Platform kami dilengkapi dengan Live Code Editor, sistem Gamifikasi (EXP & Rank), pemantauan progres visual, serta asisten AI TurnBot yang siap membantumu.', 'bx-star')">Fitur</a>
-                <a href="#" class="wlc-mobile-link" onclick="event.preventDefault(); showInfoPopup(event, 'Integrasi Sistem', 'TurningCode terintegrasi penuh dengan lingkungan eksekusi waktu nyata. Tulis kodemu dan jalankan secara langsung di browser dengan Live DOM dan JS Runtime Console.', 'bx-plug')">Integrasi</a>
-                <a href="#" class="wlc-mobile-link" onclick="event.preventDefault(); showInfoPopup(event, 'Komunitas & Ekstra', 'Temukan berbagai kejutan menarik di dalam platform! Mulai dari leaderboard peringkat siswa, easter eggs tersembunyi, hingga mini-games interaktif bersama TurnBot.', 'bx-category')">Lainnya</a>
+                <a href="#" class="wlc-mobile-link"
+                    onclick="event.preventDefault(); showInfoPopup(event, 'Materi Terstruktur', 'Jelajahi berbagai modul pembelajaran yang disusun rapi dari tingkat dasar hingga mahir. Kami mencakup HTML, CSS, JavaScript modern, hingga arsitektur Backend.', 'bx-book-open')">Materi</a>
+                <a href="#" class="wlc-mobile-link"
+                    onclick="event.preventDefault(); showInfoPopup(event, 'Fitur Unggulan', 'Platform kami dilengkapi dengan Live Code Editor, sistem Gamifikasi (EXP & Rank), pemantauan progres visual, serta asisten AI TurnBot yang siap membantumu.', 'bx-star')">Fitur</a>
+                <a href="#" class="wlc-mobile-link"
+                    onclick="event.preventDefault(); showInfoPopup(event, 'Integrasi Sistem', 'TurningCode terintegrasi penuh dengan lingkungan eksekusi waktu nyata. Tulis kodemu dan jalankan secara langsung di browser dengan Live DOM dan JS Runtime Console.', 'bx-plug')">Integrasi</a>
+                <a href="#" class="wlc-mobile-link"
+                    onclick="event.preventDefault(); showInfoPopup(event, 'Komunitas & Ekstra', 'Temukan berbagai kejutan menarik di dalam platform! Mulai dari leaderboard peringkat siswa, easter eggs tersembunyi, hingga mini-games interaktif bersama TurnBot.', 'bx-category')">Lainnya</a>
                 <div class="wlc-mobile-actions">
                     <a href="{{ route('login') }}" class="wlc-header-login">Log in</a>
                     <a href="{{ route('register') }}" class="wlc-header-cta">Daftar Sekarang</a>
@@ -60,9 +72,34 @@
         </header>
 
         {{-- ═══ HERO SECTION — Split Layout ═══ --}}
-        <section class="wlc-hero">
+        <section class="wlc-hero" id="parallax-container" style="position: relative; overflow: hidden;">
+            {{-- Parallax Background Layers --}}
+            <div class="parallax-layer layer-bg" data-speed="0.02"
+                style="position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 30px 30px; z-index: 0; pointer-events: none; transition: transform 0.1s ease-out;">
+            </div>
+
+            <div class="parallax-layer layer-abstract" data-speed="0.05"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 1; pointer-events: none; transition: transform 0.1s ease-out;">
+                <div
+                    style="font-family: 'Space Mono', monospace; font-size: 25vw; font-weight: 700; color: rgba(255, 255, 255, 0.03); letter-spacing: -0.05em; user-select: none;">
+                    N(1)</div>
+            </div>
+
+            <div class="parallax-layer layer-shapes" data-speed="0.08"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; transition: transform 0.1s ease-out;">
+                <div
+                    style="position: absolute; width: 300px; height: 300px; top: 15%; left: 20%; border: 1px solid rgba(234, 21, 21, 0.2); background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); border-radius: 50%;">
+                </div>
+                <div
+                    style="position: absolute; width: 150px; height: 150px; bottom: 20%; right: 25%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); border-radius: 50%;">
+                </div>
+                <div
+                    style="position: absolute; width: 80px; height: 80px; top: 40%; right: 15%; background: #ea1515; filter: blur(40px); opacity: 0.5; border-radius: 50%;">
+                </div>
+            </div>
+
             {{-- Vertical lines background --}}
-            <div class="wlc-lines" aria-hidden="true">
+            <div class="wlc-lines" aria-hidden="true" style="z-index: 2;">
                 <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
 
@@ -79,8 +116,9 @@
                 <div class="wlc-hero-left">
                     <div class="wlc-sparkle">✦</div>
 
-                    <h1 class="wlc-hero-title">
-                        <span class="serif">Complete</span>
+                    <h1 class="wlc-hero-title" style="font-family: 'Space Mono', monospace; text-transform: uppercase;">
+                        <span class="serif"
+                            style="font-family: 'Inter', sans-serif; font-style: normal; color: #ea1515;">Complete</span><br>
                         Platform Belajar
                         Interaktif
                     </h1>
@@ -566,9 +604,9 @@
                             }
                         };
                         document.addEventListener('click', closeHandler);
-                        
+
                         setTimeout(() => {
-                            if(currentNavPopover === popup) {
+                            if (currentNavPopover === popup) {
                                 popup.style.opacity = '0';
                                 popup.style.transform = `translateX(${transformX}) translateY(10px)`;
                                 setTimeout(() => popup.remove(), 250);
@@ -647,6 +685,45 @@
             </div>
         </section>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('parallax-container');
+            const layers = document.querySelectorAll('.parallax-layer');
+
+            if (container && layers.length > 0) {
+                let cx = window.innerWidth / 2;
+                let cy = window.innerHeight / 2;
+
+                window.addEventListener('resize', () => {
+                    cx = window.innerWidth / 2;
+                    cy = window.innerHeight / 2;
+                });
+
+                container.addEventListener('mousemove', (e) => {
+                    const mouseX = e.clientX;
+                    const mouseY = e.clientY;
+
+                    requestAnimationFrame(() => {
+                        layers.forEach(layer => {
+                            const speed = parseFloat(layer.getAttribute('data-speed'));
+                            const x = (mouseX - cx) * speed;
+                            const y = (mouseY - cy) * speed;
+                            layer.style.transform = `translate(${-x}px, ${-y}px)`;
+                        });
+                    });
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    requestAnimationFrame(() => {
+                        layers.forEach(layer => {
+                            layer.style.transform = `translate(0px, 0px)`;
+                        });
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

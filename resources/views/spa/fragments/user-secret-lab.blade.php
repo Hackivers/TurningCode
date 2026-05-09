@@ -351,7 +351,7 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
     }
 
     .sl-locked-body h2 {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Mono', monospace;
         font-size: 22px;
         font-weight: 800;
         color: var(--neo-text-dark, #121212);
@@ -518,7 +518,7 @@ SECRET LAB — Elite-Only Zone (Universe+ Tier)
     }
 
     .sl-bento-card.sl-bc-dark .sl-bc-value {
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .sl-bc-label {

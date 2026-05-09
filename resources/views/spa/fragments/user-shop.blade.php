@@ -4,14 +4,14 @@
         {{-- Header --}}
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
             <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Reward Shop</h2>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Reward Shop</h2>
                 <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Tukarkan koin untuk item eksklusif!</p>
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="display: flex; align-items: center; gap: 10px; padding: 12px 20px; background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 16px; box-shadow: 0 8px 20px rgba(49, 46, 129, 0.25);">
                     <span style="font-size: 22px;">🪙</span>
                     <div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Koin Kamu</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Koin Kamu</div>
                         <div id="shop-coins-display" style="font-size: 24px; font-weight: 900; color: #fbbf24; line-height: 1.1;">{{ number_format($userCoins) }}</div>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
         <div class="neo-card neo-card-light" style="padding: 20px 24px; border-radius: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #6366f1;">
             <i class='bx bx-info-circle' style="font-size: 24px; color: #6366f1; flex-shrink: 0;"></i>
             <div>
-                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: #121212;">Cara Mendapatkan Koin</h4>
+                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: var(--text-primary)fff;">Cara Mendapatkan Koin</h4>
                 <p style="margin: 0; font-size: 13px; color: #666;">Selesaikan misi harian (+10), lulus kuis (+15), capai streak belajar (+5/hari). Semakin aktif, semakin banyak koin!</p>
             </div>
         </div>
@@ -68,13 +68,13 @@
 
                         {{-- Owned overlay badge --}}
                         @if($owned)
-                            <div style="position: absolute; top: 12px; right: 12px; background: #10b981; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                            <div style="position: absolute; top: 12px; right: 12px; background: #10b981; color: var(--text-primary); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
                                 <i class='bx bxs-check-circle'></i> Dimiliki
                             </div>
                         @endif
 
                         {{-- Item icon --}}
-                        <div style="width: 100px; height: 100px; border-radius: 28px; background: {{ $owned ? 'rgba(255,255,255,0.5)' : 'linear-gradient(135deg, #ffffff, #f8fafc)' }}; border: 1px solid rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+                        <div style="width: 100px; height: 100px; border-radius: 28px; background: {{ $owned ? 'var(--text-muted)' : 'linear-gradient(135deg, #ffffff, #f8fafc)' }}; border: 1px solid rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
                             <img src="{{ asset('assets/ico/' . $item->icon) }}" alt="{{ $item->name }}"
                                  style="width: 72px; height: 72px; object-fit: contain; {{ $owned ? '' : 'filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));' }} transition: all 0.3s;">
                         </div>
@@ -84,7 +84,7 @@
                             {{ $typeLabel }}
                         </span>
 
-                        <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: #121212; line-height: 1.3;">{{ $item->name }}</h4>
+                        <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--text-primary)fff; line-height: 1.3;">{{ $item->name }}</h4>
 
                         {{-- Price --}}
                         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 16px;">
@@ -126,7 +126,7 @@
         padding: 10px 24px;
         border-radius: 100px;
         border: 1px solid rgba(0,0,0,0.06);
-        background: rgba(255,255,255,0.8);
+        background: var(--text-secondary);
         color: #555;
         font-size: 14px;
         font-weight: 700;
@@ -142,12 +142,12 @@
     }
     .shop-filter-btn.active {
         background: linear-gradient(135deg, #1e1b4b, #312e81);
-        color: #fff;
+        color: var(--text-primary);
         border-color: transparent;
         box-shadow: 0 8px 20px rgba(49, 46, 129, 0.3);
     }
     .shop-item-card {
-        border: 1px solid rgba(255,255,255,0.5);
+        border: 1px solid var(--text-muted);
     }
     .shop-item-card:hover {
         transform: translateY(-8px);

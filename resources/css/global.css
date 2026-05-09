@@ -16,20 +16,20 @@
 }
 
 .dark-mode {
-    --bg-primary: #0D0C14;
-    --bg-secondary: #13121C;
-    --bg-tertiary: #191825;
-    --text-primary: #F5F5F7;
-    --text-secondary: #E6E0E9;
-    --text-muted: #8A898A;
-    --border-color: #2A2C3A;
-    --accent-primary: #818cf8;
-    --accent-secondary: #a78bfa;
-    --sidebar-bg: linear-gradient(180deg, #13121C 0%, #0D0C14 100%);
-    --nav-bg: rgba(13, 12, 20, 0.8);
-    --glass-bg: rgba(30, 30, 46, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.05);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --bg-primary: #000000;
+    --bg-secondary: rgba(255, 255, 255, 0.03);
+    --bg-tertiary: rgba(255, 255, 255, 0.05);
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #a1a1aa;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --accent-primary: #ea1515;
+    --accent-secondary: #d01010;
+    --sidebar-bg: #000000;
+    --nav-bg: rgba(0, 0, 0, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
 * {
@@ -75,6 +75,7 @@
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    overflow-x: hidden;
 }
 
 body::-webkit-scrollbar {
@@ -97,11 +98,6 @@ body {
     text-align: center;
     font-weight: 450;
     color: #7A7F84;
-}
-
-.bottom-space {
-    height: 4.9em;
-    width: 100%;
 }
 
 .title-example {

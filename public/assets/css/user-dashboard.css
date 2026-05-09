@@ -1,12 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --neo-bg: #ececec;
-    --neo-card-light: #e5e5e5;
-    --neo-card-black: #000000;
-    --neo-text-dark: #121212;
+    --neo-bg: #f9fafb; /* Light mode base */
+    --neo-card-light: #ffffff;
+    --neo-card-black: #0c0c0c;
+    --neo-text-dark: #000000;
     --neo-text-light: #ffffff;
-    --neo-radius: 32px;
+    --neo-radius: 40px; /* Maximum roundness */
+    --neo-btn-radius: 9999px; /* Pill shape */
+    --nothing-red: #d71921;
+    --nothing-border: 2px solid #000000;
+    --nothing-border-light: 1px solid #000000;
+    --nothing-dot-font: 'DotGothic16', monospace;
+}
+
+/* Dot Matrix Background Pattern */
+.nothing-dots {
+    background-image: radial-gradient(circle, #000 1px, transparent 1.5px);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+    opacity: 0.05;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
 body {
@@ -21,12 +38,11 @@ body {
 }
 
 .neo-dashboard {
-    background-color: var(--neo-bg);
+    background-color: transparent;
     color: var(--neo-text-dark);
     font-family: 'Inter', sans-serif;
     padding: 32px 0;
-    /* Let rtd container handle left/right spacing so it perfectly lines up with the sidebar & header */
-    min-height: 100vh;
+    height: 100dvh;
     width: 100%;
     overflow-x: hidden;
 }
@@ -54,28 +70,36 @@ body {
 
 .neo-card {
     border-radius: var(--neo-radius);
-    padding: 32px;
+    padding: 36px;
     position: relative;
     overflow: hidden;
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-    max-width: 100%;
-    box-sizing: border-box;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: var(--nothing-border-light);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
 }
 
 .neo-card:hover {
     transform: translateY(-4px);
+    border: var(--nothing-border);
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
 }
 
 .neo-card-light {
-    background: var(--neo-card-light);
+    background-color: var(--neo-card-light);
     color: var(--neo-text-dark);
 }
 
 .neo-card-black {
-    background: var(--neo-card-black);
+    background-color: var(--neo-card-black);
+    color: var(--neo-text-light);
+}
+
+.neo-card-black h3,
+.neo-card-black p {
     color: var(--neo-text-light);
 }
 
@@ -136,6 +160,31 @@ body {
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
+}
+
+.neo-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: var(--neo-btn-radius);
+    font-weight: 800;
+    font-family: var(--nothing-dot-font);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: var(--nothing-border);
+}
+
+.neo-btn-primary {
+    background-color: var(--neo-text-dark);
+    color: var(--neo-text-light);
+}
+
+.neo-btn-primary:hover {
+    background-color: transparent;
+    color: var(--neo-text-dark);
 }
 
 .neo-card-black .neo-pill {
@@ -210,6 +259,23 @@ body {
     -webkit-backdrop-filter: blur(6px);
 }
 
+.fs-sidebar {
+    position: fixed;
+    top: 32px;
+    bottom: 32px;
+    left: 32px;
+    width: 260px;
+    background-color: var(--neo-card-light);
+    border-radius: var(--neo-radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    border: var(--nothing-border-light);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+}
+
 .neo-aside {
     background: #fafafa;
     display: flex;
@@ -279,13 +345,60 @@ body {
 }
 
 /* ── Navigation Menu ── */
-.neo-nav-menu {
+.fs-nav-main {
     display: flex;
     flex-direction: column;
     gap: 6px;
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.fs-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: var(--neo-btn-radius);
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.fs-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--neo-text-dark);
+}
+
+.fs-link.active {
+    background-color: #000;
+    color: #fff;
+    font-weight: 700;
+    border: 2px solid #000;
+    font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.fs-link.active::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: #d71921;
+    border-radius: 50%;
+}
+
+.fs-link.active i {
+    color: #fff;
 }
 
 .neo-nav-link {
@@ -631,4 +744,132 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+/* ── Sidebar Nothing OS Styles ── */
+.fs-promo {
+    background-color: #000;
+    border-radius: var(--neo-radius);
+    padding: 24px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    margin-top: auto;
+    border: var(--nothing-border-light);
+    margin-bottom: 16px;
+}
+.fs-promo-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.fs-promo-icon i {
+    font-size: 24px;
+    color: #fff;
+}
+.fs-promo-subtitle {
+    display: block;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+}
+.fs-promo-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+.fs-promo-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.fs-promo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background-color: #fff;
+    color: #000;
+    text-decoration: none;
+    border-radius: var(--neo-btn-radius);
+    font-weight: 800;
+    font-size: 12px;
+    font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+    text-transform: uppercase;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+.fs-promo-btn:hover {
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+}
+
+/* ── Bottom Actions ── */
+.fs-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.05);
+    margin: 16px 0;
+}
+.fs-bottom-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.fs-icon {
+    font-size: 20px;
+}
+.fs-logout-btn {
+    color: #d71921 !important;
+    cursor: pointer;
+}
+.fs-logout-btn:hover {
+    background: rgba(215, 25, 33, 0.05) !important;
+}
+
+/* ── Sidebar Footer ── */
+.fs-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: var(--neo-btn-radius);
+    background: rgba(0,0,0,0.02);
+    border: var(--nothing-border-light);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.fs-footer:hover {
+    background: rgba(0,0,0,0.05);
+}
+.fs-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #000;
+}
+.fs-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    text-align: left;
+}
+.fs-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fs-role {
+    font-size: 11px;
+    color: #888;
+}
+.fs-chevron {
+    font-size: 20px;
+    color: #888;
 }

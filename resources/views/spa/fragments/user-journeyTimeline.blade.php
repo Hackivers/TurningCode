@@ -157,15 +157,16 @@
     }
 @endphp
 
-<div class="neo-card neo-card-light" style="padding: 48px; position: relative; border: 1px solid rgba(0,0,0,0.04);">
+<div class="nw-cell" style="padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); position: relative;">
     {{-- Header --}}
     <div
         style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
         <div>
-            <p style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.5);">Your Learning Journey
-            </p>
-            <h2 style="margin: 0; font-size: 32px; font-weight: 800; color: #121212; letter-spacing: -0.5px;">Schedule &
-                Timeline</h2>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 6px; height: 6px; background: #d71921; border-radius: 50%;"></div>
+                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);">LEARNING JOURNEY</div>
+            </div>
+            <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; font-family: 'Space Mono', monospace; text-transform: uppercase;">Schedule & Timeline</h2>
         </div>
 
         {{-- Switch Mode --}}
@@ -180,9 +181,9 @@
     </div>
 
     @if ($displaySchedules->isEmpty())
-        <div style="text-align:center; padding:40px; background:rgba(0,0,0,0.02); border-radius:16px;">
+        <div style="text-align:center; padding:40px; background:var(--bg-secondary); border-radius:16px;">
             <i class='bx bx-calendar-x' style="font-size:48px; color:#ccc; margin-bottom:12px;"></i>
-            <p style="margin:0; font-weight:600; color:#888;">Belum ada jadwal. Tambahkan jadwal untuk melihat kalendermu!
+            <p style="margin:0; font-weight:600; color: var(--text-muted);">Belum ada jadwal. Tambahkan jadwal untuk melihat kalendermu!
             </p>
         </div>
     @else
@@ -333,23 +334,26 @@
             </div>
 
             {{-- Detail Jadwal Bawah (Desktop Only) --}}
-            <div class="desktop-detail-agenda" style="margin-top: 40px; padding-top: 24px; border-top: 1px dashed rgba(0,0,0,0.1);">
-                <h4 style="font-size: 16px; font-weight: 800; color: #121212; margin: 0 0 16px; letter-spacing: -0.3px;">
-                    Detail Agenda</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+            <div class="desktop-detail-agenda" style="margin-top: 40px; padding-top: 24px; border-top: 2px dashed rgba(0,0,0,0.08);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <div style="width: 6px; height: 6px; background: #d71921; border-radius: 50%;"></div>
+                    <h4 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.3px; text-transform: uppercase; font-family: 'Space Mono', monospace;">
+                        Detail Agenda</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; overflow: hidden;">
                     @foreach ($displaySchedules as $schedule)
                         <div
-                            style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.04);">
+                            style="display: flex; align-items: center; gap: 16px; background: var(--bg-secondary); padding: 20px 24px; border-radius: 12px; border: 1px solid var(--border-color); transition: transform 0.2s, background 0.2s; cursor: default; width: 100%; box-sizing: border-box;"
+                            onmouseover="this.style.transform='translateY(-4px)'; this.style.background='var(--bg-tertiary)';" onmouseout="this.style.transform=''; this.style.background='var(--bg-secondary)';">
                             <div
-                                style="width: 12px; height: 12px; border-radius: 50%; background: {{ $schedule->color ?? '#1a1a1a' }}; box-shadow: 0 2px 6px {{ $schedule->color ?? '#1a1a1a' }}80;">
+                                style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border-color); background: {{ $schedule->color ?? '#1a1a1a' }}; flex-shrink: 0;">
                             </div>
-                            <div style="flex: 1; display: flex; align-items: baseline; gap: 8px;">
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0;">
                                 <span
-                                    style="font-weight: 700; font-size: 14px; color: #121212; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;"
+                                    style="font-weight: 700; font-size: 14px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Space Mono', monospace;"
                                     title="{{ $schedule->title }}">{{ $schedule->title }}</span>
-                                <span style="font-weight: 600; font-size: 13px; color: rgba(0,0,0,0.5);">
-                                    : {{ $schedule->start_time ? substr($schedule->start_time, 0, 5) : '-' }} -
-                                    {{ $schedule->end_time ? substr($schedule->end_time, 0, 5) : '-' }}
+                                <span style="font-family: var(--nothing-dot-font, 'DotGothic16', monospace); font-weight: 400; font-size: 14px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;">
+                                    {{ $schedule->start_time ? substr($schedule->start_time, 0, 5) : '-' }} - {{ $schedule->end_time ? substr($schedule->end_time, 0, 5) : '-' }}
                                 </span>
                             </div>
                         </div>
@@ -362,7 +366,7 @@
         <div id="view-calendar" style="display: none;">
             <div class="month-calendar-container">
                 <div class="month-header">
-                    <h3>{{ $todayDate->translatedFormat('F Y') }}</h3>
+                    <h3 style="color: var(--text-primary); font-family: 'Space Mono', monospace;">{{ $todayDate->translatedFormat('F Y') }}</h3>
                 </div>
                 <div class="month-grid">
                     {{-- Day Names Header --}}
@@ -425,7 +429,7 @@
 
     .calendar-header {
         display: flex;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 2px solid var(--border-color);
         padding-bottom: 12px;
         z-index: 10;
     }
@@ -453,24 +457,25 @@
     .day-name {
         font-size: 14px;
         font-weight: 700;
-        color: rgba(0, 0, 0, 0.5);
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .active-day .day-name {
-        color: #121212;
+        color: var(--text-primary)fff;
         font-weight: 900;
     }
 
     .today-badge {
-        background: #121212;
-        color: #fff;
+        background: var(--bg-primary);
+        color: var(--text-primary);
         font-size: 9px;
         font-weight: 800;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 4px 10px;
+        border-radius: var(--neo-btn-radius);
         letter-spacing: 0.5px;
+        border: var(--nothing-border);
     }
 
     .calendar-body-scroll {
@@ -478,7 +483,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         margin-top: 10px;
-        border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        border-bottom: 1px dashed var(--border-color);
         padding-top: 10px;
         padding-bottom: 10px;
     }
@@ -499,9 +504,10 @@
         width: 100%;
         text-align: right;
         padding-right: 12px;
-        font-size: 12px;
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.4);
+        font-size: 14px;
+        font-weight: 400;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        color: var(--text-muted);
         transform: translateY(-50%);
         /* Center on the line */
     }
@@ -523,7 +529,7 @@
     .grid-hour-line {
         position: absolute;
         width: 100%;
-        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        border-top: 1px dashed var(--border-color);
     }
 
     .grid-vertical-lines {
@@ -533,7 +539,7 @@
     }
 
     .grid-col-line {
-        border-right: 1px dashed rgba(0, 0, 0, 0.1);
+        border-right: 1px dashed var(--border-color);
     }
 
     .grid-col-line:last-child {
@@ -551,8 +557,9 @@
         left: 4px;
         right: 4px;
         border-radius: 8px;
+        border: 2px solid #000;
         padding: 6px 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 2px 2px 0px var(--border-color);
         transition: transform 0.2s, box-shadow 0.2s, z-index 0s;
         cursor: default;
         overflow: hidden;
@@ -570,14 +577,16 @@
     }
 
     .calendar-event .event-title {
-        color: #ffffff;
-        font-size: 12px;
-        font-weight: 700;
+        color: var(--text-primary);
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        font-size: 14px;
+        font-weight: 400;
         line-height: 1.2;
         width: 100%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        text-transform: uppercase;
     }
 
     .calendar-event .event-time {
@@ -632,7 +641,7 @@
     /* View Mode Switch Styles */
     .view-mode-switch {
         display: flex;
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--bg-tertiary);
         padding: 4px;
         border-radius: 12px;
         gap: 4px;
@@ -642,25 +651,28 @@
         border: none;
         background: transparent;
         padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 700;
-        color: rgba(0, 0, 0, 0.5);
+        border-radius: var(--neo-btn-radius);
+        font-size: 12px;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        text-transform: uppercase;
+        font-weight: 800;
+        color: var(--text-muted);
         cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
         transition: all 0.2s;
+        border: 1px solid transparent;
     }
 
     .mode-btn:hover {
-        color: #121212;
+        color: var(--text-primary)fff;
     }
 
     .mode-btn.active {
-        background: #fff;
-        color: #121212;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: var(--nothing-border);
     }
 
     /* Calendar View Styles */
@@ -674,14 +686,14 @@
         text-align: left;
         margin-bottom: 20px;
         padding-bottom: 12px;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 2px solid var(--border-color);
     }
 
     .month-header h3 {
         margin: 0;
         font-size: 20px;
         font-weight: 800;
-        color: #121212;
+        color: var(--text-primary)fff;
         letter-spacing: -0.3px;
         text-transform: uppercase;
     }
@@ -696,21 +708,21 @@
         text-align: center;
         font-size: 14px;
         font-weight: 700;
-        color: rgba(0, 0, 0, 0.5);
+        color: var(--text-muted);
         text-transform: uppercase;
         padding-bottom: 8px;
         letter-spacing: 1px;
     }
 
     .month-cell {
-        background: #fff;
-        border-radius: 12px;
+        background: var(--text-primary);
+        border-radius: 20px;
         min-height: 120px;
-        padding: 8px;
+        padding: 12px;
         display: flex;
         flex-direction: column;
-        border: 1px solid rgba(0, 0, 0, 0.03);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        border: var(--nothing-border-light);
+        box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
         transition: transform 0.2s, box-shadow 0.2s;
         overflow: hidden;
     }
@@ -722,7 +734,7 @@
 
     .month-cell.not-current-month {
         opacity: 0.4;
-        background: rgba(0, 0, 0, 0.02);
+        background: var(--bg-secondary);
     }
 
     .month-cell.is-today {
@@ -732,7 +744,7 @@
 
     .month-cell.is-today .month-cell-date span {
         background: #121212;
-        color: #fff;
+        color: var(--text-primary);
         width: 26px;
         height: 26px;
         display: flex;
@@ -744,7 +756,7 @@
     .month-cell-date {
         font-size: 14px;
         font-weight: 700;
-        color: #121212;
+        color: var(--text-primary)fff;
         margin-bottom: 8px;
         align-self: flex-end;
         display: flex;
@@ -764,20 +776,20 @@
     }
 
     .month-cell-events::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.1);
+        background: var(--border-color);
         border-radius: 2px;
     }
 
     .month-event-dot {
         font-size: 10px;
         font-weight: 700;
-        color: #fff;
+        color: var(--text-primary);
         padding: 4px 6px;
         border-radius: 6px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px var(--border-color);
         cursor: default;
     }
 
@@ -809,7 +821,7 @@
 
         /* Picker Styles */
         .mobile-timeline-picker-container {
-            background: #ffffff;
+            background: var(--text-primary)fff;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             padding: 12px;
@@ -853,7 +865,7 @@
             color: #3f3f46;
         }
         .mobile-day-item.active .mobile-day-num {
-            color: #121212;
+            color: var(--text-primary)fff;
             font-weight: 800;
         }
 
@@ -864,7 +876,7 @@
             gap: 12px;
         }
         .mobile-task-card {
-            background: #ffffff;
+            background: var(--text-primary)fff;
             border-radius: 20px;
             padding: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
@@ -900,7 +912,7 @@
         .task-title {
             font-size: 15px;
             font-weight: 700;
-            color: #121212;
+            color: var(--text-primary)fff;
             line-height: 1.3;
         }
         .task-time-row {
@@ -918,7 +930,7 @@
             line-height: 1.4;
         }
         #mobile-empty-state {
-            background: #ffffff;
+            background: var(--text-primary)fff;
             border-radius: 20px;
             padding: 32px 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);

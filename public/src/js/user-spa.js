@@ -38,7 +38,7 @@ const issueModal = document.getElementById('issue-report-modal');
             try {
                 const res = await fetch(document.getElementById('issue-report-modal').dataset.reportUrl, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    headers: { 'X-CSRF-TOKEN': document.getElementById('navBar').dataset.csrfToken },
                     body: fd
                 });
                 const data = await res.json();

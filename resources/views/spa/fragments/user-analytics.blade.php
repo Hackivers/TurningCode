@@ -3,11 +3,11 @@
         
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
             <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Analitik Belajar</h2>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Analitik Belajar</h2>
                 <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Pantau perkembangan dan kebiasaan belajarmu.</p>
             </div>
             <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-                <i class='bx bx-bar-chart-alt-2' style="font-size: 28px; color: #fff;"></i>
+                <i class='bx bx-bar-chart-alt-2' style="font-size: 28px; color: var(--text-primary);"></i>
             </div>
         </div>
 
@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <div style="font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Materi Dibaca</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #121212; line-height: 1;">{{ $materisRead }}</div>
+                    <div style="font-size: 28px; font-weight: 900; color: var(--text-primary)fff; line-height: 1;">{{ $materisRead }}</div>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
                 </div>
                 <div>
                     <div style="font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Kuis Lulus</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #121212; line-height: 1;">{{ $passedQuizzes }} <span style="font-size: 16px; color: #888; font-weight: 600;">/ {{ $totalQuizzes }}</span></div>
+                    <div style="font-size: 28px; font-weight: 900; color: var(--text-primary)fff; line-height: 1;">{{ $passedQuizzes }} <span style="font-size: 16px; color: #888; font-weight: 600;">/ {{ $totalQuizzes }}</span></div>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                 </div>
                 <div>
                     <div style="font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Akurasi Rata-rata</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #121212; line-height: 1;">{{ $avgScore }}%</div>
+                    <div style="font-size: 28px; font-weight: 900; color: var(--text-primary)fff; line-height: 1;">{{ $avgScore }}%</div>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
                 </div>
                 <div>
                     <div style="font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Waktu Belajar</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #121212; line-height: 1;">
+                    <div style="font-size: 28px; font-weight: 900; color: var(--text-primary)fff; line-height: 1;">
                         @if($timeSpent['hours'] > 0)
                             {{ $timeSpent['hours'] }}<span style="font-size: 14px; margin-right: 4px;">j</span>
                         @endif
@@ -65,7 +65,7 @@
         {{-- Activity Chart --}}
         <div class="neo-card neo-card-light" style="margin-top: 32px; padding: 32px; border-radius: 20px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-                <h3 class="neo-title" style="font-size: 20px; margin: 0; color: #121212;">Aktivitas 7 Hari Terakhir</h3>
+                <h3 class="neo-title" style="font-size: 20px; margin: 0; color: var(--text-primary)fff;">Aktivitas 7 Hari Terakhir</h3>
                 <div style="font-size: 12px; font-weight: 600; color: #888; background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 20px;">Intensitas Belajar</div>
             </div>
             
@@ -77,7 +77,7 @@
                             @php $heightPct = ($day['count'] / $maxCount) * 100; @endphp
                             <div style="width: 100%; max-width: 48px; height: {{ $heightPct }}%; background: linear-gradient(to top, #121212, #3a3a3a); border-radius: 12px; transition: height 1s ease-out; position: relative;" title="{{ $day['count'] }} Aktivitas">
                                 @if($day['count'] > 0)
-                                    <div style="position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 800; color: #121212; background: #fff; padding: 2px 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                    <div style="position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 800; color: var(--text-primary)fff; background: var(--text-primary); padding: 2px 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                         {{ $day['count'] }}
                                     </div>
                                 @endif

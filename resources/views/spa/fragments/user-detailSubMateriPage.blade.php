@@ -356,17 +356,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-    --neo-bg: #ececec;
-    --neo-text-dark: #121212;
+    --neo-bg: transparent;
+    --neo-text-dark: #ffffff;
     --art-max: 1200px;
     --art-body-max: 720px;
 }
 
-body { background-color: var(--neo-bg) !important; }
+body { background-color: #000000 !important; }
 
 .neo-dashboard {
     background-color: var(--neo-bg);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Mono', monospace;
     min-height: 100vh;
     width: 100%;
 }
@@ -393,9 +393,9 @@ body { background-color: var(--neo-bg) !important; }
     font-weight: 500;
     transition: color 0.2s;
 }
-.art-breadcrumb a:hover { color: #121212; }
+.art-breadcrumb a:hover { color: var(--text-primary)fff; }
 .art-breadcrumb span { color: #ccc; }
-.art-breadcrumb-current { color: #121212; font-weight: 600; }
+.art-breadcrumb-current { color: var(--text-primary)fff; font-weight: 600; }
 
 /* ═══ ARTICLE HEADER (Two-column editorial) ═══ */
 .art-header {
@@ -435,14 +435,14 @@ body { background-color: var(--neo-bg) !important; }
     height: 40px;
     border-radius: 50%;
     background: #121212;
-    color: #fff;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
     font-size: 16px;
 }
-.art-author-name { font-size: 14px; font-weight: 700; color: #121212; }
+.art-author-name { font-size: 14px; font-weight: 700; color: var(--text-primary)fff; }
 .art-author-role { font-size: 12px; color: #888; font-weight: 500; }
 
 .art-header-right {
@@ -476,7 +476,7 @@ body { background-color: var(--neo-bg) !important; }
     padding: 12px;
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.05), inset 0 2px 8px rgba(255,255,255,0.8);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.05), inset 0 2px 8px var(--text-secondary);
     backdrop-filter: blur(16px);
 }
 .art-thumbnail-glow {
@@ -519,7 +519,7 @@ body { background-color: var(--neo-bg) !important; }
     margin: 64px 0 32px;
     padding: 32px;
     background: #121212;
-    color: #fff;
+    color: var(--text-primary);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     position: relative;
@@ -545,7 +545,7 @@ body { background-color: var(--neo-bg) !important; }
     font-size: 28px;
     font-weight: 800;
     margin: 0;
-    color: #fff;
+    color: var(--text-primary);
     letter-spacing: -0.02em;
 }
 
@@ -644,7 +644,7 @@ body { background-color: var(--neo-bg) !important; }
     outline: none;
 }
 .code-output-wrap {
-    background: #fff;
+    background: var(--text-primary);
     border-top: 1px solid #e5e7eb;
 }
 .output-header {
@@ -680,7 +680,7 @@ body { background-color: var(--neo-bg) !important; }
     height: 250px;
     border: 1px dashed #d1d5db;
     border-radius: 8px;
-    background: #fff;
+    background: var(--text-primary);
 }
 .output-console {
     margin: 0;
@@ -745,8 +745,8 @@ body { background-color: var(--neo-bg) !important; }
     line-height: 1.85;
     margin-bottom: 6px;
 }
-ul.art-sec-list li::marker { color: #121212; }
-ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
+ul.art-sec-list li::marker { color: var(--text-primary)fff; }
+ol.art-sec-list li::marker { color: var(--text-primary)fff; font-weight: 700; }
 
 /* Divider */
 .art-sec-divider {
@@ -767,12 +767,12 @@ ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
     border-collapse: collapse;
     font-size: 15px;
     text-align: left;
-    background: #fff;
+    background: var(--text-primary);
 }
 .art-sec-table th {
     padding: 14px 16px;
     background: rgba(0,0,0,0.03);
-    color: #121212;
+    color: var(--text-primary)fff;
     font-weight: 700;
     border-bottom: 2px solid rgba(0,0,0,0.08);
 }
@@ -822,17 +822,17 @@ ol.art-sec-list li::marker { color: #121212; font-weight: 700; }
 }
 .art-nav-prev:hover {
     background: #121212;
-    color: #fff;
-    border-color: #121212;
+    color: var(--text-primary);
+    border-color: var(--text-primary)fff;
 }
 .art-nav-quiz {
     background: #121212;
 }
 .art-nav-quiz span{
-    color: #fff;
+    color: var(--text-primary);
 }
 .art-nav-quiz i{
-    color: #fff;
+    color: var(--text-primary);
 }
 .art-nav-quiz:hover {
     opacity: 0.85;

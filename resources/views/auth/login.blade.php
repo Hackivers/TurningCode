@@ -22,7 +22,7 @@
                     <h5>materi udah nugguin nih, buat dipelajari...</h5>
                 </div>
                 <div class="thumb-img">
-                    <img src="{{ asset('assets/ico/img001thumb02Trans.png') }}" alt="">
+                    <img src="{{ asset('assets/ico/auth-bg.png') }}" alt="">
                 </div>
             </div>
         </main>

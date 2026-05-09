@@ -85,6 +85,9 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     // Favorites
     Route::post('/app/favorite/toggle', [UserController::class, 'toggleFavorite'])->name('user.favorite.toggle');
 
+    // Select Main Materi (onboarding / change path)
+    Route::post('/app/api/select-main-materi', [UserController::class, 'selectMainMateri'])->name('user.select.main.materi');
+
     // Quiz
     Route::post('/app/api/quiz/submit', [UserController::class, 'submitQuiz'])->name('user.quiz.submit');
 

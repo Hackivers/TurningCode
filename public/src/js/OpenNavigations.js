@@ -23,3 +23,12 @@ asidePage.addEventListener("click", function (e) {
         body.classList.remove("no-scroll");
     }
 });
+
+// Auto close aside on link click
+const asideLinks = asidePage.querySelectorAll(".fs-link");
+asideLinks.forEach(link => {
+    link.addEventListener("click", () => {
+        asidePage.classList.remove("active");
+        body.classList.remove("no-scroll");
+    });
+});

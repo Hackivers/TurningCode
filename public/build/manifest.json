@@ -4,7 +4,7 @@
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-D0CzUqtq.css",
+    "file": "assets/app-Cx2_t-3N.css",
     "name": "app",
     "names": [
       "app.css"
@@ -13,7 +13,7 @@
     "isEntry": true
   },
   "resources/css/auth.css": {
-    "file": "assets/auth-Df41Kk7J.css",
+    "file": "assets/auth-DzNw8gsa.css",
     "name": "auth",
     "names": [
       "auth.css"
@@ -22,7 +22,7 @@
     "isEntry": true
   },
   "resources/css/global.css": {
-    "file": "assets/global-Dp2AZDmL.css",
+    "file": "assets/global-D2JbX-ol.css",
     "name": "global",
     "names": [
       "global.css"
@@ -31,7 +31,7 @@
     "isEntry": true
   },
   "resources/css/style.css": {
-    "file": "assets/style-B-lILUSq.css",
+    "file": "assets/style-CusjlXVi.css",
     "name": "style",
     "names": [
       "style.css"
@@ -40,7 +40,7 @@
     "isEntry": true
   },
   "resources/css/welcome.css": {
-    "file": "assets/welcome-DSXPTg1I.css",
+    "file": "assets/welcome-D5w2ezuT.css",
     "name": "welcome",
     "names": [
       "welcome.css"
@@ -58,7 +58,7 @@
     ]
   },
   "resources/js/SPA_user.js": {
-    "file": "assets/SPA_user-BXP8-zzR.js",
+    "file": "assets/SPA_user-DAXKF2Wf.js",
     "name": "SPA_user",
     "src": "resources/js/SPA_user.js",
     "isEntry": true,

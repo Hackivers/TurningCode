@@ -139,8 +139,8 @@ function updateNavBottom(activePage) {
         icon.classList.toggle('active', item.dataset.page === activePage);
     });
 
-    // Sidebar Nav (Neo-Minimalist)
-    document.querySelectorAll('.neo-nav-link').forEach(link => {
+    // Sidebar Nav
+    document.querySelectorAll('.neo-nav-link, .fs-link').forEach(link => {
         link.classList.toggle('active', link.dataset.spaPage === activePage);
     });
 }

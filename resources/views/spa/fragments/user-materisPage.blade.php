@@ -15,7 +15,7 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
         {{-- Premium Hero Header --}}
         <div class="neo-card"
-            style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
+            style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid var(--bg-tertiary);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
             {{-- Background Gradient Orbs --}}
             <div
                 style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;">
@@ -26,18 +26,18 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
             {{-- Grid Pattern Overlay --}}
             <div
-                style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;">
+                style="position:absolute;inset:0;background-image:radial-gradient(var(--border-color) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;">
             </div>
 
             <div style="position:relative;z-index:2;width:100%;max-width:700px;">
                 <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
                     <span class="neo-pill"
-                        style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
                         <i class='bx bx-category' style="margin-right:4px;"></i>
                         {{ $firstMateri->mainMateri->title ?? 'Materi Utama' }}
                     </span>
                     <span class="neo-pill"
-                        style="color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
+                        style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
                         <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $materis->count() }} Bab
                         Pembelajaran
                     </span>
@@ -46,7 +46,7 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
                     style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
                     {{ $firstMateri->title ?? 'Eksplorasi Materi' }}
                 </h3>
-                <p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0;line-height:1.6;font-weight:500;">
+                <p style="font-size:16px;color:var(--text-secondary);margin:0;line-height:1.6;font-weight:500;">
                     Perluas wawasanmu dan kuasai konsep fundamental dari topik ini. Siapkan dirimu untuk melangkah ke
                     tingkat pemahaman berikutnya!
                 </p>
@@ -62,7 +62,7 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
 
         {{-- Materi Grid --}}
         <div style="margin-bottom:32px;">
-            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Daftar Bab</h3>
+            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Daftar Bab</h3>
             <p style="font-size:16px;color:#555;margin:0 0 24px;">Pilih bab yang ingin kamu pelajari.</p>
 
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
@@ -139,20 +139,18 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
-        --neo-bg: #ececec;
-        --neo-card-light: #e5e5e5;
-        --neo-radius: 32px;
-        --neo-text-dark: #121212;
+        --neo-bg: transparent;
+        --neo-card-light: rgba(255, 255, 255, 0.03);
+        --neo-radius: 16px;
+        --neo-text-dark: #ffffff;
     }
 
-    body {
-        background-color: var(--neo-bg) !important;
-    }
+    body { background-color: #000000 !important; }
 
     .neo-dashboard {
         background-color: var(--neo-bg);
         color: var(--neo-text-dark);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Mono', monospace;
         padding: 32px 0;
         min-height: 100vh;
         width: 100%;

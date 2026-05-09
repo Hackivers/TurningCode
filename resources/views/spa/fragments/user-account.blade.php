@@ -29,14 +29,14 @@
                     @endif
                 </div>
                 <div style="text-align:center;">
-                    <h4 id="display-name" class="{{ $user->isPenguasaSektor() ? 'sovereign-name-lg' : ($user->isElite() ? 'elite-name-lg' : '') }}" style="margin:0 0 4px;font-size:20px;font-weight:700;color:#121212;">{{ $user->name }}</h4>
+                    <h4 id="display-name" class="{{ $user->isPenguasaSektor() ? 'sovereign-name-lg' : ($user->isElite() ? 'elite-name-lg' : '') }}" style="margin:0 0 4px;font-size:20px;font-weight:700;color: var(--text-primary)fff;">{{ $user->name }}</h4>
                     <p id="display-email" style="margin:0;font-size:13px;color:#888;">{{ $user->email }}</p>
                 </div>
             </div>
             <div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
                     <span class="neo-pill" style="font-size:14px;background:rgba(0,0,0,0.05);">{{ number_format($user->exp ?? 0) }} EXP</span>
-                    <span class="neo-pill" style="font-size:14px;background:#121212;color:#fff;border-color:#121212;">Rank: {{ $user->rank_name }}</span>
+                    <span class="neo-pill" style="font-size:14px;background:#121212;color:#fff;border-color: var(--text-primary)fff;">Rank: {{ $user->rank_name }}</span>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <span class="neo-pill">{{ $daysActive }} hari aktif</span>
@@ -57,7 +57,7 @@
                 </div>
                 <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:16px 0;">
                     <div style="text-align:center;">
-                        <div style="font-size:56px;font-weight:800;color:#121212;line-height:1;">{{ $quizAvgScore }}</div>
+                        <div style="font-size:56px;font-weight:800;color: var(--text-primary)fff;line-height:1;">{{ $quizAvgScore }}</div>
                         <div style="font-size:13px;color:#888;font-weight:500;margin-top:4px;">Rata-rata Skor</div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="3"/>
                             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#121212" stroke-width="3" stroke-dasharray="{{ $learningProgress }}, 100" stroke-linecap="round"/>
                         </svg>
-                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#121212;">{{ $learningProgress }}%</div>
+                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color: var(--text-primary)fff;">{{ $learningProgress }}%</div>
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -116,7 +116,7 @@
 {{-- ── ACHIEVEMENTS ──────────────────────────────────────────────── --}}
 @if(!empty($achievements))
 <div style="margin-top:48px;">
-    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Pencapaian</h3>
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Pencapaian</h3>
     <p style="font-size:16px;color:#555;margin:0 0 24px;">Lencana yang kamu dapatkan dari perjalanan belajar.</p>
     <div class="neo-card neo-card-light" style="padding:32px;">
         <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;">
@@ -124,7 +124,7 @@
             <div class="acc-ach-item" title="{{ $ach['label'] }}: {{ $ach['desc'] }}">
                 <img src="{{ asset('assets/ico/' . $ach['icon']) }}" alt="{{ $ach['label'] }}" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.1));transition:transform 0.2s;">
                 <div style="text-align:center;margin-top:8px;">
-                    <div style="font-size:12px;font-weight:700;color:#121212;">{{ $ach['label'] }}</div>
+                    <div style="font-size:12px;font-weight:700;color: var(--text-primary)fff;">{{ $ach['label'] }}</div>
                     <div style="font-size:10px;color:#888;">{{ $ach['desc'] }}</div>
                 </div>
             </div>
@@ -137,23 +137,23 @@
 {{-- ── RECENT QUIZZES ────────────────────────────────────────────── --}}
 @if($recentQuizzes->count() > 0)
 <div style="margin-top:48px;">
-    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Riwayat Kuis</h3>
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Riwayat Kuis</h3>
     <p style="font-size:16px;color:#555;margin:0 0 24px;">5 kuis terakhir yang kamu kerjakan.</p>
     <div class="neo-card neo-card-light" style="padding:24px;">
         <div style="display:flex;flex-direction:column;gap:12px;">
             @foreach($recentQuizzes as $q)
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(255,255,255,0.5);border-radius:16px;border:1px solid rgba(0,0,0,0.04);">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--text-muted);border-radius:16px;border:1px solid rgba(0,0,0,0.04);">
                 <div style="display:flex;align-items:center;gap:12px;">
                     <div style="width:40px;height:40px;border-radius:12px;background:{{ $q->passed ? '#ecfdf5' : '#fef2f2' }};display:flex;align-items:center;justify-content:center;">
                         <i class='bx {{ $q->passed ? "bx-check" : "bx-x" }}' style="font-size:20px;color:{{ $q->passed ? '#10b981' : '#ef4444' }};"></i>
                     </div>
                     <div>
-                        <div style="font-size:14px;font-weight:600;color:#121212;">{{ $q->subMateri->title ?? 'Sub Materi' }}</div>
+                        <div style="font-size:14px;font-weight:600;color: var(--text-primary)fff;">{{ $q->subMateri->title ?? 'Sub Materi' }}</div>
                         <div style="font-size:12px;color:#888;">{{ $q->updated_at->diffForHumans() }}</div>
                     </div>
                 </div>
                 <div style="text-align:right;">
-                    <div style="font-size:18px;font-weight:800;color:#121212;">{{ $q->score }}%</div>
+                    <div style="font-size:18px;font-weight:800;color: var(--text-primary)fff;">{{ $q->score }}%</div>
                     <div style="font-size:11px;color:{{ $q->passed ? '#10b981' : '#ef4444' }};font-weight:600;">{{ $q->passed ? 'LULUS' : 'GAGAL' }}</div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
 {{-- ── SERTIFIKAT SAYA ───────────────────────────────────────────── --}}
 @if(isset($certificates) && $certificates->count() > 0)
 <div style="margin-top:48px;">
-    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Sertifikat Saya</h3>
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Sertifikat Saya</h3>
     <p style="font-size:16px;color:#555;margin:0 0 24px;">Bukti pencapaian belajarmu.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
         @foreach($certificates as $cert)
@@ -177,7 +177,7 @@
                         <i class='bx bx-award'></i>
                     </div>
                     <div>
-                        <div style="font-size:16px;font-weight:700;color:#121212;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
+                        <div style="font-size:16px;font-weight:700;color: var(--text-primary)fff;line-height:1.2;">{{ $cert->materi->title ?? 'Materi' }}</div>
                         <div style="font-size:12px;color:#888;margin-top:4px;">{{ $cert->issued_at->translatedFormat('d M Y') }}</div>
                     </div>
                 </div>
@@ -196,13 +196,13 @@
 
 {{-- ── FRIENDS SECTION (AJAX) ────────────────────────────────────── --}}
 <div style="margin-top:48px;">
-    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color:#121212;">Pertemanan</h3>
+    <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Pertemanan</h3>
     <p style="font-size:16px;color:#555;margin:0 0 24px;">Kelola daftar teman dan permintaan masuk.</p>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
         {{-- Friend Requests --}}
         <div class="neo-card neo-card-light" style="padding:24px;">
-            <h4 style="margin:0 0 16px;font-size:18px;font-weight:600;color:#121212;display:flex;justify-content:space-between;align-items:center;">
+            <h4 style="margin:0 0 16px;font-size:18px;font-weight:600;color: var(--text-primary)fff;display:flex;justify-content:space-between;align-items:center;">
                 Permintaan Masuk
                 @if(isset($friendRequests) && $friendRequests->count() > 0)
                     <span id="friend-req-badge" style="background:#ef4444;color:white;font-size:12px;padding:2px 8px;border-radius:12px;">{{ $friendRequests->count() }}</span>
@@ -211,11 +211,11 @@
             <div id="friend-requests-list" style="display:flex;flex-direction:column;gap:12px;">
                 @if(isset($friendRequests) && $friendRequests->count() > 0)
                     @foreach($friendRequests as $req)
-                    <div class="friend-req-item" data-sender-id="{{ $req->sender->id }}" style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.5);border-radius:16px;border:1px solid rgba(0,0,0,0.04);transition:all 0.3s;">
+                    <div class="friend-req-item" data-sender-id="{{ $req->sender->id }}" style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--text-muted);border-radius:16px;border:1px solid rgba(0,0,0,0.04);transition:all 0.3s;">
                         <div style="display:flex;align-items:center;gap:12px;">
                             <img src="{{ $req->sender->avatar ? asset('storage/'.$req->sender->avatar) : asset('assets/ico/'.($req->sender->emblem_image ?? 'default-user.jpg')) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                             <div>
-                                <div style="font-weight:600;font-size:14px;color:#121212;">{{ $req->sender->name }}</div>
+                                <div style="font-weight:600;font-size:14px;color: var(--text-primary)fff;">{{ $req->sender->name }}</div>
                                 <div style="font-size:12px;color:#888;">{{ $req->sender->rank_name }}</div>
                             </div>
                         </div>
@@ -233,16 +233,16 @@
 
         {{-- Friends List --}}
         <div class="neo-card neo-card-light" style="padding:24px;">
-            <h4 style="margin:0 0 16px;font-size:18px;font-weight:600;color:#121212;">Daftar Teman (<span id="friend-count">{{ isset($friends) ? $friends->count() : 0 }}</span>)</h4>
+            <h4 style="margin:0 0 16px;font-size:18px;font-weight:600;color: var(--text-primary)fff;">Daftar Teman (<span id="friend-count">{{ isset($friends) ? $friends->count() : 0 }}</span>)</h4>
             <div id="friends-list" style="display:flex;flex-direction:column;gap:12px;">
                 @if(isset($friends) && $friends->count() > 0)
                     @foreach($friends as $friend)
-                    <div class="friend-item" data-friend-id="{{ $friend->id }}" style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.5);border-radius:16px;border:1px solid rgba(0,0,0,0.04);transition:all 0.3s;">
+                    <div class="friend-item" data-friend-id="{{ $friend->id }}" style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--text-muted);border-radius:16px;border:1px solid rgba(0,0,0,0.04);transition:all 0.3s;">
                         <div style="display:flex;align-items:center;gap:12px;">
                             <a href="?page=profile&id={{ $friend->id }}" class="link-spa" data-page="profile&id={{ $friend->id }}" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                                 <img src="{{ $friend->avatar ? asset('storage/'.$friend->avatar) : asset('assets/ico/'.($friend->emblem_image ?? 'default-user.jpg')) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                                 <div>
-                                    <div style="font-weight:600;font-size:14px;color:#121212;">{{ $friend->name }}</div>
+                                    <div style="font-weight:600;font-size:14px;color: var(--text-primary)fff;">{{ $friend->name }}</div>
                                     <div style="font-size:12px;color:#888;">{{ $friend->rank_name }}</div>
                                 </div>
                             </a>
@@ -273,7 +273,7 @@
 
 {{-- ── IMAGE VIEWER MODAL ────────────────────────────────────────── --}}
 <div id="image-viewer-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease;">
-    <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1)';">
+    <button onclick="closeImageViewer()" style="position: absolute; top: 24px; right: 24px; background: var(--border-color); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; transition: all 0.2s;" onmouseover="this.style.background='var(--border-color)'; this.style.transform='scale(1.1)';" onmouseout="this.style.background='var(--border-color)'; this.style.transform='scale(1)';">
         <i class='bx bx-x' style="font-size: 28px;"></i>
     </button>
     <img id="image-viewer-img" src="" alt="Profile Image" style="max-width: 90%; max-height: 90vh; border-radius: 4px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); object-fit: contain;">
@@ -331,7 +331,7 @@
 <div class="acc-modal" id="ep-modal">
     <div class="acc-modal-handle" id="ep-modal-handle"><span></span></div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 24px 16px;">
-        <h4 style="color:#121212;font-size:18px;font-weight:700;margin:0;">Edit Profile</h4>
+        <h4 style="color: var(--text-primary)fff;font-size:18px;font-weight:700;margin:0;">Edit Profile</h4>
         <button id="ep-modal-close" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='#fff'"><i class='bx bx-x' style="font-size:20px;color:#888;"></i></button>
     </div>
     <div style="padding:20px 24px 40px;">
@@ -342,13 +342,13 @@
                     @if($user->avatar)
                         <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" id="ep-avatar-img" style="width:100%;height:100%;object-fit:cover;">
                     @else
-                        <div class="ep-avatar-placeholder"><i class='bx bx-user' style="color:#888;font-size:24px;"></i><span style="color:#121212;font-size:24px;font-weight:700;">{{ strtoupper(substr($user->name, 0, 1)) }}</span></div>
+                        <div class="ep-avatar-placeholder"><i class='bx bx-user' style="color:#888;font-size:24px;"></i><span style="color: var(--text-primary)fff;font-size:24px;font-weight:700;">{{ strtoupper(substr($user->name, 0, 1)) }}</span></div>
                     @endif
                 </div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
                 <input type="file" id="ep-input-avatar" accept="image/jpeg,image/png,image/webp" hidden>
-                <button type="button" id="ep-btn-upload" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#fff;color:#121212;font-size:13px;font-weight:500;cursor:pointer;"><i class='bx bx-upload' style="font-size:16px;color:#555;"></i> Ganti Foto</button>
+                <button type="button" id="ep-btn-upload" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#fff;color: var(--text-primary)fff;font-size:13px;font-weight:500;cursor:pointer;"><i class='bx bx-upload' style="font-size:16px;color:#555;"></i> Ganti Foto</button>
                 @if($user->avatar)
                 <button type="button" class="ep-btn-remove" id="ep-btn-remove" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;border:1px solid rgba(239,68,68,0.3);background:transparent;color:#ef4444;font-size:13px;font-weight:500;cursor:pointer;"><i class='bx bx-trash' style="font-size:16px;"></i> Hapus</button>
                 @endif

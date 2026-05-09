@@ -1,75 +1,100 @@
 <div style="margin-top: 48px; margin-bottom: 32px;">
-    <h3 class="neo-title" style="font-size: 28px; margin: 0 0 8px 0; color: #121212;">Peringkat Teratas</h3>
-    <p style="font-size: 16px; color: #555; margin: 0 0 16px 0;">Lihat siapa saja yang paling rajin belajar minggu ini.</p>
+    <div
+        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <div style="width: 6px; height: 6px; background: #d71921; border-radius: 50%;"></div>
+                <div
+                    style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);">
+                    RANKINGS</div>
+            </div>
+            <h3
+                style="font-size: 24px; font-weight: 800; margin: 0; color: var(--text-primary); letter-spacing: -0.5px; font-family: 'Space Mono', monospace; text-transform: uppercase;">
+                Peringkat Teratas</h3>
+        </div>
 
-    <!-- Tab Filter -->
-    <div style="display: flex; gap: 8px;">
-        <button class="ldb-tab active" data-tab="global" onclick="switchLeaderboardTab('global')"
-            style="padding: 8px 20px; border-radius: 10px; border: 1px solid #e2e8f0; background: #121212; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-            <i class='bx bx-globe' style="margin-right: 4px;"></i> Global
-        </button>
-        <button class="ldb-tab" data-tab="friends" onclick="switchLeaderboardTab('friends')"
-            style="padding: 8px 20px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #666; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-            <i class='bx bx-group' style="margin-right: 4px;"></i> Teman
-        </button>
+        <!-- Tab Filter — Nothing OS pill segmented -->
+        <div style="display: flex; border: 1px solid var(--border-color); border-radius: 9999px; overflow: hidden;">
+            <button class="ldb-tab active" data-tab="global" onclick="switchLeaderboardTab('global')"
+                style="padding: 8px 20px; border: none; background: var(--border-color); color: var(--text-primary); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px; font-family: var(--nothing-dot-font, 'DotGothic16', monospace);">
+                Global
+            </button>
+            <button class="ldb-tab" data-tab="friends" onclick="switchLeaderboardTab('friends')"
+                style="padding: 8px 20px; border: none; border-left: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px; font-family: var(--nothing-dot-font, 'DotGothic16', monospace);">
+                Teman
+            </button>
+        </div>
     </div>
 </div>
 
 {{-- Friend Leaderboard Data (hidden, for JS) --}}
 @if(isset($friendUsers) && $friendUsers->count() > 0)
-@php
-    $friendDataJson = json_encode($friendUsers->map(function($u) {
-        return [
-            'id' => $u->id,
-            'name' => $u->name,
-            'rank_name' => $u->rank_name,
-            'exp' => $u->exp,
-            'avatar' => $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')),
-        ];
-    })->values());
-@endphp
-<div id="ldb-friends-data" style="display: none;" data-friends='{!! $friendDataJson !!}'></div>
+    @php
+        $friendDataJson = json_encode($friendUsers->map(function ($u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'rank_name' => $u->rank_name,
+                'exp' => $u->exp,
+                'avatar' => $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')),
+            ];
+        })->values());
+    @endphp
+    <div id="ldb-friends-data" style="display: none;" data-friends='{!! $friendDataJson !!}'></div>
 @endif
 
 {{-- Friend Leaderboard Container (hidden by default) --}}
 <div id="ldb-friends-container" style="display: none;">
     @if(isset($friendUsers) && $friendUsers->count() > 0)
-        <div class="neo-card neo-card-light">
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                @foreach($friendUsers as $i => $u)
-                    <div class="leaderboard-row" style="display: flex; align-items: center; gap: 20px; padding: 20px 24px; position: relative; border-radius: 24px; {{ $i === 0 ? 'background: rgba(255,255,255,0.5); border: 2px solid rgba(6, 182, 212, 0.6); box-shadow: 0 8px 24px rgba(6, 182, 212, 0.12);' : 'background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2);' }}">
-                        @if($i === 0)
-                            <div style="position: absolute; top: -14px; left: 12px; font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 2; transform: rotate(-15deg);">🏆</div>
-                        @endif
-                        <div style="width: 30px; text-align: center; font-size: 18px; font-weight: 800; color: {{ $i === 0 ? '#06b6d4' : ($i === 1 ? '#64748b' : '#888') }};">#{{ $loop->iteration }}</div>
-                        <div class="ldb-col-avatar">
-                            <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}">
-                                <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}" alt="{{ $u->name }}"
-                                    style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); {{ $i === 0 ? 'border: 2px solid #06b6d4;' : '' }}; transition: transform 0.2s;"
-                                    onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            </a>
-                        </div>
-                        <div class="ldb-col-info" style="flex: 1; min-width: 0;">
-                            <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}" style="text-decoration:none; color:inherit;">
-                                <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ $u->name }}</h4>
-                            </a>
-                            <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                                <span style="color: #06b6d4; font-size: 14px;"><i class='bx bxs-star'></i></span>
-                                {{ $u->rank_name ?? 'Beginner' }}
-                            </div>
-                        </div>
-                        <div class="ldb-col-exp" style="text-align: right;">
-                            <div style="font-size: 18px; font-weight: 800;">{{ number_format($u->exp) }}</div>
-                            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #888;">EXP</div>
-                        </div>
+        <div
+            style="padding: 0; overflow: hidden; border-radius: 16px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+            @foreach($friendUsers as $i => $u)
+                <div class="nothing-ldb-row"
+                    style="display: flex; align-items: center; gap: 16px; padding: 16px 20px; {{ $i > 0 ? 'border-top: 1px solid rgba(0,0,0,0.06);' : '' }} {{ $i === 0 ? 'background: var(--bg-primary); color: var(--text-primary);' : '' }}">
+                    <!-- Rank -->
+                    <div
+                        style="width: 28px; text-align: center; font-family: var(--nothing-dot-font); font-size: 18px; font-weight: 400; color: {{ $i === 0 ? '#fff' : '#aaa' }};">
+                        {{ $loop->iteration }}</div>
+                    <!-- Avatar -->
+                    <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}">
+                        <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}"
+                            alt="{{ $u->name }}"
+                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; {{ $i === 0 ? 'border: 2px solid var(--text-primary);' : 'border: 1px solid rgba(0,0,0,0.08);' }}">
+                    </a>
+                    <!-- Info -->
+                    <div class="ldb-col-info" style="flex: 1; min-width: 0;">
+                        <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}"
+                            style="text-decoration:none; color:inherit;">
+                            <h4
+                                style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: {{ $i === 0 ? '#fff' : '#000' }}; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                {{ $u->name }}</h4>
+                        </a>
+                        <div
+                            style="font-size: 11px; font-weight: 600; color: {{ $i === 0 ? 'var(--text-muted)' : '#888' }}; text-transform: uppercase; letter-spacing: 0.5px;">
+                            {{ $u->rank_name ?? 'Beginner' }}</div>
                     </div>
-                @endforeach
-            </div>
+                    <!-- EXP -->
+                    <div class="ldb-col-exp" style="text-align: right;">
+                        <div
+                            style="font-family: var(--nothing-dot-font); font-size: 16px; font-weight: 400; color: {{ $i === 0 ? '#fff' : '#f7f7f7ff' }};">
+                            {{ number_format($u->exp) }}</div>
+                        <div
+                            style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: {{ $i === 0 ? 'var(--text-muted)' : '#aaa' }}; text-transform: uppercase;">
+                            EXP</div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     @else
-        <div class="neo-card neo-card-light" style="text-align:center; padding: 40px 20px;">
-            <i class='bx bx-group' style="font-size: 48px; color: #aaa; margin-bottom: 12px;"></i>
-            <h5 style="color: #666; font-size: 15px; font-weight: 500; margin: 0;">Belum ada teman. Tambah teman untuk melihat peringkat mereka!</h5>
+        <div
+            style="text-align:center; padding: 40px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+            <div
+                style="width: 48px; height: 48px; border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <i class='bx bx-group' style="font-size: 24px; color: var(--text-muted);"></i>
+            </div>
+            <h5
+                style="color: var(--text-muted); font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                Belum ada teman</h5>
         </div>
     @endif
 </div>
@@ -77,164 +102,223 @@
 {{-- Global Leaderboard Container --}}
 <div id="ldb-global-container">
 
-@if (isset($topUsers) && $topUsers->count())
-    <div class="neo-card neo-card-light">
-        <div style="display: flex; flex-direction: column; gap: 20px;">
+    @if (isset($topUsers) && $topUsers->count())
+        <div style="display: flex; flex-direction: column; gap: 12px;">
             @foreach ($topUsers as $i => $u)
-                <div class="leaderboard-row {{ $u->isPenguasaSektor() ? 'leaderboard-row-sovereign' : '' }}"
-                    style="display: flex; align-items: center; gap: 20px; padding: 20px 24px; position: relative; border-radius: 24px; {{ $u->isPenguasaSektor() ? '' : ($i === 0 ? 'background: rgba(255,255,255,0.5); border: 2px solid rgba(245, 158, 11, 0.6); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);' : 'background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2);') }}">
+                @php
+                    $isTop = $i === 0;
+                    $isSov = $u->isPenguasaSektor();
+                    $isDark = $isTop || $isSov;
+                @endphp
+                <div class="nothing-ldb-card {{ $isSov ? 'nothing-ldb-sovereign' : '' }} {{ $isTop ? 'nothing-ldb-first' : '' }}"
+                    style="display: flex; align-items: center; gap: 16px; padding: 20px 24px; position: relative;
+                        background: {{ $isTop || $isSov ? 'var(--bg-tertiary)' : 'var(--bg-secondary)' }};
+                        border: 2px solid {{ $isSov ? '#d71921' : ($isTop ? 'var(--text-primary)' : 'var(--border-color)') }};
+                        border-radius: 16px;
+                        box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+                        transition: transform 0.2s, box-shadow 0.2s;">
 
-                    @if ($i === 0)
+                    @if ($isTop)
                         <div
-                            style="position: absolute; top: -14px; left: 12px; font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 2; transform: rotate(-15deg);">
-                            👑
+                            style="position: absolute; top: 10px; right: 16px; width: 6px; height: 6px; background: #d71921; border-radius: 50%;">
                         </div>
                     @endif
 
-                    <!-- Rank Number -->
                     <div
-                        style="width: 30px; text-align: center; font-size: 18px; font-weight: 800; color: {{ $i === 0 ? '#f59e0b' : ($i === 1 ? '#64748b' : ($i === 2 ? '#b45309' : '#888')) }};">
-                        #{{ $loop->iteration }}
+                        style="width: 32px; text-align: center; font-family: var(--nothing-dot-font, 'DotGothic16', monospace); font-size: 20px; color: var(--text-muted);">
+                        {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
                     </div>
 
-                    <!-- Avatar -->
-                    <div class="ldb-col-avatar" style="position: relative;">
+                    <div class="ldb-col-avatar">
                         <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}">
                             <img src="{{ $u->avatar ? asset('storage/' . $u->avatar) : asset('assets/ico/' . ($u->emblem_image ?? 'default-user.jpg')) }}"
                                 alt="{{ $u->name }}"
-                                style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); {{ $i === 0 ? 'border: 2px solid #f59e0b;' : '' }}; transition: transform 0.2s;"
-                                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);">
                         </a>
                     </div>
 
-                    <!-- Info -->
-                    <div class="ldb-col-info"
-                        style="width: 25%; min-width: 150px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="ldb-col-info" style="flex: 1; min-width: 0; overflow: hidden;">
                         <a href="?page=profile&id={{ $u->id }}" class="link-spa" data-page="profile&id={{ $u->id }}"
                             style="text-decoration:none; color:inherit;">
-                            <h4 class="{{ $u->isPenguasaSektor() ? 'sovereign-name-leaderboard' : ($u->isElite() ? 'elite-name-leaderboard' : '') }}"
-                                style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
-                                @if($u->isPenguasaSektor())
-                                    <i class='bx bxs-crown' style="color:#fbbf24; margin-right:2px; font-size: 14px;"></i>
-                                @endif
+                            <h4
+                                style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                @if($isSov)<span style="color: #d71921; margin-right: 4px;">●</span>@endif
                                 {{ $u->name }}
                             </h4>
                         </a>
-                        <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;"
-                            class="{{ $u->isPenguasaSektor() ? 'sovereign-text-muted' : '' }}">
-                            <span style="color: #f59e0b; font-size: 14px;"><i class='bx bxs-star'></i></span>
+                        <div
+                            style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);">
                             {{ $u->rank_name ?? 'Beginner' }}
                         </div>
                     </div>
 
-                    <!-- Achievements -->
-                    <div class="ldb-col-achievements" style="flex: 1; display: flex; align-items: center;">
+                    <div class="ldb-col-achievements" style="display: flex; align-items: center; gap: 8px;">
                         @if (isset($u->achievements) && is_array($u->achievements) && count($u->achievements) > 0)
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                @foreach ($u->achievements as $ach)
-                                    <div style="position: relative;" class="ach-badge-wrap">
-                                        <img src="{{ asset('assets/ico/' . $ach['icon']) }}" alt="{{ $ach['label'] }}"
-                                            title="{{ $ach['label'] }}: {{ $ach['desc'] }}"
-                                            style="width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: help; transition: transform 0.2s;"
-                                            onmouseover="this.style.transform='scale(1.2)'"
-                                            onmouseout="this.style.transform='scale(1)'">
-                                    </div>
-                                @endforeach
-                            </div>
+                            @foreach ($u->achievements as $ach)
+                                <img src="{{ asset('assets/ico/' . $ach['icon']) }}" alt="{{ $ach['label'] }}"
+                                    title="{{ $ach['label'] }}: {{ $ach['desc'] }}"
+                                    style="width: 24px; height: 24px; object-fit: contain; filter: brightness(1.2); cursor: help;">
+                            @endforeach
                         @else
-                            <div style="font-size: 12px; color: #a1a1aa; font-style: italic; letter-spacing: 0.5px;">Belum memiliki
-                                lencana</div>
+                            <div style="font-size: 10px; color: var(--border-color); font-weight: 600;">—</div>
                         @endif
                     </div>
 
-                    <!-- Add Friend Action (AJAX — no page reload) -->
                     @if ($u->id !== auth()->id() && isset($myFriendships))
                         @php
                             $friendship = $myFriendships->where('user_id', $u->id)->where('friend_id', auth()->id())->first()
                                 ?? $myFriendships->where('friend_id', $u->id)->where('user_id', auth()->id())->first();
                             $fStatus = $friendship ? $friendship->status : null;
                         @endphp
-                        <div class="ldb-col-action" style="margin-right: 16px;">
+                        <div class="ldb-col-action">
                             @if (!$friendship)
-                                <button class="ldb-btn ldb-btn-add ldb-friend-btn" data-url="{{ route('user.friend.add', $u->id) }}">
-                                    <i class='bx bx-user-plus'></i> Add
+                                <button class="nothing-ldb-btn ldb-friend-btn" data-url="{{ route('user.friend.add', $u->id) }}">
+                                    <i class='bx bx-plus'></i> ADD
                                 </button>
                             @elseif ($fStatus === 'pending')
-                                <button disabled class="ldb-btn ldb-btn-pending">
-                                    <i class='bx bx-time'></i> Pending
-                                </button>
+                                <button disabled class="nothing-ldb-btn nothing-ldb-btn-muted">PENDING</button>
                             @elseif ($fStatus === 'accepted')
-                                <button disabled class="ldb-btn ldb-btn-friends">
-                                    <i class='bx bx-check'></i> Friends
-                                </button>
+                                <button disabled class="nothing-ldb-btn nothing-ldb-btn-done">✓</button>
                             @endif
                         </div>
                     @endif
 
-                    <!-- EXP -->
                     <div class="ldb-col-exp" style="text-align: right;">
-                        <div style="font-size: 18px; font-weight: 800;"
-                            class="{{ $u->isPenguasaSektor() ? 'sovereign-text-light' : '' }}">{{ number_format($u->exp) }}
-                        </div>
-                        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.5px;"
-                            class="{{ $u->isPenguasaSektor() ? 'sovereign-text-muted' : '' }}">EXP</div>
+                        <div
+                            style="font-family: var(--nothing-dot-font, 'DotGothic16', monospace); font-size: 16px; color: {{ $isDark ? '#fff' : '#000' }};">
+                            {{ number_format($u->exp) }}</div>
+                        <div
+                            style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: {{ $isDark ? 'var(--text-muted)' : '#aaa' }}; text-transform: uppercase;">
+                            EXP</div>
                     </div>
                 </div>
             @endforeach
         </div>
-    </div>
-@else
-    <div class="neo-card neo-card-light" style="text-align:center; padding: 40px 20px;">
-        <i class='bx bx-trophy' style="font-size: 48px; color: #aaa; margin-bottom: 12px;"></i>
-        <h5 style="color: #666; font-size: 15px; font-weight: 500; margin: 0;">Belum ada data peringkat.</h5>
-    </div>
-@endif
-</div> {{-- close #ldb-global-container --}}
+    @else
+        <div
+            style="text-align:center; padding: 40px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+            <div
+                style="width: 48px; height: 48px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <i class='bx bx-trophy' style="font-size: 24px; color: var(--text-muted);"></i>
+            </div>
+            <h5
+                style="color: var(--text-muted); font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                Belum ada data</h5>
+        </div>
+    @endif
+</div>
 
-<!-- Global Toast Container (shared by leaderboard & account page) -->
+<!-- Toast Container -->
 <div id="friend-toast-container"
     style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;">
 </div>
 
 <script>
-window.switchLeaderboardTab = function(tab) {
-    const globalContainer = document.getElementById('ldb-global-container');
-    const friendsContainer = document.getElementById('ldb-friends-container');
-    const tabs = document.querySelectorAll('.ldb-tab');
+    window.switchLeaderboardTab = function (tab) {
+        const globalContainer = document.getElementById('ldb-global-container');
+        const friendsContainer = document.getElementById('ldb-friends-container');
+        const tabs = document.querySelectorAll('.ldb-tab');
 
-    tabs.forEach(t => {
-        if (t.dataset.tab === tab) {
-            t.style.background = '#121212';
-            t.style.color = '#fff';
-            t.classList.add('active');
+        tabs.forEach(t => {
+            if (t.dataset.tab === tab) {
+                t.style.background = 'var(--border-color)';
+                t.style.color = '#fff';
+                t.classList.add('active');
+            } else {
+                t.style.background = 'transparent';
+                t.style.color = '#888';
+                t.classList.remove('active');
+            }
+        });
+
+        if (tab === 'global') {
+            if (globalContainer) globalContainer.style.display = '';
+            if (friendsContainer) friendsContainer.style.display = 'none';
         } else {
-            t.style.background = '#fff';
-            t.style.color = '#666';
-            t.classList.remove('active');
+            if (globalContainer) globalContainer.style.display = 'none';
+            if (friendsContainer) friendsContainer.style.display = '';
         }
-    });
-
-    if (tab === 'global') {
-        if (globalContainer) globalContainer.style.display = '';
-        if (friendsContainer) friendsContainer.style.display = 'none';
-    } else {
-        if (globalContainer) globalContainer.style.display = 'none';
-        if (friendsContainer) friendsContainer.style.display = '';
-    }
-};
+    };
 </script>
 
 <style>
-    .leaderboard-row {
-        transition: background-color 0.2s;
+    .nothing-ldb-card {
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .leaderboard-row:hover {
-        background-color: rgba(0, 0, 0, 0.015);
+    .nothing-ldb-card:hover {
+        transform: translateY(-4px);
+        box-shadow: none !important;
+        border-color: var(--border-color);
     }
 
-    .ldb-friend-btn {
-        transition: all 0.2s;
+    .nothing-ldb-first:hover {
+        box-shadow: none !important;
+        border-color: var(--text-muted);
+    }
+
+    /* Nothing OS Buttons */
+    .nothing-ldb-btn {
+        padding: 6px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 9999px;
+        border: 2px solid #000;
+        background: transparent;
+        color: #000;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .nothing-ldb-btn:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: #000;
+    }
+
+    .nothing-ldb-btn-muted {
+        padding: 6px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 9999px;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: not-allowed;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+    }
+
+    .nothing-ldb-btn-done {
+        padding: 6px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 9999px;
+        border: 2px solid #000;
+        background: transparent;
+        color: #000;
+        cursor: default;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+    }
+
+    /* Sovereign card — red accent buttons */
+    .nothing-ldb-sovereign .nothing-ldb-btn {
+        border-color: var(--text-muted) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .nothing-ldb-sovereign .nothing-ldb-btn:hover {
+        background: #d71921 !important;
+        border-color: #d71921 !important;
     }
 
     /* Toast */
@@ -243,33 +327,35 @@ window.switchLeaderboardTab = function(tab) {
         align-items: center;
         gap: 10px;
         padding: 12px 18px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 500;
-        font-family: 'Inter', sans-serif;
-        color: #fff;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: var(--nothing-dot-font, 'DotGothic16', monospace);
+        color: var(--text-primary);
         pointer-events: auto;
-        animation: friendSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        min-width: 220px;
+        animation: friendSlideIn 0.2s ease-out;
+        min-width: 200px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid var(--border-color);
     }
 
     .friend-toast.success {
-        background: #10b981;
+        background: var(--bg-primary);
     }
 
     .friend-toast.error {
-        background: #ef4444;
+        background: #d71921;
     }
 
     .friend-toast.fade-out {
         opacity: 0;
-        transition: opacity 0.4s;
+        transition: opacity 0.3s;
     }
 
     @keyframes friendSlideIn {
         from {
-            transform: translateY(20px);
+            transform: translateY(10px);
             opacity: 0;
         }
 
@@ -279,130 +365,9 @@ window.switchLeaderboardTab = function(tab) {
         }
     }
 
-    .elite-name-leaderboard {
-        background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
-        font-weight: 800 !important;
-    }
-
-    .sovereign-name-leaderboard {
-        background: linear-gradient(135deg, #fbbf24, #d946ef) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
-        font-weight: 900 !important;
-        letter-spacing: -0.2px;
-    }
-
-    /* Leaderboard Buttons */
-    .ldb-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
-
-    .ldb-btn-add {
-        background: #fff;
-        border: 1px solid #ddd;
-        color: #121212;
-        cursor: pointer;
-    }
-
-    .ldb-btn-add:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-    }
-
-    .ldb-btn-pending {
-        background: #f1f5f9;
-        border: 1px solid #e2e8f0;
-        color: #64748b;
-        cursor: not-allowed;
-    }
-
-    .ldb-btn-friends {
-        background: #ecfdf5;
-        border: 1px solid #a7f3d0;
-        color: #10b981;
-        cursor: default;
-    }
-
-    /* Sovereign Tier Button Colors */
-    .leaderboard-row-sovereign .ldb-btn-add {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(251, 191, 36, 0.4) !important;
-        color: #fbbf24 !important;
-        backdrop-filter: blur(4px);
-    }
-
-    .leaderboard-row-sovereign .ldb-btn-add:hover {
-        background: rgba(251, 191, 36, 0.15) !important;
-        border-color: rgba(251, 191, 36, 0.8) !important;
-        color: #fff !important;
-        box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
-    }
-
-    .leaderboard-row-sovereign .ldb-btn-pending {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #a1a1aa !important;
-    }
-
-    .leaderboard-row-sovereign .ldb-btn-friends {
-        background: rgba(16, 185, 129, 0.1) !important;
-        border: 1px solid rgba(16, 185, 129, 0.3) !important;
-        color: #34d399 !important;
-    }
-
-    /* Sovereign Row Special Styling */
-    .leaderboard-row-sovereign {
-        background: linear-gradient(135deg, #1f1f1f, #121212) !important;
-        border: none !important;
-        box-shadow: 0 12px 32px rgba(251, 191, 36, 0.2) !important;
-    }
-
-    .leaderboard-row-sovereign::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 24px;
-        padding: 2px;
-        background: linear-gradient(135deg, #fbbf24, #d946ef, #fbbf24);
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-        animation: sovereignBorderRotate 4s linear infinite;
-    }
-
-    .leaderboard-row-sovereign .sovereign-text-light {
-        color: #fff !important;
-    }
-
-    .leaderboard-row-sovereign .sovereign-text-muted {
-        color: #a1a1aa !important;
-    }
-
-    @keyframes sovereignBorderRotate {
-        0% {
-            filter: hue-rotate(0deg);
-        }
-
-        100% {
-            filter: hue-rotate(360deg);
-        }
-    }
-
-    /* ═══ MOBILE RESPONSIVENESS ═══ */
+    /* ═══ MOBILE ═══ */
     @media (max-width: 768px) {
-        .leaderboard-row {
+        .nothing-ldb-card {
             display: grid !important;
             grid-template-columns: auto 1fr;
             grid-template-areas:
@@ -411,91 +376,56 @@ window.switchLeaderboardTab = function(tab) {
                 "action action";
             align-items: center !important;
             gap: 4px 10px !important;
-            padding: 10px 12px !important;
-            border-radius: 25px !important;
-        }
-
-        .ldb-col-rank {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            width: auto !important;
-            z-index: 2;
-            font-size: 13px !important;
+            padding: 16px 18px !important;
+            border-radius: 20px !important;
         }
 
         .ldb-col-avatar {
             grid-area: avatar;
-            margin-bottom: 0 !important;
         }
 
         .ldb-col-avatar img {
-            width: 38px !important;
-            height: 38px !important;
+            width: 32px !important;
+            height: 32px !important;
         }
 
         .ldb-col-info {
             grid-area: info;
-            width: 100% !important;
-            min-width: 0 !important;
             margin-right: 32px;
-            /* Space for rank */
         }
 
         .ldb-col-info h4 {
-            font-size: 13px !important;
-            margin-bottom: 0 !important;
-        }
-
-        .ldb-col-info>div {
-            font-size: 10px !important;
+            font-size: 12px !important;
         }
 
         .ldb-col-achievements {
             grid-area: achievements;
-            flex: none !important;
             width: 100% !important;
-            margin-top: 2px !important;
+            margin-top: 4px !important;
         }
 
         .ldb-col-achievements img {
-            width: 20px !important;
-            height: 20px !important;
+            width: 18px !important;
+            height: 18px !important;
         }
 
         .ldb-col-action {
             grid-area: action;
-            width: auto !important;
-            margin-right: 0 !important;
-            margin-top: 0 !important;
-        }
-
-        .ldb-btn {
-            padding: 4px 8px !important;
-            font-size: 10px !important;
-            width: fit-content;
+            margin-top: 4px !important;
         }
 
         .ldb-col-exp {
             position: absolute;
-            bottom: 10px;
-            right: 12px;
-            text-align: right !important;
+            top: 12px;
+            right: 14px;
         }
 
         .ldb-col-exp div:first-child {
-            font-size: 14px !important;
+            font-size: 13px !important;
         }
 
         .ldb-col-exp div:last-child {
-            font-size: 9px !important;
-        }
-
-        /* Adjust crown size for top user */
-        .leaderboard-row>div:first-child[style*="rotate"] {
-            font-size: 16px !important;
-            top: -6px !important;
-            left: 6px !important;
+            font-size: 8px !important;
         }
     }
 </style>
@@ -504,7 +434,6 @@ window.switchLeaderboardTab = function(tab) {
     (function () {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-        // ── Global toast helper (window-level so account page can reuse it) ─
         window.showFriendToast = function (msg, type = 'success') {
             const container = document.getElementById('friend-toast-container');
             if (!container) return;
@@ -517,15 +446,13 @@ window.switchLeaderboardTab = function(tab) {
             setTimeout(() => toast.remove(), 3500);
         };
 
-        // ── Add Friend (AJAX) ─────────────────────────────────────────────
         document.querySelectorAll('.ldb-friend-btn').forEach(btn => {
             btn.addEventListener('click', async function () {
                 const url = this.dataset.url;
                 if (!url) return;
 
-                // Optimistic: disable & show spinner
                 this.disabled = true;
-                this.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i> Mengirim...`;
+                this.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i>`;
                 this.style.cursor = 'not-allowed';
 
                 try {
@@ -541,30 +468,22 @@ window.switchLeaderboardTab = function(tab) {
                     const data = await res.json();
 
                     if (res.ok && data.success) {
-                        // Transition button → Pending state
-                        this.innerHTML = `<i class='bx bx-time'></i> Pending`;
-                        this.style.background = '#f1f5f9';
-                        this.style.border = '1px solid #ddd';
-                        this.style.color = '#64748b';
-                        this.style.cursor = 'not-allowed';
+                        this.innerHTML = `PENDING`;
+                        this.style.color = '#aaa';
+                        this.style.borderColor = 'rgba(0,0,0,0.08)';
                         this.disabled = true;
                         window.showFriendToast(data.message, 'success');
                     } else {
-                        // Revert on error
-                        this.innerHTML = `<i class='bx bx-user-plus'></i> Add`;
-                        this.style.background = '#fff';
-                        this.style.color = '';
+                        this.innerHTML = `<i class='bx bx-plus'></i> ADD`;
                         this.style.cursor = 'pointer';
                         this.disabled = false;
-                        window.showFriendToast(data.message || 'Gagal mengirim permintaan.', 'error');
+                        window.showFriendToast(data.message || 'Gagal.', 'error');
                     }
                 } catch (err) {
-                    this.innerHTML = `<i class='bx bx-user-plus'></i> Add`;
-                    this.style.background = '#fff';
-                    this.style.color = '';
+                    this.innerHTML = `<i class='bx bx-plus'></i> ADD`;
                     this.style.cursor = 'pointer';
                     this.disabled = false;
-                    window.showFriendToast('Terjadi kesalahan koneksi. Coba lagi.', 'error');
+                    window.showFriendToast('Koneksi error.', 'error');
                 }
             });
         });

@@ -12,7 +12,7 @@
         {{-- Header --}}
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
             <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: #121212;">Favorit Saya</h2>
+                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Favorit Saya</h2>
                 <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Koleksi materi dan bacaan yang kamu simpan.</p>
             </div>
             <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(-5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
@@ -22,7 +22,7 @@
 
         {{-- Tabs --}}
         <div style="display:flex;gap:24px;margin-bottom:32px;border-bottom:2px solid rgba(0,0,0,0.04);padding-bottom:0;">
-            <button class="fv-neo-tab active" data-target="fv-materi-list" style="display:flex;align-items:center;gap:10px;padding:12px 4px;border:none;background:none;color:#121212;font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid #121212;margin-bottom:-2px;font-family:inherit;transition:all 0.3s;">
+            <button class="fv-neo-tab active" data-target="fv-materi-list" style="display:flex;align-items:center;gap:10px;padding:12px 4px;border:none;background:none;color: var(--text-primary)fff;font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid #121212;margin-bottom:-2px;font-family:inherit;transition:all 0.3s;">
                 <i class='bx bx-book-open' style="font-size:20px;"></i> Materi
                 <span class="fv-tab-badge" style="font-size:11px;font-weight:800;background:linear-gradient(135deg, #121212, #2a2a2a);color:#fff;padding:2px 10px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">{{ $favMateris->count() }}</span>
             </button>
@@ -44,7 +44,7 @@
                         </div>
                         
                         <div style="flex:1;min-width:0;">
-                            <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color:#121212;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $materi->title }}</h4>
+                            <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color: var(--text-primary)fff;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $materi->title }}</h4>
                             <p style="margin:0;font-size:13px;color:#888;font-weight:600;"><span style="color:#6366f1;opacity:0.8;">{{ $materi->mainMateri->title ?? '-' }}</span></p>
                         </div>
                         
@@ -61,7 +61,7 @@
                     <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
                         <i class='bx bx-star' style="font-size:40px;color:#ccc;"></i>
                     </div>
-                    <p style="font-size:18px;font-weight:800;color:#121212;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada materi favorit</p>
+                    <p style="font-size:18px;font-weight:800;color: var(--text-primary)fff;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada materi favorit</p>
                     <p style="font-size:14px;color:#888;margin:0;">Tekan ikon <i class='bx bxs-star' style="color:#f59e0b;"></i> di halaman materi untuk menyimpannya di sini.</p>
                 </div>
             @endforelse
@@ -79,7 +79,7 @@
                         </div>
                         
                         <div style="flex:1;min-width:0;">
-                            <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color:#121212;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $sub->title }}</h4>
+                            <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color: var(--text-primary)fff;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $sub->title }}</h4>
                             <p style="margin:0;font-size:12px;color:#888;font-weight:600;"><span style="color:#8b5cf6;opacity:0.8;">{{ $sub->materi->mainMateri->title ?? '-' }}</span> <span style="margin:0 4px;color:#ccc;">/</span> {{ $sub->materi->title ?? '-' }}</p>
                         </div>
                         
@@ -96,7 +96,7 @@
                     <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
                         <i class='bx bx-file' style="font-size:40px;color:#ccc;"></i>
                     </div>
-                    <p style="font-size:18px;font-weight:800;color:#121212;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada sub materi favorit</p>
+                    <p style="font-size:18px;font-weight:800;color: var(--text-primary)fff;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada sub materi favorit</p>
                     <p style="font-size:14px;color:#888;margin:0;">Tekan ikon <i class='bx bxs-star' style="color:#f59e0b;"></i> di halaman bacaan materi untuk menyimpannya di sini.</p>
                 </div>
             @endforelse
@@ -145,7 +145,7 @@ window.__currentSearchHandler = function(query) {
     border-color: rgba(0,0,0,0.05) !important;
 }
 .favorites-item:hover .neo-arrow {
-    color: #121212 !important;
+    color: var(--text-primary)fff !important;
     transform: translateX(4px) scale(1.1);
 }
 .fv-star-btn:hover {

@@ -91,6 +91,15 @@ class AchievementService
                 ->where('completed', true)
                 ->count() >= $value,
 
+            'season_veteran' => match ($value) {
+                1 => $user->created_at && $user->created_at <= '2023-06-30 23:59:59',
+                2 => $user->created_at && $user->created_at->between('2023-07-01', '2023-12-31 23:59:59'),
+                3 => $user->created_at && $user->created_at->between('2024-01-01', '2024-06-30 23:59:59'),
+                4 => $user->created_at && $user->created_at->between('2024-07-01', '2024-12-31 23:59:59'),
+                5 => $user->created_at && $user->created_at >= '2025-01-01 00:00:00',
+                default => false,
+            },
+
             default => false,
         };
     }
