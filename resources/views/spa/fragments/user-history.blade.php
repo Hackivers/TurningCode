@@ -1,98 +1,100 @@
 <div class="neo-dashboard rtd-dashboard">
-    <div class="neo-bento-container">
+<div class="neo-bento-container">
 
-        {{-- Back --}}
-        <a href="?page=dashboard" class="link-spa" data-page="dashboard"
-            style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#888;text-decoration:none;margin-bottom:32px;transition:color 0.2s; background: rgba(0,0,0,0.03); padding: 8px 16px; border-radius: 20px;"
-            onmouseover="this.style.color='#121212'; this.style.background='rgba(0,0,0,0.05)';" 
-            onmouseout="this.style.color='#888'; this.style.background='rgba(0,0,0,0.03)';">
-            <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke Dashboard
-        </a>
+    <a href="?page=dashboard" class="link-spa ns-back" data-page="dashboard">
+        <i class='bx bx-arrow-back'></i> Kembali
+    </a>
 
-        {{-- Header --}}
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
-            <div>
-                <h2 class="neo-title" style="font-size: 32px; margin: 0; color: var(--text-primary)fff;">Riwayat Belajar</h2>
-                <p style="font-size: 15px; color: #888; margin: 4px 0 0;">Lanjutkan progres materi yang terakhir kamu pelajari.</p>
-            </div>
-            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #121212, #2a2a2a); border-radius: 16px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-                <i class='bx bx-history' style="font-size: 28px; color: #10b981;"></i>
+    {{-- ═══ COMPACT HEADER ═══ --}}
+    <div class="ns-header">
+        <div class="ns-header-left">
+            <h1 class="ns-date"><i class='bx bx-history'></i></h1>
+            <div class="ns-date-meta">
+                <span class="ns-month">Riwayat Belajar</span>
+                <span class="ns-day-name">Lanjutkan progres materimu</span>
             </div>
         </div>
-
-        {{-- Filters --}}
-        <div style="display:flex;overflow-x:auto;gap:12px;margin-bottom:32px;padding-bottom:8px;" class="nhp-filter-row">
-            <button class="nhp-neo-filter active" data-filter="all">Semua</button>
-            @foreach ($filters as $f)
-                <button class="nhp-neo-filter" data-filter="{{ strtolower($f) }}">{{ $f }}</button>
-            @endforeach
+        <div class="ns-fab-inline" style="background: transparent; box-shadow: none; border: 1px solid #27272a; color: #a1a1aa; cursor: default;">
+            <i class='bx bx-time-five'></i>
         </div>
+    </div>
 
-        {{-- History List --}}
-        <div class="neo-card neo-card-light" style="padding: 24px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+    {{-- ═══ HORIZONTAL FILTER STRIP ═══ --}}
+    <div class="ns-day-strip nhp-filter-row" style="margin-bottom: 24px;">
+        <div class="ns-day-item ns-day-active nhp-neo-filter" data-filter="all">
+            <span class="ns-day-label">Filter</span>
+            <span class="ns-day-num" style="font-size: 14px;">Semua</span>
+            <span class="ns-day-dot"></span>
+        </div>
+        @foreach ($filters as $f)
+            <div class="ns-day-item nhp-neo-filter" data-filter="{{ strtolower($f) }}">
+                <span class="ns-day-label">Kategori</span>
+                <span class="ns-day-num" style="font-size: 14px;">{{ $f }}</span>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- ═══ TIMELINE: RIWAYAT ═══ --}}
+    <div class="ns-section">
+        <div class="ns-section-head">
+            <i class='bx bx-book-reader ns-section-icon'></i>
+            <span>Daftar Riwayat</span>
+            <span class="ns-count">{{ count($histories) }}</span>
+        </div>
+        
+        <div class="ns-timeline history-list">
             @if ($histories && count($histories))
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    @foreach ($histories as $history)
-                        @if ($history->submateri && $history->submateri->materi)
-                            @php
-                                $mainThemeColor = '#8b5cf6'; // Default color (purple)
-                                $mainTitle = $history->submateri->materi->mainMateri->title ?? '-';
-                                if(str_contains(strtolower($mainTitle), 'javascript')) $mainThemeColor = '#f59e0b';
-                                elseif(str_contains(strtolower($mainTitle), 'php')) $mainThemeColor = '#6366f1';
-                                elseif(str_contains(strtolower($mainTitle), 'html')) $mainThemeColor = '#ec4899';
-                                elseif(str_contains(strtolower($mainTitle), 'css')) $mainThemeColor = '#3b82f6';
-                                elseif(str_contains(strtolower($mainTitle), 'sql') || str_contains(strtolower($mainTitle), 'database')) $mainThemeColor = '#10b981';
-                            @endphp
-                            <a href="?page=detail&submateri_id={{ $history->submateri->id }}"
-                               class="link-spa history-item"
-                               data-filter="{{ strtolower($history->submateri->materi->title) }}"
-                               style="text-decoration:none;display:block;border-radius:20px;transition:all 0.3s;border: 1px solid rgba(0,0,0,0.02);background: var(--neo-bg, #fff);overflow: hidden;">
-    
-                                <div style="display:flex;align-items:center;padding:20px;gap:20px;position: relative;">
-                                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: {{ $mainThemeColor }}; opacity: 0.8;"></div>
-                                    
-                                    {{-- Icon --}}
-                                    <div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;color:{{ $mainThemeColor }};background:{{ $mainThemeColor }}15;">
-                                        <i class='bx bx-book-reader'></i>
+                @foreach ($histories as $history)
+                    @if ($history->submateri && $history->submateri->materi)
+                        @php
+                            $mainThemeColor = '#8b5cf6'; // Default color (purple)
+                            $mainTitle = $history->submateri->materi->mainMateri->title ?? '-';
+                            if(str_contains(strtolower($mainTitle), 'javascript')) $mainThemeColor = '#f59e0b';
+                            elseif(str_contains(strtolower($mainTitle), 'php')) $mainThemeColor = '#6366f1';
+                            elseif(str_contains(strtolower($mainTitle), 'html')) $mainThemeColor = '#ec4899';
+                            elseif(str_contains(strtolower($mainTitle), 'css')) $mainThemeColor = '#3b82f6';
+                            elseif(str_contains(strtolower($mainTitle), 'sql') || str_contains(strtolower($mainTitle), 'database')) $mainThemeColor = '#10b981';
+                        @endphp
+                        
+                        <div class="ntl-item history-item" data-filter="{{ strtolower($history->submateri->materi->title) }}">
+                            {{-- Timeline gutter --}}
+                            <div class="ntl-gutter">
+                                <span class="ntl-time">{{ $history->viewed_at->diffForHumans(null, true, true) }}</span>
+                                <div class="ntl-dot" style="background: {{ $mainThemeColor }}; box-shadow: 0 0 0 4px {{ $mainThemeColor }}22;"></div>
+                            </div>
+                            
+                            {{-- Card --}}
+                            <a href="?page=detail&submateri_id={{ $history->submateri->id }}" class="link-spa ntl-card" style="border-left: 3px solid {{ $mainThemeColor }}; text-decoration: none;">
+                                <div class="ntl-card-head">
+                                    <div class="ntl-badge" style="color: {{ $mainThemeColor }}; background: {{ $mainThemeColor }}12;">
+                                        <i class='bx bx-folder'></i>
+                                        {{ $mainTitle }}
                                     </div>
-                                    
-                                    {{-- Body --}}
-                                    <div style="flex:1;min-width:0;">
-                                        <h4 style="margin:0 0 6px;font-size:16px;font-weight:800;color: var(--text-primary)fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">{{ $history->submateri->title }}</h4>
-                                        <p style="margin:0;font-size:13px;font-weight:600;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                            <span style="color: {{ $mainThemeColor }}; opacity: 0.8;">{{ $mainTitle }}</span>
-                                            <span style="margin:0 4px;color:#ccc;">/</span> 
-                                            {{ $history->submateri->materi->title }}
-                                        </p>
-                                    </div>
-                                    
-                                    {{-- Time --}}
-                                    <div style="color:#aaa;font-size:11px;font-weight:700;white-space:nowrap;background:rgba(0,0,0,0.03);padding:4px 10px;border-radius:8px;">
-                                        {{ $history->viewed_at->diffForHumans() }}
-                                    </div>
-                                    
-                                    {{-- Arrow --}}
-                                    <div class="nhp-neo-arrow" style="display:flex;align-items:center;color:#ccc;font-size:24px;transition:all 0.3s;">
-                                        <i class='bx bx-right-arrow-circle'></i>
+                                    <div class="ntl-actions">
+                                        <span class="ntl-btn" style="color: {{ $mainThemeColor }};">
+                                            <i class='bx bx-right-arrow-alt'></i>
+                                        </span>
                                     </div>
                                 </div>
-    
+                                <h4 class="ntl-title">{{ $history->submateri->title }}</h4>
+                                <div class="ntl-label">
+                                    <i class='bx bx-book-open'></i>
+                                    {{ $history->submateri->materi->title }}
+                                </div>
                             </a>
-                        @endif
-                    @endforeach
-                </div>
+                        </div>
+                    @endif
+                @endforeach
             @else
-                <div style="padding:80px 20px;text-align:center;">
-                    <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
-                        <i class='bx bx-ghost' style="font-size:40px;color:#ccc;"></i>
-                    </div>
-                    <h4 style="font-size:18px;font-weight:800;color: var(--text-primary)fff;margin:0 0 8px;letter-spacing:-0.2px;">Belum ada riwayat</h4>
-                    <p style="font-size:14px;color:#888;margin:0;">Mulai eksplorasi materi untuk mencatat riwayat belajarmu.</p>
+                <div class="ns-empty">
+                    <i class='bx bx-ghost'></i>
+                    <p>Belum ada riwayat. Yuk mulai belajar!</p>
                 </div>
             @endif
         </div>
-
     </div>
+
+</div>
 </div>
 
 <script>
@@ -102,11 +104,28 @@
 
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            // Remove active state and dot
+            filterBtns.forEach(b => {
+                b.classList.remove('ns-day-active');
+                const dot = b.querySelector('.ns-day-dot');
+                if (dot) dot.remove();
+            });
+
+            // Add active state and dot
+            btn.classList.add('ns-day-active');
+            if (!btn.querySelector('.ns-day-dot')) {
+                btn.insertAdjacentHTML('beforeend', '<span class="ns-day-dot"></span>');
+            }
+
             const filter = btn.dataset.filter;
             items.forEach(item => {
-                item.style.display = (filter === 'all' || item.dataset.filter === filter) ? '' : 'none';
+                if (filter === 'all' || item.dataset.filter === filter) {
+                    item.style.display = '';
+                    item.classList.remove('ntl-inactive');
+                } else {
+                    item.style.display = 'none';
+                    item.classList.add('ntl-inactive');
+                }
             });
         });
     });
@@ -115,11 +134,19 @@
 window.__currentSearchHandler = function(query) {
     const allBtn = document.querySelector('.nhp-neo-filter[data-filter="all"]');
     if (allBtn && query !== '') allBtn.click();
+    
     document.querySelectorAll('.history-item').forEach(card => {
-        const title = card.querySelector('h4')?.textContent.toLowerCase() || '';
-        const path = card.querySelector('p')?.textContent.toLowerCase() || '';
-        card.style.display = (title.includes(query) || path.includes(query)) ? '' : 'none';
+        const title = card.querySelector('.ntl-title')?.textContent.toLowerCase() || '';
+        const badge = card.querySelector('.ntl-badge')?.textContent.toLowerCase() || '';
+        const label = card.querySelector('.ntl-label')?.textContent.toLowerCase() || '';
+        
+        if (title.includes(query) || badge.includes(query) || label.includes(query)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
     });
+
     if (query !== '') {
         const first = Array.from(document.querySelectorAll('.history-item')).find(c => c.style.display !== 'none');
         if (first) setTimeout(() => first.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
@@ -128,65 +155,169 @@ window.__currentSearchHandler = function(query) {
 </script>
 
 <style>
-/* Filters */
-.nhp-filter-row::-webkit-scrollbar { display: none; }
-.nhp-neo-filter {
-    background: transparent;
-    border: 1px solid rgba(0,0,0,0.1);
-    color: #888;
-    padding: 10px 20px;
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    white-space: nowrap;
-    font-family: inherit;
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+/* ═══ NOTHING HISTORY V2 ═══ */
+
+/* Back */
+.ns-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: #71717a;
+    text-decoration: none; margin-bottom: 24px;
+    padding: 6px 14px; border-radius: 9999px;
+    border: 1px solid #27272a; background: transparent;
+    transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.nhp-neo-filter:hover {
-    background: rgba(0,0,0,0.03);
-    color: var(--text-primary)fff;
-    border-color: rgba(0,0,0,0.2);
+.ns-back:hover { color: #fff; border-color: #52525b; }
+.ns-back i { font-size: 15px; }
+
+/* ═══ COMPACT HEADER ═══ */
+.ns-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding: 0;
 }
-.nhp-neo-filter.active {
-    background: linear-gradient(135deg, #121212, #2a2a2a);
-    color: var(--text-primary);
-    border-color: var(--text-primary)fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.ns-header-left { display: flex; align-items: center; gap: 16px; }
+.ns-date {
+    font-size: 48px; color: #fff; margin: 0;
+    line-height: 1; letter-spacing: -2px;
+}
+.ns-date-meta { display: flex; flex-direction: column; gap: 2px; }
+.ns-month { font-size: 16px; font-weight: 700; color: #e4e4e7; font-family: 'Outfit', sans-serif; letter-spacing: -0.5px; }
+.ns-day-name { font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.ns-fab-inline {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: #111113; color: #fff; border: 1px solid #27272a;
+    font-size: 22px; display: flex; align-items: center; justify-content: center;
 }
 
-/* History Items */
-.history-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.06);
-    border-color: rgba(0,0,0,0.05) !important;
+/* ═══ FILTER STRIP ═══ */
+.ns-day-strip {
+    display: flex; gap: 8px; margin-bottom: 32px;
+    overflow-x: auto; scrollbar-width: none;
+    padding: 4px 0;
 }
-.history-item:hover .nhp-neo-arrow {
-    color: var(--text-primary)fff;
-    transform: translateX(4px) scale(1.1);
+.ns-day-strip::-webkit-scrollbar { display: none; }
+.ns-day-item {
+    min-width: 80px; padding: 12px 16px; display: flex; flex-direction: column;
+    align-items: center; gap: 6px; border-radius: 16px; 
+    border: 1px solid #27272a; background: #111113; 
+    cursor: pointer; transition: all 0.25s; position: relative;
+    flex-shrink: 0;
 }
+.ns-day-item:hover { border-color: #52525b; background: #18181b; }
+.ns-day-active {
+    background: #b91c1c !important; border-color: #b91c1c !important;
+}
+.ns-day-active .ns-day-label,
+.ns-day-active .ns-day-num { color: #fff !important; }
+.ns-day-label { font-size: 11px; color: #71717a; font-weight: 600; text-transform: uppercase; }
+.ns-day-num { font-size: 16px; font-weight: 800; color: #e4e4e7; }
+.ns-day-dot {
+    width: 4px; height: 4px; border-radius: 50%; background: #fff;
+    position: absolute; bottom: 6px;
+}
+
+/* ═══ SECTIONS ═══ */
+.ns-section { margin-bottom: 32px; }
+.ns-section-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid #1a1a1e;
+}
+.ns-section-icon { font-size: 18px; color: #b91c1c; }
+.ns-section-head > span {
+    font-size: 13px; font-weight: 700; color: #a1a1aa;
+    text-transform: uppercase; letter-spacing: 1.5px;
+}
+.ns-count {
+    margin-left: auto; font-size: 11px; font-weight: 700;
+    color: #71717a; background: #18181b; border: 1px solid #27272a;
+    padding: 2px 10px; border-radius: 9999px;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* ═══ TIMELINE ═══ */
+.ns-timeline {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+}
+.ns-timeline::before {
+    content: ''; position: absolute; left: 46px; top: 0; bottom: 0;
+    width: 1px; background: #27272a;
+}
+
+/* ═══ TIMELINE ITEM ═══ */
+.ntl-item {
+    display: flex; gap: 16px; padding: 8px 0;
+    position: relative; transition: opacity 0.3s;
+}
+.ntl-inactive { opacity: 0.35; filter: grayscale(0.6); }
+.ntl-gutter {
+    width: 56px; flex-shrink: 0; display: flex;
+    flex-direction: column; align-items: center; gap: 4px;
+    padding-top: 16px; position: relative; z-index: 1;
+}
+.ntl-time {
+    font-size: 10px; font-weight: 700; color: #71717a;
+    font-family: 'Outfit', sans-serif; text-align: center;
+    line-height: 1.2;
+}
+.ntl-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; z-index: 2; margin-top: 4px;
+}
+.ntl-card {
+    flex: 1; background: #111113; border: 1px solid #27272a;
+    border-radius: 16px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+    min-width: 0;
+}
+.ntl-card:hover {
+    border-color: #3f3f46; transform: translateX(4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.ntl-card-head {
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 8px;
+}
+.ntl-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px;
+    display: inline-flex; align-items: center; gap: 4px;
+}
+.ntl-badge i { font-size: 12px; }
+.ntl-actions { display: flex; gap: 4px; }
+.ntl-btn {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: transparent; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+.ntl-card:hover .ntl-btn { transform: translateX(4px); }
+.ntl-title {
+    font-size: 15px; font-weight: 700; color: #e4e4e7;
+    margin: 0; line-height: 1.4;
+}
+.ntl-label {
+    font-size: 11px; color: #52525b; display: flex;
+    align-items: center; gap: 4px; margin-top: 4px;
+}
+.ntl-label i { font-size: 13px; }
+
+/* ═══ EMPTY STATE ═══ */
+.ns-empty {
+    text-align: center; padding: 48px 24px;
+    background: #111113; border: 1px dashed #27272a;
+    border-radius: 16px; margin-left: 72px;
+}
+.ns-empty i { font-size: 32px; color: #27272a; margin-bottom: 8px; }
+.ns-empty p { color: #52525b; font-size: 13px; margin: 0; }
 
 @media (max-width: 768px) {
-    .history-item > div {
-        padding: 16px !important;
-        gap: 12px !important;
-    }
-
-    .history-item h4 {
-        font-size: 14px !important;
-    }
-
-    .history-item p {
-        font-size: 12px !important;
-    }
-
-    .history-item > div > div:nth-child(2) {
-        width: 40px !important;
-        height: 40px !important;
-        font-size: 20px !important;
-        border-radius: 10px !important;
-    }
-
-    .nhp-neo-arrow { display: none !important; }
+    .ns-date { font-size: 36px !important; }
+    .ns-timeline::before { left: 30px; }
+    .ntl-gutter { width: 40px; }
+    .ns-empty { margin-left: 56px; }
 }
 </style>

@@ -98,7 +98,7 @@
     color: var(--text-primary)fff;
     font-size: 24px;
     font-weight: 700;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Outfit', sans-serif;
     line-height: 1.25;
     flex: 1;
 }
@@ -120,7 +120,7 @@
     color: #a1a1aa; 
     font-size: 14px;
     line-height: 1.5;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Outfit', sans-serif;
 }
 
 .materi-pills-row {
@@ -152,7 +152,7 @@
     border-radius: 22px; /* Very rounded button */
     margin-top: 4px;
     transition: background 0.3s, transform 0.2s;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Outfit', sans-serif;
 }
 
 .link-spa:hover .materi-action-btn {

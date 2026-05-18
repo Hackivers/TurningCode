@@ -1,43 +1,44 @@
 :root {
-    --bg-primary: #EDEDED;
-    --bg-secondary: #FFFFFF;
-    --bg-tertiary: #F5F5F7;
-    --text-primary: #1D1D1F;
-    --text-secondary: #464646;
-    --text-muted: #8a898a;
-    --border-color: #E2E2E2;
-    --accent-primary: #6366f1;
-    --accent-secondary: #8b5cf6;
-    --sidebar-bg: linear-gradient(180deg, #191825 0%, #13121c 100%);
-    --nav-bg: rgba(237, 237, 237, 0.8);
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --bg-primary: #181619;
+    --bg-secondary: rgba(255, 255, 255, 0.45);
+    --bg-tertiary: rgba(255, 255, 255, 0.6);
+    --text-primary: #1A1A1A;
+    --text-secondary: #444444;
+    --text-muted: #777777;
+    --border-color: rgba(255, 255, 255, 0.8);
+    --accent-primary: #2C2C2C;
+    --accent-secondary: #4A4A4A;
+    --sidebar-bg: rgba(255, 255, 255, 0.45);
+    --nav-bg: rgba(223, 221, 223, 0.85);
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
 
 .dark-mode {
-    --bg-primary: #000000;
-    --bg-secondary: rgba(255, 255, 255, 0.03);
-    --bg-tertiary: rgba(255, 255, 255, 0.05);
-    --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --text-muted: #a1a1aa;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --accent-primary: #ea1515;
-    --accent-secondary: #d01010;
-    --sidebar-bg: #000000;
-    --nav-bg: rgba(0, 0, 0, 0.8);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    --bg-primary: #181619;
+    --bg-secondary: #1C2438;
+    --bg-tertiary: #242E47;
+    --text-primary: #F0F4F8;
+    --text-secondary: #C8D2DF;
+    --text-muted: #8E9CAE;
+    --border-color: rgba(255, 255, 255, 0.06);
+    --accent-primary: #ECA07A;
+    --accent-secondary: #D47B58;
+    --sidebar-bg: #151B2B;
+    --nav-bg: rgba(21, 27, 43, 0.85);
+    --glass-bg: rgba(30, 41, 59, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
+
 
 * {
     margin: 0;
     padding: 0;
     color: var(--text-secondary);
-    font-family: "Poppins", sans-serif;
-    font-weight: 400;
+    font-family: "Quicksand", "Poppins", sans-serif;
+    font-weight: 500;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;

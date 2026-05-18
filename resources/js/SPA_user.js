@@ -664,7 +664,7 @@ function initScheduleNotifier() {
             if (s.start_time === now && !fired.includes(startKey)) {
                 markFired(startKey);
                 sendNotification(
-                    '📚 Waktunya Belajar!',
+                    'Waktunya Belajar!',
                     `${s.title} — mulai sekarang (${s.start_time})`,
                     s.color || '#6366f1',
                     'start'
@@ -675,7 +675,7 @@ function initScheduleNotifier() {
             if (s.end_time && s.end_time === now && !fired.includes(endKey)) {
                 markFired(endKey);
                 sendNotification(
-                    '☕ Waktunya Istirahat!',
+                    'Waktunya Istirahat!',
                     `${s.title} — sesi selesai (${s.end_time})`,
                     '#10b981',
                     'end'
@@ -688,7 +688,7 @@ function initScheduleNotifier() {
             if (pre5 === now && !fired.includes(preKey)) {
                 markFired(preKey);
                 sendNotification(
-                    '⏰ 5 Menit Lagi!',
+                    '5 Menit Lagi!',
                     `${s.title} dimulai pukul ${s.start_time}`,
                     s.color || '#f59e0b',
                     'reminder'
@@ -746,7 +746,7 @@ function initScheduleNotifier() {
             // Hanya push ke panel, tanpa toast/browser notif
             if (typeof window.__addNotification === 'function') {
                 window.__addNotification(
-                    `📋 ${todaySchedules.length} jadwal hari ini`,
+                    `${todaySchedules.length} jadwal hari ini`,
                     body,
                     '#6366f1',
                     'system'

@@ -1,22 +1,4 @@
-// ── Navbar scroll ─────────────────────────────────────────────────
-let isScrolled = false;
 
-window.addEventListener("scroll", () => {
-    const navbar = document.getElementById("navBar");
-    if (!navbar) return;
-
-    const emInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const triggerOn = 13 * emInPx;
-    const triggerOff = 9 * emInPx;
-
-    if (!isScrolled && window.scrollY > triggerOn) {
-        navbar.classList.add("scrolled");
-        isScrolled = true;
-    } else if (isScrolled && window.scrollY < triggerOff) {
-        navbar.classList.remove("scrolled");
-        isScrolled = false;
-    }
-});
 
 // ── Global Search Handler ─────────────────────────────────────────
 (function () {
@@ -48,7 +30,7 @@ window.addEventListener("scroll", () => {
     updateTime();
 
     // Toggle Panel
-    function openPanel(targetPillId = 'sys-pill-profile') {
+    function openPanel(targetPillId = 'sys-pill-account') {
         sysPanel.classList.add('active');
         sysBackdrop.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -57,9 +39,7 @@ window.addEventListener("scroll", () => {
             const pill = document.getElementById(targetPillId);
             if (pill) pill.click();
         } else {
-            // Default to profile card if no pill specified
-            showCard('sys-card-profile');
-            document.querySelectorAll('.sys-pill').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sys-tile').forEach(p => p.classList.remove('active'));
         }
     }
 
@@ -86,55 +66,151 @@ window.addEventListener("scroll", () => {
     if (btnClose) btnClose.addEventListener('click', closePanel);
     sysBackdrop.addEventListener('click', closePanel);
 
-    // Pill interactions
-    const pills = document.querySelectorAll('.sys-pill');
-    const cards = document.querySelectorAll('.sys-card');
-    const notifPanel = document.getElementById('sys-notif-panel');
+    // ── Tile Slider Logic ──
+    const tileTrack = document.getElementById('sys-tile-track');
+    const dotsContainer = document.getElementById('sys-dots');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.sys-dot') : [];
+    const tilePages = tileTrack ? tileTrack.querySelectorAll('.sys-tile-page') : [];
+    let currentSlide = 0;
+    const totalSlides = dots.length || 1;
 
-    function isDesktop() {
-        return window.innerWidth >= 769;
-    }
-
-    function showCard(cardId) {
-        cards.forEach(c => c.classList.remove('active'));
-        const target = document.getElementById(cardId);
-        if (target) {
-            target.classList.add('active');
+    function goToSlide(index) {
+        if (index < 0 || index >= totalSlides) return;
+        currentSlide = index;
+        if (tileTrack) {
+            tileTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
         }
+        dots.forEach((d, i) => {
+            d.classList.toggle('active', i === currentSlide);
+        });
+        tilePages.forEach((p, i) => {
+            p.classList.toggle('active', i === currentSlide);
+        });
     }
+
+    // Init first page as active
+    if (tilePages.length > 0) tilePages[0].classList.add('active');
+
+    // Dot click
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const page = parseInt(dot.dataset.page);
+            if (!isNaN(page)) goToSlide(page);
+        });
+    });
+
+    // Swipe support on the slider
+    const slider = document.getElementById('sys-tile-slider');
+    if (slider) {
+        let startX = 0, startY = 0, isDragging = false;
+
+        slider.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = true;
+        }, { passive: true });
+
+        slider.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diffX = startX - e.changedTouches[0].clientX;
+            const diffY = startY - e.changedTouches[0].clientY;
+            // Only swipe horizontally if distance > 40px and mostly horizontal
+            if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) goToSlide(currentSlide + 1); // swipe left
+                else goToSlide(currentSlide - 1); // swipe right
+            }
+        }, { passive: true });
+
+        // Mouse drag for desktop
+        slider.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            isDragging = true;
+        });
+        slider.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diffX = startX - e.clientX;
+            if (Math.abs(diffX) > 40) {
+                if (diffX > 0) goToSlide(currentSlide + 1);
+                else goToSlide(currentSlide - 1);
+            }
+        });
+    }
+
+    // Pill interactions
+    const pills = document.querySelectorAll('.sys-tile');
+    const notifPanel = document.getElementById('sys-notif-panel');
+    const notifPill = document.getElementById('sys-pill-notif');
 
     function hideNotifPanel() {
         if (notifPanel) notifPanel.classList.remove('active');
+        if (notifPill) notifPill.classList.remove('notif-active');
     }
 
-    const notifPill = document.getElementById('sys-pill-notif');
+    function toggleNotifPanel() {
+        if (!notifPanel || !notifPill) return;
+        const isActive = notifPanel.classList.contains('active');
+        if (isActive) {
+            hideNotifPanel();
+        } else {
+            notifPanel.classList.add('active');
+            notifPill.classList.add('notif-active');
+        }
+    }
+
+    const dynamicPanelsContainer = document.getElementById('sys-dynamic-panels');
+    const dynamicCards = document.querySelectorAll('.sys-panel-card');
 
     pills.forEach(pill => {
         pill.addEventListener('click', () => {
-            const targetId = pill.getAttribute('data-target');
-
-            // Handle notification pill separately on desktop
-            if (targetId === 'sys-card-notif' && isDesktop()) {
-                // Toggle external notif panel independently
-                const isActive = notifPill && notifPill.classList.contains('notif-active');
-                if (isActive) {
-                    hideNotifPanel();
-                    notifPill.classList.remove('notif-active');
-                } else {
-                    notifPill.classList.add('notif-active');
-                    if (notifPanel) notifPanel.classList.add('active');
-                }
+            if (pill.id === 'sys-pill-notif') {
+                toggleNotifPanel();
                 return;
             }
 
-            // Normal pill behavior (don't touch notif pill)
-            pills.forEach(p => {
-                if (p.id !== 'sys-pill-notif') p.classList.remove('active');
-            });
-            pill.classList.add('active');
+            // Mode Toggle (Independent)
+            if (pill.id === 'sys-pill-mode') {
+                const isCurrentlyDark = document.documentElement.classList.contains('dark-mode');
+                const turnDark = !isCurrentlyDark;
+                localStorage.setItem('tc_dark_mode', turnDark);
+                applyTheme(turnDark);
+                return;
+            }
+
+            // Report Bug (Independent)
+            if (pill.id === 'btn-report-bug') {
+                return;
+            }
+
+            const wasActive = pill.classList.contains('active');
             
-            if (targetId) {
-                showCard(targetId);
+            // Deactivate all normal pills
+            pills.forEach(p => {
+                if (p.id !== 'sys-pill-notif' && p.id !== 'sys-pill-mode') p.classList.remove('active');
+            });
+
+            // Hide all dynamic cards
+            dynamicCards.forEach(c => c.classList.remove('active'));
+
+            if (!wasActive) {
+                // Activate the clicked pill
+                pill.classList.add('active');
+                
+                // Show corresponding panel if exists
+                const targetId = pill.getAttribute('data-target');
+                const targetPanel = document.getElementById(targetId);
+                
+                if (targetPanel) {
+                    if (dynamicPanelsContainer) dynamicPanelsContainer.style.display = 'block';
+                    targetPanel.classList.add('active');
+                } else {
+                    // No target panel, hide container
+                    if (dynamicPanelsContainer) dynamicPanelsContainer.style.display = 'none';
+                }
+            } else {
+                // User toggled off the current active pill, hide container
+                if (dynamicPanelsContainer) dynamicPanelsContainer.style.display = 'none';
             }
         });
     });
@@ -147,11 +223,13 @@ window.addEventListener("scroll", () => {
         document.documentElement.classList.toggle('dark-mode', isDark);
         if (toggleDark) toggleDark.checked = isDark;
         
-        // Update optimize pill text
-        const pillDark = document.getElementById('sys-pill-setting');
-        if (pillDark && pillDark.querySelector('span')) {
-            // Just updating settings pill subtitle
-            pillDark.querySelector('span').textContent = isDark ? 'Gelap' : 'Terang';
+        // Update mode pill text and active state
+        const pillMode = document.getElementById('sys-pill-mode');
+        if (pillMode) {
+            pillMode.classList.toggle('active', isDark);
+            if (pillMode.querySelector('span')) {
+                pillMode.querySelector('span').textContent = isDark ? 'Gelap' : 'Terang';
+            }
         }
     }
 
@@ -167,32 +245,186 @@ window.addEventListener("scroll", () => {
     }
 
     const toggleOptimize = document.getElementById('toggle-optimize');
-    const pillOptimize = document.getElementById('sys-pill-optimize');
     const optimizeKey = 'tc_optimize_mode';
 
     function applyOptimize(isOn) {
         document.documentElement.classList.toggle('optimize-mode', isOn);
-        if (pillOptimize) {
-            pillOptimize.classList.toggle('active', isOn);
-            pillOptimize.querySelector('span').textContent = isOn ? 'Aktif' : 'Mati';
-        }
+        if (toggleOptimize) toggleOptimize.checked = isOn;
     }
 
     const isOptimize = localStorage.getItem(optimizeKey) === 'true';
     applyOptimize(isOptimize);
 
-    if (pillOptimize) {
-        pillOptimize.addEventListener('click', () => {
-            const isCurrentlyOn = pillOptimize.classList.contains('active');
-            const turnOn = !isCurrentlyOn;
-            localStorage.setItem(optimizeKey, turnOn);
-            applyOptimize(turnOn);
-            // Don't change bottom card for optimize toggle
-            showCard('sys-card-profile'); 
-            pills.forEach(p => { if (p.id !== 'sys-pill-optimize') p.classList.remove('active') });
+    if (toggleOptimize) {
+        toggleOptimize.addEventListener('change', () => {
+            const on = toggleOptimize.checked;
+            localStorage.setItem(optimizeKey, on);
+            applyOptimize(on);
         });
     }
 
+    // ── Info Slider Functionality ──
+    const sipTrack = document.getElementById('sip-slider-track');
+    const sipDots = document.querySelectorAll('#sip-dots .sip-dot');
+    let currentSipSlide = 0;
+
+    if (sipTrack && sipDots.length > 0) {
+        function updateSipSlider() {
+            sipTrack.style.transform = `translateX(-${currentSipSlide * (100 / 3)}%)`;
+            sipDots.forEach(d => d.classList.remove('active'));
+            sipDots[currentSipSlide].classList.add('active');
+        }
+
+        sipDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                currentSipSlide = parseInt(dot.dataset.slide);
+                updateSipSlider();
+            });
+        });
+    }
+
+    // ── Font Size Slider ──
+    const fontSlider = document.getElementById('ssp-font-slider');
+    const fontValue = document.getElementById('ssp-font-value');
+    const fontKey = 'tc_font_size';
+
+    function applyFontSize(size) {
+        // Since the site uses px instead of rem, we use zoom to scale the entire UI proportionally
+        const scale = size / 16;
+        document.body.style.zoom = scale;
+        
+        // Fallback for Firefox which doesn't support zoom well: use CSS transform
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+            document.body.style.transform = `scale(${scale})`;
+            document.body.style.transformOrigin = 'top left';
+            document.body.style.width = `${100 / scale}%`;
+        }
+
+        if (fontSlider) fontSlider.value = size;
+        if (fontValue) fontValue.textContent = size + 'px';
+    }
+
+    const savedFont = parseInt(localStorage.getItem(fontKey)) || 16;
+    applyFontSize(savedFont);
+
+    if (fontSlider) {
+        fontSlider.addEventListener('input', () => {
+            const size = parseInt(fontSlider.value);
+            localStorage.setItem(fontKey, size);
+            applyFontSize(size);
+        });
+    }
+
+    // ── Friend Search Functionality ──
+    const friendSearchInput = document.getElementById('sys-friend-search');
+    const friendResults = document.getElementById('sys-friend-results');
+    const friendEmpty = document.getElementById('sys-friend-empty');
+    const navBar = document.getElementById('navBar');
+    const searchUrl = navBar ? navBar.dataset.friendSearchUrl : '';
+    const csrfToken = navBar ? navBar.dataset.csrfToken : '';
+    let friendSearchTimer = null;
+
+    if (friendSearchInput) {
+        friendSearchInput.addEventListener('input', () => {
+            clearTimeout(friendSearchTimer);
+            const query = friendSearchInput.value.trim();
+
+            if (query.length < 2) {
+                // Show empty state
+                friendResults.querySelectorAll('.sfp-user-card').forEach(el => el.remove());
+                if (friendEmpty) friendEmpty.style.display = 'flex';
+                return;
+            }
+
+            friendSearchTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) return;
+                    const users = await res.json();
+                    renderFriendResults(users);
+                } catch (e) { /* silent */ }
+            }, 400);
+        });
+    }
+
+    function renderFriendResults(users) {
+        if (!friendResults) return;
+        friendResults.querySelectorAll('.sfp-user-card').forEach(el => el.remove());
+
+        if (users.length === 0) {
+            if (friendEmpty) {
+                friendEmpty.querySelector('span').textContent = 'Tidak ditemukan';
+                friendEmpty.style.display = 'flex';
+            }
+            return;
+        }
+
+        if (friendEmpty) friendEmpty.style.display = 'none';
+
+        users.forEach(u => {
+            const card = document.createElement('div');
+            card.className = 'sfp-user-card';
+
+            let btnClass = 'sfp-add-btn';
+            let btnIcon = '<i class="bx bx-plus"></i>';
+            if (u.friendship_status === 'accepted') {
+                btnClass += ' already';
+                btnIcon = '<i class="bx bx-check"></i>';
+            } else if (u.friendship_status === 'pending') {
+                btnClass += ' sent';
+                btnIcon = '<i class="bx bx-time-five"></i>';
+            }
+
+            const expFormatted = (u.exp || 0).toLocaleString('id-ID');
+
+            card.innerHTML = `
+                <img src="${u.avatar}" alt="" class="sfp-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=18181b&color=fff'">
+                <div class="sfp-user-info">
+                    <div class="sfp-user-name">${u.name}</div>
+                    <div class="sfp-user-exp">${expFormatted} EXP</div>
+                </div>
+                <button class="${btnClass}" data-user-id="${u.id}">${btnIcon}</button>
+            `;
+
+            const addBtn = card.querySelector('.sfp-add-btn');
+            if (!u.friendship_status && addBtn) {
+                addBtn.addEventListener('click', async () => {
+                    addBtn.disabled = true;
+                    addBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+                    try {
+                        const res = await fetch(`/app/friend/add/${u.id}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            credentials: 'same-origin',
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            addBtn.className = 'sfp-add-btn sent';
+                            addBtn.innerHTML = '<i class="bx bx-check"></i>';
+                            if (typeof window.__addNotification === 'function') {
+                                window.__addNotification('Permintaan Terkirim', `Permintaan pertemanan ke ${u.name} berhasil dikirim`);
+                            }
+                        } else {
+                            addBtn.innerHTML = '<i class="bx bx-x"></i>';
+                            addBtn.disabled = false;
+                        }
+                    } catch (e) {
+                        addBtn.innerHTML = '<i class="bx bx-plus"></i>';
+                        addBtn.disabled = false;
+                    }
+                });
+            }
+
+            friendResults.appendChild(card);
+        });
+    }
 
     // ── Notifications Functionality ──
     const badge = document.getElementById('notif-badge');
@@ -204,7 +436,7 @@ window.addEventListener("scroll", () => {
 
     function getNotifs() {
         try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-        catch { return []; }
+        catch (e) { return []; }
     }
 
     function saveNotifs(arr) {
@@ -215,14 +447,12 @@ window.addEventListener("scroll", () => {
         return getNotifs().filter(n => !n.read).length;
     }
 
-    window.__addNotification = function (title, body, color, type) {
+    window.__addNotification = function (title, body) {
         const notifs = getNotifs();
         notifs.unshift({
             id: Date.now() + '-' + Math.random().toString(36).substr(2, 5),
             title,
             body,
-            color: color || '#6366f1',
-            type: type || 'reminder',
             time: new Date().toISOString(),
             read: false,
         });
@@ -254,57 +484,41 @@ window.addEventListener("scroll", () => {
         if (!bodyEl) return;
         const notifs = getNotifs();
 
-        bodyEl.querySelectorAll('.spd-pill.notif-pill').forEach(el => el.remove());
+        bodyEl.querySelectorAll('.scnp-item').forEach(el => el.remove());
 
         if (notifs.length === 0) {
-            if (emptyEl) emptyEl.style.display = 'flex';
+            if (emptyEl) emptyEl.style.display = 'block';
             return;
         }
 
         if (emptyEl) emptyEl.style.display = 'none';
 
-        const icons = {
-            start: 'bx bx-target-lock',
-            end: 'bx bx-coffee-togo',
-            reminder: 'bx bx-radio-circle-marked',
-            system: 'bx bx-terminal',
-        };
-
         const frag = document.createDocumentFragment();
 
         notifs.forEach(n => {
-            const timeStr = new Date(n.time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const timeStr = new Date(n.time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
             const item = document.createElement('div');
-            item.className = 'spd-pill notif-pill' + (n.read ? '' : ' unread');
+            item.className = 'scnp-item' + (n.read ? ' read' : '');
             item.dataset.notifId = n.id;
-            // Unread styling: more contrast for nothing os.
-            const iconBg = n.read ? '#27272a' : '#fff';
-            const iconColor = n.read ? '#a1a1aa' : '#000';
-            const itemBorder = n.read ? '#27272a' : '#fff';
-
-            item.innerHTML = `
-                <div class="spd-pill-text">
-                    <strong>${n.title}</strong>
-                    <span>${n.body}</span>
-                    <span style="font-size: 9px; opacity: 0.5; margin-top: 2px; text-transform: uppercase; font-family: var(--nothing-dot-font, monospace); letter-spacing: 0.5px;"><i class='bx bx-time-five'></i> ${timeStr}</span>
-                </div>
-                <button class="notif-item-dismiss" style="background: transparent; border: none; color: #a1a1aa; cursor: pointer; font-size: 20px; padding: 4px; display: flex;"><i class='bx bx-x'></i></button>
-            `;
-            item.style.marginBottom = "8px"; // add gap
-            if (!n.read) {
-                item.style.borderColor = "#fff";
-                item.style.background = "#fff";
-                item.style.color = "#000";
+            
+            // If read, slightly dim it
+            if (n.read) {
+                item.style.opacity = '0.5';
             }
 
+            item.innerHTML = `
+                <div class="scnp-icon"><i class='bx bx-bell'></i></div>
+                <div class="scnp-content">
+                    <strong>${n.title}</strong>
+                    <span>${n.body}</span>
+                </div>
+                <div class="scnp-time">${timeStr}</div>
+            `;
+            
+            item.style.cursor = "pointer";
+            
             item.addEventListener('click', (e) => {
-                if (e.target.closest('.notif-item-dismiss')) return;
                 markRead(n.id);
-            });
-
-            item.querySelector('.notif-item-dismiss').addEventListener('click', (e) => {
-                e.stopPropagation();
-                dismissNotif(n.id, item);
             });
 
             frag.appendChild(item);
@@ -482,7 +696,7 @@ window.addEventListener("scroll", () => {
         // Add click sound to interactive elements
         document.addEventListener('click', (e) => {
             if (localStorage.getItem('tc-sound') === 'false') return;
-            const el = e.target.closest('button, .sys-pill, .spd-card, a');
+            const el = e.target.closest('button, .sys-tile, .spd-card, a');
             if (el) {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
@@ -499,26 +713,7 @@ window.addEventListener("scroll", () => {
         });
     }
 
-    // Font Size Cycling
-    const btnFontSize = document.getElementById('btn-font-size');
-    const fontSizeLabel = document.getElementById('font-size-label');
-    if (btnFontSize && fontSizeLabel) {
-        const sizes = ['small', 'normal', 'large'];
-        const sizeValues = { small: '14px', normal: '16px', large: '18px' };
-        const sizeLabels = { small: 'Kecil', normal: 'Normal', large: 'Besar' };
-        let currentSize = localStorage.getItem('tc-font-size') || 'normal';
-        
-        document.documentElement.style.fontSize = sizeValues[currentSize];
-        fontSizeLabel.textContent = sizeLabels[currentSize];
 
-        btnFontSize.addEventListener('click', () => {
-            const idx = sizes.indexOf(currentSize);
-            currentSize = sizes[(idx + 1) % sizes.length];
-            document.documentElement.style.fontSize = sizeValues[currentSize];
-            fontSizeLabel.textContent = sizeLabels[currentSize];
-            localStorage.setItem('tc-font-size', currentSize);
-        });
-    }
 
     // Animations Toggle
     const toggleAnimations = document.getElementById('toggle-animations');
@@ -550,16 +745,19 @@ window.addEventListener("scroll", () => {
     const btnClearCache = document.getElementById('btn-clear-cache');
     if (btnClearCache) {
         btnClearCache.addEventListener('click', () => {
-            if (confirm('Reset semua pengaturan panel ke default?')) {
-                localStorage.removeItem('tc-compact');
-                localStorage.removeItem('tc-sound');
-                localStorage.removeItem('tc-font-size');
-                localStorage.removeItem('tc-animations');
-                localStorage.removeItem('tc-autoscroll');
-                document.documentElement.style.fontSize = '';
-                document.body.classList.remove('compact-mode', 'no-animations');
+            // Remove old and new setting keys
+            const keys = ['tc-compact', 'tc-sound', 'tc-font-size', 'tc-animations', 'tc-autoscroll', 'tc_dark_mode', 'tc_optimize_mode', 'tc_font_size'];
+            keys.forEach(k => localStorage.removeItem(k));
+            
+            document.documentElement.style.fontSize = '';
+            document.body.classList.remove('compact-mode', 'no-animations');
+            
+            btnClearCache.textContent = 'Selesai ✓';
+            btnClearCache.classList.add('done');
+            
+            setTimeout(() => {
                 location.reload();
-            }
+            }, 600);
         });
     }
 
@@ -569,11 +767,7 @@ window.addEventListener("scroll", () => {
         btnReportBug.addEventListener('click', () => {
             if (typeof window.openIssueReportModal === 'function') {
                 window.openIssueReportModal();
-                // Close the system panel after opening the modal
-                const panel = document.getElementById('sys-panel');
-                const backdrop = document.getElementById('sys-backdrop');
-                if (panel) panel.classList.remove('active');
-                if (backdrop) backdrop.classList.remove('active');
+                closePanel();
             } else {
                 alert('Fitur laporan bug akan segera tersedia.');
             }
@@ -585,20 +779,173 @@ window.addEventListener("scroll", () => {
     const btnMusicUpload = document.getElementById('btn-music-upload');
     const audioPlayer = document.getElementById('sys-audio-player');
     const btnPlay = document.getElementById('btn-music-play');
-    const btnPrev = document.getElementById('btn-music-prev');
-    const btnNext = document.getElementById('btn-music-next');
     const seekSlider = document.getElementById('sys-music-seek');
-    const currTimeEl = document.getElementById('sys-music-curr');
-    const durTimeEl = document.getElementById('sys-music-dur');
     const titleEl = document.getElementById('sys-music-title');
-    const subtitlePill = document.getElementById('sys-music-subtitle');
-    const vinylDisk = document.getElementById('sys-vinyl-disk');
+    const progressFill = document.getElementById('sys-music-progress-fill');
     const volSlider = document.getElementById('sys-music-vol');
     const volFill = document.getElementById('sys-vol-fill');
+    const visualizerBars = document.querySelectorAll('.smp-bar-fill');
+
+    if (volSlider && volFill) {
+        const savedVol = localStorage.getItem('tc_music_vol');
+        if (savedVol !== null) volSlider.value = savedVol;
+
+        const updateVolUI = (val) => {
+            if (audioPlayer) audioPlayer.volume = val / 100;
+            volFill.style.width = val + '%';
+            
+            const volIcon = document.querySelector('.sys-vol-icon');
+            if (volIcon) {
+                if (val == 0) volIcon.className = 'bx bx-volume-mute sys-vol-icon';
+                else if (val < 50) volIcon.className = 'bx bx-volume-low sys-vol-icon';
+                else volIcon.className = 'bx bx-volume-full sys-vol-icon';
+            }
+        };
+
+        updateVolUI(volSlider.value);
+        
+        volSlider.addEventListener('input', () => {
+            updateVolUI(volSlider.value);
+            localStorage.setItem('tc_music_vol', volSlider.value);
+        });
+    }
 
     let currentMusicUrl = null;
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let source = null;
+    let isVisualizerRunning = false;
+
+    function initAudioVisualizer() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64; // 32 frequency bins
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        
+        source = audioCtx.createMediaElementSource(audioPlayer);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+    }
+
+    function drawVisualizer() {
+        if (!isVisualizerRunning) return;
+        requestAnimationFrame(drawVisualizer);
+        
+        if (analyser) {
+            analyser.getByteFrequencyData(dataArray);
+            
+            // Map only the first 21 active bins to 7 visualizer frequency bands
+            // (ignoring the very high empty frequencies at the top end of the spectrum)
+            const binsPerBar = 3;
+            const averages = [];
+            
+            for (let i = 0; i < 7; i++) {
+                let sum = 0;
+                for (let j = 0; j < binsPerBar; j++) {
+                    sum += dataArray[(i * binsPerBar) + j];
+                }
+                averages.push(sum / binsPerBar);
+            }
+            
+            // Arrange symmetrically: dominant bass (averages[0]) in the center
+            const symmetricMapping = [
+                averages[5], // far left
+                averages[3],
+                averages[1],
+                averages[0], // center
+                averages[2],
+                averages[4],
+                averages[6]  // far right
+            ];
+            
+            for (let i = 0; i < 7; i++) {
+                if (!visualizerBars[i]) continue;
+                
+                let average = symmetricMapping[i];
+                
+                // Convert 0-255 value to a pixel height between 6px and 120px
+                let heightPx = 6 + (average / 255) * 114;
+                visualizerBars[i].style.height = heightPx + 'px';
+                visualizerBars[i].style.transition = 'none'; // Fast updates
+            }
+        }
+    }
+
+    function updatePlayState(isPlaying) {
+        if (!btnPlay) return;
+        const playSvg = btnPlay.querySelector('svg');
+        
+        if (isPlaying) {
+            if (playSvg) playSvg.innerHTML = '<rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />';
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            if (!isVisualizerRunning) {
+                isVisualizerRunning = true;
+                drawVisualizer();
+            }
+        } else {
+            if (playSvg) playSvg.innerHTML = '<polygon points="7,4 20,12 7,20" />';
+            isVisualizerRunning = false;
+            
+            // Reset bars back to default CSS heights smoothly
+            visualizerBars.forEach(bar => {
+                bar.style.transition = 'height 0.3s ease';
+                bar.style.height = ''; 
+            });
+        }
+    }
+
+    // IndexedDB setup for persisting music across reloads
+    function openMusicDB() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open('tcMusicDB', 1);
+            req.onupgradeneeded = (e) => {
+                e.target.result.createObjectStore('music', { keyPath: 'id' });
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function saveMusic(file) {
+        try {
+            const db = await openMusicDB();
+            const tx = db.transaction('music', 'readwrite');
+            tx.objectStore('music').put({ id: 'saved_track', file: file, name: file.name });
+        } catch(e) {}
+    }
+
+    async function loadMusic() {
+        try {
+            const db = await openMusicDB();
+            const tx = db.transaction('music', 'readonly');
+            const req = tx.objectStore('music').get('saved_track');
+            req.onsuccess = () => {
+                if (req.result && req.result.file) {
+                    const data = req.result;
+                    currentMusicUrl = URL.createObjectURL(data.file);
+                    audioPlayer.src = currentMusicUrl;
+                    if (titleEl) titleEl.textContent = data.name.replace(/\.[^/.]+$/, "");
+                    
+                    const savedProgress = parseFloat(localStorage.getItem('tc_music_progress'));
+                    audioPlayer.addEventListener('loadedmetadata', function onMetaLoad() {
+                        if (savedProgress && savedProgress < audioPlayer.duration) {
+                            audioPlayer.currentTime = savedProgress;
+                        }
+                        audioPlayer.removeEventListener('loadedmetadata', onMetaLoad);
+                    });
+
+                    audioPlayer.load();
+                    initAudioVisualizer();
+                }
+            };
+        } catch(e) {}
+    }
 
     if (btnMusicUpload && musicFileInput) {
+        loadMusic();
         btnMusicUpload.addEventListener('click', () => {
             musicFileInput.click();
         });
@@ -606,12 +953,14 @@ window.addEventListener("scroll", () => {
         musicFileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                saveMusic(file);
+                localStorage.removeItem('tc_music_progress'); // reset progress for new file
                 if (currentMusicUrl) URL.revokeObjectURL(currentMusicUrl);
                 currentMusicUrl = URL.createObjectURL(file);
                 audioPlayer.src = currentMusicUrl;
-                titleEl.textContent = file.name.replace(/\.[^/.]+$/, "");
-                subtitlePill.textContent = "Siap Diputar";
+                if (titleEl) titleEl.textContent = file.name.replace(/\.[^/.]+$/, "");
                 
+                initAudioVisualizer();
                 audioPlayer.load();
                 audioPlayer.play().then(() => {
                     updatePlayState(true);
@@ -619,92 +968,53 @@ window.addEventListener("scroll", () => {
             }
         });
 
-        btnPlay.addEventListener('click', () => {
-            if (!currentMusicUrl) return musicFileInput.click();
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                updatePlayState(true);
-            } else {
-                audioPlayer.pause();
-                updatePlayState(false);
-            }
-        });
-
-        btnPrev.addEventListener('click', () => {
-            audioPlayer.currentTime = 0;
-            if (audioPlayer.paused && currentMusicUrl) {
-                audioPlayer.play();
-                updatePlayState(true);
-            }
-        });
-
-        btnNext.addEventListener('click', () => {
-            audioPlayer.pause();
-            audioPlayer.currentTime = 0;
-            updatePlayState(false);
-            subtitlePill.textContent = "Berhenti";
-        });
-
-        const progressFill = document.getElementById('sys-music-progress-fill');
-
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (!audioPlayer.duration) return;
-            const current = audioPlayer.currentTime;
-            const duration = audioPlayer.duration;
-            const percentage = (current / duration) * 100;
-            seekSlider.value = percentage;
-            if (progressFill) progressFill.style.width = percentage + '%';
-            
-            if (currTimeEl) currTimeEl.textContent = formatTime(current);
-            if (durTimeEl) durTimeEl.textContent = formatTime(duration);
-        });
-
-        audioPlayer.addEventListener('ended', () => {
-            updatePlayState(false);
-            seekSlider.value = 0;
-            if (progressFill) progressFill.style.width = '0%';
-            if (currTimeEl) currTimeEl.textContent = "0:00";
-            if (subtitlePill) subtitlePill.textContent = "Selesai";
-        });
-
-        seekSlider.addEventListener('input', () => {
-            if (!audioPlayer.duration) return;
-            const seekTo = audioPlayer.duration * (seekSlider.value / 100);
-            audioPlayer.currentTime = seekTo;
-            if (progressFill) progressFill.style.width = seekSlider.value + '%';
-        });
-
-        if (volSlider && volFill) {
-            audioPlayer.volume = volSlider.value / 100;
-            volFill.style.width = volSlider.value + '%';
-            
-            volSlider.addEventListener('input', () => {
-                audioPlayer.volume = volSlider.value / 100;
-                volFill.style.width = volSlider.value + '%';
-                
-                // Change icon based on volume level
-                const volIcon = volFill.querySelector('i');
-                if (volSlider.value == 0) {
-                    volIcon.className = 'bx bx-volume-mute';
-                } else if (volSlider.value < 50) {
-                    volIcon.className = 'bx bx-volume-low';
+        if (btnPlay) {
+            btnPlay.addEventListener('click', () => {
+                if (!currentMusicUrl) return musicFileInput.click();
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                    updatePlayState(true);
                 } else {
-                    volIcon.className = 'bx bx-volume-full';
+                    audioPlayer.pause();
+                    updatePlayState(false);
                 }
             });
         }
 
-        function updatePlayState(isPlaying) {
-            if (isPlaying) {
-                btnPlay.classList.add('playing');
-                vinylDisk.classList.add('playing');
-                subtitlePill.textContent = "Memutar...";
-            } else {
-                btnPlay.classList.remove('playing');
-                vinylDisk.classList.remove('playing');
-                if(currentMusicUrl) subtitlePill.textContent = "Dijeda";
-            }
+        if (audioPlayer) {
+            audioPlayer.addEventListener('timeupdate', () => {
+                if (!audioPlayer.duration) return;
+                const current = audioPlayer.currentTime;
+                const duration = audioPlayer.duration;
+                const percentage = (current / duration) * 100;
+                
+                // Save progress roughly every second to avoid hitting localStorage too rapidly
+                if (Math.floor(current) % 2 === 0) {
+                    localStorage.setItem('tc_music_progress', current);
+                }
+                
+                if (seekSlider) seekSlider.value = percentage;
+                if (progressFill) progressFill.style.width = percentage + '%';
+            });
+
+            audioPlayer.addEventListener('ended', () => {
+                updatePlayState(false);
+                localStorage.removeItem('tc_music_progress');
+                if (seekSlider) seekSlider.value = 0;
+                if (progressFill) progressFill.style.width = '0%';
+            });
         }
+
+        if (seekSlider) {
+            seekSlider.addEventListener('input', () => {
+                if (!audioPlayer.duration) return;
+                const seekTo = audioPlayer.duration * (seekSlider.value / 100);
+                audioPlayer.currentTime = seekTo;
+                localStorage.setItem('tc_music_progress', seekTo);
+                if (progressFill) progressFill.style.width = seekSlider.value + '%';
+            });
+        }
+    }
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
@@ -712,5 +1022,4 @@ window.addEventListener("scroll", () => {
             const sec = Math.floor(seconds % 60);
             return `${min}:${sec.toString().padStart(2, '0')}`;
         }
-    }
 })();

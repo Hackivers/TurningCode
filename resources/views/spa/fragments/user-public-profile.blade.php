@@ -96,7 +96,7 @@
 
         {{-- Bottom Black Card: Activity Summary --}}
         <div style="flex:1;display:flex;">
-            <div class="neo-card neo-card-black" style="flex:1;min-height:200px;background:var(--neo-card-black, #000000);color:var(--neo-text-light, #ffffff);padding:40px;display:flex;align-items:center;">
+            <div class="neo-card neo-card-black" style="flex:1;min-height:200px;background:var(--neo-card-black, var(--bg-secondary));color:var(--neo-text-light, #ffffff);padding:40px;display:flex;align-items:center;">
                 <div style="width:100%;">
                     <div style="font-size:15px;font-weight:700;color:var(--neo-text-light, #ffffff);margin-bottom:16px;display:flex;align-items:center;">
                         <span>{{ $user->rank_name }}</span>
@@ -118,7 +118,7 @@
                                 <button
                                     class="ldb-friend-btn neo-pill"
                                     data-url="{{ route('user.friend.add', $user->id) }}"
-                                    style="padding: 10px 20px; font-size: 14px; background: var(--neo-text-light, #ffffff); border: none; color: var(--neo-card-black, #000000); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                                    style="padding: 10px 20px; font-size: 14px; background: var(--neo-text-light, #ffffff); border: none; color: var(--neo-card-black, var(--bg-secondary)); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
                                     <i class='bx bx-user-plus'></i> Tambahkan Teman
                                 </button>
                             @elseif ($fStatus === 'pending')
@@ -270,7 +270,7 @@
                 } else {
                     this.innerHTML        = `<i class='bx bx-user-plus'></i> Tambahkan Teman`;
                     this.style.background = '#ffffff';
-                    this.style.color      = '#000000';
+                    this.style.color      = 'var(--bg-secondary)';
                     this.style.cursor     = 'pointer';
                     this.disabled         = false;
                     window.showFriendToast(data.message || 'Gagal mengirim permintaan.', 'error');
@@ -278,7 +278,7 @@
             } catch (err) {
                 this.innerHTML        = `<i class='bx bx-user-plus'></i> Tambahkan Teman`;
                 this.style.background = '#ffffff';
-                this.style.color      = '#000000';
+                this.style.color      = 'var(--bg-secondary)';
                 this.style.cursor     = 'pointer';
                 this.disabled         = false;
                 window.showFriendToast('Terjadi kesalahan koneksi. Coba lagi.', 'error');

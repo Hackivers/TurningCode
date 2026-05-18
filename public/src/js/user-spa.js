@@ -1,5 +1,5 @@
 const issueModal = document.getElementById('issue-report-modal');
-        const issueModalCard = issueModal.querySelector('.neo-card');
+        const issueModalCard = issueModal.querySelector('.neo-report-card') || issueModal.querySelector('.neo-card');
 
         window.openIssueReportModal = function() {
             issueModal.style.display = 'flex';
@@ -7,14 +7,48 @@ const issueModal = document.getElementById('issue-report-modal');
             document.getElementById('issue-report-form').reset();
             document.getElementById('issue-image-name').textContent = 'Pilih file atau tarik ke sini';
             
+            // Reset image preview
+            const preview = document.getElementById('neo-report-preview-img');
+            if(preview) {
+                preview.style.display = 'none';
+                preview.src = '';
+            }
+
+            // Show Frame 2, Hide Frame 3
+            document.getElementById('neo-report-f2').style.display = 'flex';
+            document.getElementById('neo-report-f3').style.display = 'none';
+            
             void issueModal.offsetWidth;
             issueModal.style.opacity = '1';
-            issueModalCard.style.transform = 'translateY(0)';
+            if(issueModalCard) issueModalCard.style.transform = 'translateY(0)';
+        };
+
+        window.goToReportFrame3 = function() {
+            document.getElementById('neo-report-f2').style.display = 'none';
+            document.getElementById('neo-report-f3').style.display = 'grid';
+        };
+
+        window.handleReportImagePreview = function(input) {
+            const preview = document.getElementById('neo-report-preview-img');
+            const nameSpan = document.getElementById('issue-image-name');
+            if (input.files && input.files[0]) {
+                nameSpan.textContent = input.files[0].name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                nameSpan.textContent = 'Upload gambar bila ada atau drop disini';
+                preview.style.display = 'none';
+                preview.src = '';
+            }
         };
 
         window.closeIssueReportModal = function() {
             issueModal.style.opacity = '0';
-            issueModalCard.style.transform = 'translateY(20px)';
+            if(issueModalCard) issueModalCard.style.transform = 'translateY(20px)';
             setTimeout(() => {
                 issueModal.style.display = 'none';
             }, 300);

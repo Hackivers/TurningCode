@@ -5,49 +5,54 @@
         'monthly' => 'Bulanan',
         'custom' => 'Kustom',
     ];
+    $typeIcons = [
+        'daily' => 'bx-sun',
+        'weekly' => 'bx-calendar-week',
+        'monthly' => 'bx-calendar',
+        'custom' => 'bx-calendar-event',
+    ];
+    $color = $s->color ?? '#6366f1';
+    $startTime = \Carbon\Carbon::parse($s->start_time)->format('H:i');
+    $endTime = $s->end_time ? \Carbon\Carbon::parse($s->end_time)->format('H:i') : null;
 @endphp
-<div class="fav-sched-card {{ $s->is_active ? '' : 'inactive' }}">
-    <div class="fsc-content">
-        <div class="fsc-top">
-            <div class="fsc-badge" style="color: {{ $s->color ?? '#6366f1' }}; border-color: {{ $s->color ?? '#6366f1' }}33; background: {{ $s->color ?? '#6366f1' }}10;">
-                <span class="fsc-badge-dot" style="background: {{ $s->color ?? '#6366f1' }};"></span>
-                <span>{{ $typeLabels[$s->schedule_type] ?? '-' }}</span>
+<div class="ntl-item {{ $s->is_active ? '' : 'ntl-inactive' }}" data-color="{{ $color }}">
+    {{-- Timeline gutter --}}
+    <div class="ntl-gutter">
+        <span class="ntl-time">{{ $startTime }}</span>
+        <div class="ntl-dot" style="background: {{ $color }}; box-shadow: 0 0 0 4px {{ $color }}22;"></div>
+        @if($endTime)
+            <span class="ntl-time ntl-time-end">{{ $endTime }}</span>
+        @endif
+    </div>
+
+    {{-- Card --}}
+    <div class="ntl-card" style="border-left: 3px solid {{ $color }};">
+        <div class="ntl-card-head">
+            <div class="ntl-badge" style="color: {{ $color }}; background: {{ $color }}12;">
+                <i class='bx {{ $typeIcons[$s->schedule_type] ?? 'bx-calendar' }}'></i>
+                {{ $typeLabels[$s->schedule_type] ?? '-' }}
             </div>
-            
-            <div class="fsc-actions">
-                <button class="fsc-btn btn-toggle-schedule" data-id="{{ $s->id }}" title="{{ $s->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">
+            <div class="ntl-actions">
+                <button class="ntl-btn btn-toggle-schedule" data-id="{{ $s->id }}" title="{{ $s->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">
                     <i class='bx {{ $s->is_active ? "bx-pause" : "bx-play" }}'></i>
                 </button>
-                <button class="fsc-btn btn-edit-schedule" data-schedule="{{ json_encode($s) }}" title="Edit">
+                <button class="ntl-btn btn-edit-schedule" data-schedule="{{ json_encode($s) }}" title="Edit">
                     <i class='bx bx-edit-alt'></i>
                 </button>
-                <button class="fsc-btn btn-delete btn-delete-schedule" data-id="{{ $s->id }}" title="Hapus">
+                <button class="ntl-btn ntl-btn-danger btn-delete-schedule" data-id="{{ $s->id }}" title="Hapus">
                     <i class='bx bx-trash'></i>
                 </button>
             </div>
         </div>
-
-        <div class="fsc-main">
-            <h4 class="fsc-title">{{ $s->title }}</h4>
-            @if($s->description)
-                 <p class="fsc-desc">{{ Str::limit($s->description, 50) }}</p>
-            @endif
-        </div>
-        
-        <div class="fsc-footer">
-            @if(trim($s->getScheduleLabel()) !== '')
-                <div class="fsc-detail-pill">
-                    <i class='bx bx-calendar-event'></i> 
-                    <span>{{ $s->getScheduleLabel() }}</span>
-                </div>
-            @else
-                <div></div>
-            @endif
-            
-            <div class="fsc-time" style="color: {{ $s->color ?? '#6366f1' }};">
-                <i class='bx bx-time-five'></i>
-                <span>{{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }}@if($s->end_time) - {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}@endif</span>
+        <h4 class="ntl-title">{{ $s->title }}</h4>
+        @if($s->description)
+            <p class="ntl-desc">{{ Str::limit($s->description, 80) }}</p>
+        @endif
+        @if(trim($s->getScheduleLabel()) !== '')
+            <div class="ntl-label">
+                <i class='bx bx-calendar-event'></i>
+                {{ $s->getScheduleLabel() }}
             </div>
-        </div>
+        @endif
     </div>
 </div>

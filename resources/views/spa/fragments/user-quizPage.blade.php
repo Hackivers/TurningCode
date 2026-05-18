@@ -313,7 +313,7 @@
 
     .neo-dashboard {
         background: var(--neo-bg);
-        font-family: 'Space Mono', monospace;
+        font-family: 'Outfit', sans-serif;
         min-height: 100vh;
         width: 100%;
     }

@@ -209,7 +209,7 @@
     width: 10px;
     height: 10px;
     background: #34d399;
-    border: 2px solid #000000;
+    border: 1px solid var(--border-color);
     border-radius: 50%;
 }
 
@@ -379,7 +379,7 @@
     width: 100%;
     border: none;
     outline: none;
-    color: #000000;
+    color: var(--text-primary);
     font-weight: 450;
     border-radius: 20px;
     padding: 7px 30px 7px 40px;
@@ -620,7 +620,7 @@
     width: 100%;
     display: flex;
     margin: 10px;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 30px;
 }
 
@@ -742,7 +742,7 @@
 .box-materi {
     opacity: .5;
     margin: 13px 0 45px 0;
-    background: #000000;
+    background: var(--bg-secondary);
     min-width: 17em;
     max-width: 17em;
     flex-shrink: 0;
@@ -807,7 +807,7 @@
 }
 
 .subdesc-materi h6 {
-    background: #000000;
+    background: var(--bg-secondary);
     padding: 3px 10px;
     font-size: 9px;
     border-radius: 20px;
@@ -849,7 +849,7 @@
     border-radius: 30px;
     z-index: 3;
     backdrop-filter: blur(4px);
-    background: #000000c4;
+    background: var(--bg-secondary)c4;
 }
 
 .coming-soon-materi h4 {
@@ -961,7 +961,7 @@
     position: relative;
     min-height: 8em;
     display: flex;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -1017,7 +1017,7 @@
 
 .on-progres-sub h6 {
     margin-top: 8px;
-    background: #000000;
+    background: var(--bg-secondary);
     padding: 3px 10px;
     font-size: 9px;
     color: #afadca;
@@ -1253,7 +1253,7 @@
     position: relative;
     min-height: 8em;
     display: flex;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -1416,7 +1416,7 @@
     position: relative;
     min-height: 8em;
     display: flex;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -1496,19 +1496,19 @@
     display: flex;
     overflow-x: auto;
     border-radius: 20px;
-    border-right: 2px solid #000000;
-    border-left: 2px solid #000000;
+    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
     touch-action: pan-y pinch-zoom;
     overscroll-behavior-y: none;
 }
 
 .filter-btn {
     border-radius: 20px;
-    border: 2px solid #000000;
+    border: 1px solid var(--border-color);
 }
 
 .filter-btn.active {
-    background: #000000;
+    background: var(--bg-secondary);
 }
 
 .filter-btn.active h5 {
@@ -1516,7 +1516,7 @@
 }
 
 .filter-btn h5 {
-    color: #000000;
+    color: var(--text-primary);
     text-transform: uppercase;
     padding: 5px 15px;
     white-space: nowrap;
@@ -1554,7 +1554,7 @@
     position: relative;
     min-height: 8em;
     display: flex;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -1638,7 +1638,7 @@
     position: relative;
     min-height: 8em;
     display: flex;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -2081,7 +2081,7 @@
     right: 12px;
     z-index: 99;
     width: 280px;
-    background: #000000;
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
@@ -2284,7 +2284,7 @@
     z-index: 99;
     width: 340px;
     max-height: 480px;
-    background: #000000;
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
@@ -2529,15 +2529,15 @@
 
 /* ── Dark Mode Theme ── */
 body.dark-mode {
-    background-color: #0d0c14;
+    background-color: var(--bg-primary);
 }
 
 html.dark-mode-pending {
-    background-color: #0d0c14;
+    background-color: var(--bg-primary);
 }
 
 body.dark-mode .wrapper-nav {
-    background-color: #141320;
+    background-color: var(--nav-bg);
     border-color: rgba(255, 255, 255, 0.03);
 }
 
@@ -2563,7 +2563,7 @@ body.dark-mode .profile-setting-nav {
 }
 
 body.dark-mode .container-nav-bottom {
-    background: #141320;
+    background: var(--nav-bg);
     border-top-color: rgba(255, 255, 255, 0.03);
 }
 
@@ -2592,7 +2592,7 @@ body.dark-mode .tittle-history h5 {
 }
 
 body.dark-mode .main-header {
-    background: #000000;
+    background: var(--bg-secondary);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -2617,7 +2617,7 @@ body.dark-mode .bottom-space {
 }
 
 body.dark-mode .box-detail-materi {
-    background-color: #000000;
+    background-color: var(--bg-secondary);
 }
 
 body.dark-mode .box-detail-materi h2,
@@ -2708,7 +2708,7 @@ body.dark-mode .filter-btn.active h5 {
     min-height: 3em;
     margin-top: 8px;
     align-items: center;
-    background: #000000;
+    background: var(--bg-secondary);
     justify-content: space-between;
     border-radius: 0 0 30px 30px;
 }
@@ -2786,7 +2786,7 @@ body.dark-mode .filter-btn.active h5 {
 }
 
 .account-profile-emblem>div {
-    background: #000000;
+    background: var(--bg-secondary);
     padding: 2em 10px 17px 10px;
     border-left: 1px solid #ea1515;
     border-right: 1px solid #ea1515;
@@ -2851,7 +2851,7 @@ body.dark-mode .filter-btn.active h5 {
     width: 100%;
     max-width: 79em;
     margin: 0 10px;
-    background: #000000;
+    background: var(--bg-secondary);
     border-radius: 20px;
     /* padding: 20px; */
     border: 1px solid rgba(255, 255, 255, 0.03);
@@ -3530,5 +3530,5 @@ body.dark-mode .filter-btn.active h5 {
     z-index: -1;
     background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
-    background-color: #000000;
+    background-color: var(--bg-secondary);
 }

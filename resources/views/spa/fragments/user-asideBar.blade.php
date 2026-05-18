@@ -106,10 +106,7 @@
         <!-- Bottom Actions -->
         <div class="fs-bottom-links">
 
-            <div href="#" class="fs-link" onclick="openIssueReportModal()">
-                <i class='bx bx-help-circle fs-icon'></i>
-                <span class="fs-label">Help</span>
-            </div>
+
             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                 @csrf
                 <button type="submit" class="fs-link fs-logout-btn"

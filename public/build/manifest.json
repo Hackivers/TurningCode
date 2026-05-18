@@ -22,7 +22,7 @@
     "isEntry": true
   },
   "resources/css/global.css": {
-    "file": "assets/global-D2JbX-ol.css",
+    "file": "assets/global-CtU_Vshc.css",
     "name": "global",
     "names": [
       "global.css"
@@ -31,7 +31,7 @@
     "isEntry": true
   },
   "resources/css/style.css": {
-    "file": "assets/style-CusjlXVi.css",
+    "file": "assets/style-BNu4ujGH.css",
     "name": "style",
     "names": [
       "style.css"
@@ -58,7 +58,7 @@
     ]
   },
   "resources/js/SPA_user.js": {
-    "file": "assets/SPA_user-DAXKF2Wf.js",
+    "file": "assets/SPA_user-DVT5AO_F.js",
     "name": "SPA_user",
     "src": "resources/js/SPA_user.js",
     "isEntry": true,

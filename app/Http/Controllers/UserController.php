@@ -345,7 +345,7 @@ class UserController extends Controller
                     ->get()
                     ->keyBy('sub_materi_id')
                 : collect();
-            $completedSubIds = $histories->pluck('sub_materi_id')->toArray();
+            $completedSubIds = $histories->pluck('sub_materi_id')->toArray(); // fallback, overridden below
 
             // Batch load question counts for the sub materis
             $subMateriIds = $subMateris->pluck('id')->toArray();
@@ -356,6 +356,51 @@ class UserController extends Controller
                     ->pluck('cnt', 'sub_materi_id')
                     ->toArray()
                 : [];
+
+            // Batch load passed quiz attempts
+            $passedQuizSubIds = $userId
+                ? QuizAttempt::where('user_id', $userId)
+                    ->where('passed', true)
+                    ->whereIn('sub_materi_id', $subMateriIds)
+                    ->pluck('sub_materi_id')
+                    ->toArray()
+                : [];
+
+            // Determine truly completed sub materis:
+            // - All babs must be in completed_babs
+            // - If questions exist, quiz must be passed
+            $completedSubIds = [];
+            foreach ($subMateris as $sub) {
+                $history = $histories->get($sub->id);
+                if (!$history) continue;
+
+                // Check all babs completed
+                $sections = is_string($sub->sections_json)
+                    ? json_decode($sub->sections_json, true)
+                    : (is_array($sub->sections) ? $sub->sections : []);
+                if (!is_array($sections)) $sections = [];
+
+                $babs = collect($sections)->where('type', 'bab')->values();
+                $completedBabs = is_array($history->completed_babs) ? $history->completed_babs : [];
+
+                $allBabsDone = true;
+                foreach ($babs as $bab) {
+                    if (!in_array($bab['order'] ?? '', $completedBabs)) {
+                        $allBabsDone = false;
+                        break;
+                    }
+                }
+
+                if (!$allBabsDone) continue;
+
+                // Check quiz passed (if questions exist)
+                $qCount = $questionCounts[$sub->id] ?? 0;
+                if ($qCount > 0 && !in_array($sub->id, $passedQuizSubIds)) {
+                    continue;
+                }
+
+                $completedSubIds[] = $sub->id;
+            }
 
             return view('spa.fragments.user-subMateriPage', [
                 'materi' => $materi,
@@ -1298,6 +1343,7 @@ class UserController extends Controller
             return [
                 'id' => $u->id, 'name' => $u->name, 'email' => $u->email,
                 'rank_name' => $u->rank_name,
+                'exp' => $u->exp ?? 0,
                 'avatar' => $u->avatar ? asset('storage/'.$u->avatar) : asset('assets/ico/'.($u->emblem_image ?? 'default-user.jpg')),
                 'friendship_status' => $f ? $f->status : null,
             ];

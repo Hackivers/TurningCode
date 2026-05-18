@@ -40,7 +40,7 @@
                                         <h4 class="note-title" style="font-size: 16px; font-weight: 800; color: var(--neo-text-dark, #121212); margin: 0; line-height: 1.3;">{{ $note->subMateri->title ?? 'Sub Materi' }}</h4>
                                         <span style="font-size: 10px; font-weight: 700; color: var(--neo-text-dark, #888); background: rgba(0,0,0,0.04); padding: 4px 10px; border-radius: 8px; white-space: nowrap;">{{ $note->updated_at->diffForHumans() }}</span>
                                     </div>
-                                    <div class="note-content" style="font-size: 13px; color: var(--neo-text-dark, #666); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 12px; font-family: 'Space Mono', monospace;">
+                                    <div class="note-content" style="font-size: 13px; color: var(--neo-text-dark, #666); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 12px; font-family: 'Outfit', sans-serif;">
                                         {!! nl2br(e(Str::limit($note->content, 200))) !!}
                                     </div>
                                 </a>

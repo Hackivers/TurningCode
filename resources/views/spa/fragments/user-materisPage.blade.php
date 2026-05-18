@@ -145,12 +145,12 @@ MATERI PAGE — Neo Bento Design (synced with Dashboard)
         --neo-text-dark: #ffffff;
     }
 
-    body { background-color: #000000 !important; }
+    body { background-color: var(--bg-secondary) !important; }
 
     .neo-dashboard {
         background-color: var(--neo-bg);
         color: var(--neo-text-dark);
-        font-family: 'Space Mono', monospace;
+        font-family: 'Outfit', sans-serif;
         padding: 32px 0;
         min-height: 100vh;
         width: 100%;

@@ -1,205 +1,182 @@
 {{-- ═══════════════════════════════════════════════════════════════
-SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
+SUB MATERI PAGE — Auth Index Nothing OS Design
 ═══════════════════════════════════════════════════════════════ --}}
 @php $subMateris = $subMateris ?? []; @endphp
 
-<div class="neo-dashboard rtd-dashboard">
-    <div class="neo-bento-container">
+<div class="wlc-sub-page">
+    {{-- Background elements --}}
+    <div class="wlc-sub-bg"></div>
+    <div class="wlc-sub-watermark">S(M)</div>
+    <div class="wlc-lines" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
 
-        {{-- Back --}}
-        <a href="?page=materi&main_id={{ $firstMateri->main_materi_id ?? '' }}" class="link-spa"
-            style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#888;text-decoration:none;margin-bottom:24px;transition:color 0.2s;"
-            onmouseover="this.style.color='#121212'" onmouseout="this.style.color='#888'">
-            <i class='bx bx-arrow-back' style="font-size:18px;"></i> Kembali ke
-            {{ $firstMateri->mainMateri->title ?? 'Materi' }}
+    <div class="wlc-sub-container">
+        
+        {{-- Back Button --}}
+        <a href="?page=materi&main_id={{ $firstMateri->main_materi_id ?? '' }}" class="link-spa wlc-back-btn" data-page="materi&main_id={{ $firstMateri->main_materi_id ?? '' }}">
+            <i class='bx bx-chevron-left'></i> KEMBALI KE {{ strtoupper($firstMateri->mainMateri->title ?? 'MATERI') }}
         </a>
 
-        {{-- Premium Hero Header --}}
-        <div class="neo-card" style="min-height:240px;background:#0f0f13;color:#fff;padding:48px;display:flex;align-items:center;margin-bottom:40px;position:relative;overflow:hidden;border:1px solid var(--bg-tertiary);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
-            {{-- Background Gradient Orbs --}}
-            <div style="position:absolute;top:-50%;left:-10%;width:350px;height:350px;background:radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(40px);pointer-events:none;z-index:1;"></div>
-            <div style="position:absolute;bottom:-50%;right:10%;width:450px;height:450px;background:radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1;"></div>
-            
-            {{-- Grid Pattern Overlay --}}
-            <div style="position:absolute;inset:0;background-image:radial-gradient(var(--border-color) 1px, transparent 1px);background-size:24px 24px;opacity:0.4;z-index:1;pointer-events:none;"></div>
-            
-            <div style="position:relative;z-index:2;width:100%;max-width:700px;">
-                <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
-                        <i class='bx bx-category' style="margin-right:4px;"></i> {{ $firstMateri->mainMateri->title ?? 'Main' }}
-                    </span>
-                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
-                        <i class='bx bx-book-content' style="margin-right:4px;"></i> {{ $firstMateri->title ?? 'Bab' }}
-                    </span>
-                    <span class="neo-pill" style="color:#fff;background:var(--bg-tertiary);border-color:var(--border-color);backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:11px;padding:8px 16px;">
-                        <i class='bx bx-list-ul' style="margin-right:4px;"></i> {{ count($subMateris) }} Sub Materi
-                    </span>
+        {{-- Hero Section (Split Layout) --}}
+        <div class="wlc-sub-hero">
+            <div class="wlc-sub-hero-left">
+                <div class="wlc-sparkle">✦</div>
+                <div class="wlc-hero-badges">
+                    <span class="wlc-hero-badge">{{ $firstMateri->mainMateri->title ?? 'MAIN' }}</span>
+                    <span class="wlc-hero-badge red">{{ $firstMateri->title ?? 'BAB' }}</span>
                 </div>
-                <h3 style="font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.15;letter-spacing:-0.03em;margin:0 0 16px;background:linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-                    {{ $firstMateri->title ?? 'Daftar Sub Materi' }}
-                </h3>
-                <p style="font-size:16px;color:var(--text-secondary);margin:0;line-height:1.6;font-weight:500;">
-                    Gass pelajari semuanya! Jelajahi setiap topik secara mendalam dan tingkatkan pemahamanmu. 🚀
+                <h1 class="wlc-hero-title">
+                    <span class="serif">Materi</span><br>
+                    Pembelajaran
+                </h1>
+                <p class="wlc-hero-desc">
+                    Terdapat <strong>{{ count($subMateris) }} Sub Materi</strong> dalam bab ini. Kuasai setiap bagian secara berurutan untuk naik level.
                 </p>
             </div>
-            
-            {{-- Abstract Decorative Icon --}}
-            <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%) rotate(10deg);z-index:2;pointer-events:none;opacity:0.5;">
-                <i class='bx bxs-bulb' style="font-size:180px;color:rgba(255,255,255,0.03);filter:drop-shadow(0 20px 40px rgba(0,0,0,0.5));"></i>
+            <div class="wlc-sub-hero-right">
+                <div class="wlc-sub-mockup">
+                    <div class="wlc-mockup-inner">
+                        <div class="wlc-mockup-bar">
+                            <div class="wlc-mockup-dots"><span></span><span></span><span></span></div>
+                            <div class="wlc-mockup-url"><i class='bx bx-book-open'></i> module.viewer</div>
+                        </div>
+                        <div class="wlc-mockup-body">
+                            <div class="wlc-mock-card-line w80"></div>
+                            <div class="wlc-mock-card-line w50"></div>
+                            <div class="wlc-mock-card-line w70" style="margin-top:20px;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        {{-- Sub Materi List --}}
-        <div style="margin-bottom:32px;">
-            <h3 class="neo-title" style="font-size:28px;margin:0 0 8px;color: var(--text-primary)fff;">Daftar Sub Materi</h3>
-            <p style="font-size:16px;color:#555;margin:0 0 24px;">Pelajari setiap topik secara mendalam.</p>
+        {{-- Section Divider --}}
+        <div class="wlc-sub-divider">
+            <i class='bx bx-code-alt'></i> TOPIK MATERI
+        </div>
 
-            <div style="display:flex;flex-direction:column;gap:16px;">
-                @foreach ($subMateris as $i => $subMateri)
-                    @php 
-                        $isDone = in_array($subMateri->id, $completed ?? []); 
-                        $qCount = $questionCounts[$subMateri->id] ?? 0;
-                        
-                        // Parse JSON sections to get "bab" blocks
-                        $sections = is_string($subMateri->sections_json) 
-                                        ? json_decode($subMateri->sections_json, true) 
-                                        : (is_array($subMateri->sections) ? $subMateri->sections : []);
-                        if (!is_array($sections)) $sections = [];
-                        
-                        $babs = collect($sections)->where('type', 'bab')->values();
-                        $totalBabs = count($babs);
-                        $hasAccordion = $totalBabs > 0 || $qCount > 0;
-                    @endphp
+        {{-- Grid List --}}
+        <div class="wlc-sub-grid">
+            @foreach ($subMateris as $i => $subMateri)
+                @php 
+                    $isDone = in_array($subMateri->id, $completed ?? []); 
+                    $qCount = $questionCounts[$subMateri->id] ?? 0;
                     
-                    <div class="neo-card neo-card-light sub-card-item" style="padding:24px 32px;{{ $isDone ? 'border:2px solid rgba(16,185,129,0.4);' : '' }}">
-                        <div style="display:flex;flex-direction:row;align-items:flex-start;gap:20px;">
-                            {{-- Number --}}
-                            <div style="width:40px;height:40px;border-radius:12px;background:{{ $isDone ? '#ecfdf5' : 'rgba(0,0,0,0.06)' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                @if($isDone)
-                                    <i class='bx bx-check' style="font-size:20px;color:#10b981;"></i>
-                                @else
-                                    <span style="font-size:16px;font-weight:800;color:#888;">{{ $i + 1 }}</span>
-                                @endif
-                            </div>
-
-                            {{-- Content --}}
-                            <div style="flex:1;min-width:0;">
-                                <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa" style="text-decoration:none;">
-                                    <h4 style="margin:0 0 4px;font-size:18px;font-weight:700;color: var(--text-primary)fff;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">{{ $subMateri->title }}</h4>
-                                    <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $subMateri->subtitle ?? Str::limit(strip_tags($subMateri->content), 100) }}</p>
-                                </a>
-                                
-                                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                                    @if($hasAccordion)
-                                        <button class="btn-primary" onclick="toggleBabList('sub-{{ $subMateri->id }}')" style="display:inline-flex;align-items:center;gap:6px;background:#121212;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
-                                            Urutan Belajar <i class='bx bx-chevron-down' id="icon-sub-{{ $subMateri->id }}" style="transition:transform 0.3s;"></i>
-                                        </button>
-                                    @endif
-                                    
-                                    @if($qCount > 0)
-                                        <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#f59e0b;background:rgba(245,158,11,0.1);padding:8px 12px;border-radius:8px;">
-                                            <i class='bx bx-trophy'></i> Ada Quiz
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            {{-- Actions --}}
-                            <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
-                                <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star' : 'bx-star' }} archive-btn"
-                                    data-id="{{ $subMateri->id }}" data-type="sub"
-                                    style="font-size:20px;color:{{ in_array($subMateri->id, $arsipSub ?? []) ? '#f59e0b' : '#ccc' }};cursor:pointer;z-index:5;"
-                                    onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
-                            </div>
+                    $sections = is_string($subMateri->sections_json) 
+                                    ? json_decode($subMateri->sections_json, true) 
+                                    : (is_array($subMateri->sections) ? $subMateri->sections : []);
+                    if (!is_array($sections)) $sections = [];
+                    
+                    $babs = collect($sections)->where('type', 'bab')->values();
+                    $totalBabs = count($babs);
+                    $hasAccordion = $totalBabs > 0 || $qCount > 0;
+                    
+                    $statusIcon = $isDone ? 'bx-check-double' : 'bx-list-ul';
+                @endphp
+                
+                <div class="wlc-card sub-card-item {{ $isDone ? 'done' : '' }}">
+                    <div class="wlc-card-header">
+                        <div class="wlc-card-num">
+                            <i class='bx {{ $statusIcon }}'></i> {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}
                         </div>
-                        
-                        {{-- Timeline Accordion for Babs --}}
+                        <div class="wlc-card-actions">
+                            <i class="bx {{ in_array($subMateri->id, $arsipSub ?? []) ? 'bxs-star star-active' : 'bx-star' }} archive-btn wlc-fav-btn"
+                                data-id="{{ $subMateri->id }}" data-type="sub"
+                                title="{{ in_array($subMateri->id, $arsipSub ?? []) ? 'Hapus' : 'Favorit' }}"
+                                onclick="event.preventDefault(); event.stopPropagation(); window.toggleFavorite(this);"></i>
+                        </div>
+                    </div>
+
+                    <a href="?page=detail&submateri_id={{ $subMateri->id }}" class="link-spa wlc-card-title">
+                        <h3>{{ $subMateri->title }}</h3>
+                        <p>{{ $subMateri->subtitle ?? Str::limit(strip_tags($subMateri->content), 80) }}</p>
+                    </a>
+
+                    <div class="wlc-card-footer">
                         @if($hasAccordion)
-                            <div id="bab-list-sub-{{ $subMateri->id }}" class="bab-timeline-container" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);">
-                                <div style="position:relative;padding-left:16px;">
-                                    <div style="position:absolute;left:23px;top:20px;bottom:20px;width:2px;background:rgba(0,0,0,0.1);z-index:1;"></div>
-                                    
-                                    <div style="display:flex;flex-direction:column;gap:0;">
-                                        {{-- Render Babs --}}
-                                        @php
-                                            $history = $histories->get($subMateri->id);
-                                            $completedBabs = $history && is_array($history->completed_babs) ? $history->completed_babs : [];
-                                        @endphp
-                                        
-                                        @foreach($babs as $bIndex => $bab)
-                                            @php
-                                                $isBabUnlocked = $bIndex === 0;
-                                                if ($bIndex > 0) {
-                                                    $prevBabId = $babs[$bIndex - 1]['order'] ?? '';
-                                                    $isBabUnlocked = in_array($prevBabId, $completedBabs);
-                                                }
-                                                if (in_array($bab['order'] ?? '', $completedBabs)) {
-                                                    $isBabUnlocked = true;
-                                                }
-                                            @endphp
-                                            
-                                            @if($isBabUnlocked)
-                                                <a href="?page=detail&submateri_id={{ $subMateri->id }}&bab_id={{ $bab['order'] ?? '' }}" class="link-spa" style="text-decoration:none;display:block;position:relative;z-index:2;padding:12px 0;transition:transform 0.2s;" onmouseover="this.style.transform='translateX(6px)'" onmouseout="this.style.transform='translateX(0)'">
-                                                    <div style="display:flex;align-items:center;gap:16px;">
-                                                        <div style="width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #8b5cf6;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);"></div>
-                                                        <div style="flex:1;">
-                                                            <h4 style="margin:0;font-size:14px;font-weight:600;color:#444;">{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }}</h4>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            @else
-                                                <div style="display:block;position:relative;z-index:2;padding:12px 0;opacity:0.6;cursor:not-allowed;">
-                                                    <div style="display:flex;align-items:center;gap:16px;">
-                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);">
-                                                            <i class='bx bx-lock-alt' style="font-size:10px;color:#9ca3af;"></i>
-                                                        </div>
-                                                        <div style="flex:1;">
-                                                            <h4 style="margin:0;font-size:14px;font-weight:600;color:#9ca3af;">{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }} <span style="font-size:11px;font-weight:500;">(Terkunci)</span></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                        
-                                        {{-- Render Quiz if any --}}
-                                        @if($qCount > 0)
-                                            @php
-                                                $isQuizUnlocked = true;
-                                                if ($totalBabs > 0) {
-                                                    $lastBabId = $babs[$totalBabs - 1]['order'] ?? '';
-                                                    $isQuizUnlocked = in_array($lastBabId, $completedBabs);
-                                                }
-                                            @endphp
-                                            @if($isQuizUnlocked)
-                                                <a href="?page=detail&submateri_id={{ $subMateri->id }}&auto_quiz=1" class="link-spa" style="text-decoration:none;display:block;position:relative;z-index:2;padding:12px 0;transition:transform 0.2s;" onmouseover="this.style.transform='translateX(6px)'" onmouseout="this.style.transform='translateX(0)'">
-                                                    <div style="display:flex;align-items:center;gap:16px;">
-                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f59e0b;border:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);"></div>
-                                                        <div style="flex:1;">
-                                                            <h4 style="margin:0;font-size:14px;font-weight:700;color:#d97706;">Quiz ({{ $qCount }} Soal)</h4>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            @else
-                                                <div style="display:block;position:relative;z-index:2;padding:12px 0;opacity:0.6;cursor:not-allowed;">
-                                                    <div style="display:flex;align-items:center;gap:16px;">
-                                                        <div style="width:16px;height:16px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px var(--neo-card-light);">
-                                                            <i class='bx bx-lock-alt' style="font-size:10px;color:#9ca3af;"></i>
-                                                        </div>
-                                                        <div style="flex:1;">
-                                                            <h4 style="margin:0;font-size:14px;font-weight:700;color:#9ca3af;">Quiz ({{ $qCount }} Soal) <span style="font-size:11px;font-weight:500;">(Terkunci)</span></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
+                            <button class="wlc-btn-timeline" onclick="toggleBabList('sub-{{ $subMateri->id }}')">
+                                URUTAN <i class='bx bx-chevron-down' id="icon-sub-{{ $subMateri->id }}"></i>
+                            </button>
+                        @else
+                            <div></div>
+                        @endif
+
+                        @if($qCount > 0)
+                            <span class="wlc-badge-quiz"><i class='bx bx-trophy'></i> {{ $qCount }}</span>
                         @endif
                     </div>
-                @endforeach
-            </div>
+
+                    @if($hasAccordion)
+                        <div id="bab-list-sub-{{ $subMateri->id }}" class="wlc-timeline" style="display:none;">
+                            <div class="wlc-timeline-line"></div>
+                            @php
+                                $history = $histories->get($subMateri->id);
+                                $completedBabs = $history && is_array($history->completed_babs) ? $history->completed_babs : [];
+                            @endphp
+                            
+                            @foreach($babs as $bIndex => $bab)
+                                @php
+                                    $isBabUnlocked = $bIndex === 0;
+                                    if ($bIndex > 0) {
+                                        $prevBabId = $babs[$bIndex - 1]['order'] ?? '';
+                                        $isBabUnlocked = in_array($prevBabId, $completedBabs);
+                                    }
+                                    if (in_array($bab['order'] ?? '', $completedBabs)) {
+                                        $isBabUnlocked = true;
+                                    }
+                                    $babDone = in_array($bab['order'] ?? '', $completedBabs);
+                                @endphp
+                                
+                                @if($isBabUnlocked)
+                                    <a href="?page=detail&submateri_id={{ $subMateri->id }}&bab_id={{ $bab['order'] ?? '' }}" class="link-spa wlc-tl-item {{ $babDone ? 'done' : '' }}">
+                                        <div class="wlc-tl-dot"></div>
+                                        <div class="wlc-tl-content">
+                                            <h4>{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }}</h4>
+                                        </div>
+                                        <i class='bx bx-right-arrow-alt wlc-tl-arrow'></i>
+                                    </a>
+                                @else
+                                    <div class="wlc-tl-item locked">
+                                        <div class="wlc-tl-dot"></div>
+                                        <div class="wlc-tl-content">
+                                            <h4>{{ $bab['content'] ?? 'Bab ' . ($bIndex + 1) }} <span>LOCKED</span></h4>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                            
+                            @if($qCount > 0)
+                                @php
+                                    $isQuizUnlocked = true;
+                                    if ($totalBabs > 0) {
+                                        $lastBabId = $babs[$totalBabs - 1]['order'] ?? '';
+                                        $isQuizUnlocked = in_array($lastBabId, $completedBabs);
+                                    }
+                                @endphp
+                                @if($isQuizUnlocked)
+                                    <a href="?page=detail&submateri_id={{ $subMateri->id }}&auto_quiz=1" class="link-spa wlc-tl-item quiz">
+                                        <div class="wlc-tl-dot"></div>
+                                        <div class="wlc-tl-content">
+                                            <h4>Quiz <span>{{ $qCount }} SOAL</span></h4>
+                                        </div>
+                                        <i class='bx bx-right-arrow-alt wlc-tl-arrow'></i>
+                                    </a>
+                                @else
+                                    <div class="wlc-tl-item locked">
+                                        <div class="wlc-tl-dot"></div>
+                                        <div class="wlc-tl-content">
+                                            <h4>Quiz <span>LOCKED</span></h4>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
+        <br><br>
 
     </div>
 </div>
@@ -222,192 +199,427 @@ SUB MATERI PAGE — Neo Bento Design (synced with Dashboard)
                 { opacity: 0, transform: 'translateY(-10px)' }
             ], { duration: 200, easing: 'ease-in' });
             
-            animation.onfinish = () => {
-                list.style.display = 'none';
-            };
+            animation.onfinish = () => { list.style.display = 'none'; };
             icon.style.transform = 'rotate(0deg)';
         }
     }
 
     window.__currentSearchHandler = function (query) {
         document.querySelectorAll('.sub-card-item').forEach(card => {
-            const a = card; // it is an <a> tag now
-            const title = card.querySelector('h4')?.textContent.toLowerCase() || '';
-            const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
-            if (title.includes(query) || desc.includes(query)) { a.style.display = 'block'; }
-            else { a.style.display = 'none'; }
+            const title = card.querySelector('.wlc-card-title h3')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.wlc-card-title p')?.textContent.toLowerCase() || '';
+            if (title.includes(query) || desc.includes(query)) { card.style.display = 'flex'; }
+            else { card.style.display = 'none'; }
         });
     };
 </script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    /* AUTH INDEX NOTHING OS STYLING FOR SUB MATERI */
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
-    :root {
-        --neo-bg: transparent;
-        --neo-card-light: rgba(255, 255, 255, 0.03);
-        --neo-radius: 16px;
-        --neo-text-dark: #ffffff;
-    }
-
-    body { background-color: #000000 !important; }
-
-    .neo-dashboard {
-        background-color: var(--neo-bg);
-        color: var(--neo-text-dark);
-        font-family: 'Space Mono', monospace;
-        padding: 32px 0;
-        min-height: 100vh;
-        width: 100%;
-    }
-
-    .neo-bento-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .neo-card {
-        border-radius: var(--neo-radius);
-        padding: 32px;
+    .wlc-sub-page {
         position: relative;
+        width: 100%;
+        min-height: 100vh;
+        background: var(--bg-secondary); /* Pure black */
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
         overflow: hidden;
+        margin: -20px; /* Offset the container padding from dashboard */
+        padding: 40px;
+        z-index: 1;
+    }
+
+    /* Backgrounds */
+    .wlc-sub-bg {
+        position: absolute;
+        inset: -20%;
+        width: 140%;
+        height: 140%;
+        background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+        background-size: 30px 30px;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .wlc-sub-watermark {
+        position: absolute;
+        top: 5%;
+        left: 0;
+        width: 100%;
         display: flex;
-        flex-direction: column;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-        max-width: 100%;
-        box-sizing: border-box;
+        justify-content: center;
+        font-family: 'Outfit', sans-serif;
+        font-size: 25vw;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.02);
+        letter-spacing: -0.05em;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
     }
-
-    .neo-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .neo-card-light {
-        background: var(--neo-card-light);
-        color: var(--neo-text-dark);
-    }
-
-    .neo-header {
+    .wlc-lines {
+        position: absolute;
+        inset: 0;
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        padding: 0 10%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .wlc-lines span {
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.04) 20%, rgba(255, 255, 255, 0.04) 80%, transparent 100%);
+    }
+
+    .wlc-sub-container {
+        position: relative;
+        z-index: 2;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Back Button */
+    .wlc-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #a1a1aa;
+        text-decoration: none;
+        padding: 8px 16px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 9999px;
+        margin-bottom: 32px;
+        transition: all 0.2s;
+        background: rgba(255,255,255,0.02);
+    }
+    .wlc-back-btn:hover {
+        background: rgba(255,255,255,0.06);
+        color: #ffffff;
+        border-color: rgba(255,255,255,0.2);
+    }
+
+    /* Hero Section */
+    .wlc-sub-hero {
+        display: flex;
+        align-items: center;
+        gap: 48px;
+        margin-bottom: 60px;
+    }
+    .wlc-sub-hero-left {
+        flex: 1;
+    }
+    .wlc-sparkle {
+        font-size: 18px;
+        color: #ffffff;
+        margin-bottom: 24px;
+        animation: wlcSparkle 3s ease-in-out infinite;
+    }
+    @keyframes wlcSparkle {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+    .wlc-hero-badges {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .wlc-hero-badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        color: #a1a1aa;
+    }
+    .wlc-hero-badge.red {
+        background: rgba(234,21,21,0.1);
+        border-color: rgba(234,21,21,0.3);
+        color: var(--accent-primary);
+    }
+    .wlc-hero-title {
+        font-family: 'Inter', sans-serif;
+        font-size: clamp(32px, 5vw, 52px);
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        margin: 0 0 16px;
+        text-transform: uppercase;
+    }
+    .wlc-hero-title .serif {
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
+        font-weight: 400;
+        color: var(--accent-primary);
+        text-transform: none;
+    }
+    .wlc-hero-desc {
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        color: #a1a1aa;
+        line-height: 1.6;
+        max-width: 440px;
+    }
+    .wlc-hero-desc strong { color: #ffffff; font-weight: 700; }
+    
+    .wlc-sub-hero-right {
+        flex: 0 0 320px;
+        perspective: 1000px;
+    }
+    .wlc-mockup-inner {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        transform: rotateY(-5deg) rotateX(2deg);
+        transition: transform 0.5s;
+    }
+    .wlc-mockup-inner:hover { transform: rotateY(0) rotateX(0); }
+    .wlc-mockup-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        background: rgba(255,255,255,0.03);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .wlc-mockup-dots { display: flex; gap: 6px; }
+    .wlc-mockup-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+    .wlc-mockup-dots span:nth-child(1) { background: var(--accent-primary); }
+    .wlc-mockup-url {
+        flex: 1;
+        background: rgba(255,255,255,0.04);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        color: #a1a1aa;
+        display: flex; align-items: center; gap: 6px;
+        justify-content: center;
+    }
+    .wlc-mockup-body { padding: 24px; min-height: 120px; }
+    .wlc-mock-card-line {
+        height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); margin-bottom: 10px;
+    }
+    .wlc-mock-card-line.w80 { width: 80%; }
+    .wlc-mock-card-line.w50 { width: 50%; }
+    .wlc-mock-card-line.w70 { width: 70%; }
+
+    /* Divider */
+    .wlc-sub-divider {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #a1a1aa;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .wlc-sub-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255,255,255,0.1);
+    }
+
+    /* List Layout */
+    .wlc-sub-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* Card */
+    .wlc-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+    .wlc-card:hover {
+        background: rgba(255,255,255,0.04);
+        border-color: rgba(255,255,255,0.15);
+        transform: translateY(-4px);
+    }
+    .wlc-card.done {
+        border-color: rgba(166, 227, 161, 0.2);
+    }
+    
+    .wlc-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+    .wlc-card-num {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #a1a1aa;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.05);
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+    .wlc-card.done .wlc-card-num {
+        color: #a6e3a1;
+        background: rgba(166, 227, 161, 0.1);
+    }
+    .wlc-fav-btn {
+        font-size: 18px;
+        color: #a1a1aa;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .wlc-fav-btn:hover { color: #ffffff; transform: scale(1.1); }
+    .wlc-fav-btn.star-active { color: #f59e0b; }
+
+    .wlc-card-title {
+        text-decoration: none;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         margin-bottom: 24px;
     }
-
-    .neo-title {
-        font-size: 24px;
+    .wlc-card-title h3 {
+        font-family: 'Inter', sans-serif;
+        font-size: 18px;
         font-weight: 600;
+        color: #ffffff;
         margin: 0;
-        line-height: 1.25;
-        letter-spacing: -0.03em;
+        line-height: 1.3;
+        letter-spacing: -0.5px;
     }
-
-    .neo-arrow {
-        font-size: 32px;
-        font-weight: 400;
-        line-height: 1;
-        transition: transform 0.2s;
-        margin-top: -4px;
-    }
-
-    .neo-card:hover .neo-arrow {
-        transform: translate(2px, -2px);
-    }
-
-    .neo-pill {
-        background: transparent;
-        color: var(--neo-text-dark);
-        border: 1px solid rgba(0, 0, 0, 0.3);
-        padding: 6px 16px;
-        border-radius: 100px;
-        font-size: 13px;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .neo-desc {
-        font-size: 15px;
-        color: #555;
+    .wlc-card-title p {
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        color: #a1a1aa;
         margin: 0;
         line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .sub-card-item {
+    .wlc-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+    .wlc-btn-timeline {
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #a1a1aa;
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 6px;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.2s;
+    }
+    .wlc-btn-timeline:hover {
+        background: rgba(255,255,255,0.1);
+        color: #ffffff;
+    }
+    .wlc-badge-quiz {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        color: #f59e0b;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
-    @media (max-width:768px) {
-        .neo-dashboard {
-            padding: 16px 0;
-            overflow-x: hidden;
-        }
+    /* Timeline */
+    .wlc-timeline {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px dashed rgba(255,255,255,0.1);
+        position: relative;
+        padding-left: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .wlc-timeline-line {
+        position: absolute;
+        left: 17px;
+        top: 28px;
+        bottom: 28px;
+        width: 2px;
+        background: rgba(255,255,255,0.1);
+        z-index: 1;
+    }
+    .wlc-tl-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        z-index: 2;
+        text-decoration: none;
+        padding: 4px;
+        transition: 0.2s;
+        border-radius: 6px;
+    }
+    .wlc-tl-item:hover:not(.locked) {
+        background: rgba(255,255,255,0.05);
+        transform: translateX(4px);
+    }
+    .wlc-tl-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        border: 2px solid rgba(255,255,255,0.2);
+        box-shadow: 0 0 0 4px var(--bg-secondary);
+        z-index: 2;
+    }
+    .wlc-tl-item.done .wlc-tl-dot { border-color: #a6e3a1; background: #a6e3a1; }
+    .wlc-tl-item.quiz .wlc-tl-dot { border-color: #f59e0b; }
+    .wlc-tl-item.locked .wlc-tl-dot { border-color: rgba(255,255,255,0.1); }
+    
+    .wlc-tl-content { flex: 1; }
+    .wlc-tl-content h4 {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        color: #eeeeee;
+    }
+    .wlc-tl-content span { font-family: 'Outfit', sans-serif; font-size: 11px; color: #a1a1aa; font-weight: 700; margin-left: 6px; }
+    .wlc-tl-item.locked .wlc-tl-content h4 { color: #a1a1aa; }
+    
+    .wlc-tl-arrow { font-size: 16px; color: #a1a1aa; transition: 0.2s; opacity: 0; }
+    .wlc-tl-item:hover:not(.locked) .wlc-tl-arrow { opacity: 1; transform: translateX(2px); color: #ffffff; }
 
-        .neo-bento-container {
-            padding: 0 16px;
-            box-sizing: border-box;
-            max-width: 100vw;
-        }
-        .neo-card {
-            padding: 20px !important;
-            border-radius: 20px !important;
-        }
-        /* Hero header compression */
-        .neo-card[style*="min-height:240px"] {
-            min-height: 160px !important;
-            padding: 24px 20px !important;
-            margin-bottom: 24px !important;
-        }
-        .neo-card[style*="min-height:240px"] h3 {
-            font-size: 24px !important;
-        }
-        .neo-card[style*="min-height:240px"] p {
-            font-size: 13px !important;
-        }
-        .neo-card[style*="min-height:240px"] .neo-pill {
-            font-size: 9px !important;
-            padding: 6px 10px !important;
-        }
-        .neo-card[style*="min-height:240px"] > div[style*="right:8%"] {
-            display: none !important;
-        }
-        /* Section title */
-        .neo-title[style*="font-size:28px"] {
-            font-size: 20px !important;
-        }
-        /* Sub-materi list */
-        div[style*="flex-direction:column;gap:16px"] {
-            gap: 10px !important;
-        }
-        .sub-card-item {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            padding: 16px !important;
-            border-radius: 16px !important;
-            gap: 12px !important;
-        }
-        .sub-card-item h4 {
-            font-size: 14px !important;
-        }
-        .sub-card-item p {
-            font-size: 12px !important;
-        }
-        .sub-card-item div[style*="width:40px"] {
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 10px !important;
-        }
-        .sub-card-item div[style*="width:40px"] span {
-            font-size: 14px !important;
-        }
-        .sub-card-item .neo-arrow {
-            font-size: 20px !important;
-        }
-        /* Back link */
-        a[style*="margin-bottom:24px"][style*="font-size:14px"] {
-            font-size: 12px !important;
-            margin-bottom: 16px !important;
-        }
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .wlc-sub-hero { flex-direction: column; gap: 32px; text-align: center; }
+        .wlc-hero-badges { justify-content: center; }
+        .wlc-hero-desc { margin: 0 auto; }
+        .wlc-sub-hero-right { display: none; }
+        .wlc-sub-page { padding: 20px; }
     }
 </style>
